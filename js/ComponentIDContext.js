@@ -3,7 +3,9 @@
 /**
  *
  * ComponentIDContext can be used to specify componentID for together.js when components are reused
- * and need different componentID values.
+ * and need different componentID values.  Note that contexts are *conceptual* only and should be used
+ * to design a straightforward API for researchers and 3rd parties.  Contexts are not meant to match up
+ * exactly with implementation.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
@@ -20,7 +22,7 @@ define( function( require ) {
   function ComponentIDContext( pathElement ) {
 
     // @private
-    this.text = pathElement;
+    this.text = pathElement || '';
   }
 
   return inherit( Object, ComponentIDContext, {
@@ -31,7 +33,12 @@ define( function( require ) {
      * @returns {ComponentIDContext}
      */
     createContext: function( pathElement ) {
-      return new ComponentIDContext( this.text + '.' + pathElement );
+      if ( this.text.length > 0 ) {
+        return new ComponentIDContext( this.text + '.' + pathElement );
+      }
+      else {
+        return new ComponentIDContext( pathElement );
+      }
     },
 
     /**
