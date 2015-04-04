@@ -21,7 +21,7 @@ define( function( require ) {
   }
 
   return inherit( Object, TogetherArray, {
-    getComponentID: function( instance ) {
+    getTogetherID: function( instance ) {
       return this.name + '[' + (this.index++) + ']';
     }
   }, {} );
