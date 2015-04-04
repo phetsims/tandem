@@ -2,8 +2,8 @@
 
 /**
  *
- * ComponentIDContext can be used to specify componentID for together.js when components are reused
- * and need different componentID values.  Note that contexts are *conceptual* only and should be used
+ * ComponentIDContext can be used to specify togetherID for together.js when components are reused
+ * and need different togetherID values.  Note that contexts are *conceptual* only and should be used
  * to design a straightforward API for researchers and 3rd parties.  Contexts are not meant to match up
  * exactly with implementation.
  *
@@ -42,19 +42,19 @@ define( function( require ) {
     },
 
     /**
-     * Creates a componentID string by appending a pathElement string to this context
+     * Creates a togetherID string by appending a pathElement string to this context
      * @param {string} pathElement
      * @returns {string}
      */
     createComponentID: function( pathElement ) {
-      return this.createContext( pathElement ).componentID;
+      return this.createContext( pathElement ).togetherID;
     },
 
     /**
      * Gets the entire path for this context
      * @returns {string}
      */
-    get componentID() {
+    get togetherID() {
       return this.text;
     }
   } );
