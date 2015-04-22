@@ -27,7 +27,7 @@ define( function( require ) {
   // Export so preloads such as together can use it.
   window.Tandem = Tandem;
 
-  return inherit( Object, Tandem, {
+  Tandem = inherit( Object, Tandem, {
     addInstance: function( instance ) {
       for ( var i = 0; i < instanceListeners.length; i++ ) {
         instanceListeners[ i ].addInstance( this.id, instance );
@@ -57,4 +57,15 @@ define( function( require ) {
       instanceListeners.push( instanceListener );
     }
   } );
+
+  // Check for listeners in the preload.  This is necessary so that together.js can 
+  // receive notifications about items created during static initialization such as Solute.js
+  // which is created before Sim.js runs.
+  if ( window.tandemPreloadInstanceListeners ) {
+    for ( var i = 0; i < window.tandemPreloadInstanceListeners.length; i++ ) {
+      Tandem.addInstanceListener( window.tandemPreloadInstanceListeners[ i ] );
+    }
+  }
+
+  return Tandem;
 } );
