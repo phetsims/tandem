@@ -17,7 +17,10 @@ define( function( require ) {
    * @constructor
    */
   function Tandem( id ) {
-
+    
+    if (arguments.length===0){
+      id= '';
+    }
     // @private
     this.id = id;
   }
