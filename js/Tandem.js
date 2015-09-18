@@ -30,7 +30,7 @@ define( function( require ) {
   // Export so preloads such as together can use it.
   window.Tandem = Tandem;
 
-  Tandem = inherit( Object, Tandem, {
+  inherit( Object, Tandem, {
     addInstance: function( instance ) {
       for ( var i = 0; i < instanceListeners.length; i++ ) {
         instanceListeners[ i ].addInstance( this.id, instance );
