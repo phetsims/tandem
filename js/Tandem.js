@@ -17,12 +17,8 @@ define( function( require ) {
    * @constructor
    */
   function Tandem( id ) {
-    
-    if (arguments.length===0){
-      id= '';
-    }
     // @private
-    this.id = id;
+    this.id = id !== undefined ? id : '';
   }
 
   var instanceListeners = [];
@@ -61,7 +57,7 @@ define( function( require ) {
     }
   } );
 
-  // Check for listeners in the preload.  This is necessary so that together.js can 
+  // Check for listeners in the preload.  This is necessary so that together.js can
   // receive notifications about items created during static initialization such as Solute.js
   // which is created before Sim.js runs.
   if ( window.tandemPreloadInstanceListeners ) {
