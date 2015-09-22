@@ -1,8 +1,8 @@
 // Copyright 2002-2014, University of Colorado Boulder
 
 /**
- * Tandem is a general instance registry that can be used to track creation/disposal of instances in
- * PhET Simulations.  It is used for together.js instrumentation.
+ * Tandem is a general instance registry that can be used to track creation/disposal of instances in PhET Simulations.
+ * It is used for together.js instrumentation for PhET-iO support.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
@@ -17,25 +17,33 @@ define( function( require ) {
    * @constructor
    */
   function Tandem( id ) {
-    
-    if (arguments.length===0){
-      id= '';
-    }
+
     // @private
-    this.id = id;
+    this.id = (typeof id === 'undefined') ? '' : id;
   }
 
+  // Listeners that will be notified when items are registered/deregistered
   var instanceListeners = [];
 
-  // Export so preloads such as together can use it.
-  window.Tandem = Tandem;
-
   inherit( Object, Tandem, {
+
+    /**
+     * Adds an instance of any type.  For example, it could be an axon Property, scenery Node or Sun button.  Each
+     * item should only be added to the registry once, but that is not enforced here in Tandem.
+     *
+     * This is used to register instances with together.
+     * @param {Object} instance - the instance to add
+     */
     addInstance: function( instance ) {
       for ( var i = 0; i < instanceListeners.length; i++ ) {
         instanceListeners[ i ].addInstance( this.id, instance );
       }
     },
+
+    /**
+     * Removes an instance from the
+     * @param {Object} instance - the instance to remove
+     */
     removeInstance: function( instance ) {
       for ( var i = 0; i < instanceListeners.length; i++ ) {
         instanceListeners[ i ].removeInstance( this.id, instance );
@@ -48,20 +56,26 @@ define( function( require ) {
      * @returns {Tandem}
      */
     createTandem: function( id ) {
-      if ( this.id.length > 0 ) {
-        return new Tandem( this.id + '.' + id );
-      }
-      else {
-        return new Tandem( id );
-      }
+      var string = (this.id.length > 0) ? (this.id + '.' + id) : id;
+      return new Tandem( string );
     }
   }, {
+
+    /**
+     * Adds a listener that will be notified when items are registered/deregistered
+     * Listeners have the form
+     * {
+     *   addInstance(id,instance),   
+     *   removeInstance(id,instance)
+     * }
+     * where id is of type {string} and instance is of type {Object}
+     */
     addInstanceListener: function( instanceListener ) {
       instanceListeners.push( instanceListener );
     }
   } );
 
-  // Check for listeners in the preload.  This is necessary so that together.js can 
+  // Tandem checks for listeners added before the Tandem module was loaded.  This is necessary so that together.js can 
   // receive notifications about items created during static initialization such as Solute.js
   // which is created before Sim.js runs.
   if ( window.tandemPreloadInstanceListeners ) {
