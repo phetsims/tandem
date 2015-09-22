@@ -19,7 +19,7 @@ define( function( require ) {
   function Tandem( id ) {
 
     // @private
-    this.id = (typeof id === 'undefined') ? '' : id;
+    this.id = (id !== undefined) ? id : '';
   }
 
   // Listeners that will be notified when items are registered/deregistered
