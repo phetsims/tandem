@@ -18,7 +18,7 @@ define( function( require ) {
    */
   function Tandem( id ) {
 
-    // @private
+    // @public {read-only}
     this.id = (id !== undefined) ? id : '';
   }
 
