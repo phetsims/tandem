@@ -33,6 +33,7 @@ define( function( require ) {
      *
      * This is used to register instances with together.
      * @param {Object} instance - the instance to add
+     * @public
      */
     addInstance: function( instance ) {
       for ( var i = 0; i < instanceListeners.length; i++ ) {
@@ -43,6 +44,7 @@ define( function( require ) {
     /**
      * Removes an instance from the
      * @param {Object} instance - the instance to remove
+     * @public
      */
     removeInstance: function( instance ) {
       for ( var i = 0; i < instanceListeners.length; i++ ) {
@@ -54,6 +56,7 @@ define( function( require ) {
      * Create a new Tandem by appending the given id
      * @param {string} id
      * @returns {Tandem}
+     * @public
      */
     createTandem: function( id ) {
       var string = (this.id.length > 0) ? (this.id + '.' + id) : id;
@@ -69,6 +72,10 @@ define( function( require ) {
      *   removeInstance(id,instance)
      * }
      * where id is of type {string} and instance is of type {Object}
+     *
+     * @param {Object} instanceListener - described above
+     * @public
+     * @static
      */
     addInstanceListener: function( instanceListener ) {
       instanceListeners.push( instanceListener );
