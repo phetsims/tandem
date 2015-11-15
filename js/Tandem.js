@@ -21,8 +21,8 @@ define( function( require ) {
     // @public {read-only}
     this.id = (id !== undefined) ? id : '';
 
-    // @private for generating indices from a pool, for array element indices
-    this.index = 0;
+    // @private for generating indices from a pool
+    this.poolElementIndex = 0;
   }
 
   // Listeners that will be notified when items are registered/deregistered
@@ -66,9 +66,17 @@ define( function( require ) {
       return new Tandem( string );
     },
 
-    createNextIndexTandem: function() {
+    /**
+     * Creates a new tandem by appending the given id then underscore and a new index.  For instance:
+     * sim.screen.model.electron_0
+     * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
+     * have unique identifiers.
+     * @param id
+     * @returns {Tandem}
+     */
+    createPoolElementTandem: function( id ) {
       assert && assert( this.id.length > 0, 'indexed tandems must have an id' );
-      return new Tandem( this.id + '[' + (this.index++) + ']' );
+      return new Tandem( this.id + '.' + id + '_' + (this.poolElementIndex++) );
     }
   }, {
 
