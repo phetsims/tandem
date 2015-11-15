@@ -20,6 +20,9 @@ define( function( require ) {
 
     // @public {read-only}
     this.id = (id !== undefined) ? id : '';
+
+    // @private for generating indices from a pool, for array element indices
+    this.index = 0;
   }
 
   // Listeners that will be notified when items are registered/deregistered
@@ -61,6 +64,11 @@ define( function( require ) {
     createTandem: function( id ) {
       var string = (this.id.length > 0) ? (this.id + '.' + id) : id;
       return new Tandem( string );
+    },
+
+    createNextIndexTandem: function() {
+      assert && assert( this.id.length > 0, 'indexed tandems must have an id' );
+      return new Tandem( this.id + '[' + (this.index++) + ']' );
     }
   }, {
 
