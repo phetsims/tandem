@@ -11,6 +11,7 @@ define( function( require ) {
 
   // modules
   var inherit = require( 'PHET_CORE/inherit' );
+  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   /**
    * @param {string} id - id as a string (or '' for a root id)
@@ -24,6 +25,8 @@ define( function( require ) {
     // @private for generating indices from a pool
     this.poolElementIndex = 0;
   }
+
+  tandemNamespace.register( 'Tandem', Tandem );
 
   // Listeners that will be notified when items are registered/deregistered
   var instanceListeners = [];
