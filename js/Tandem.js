@@ -80,6 +80,20 @@ define( function( require ) {
     createPoolElementTandem: function( id ) {
       assert && assert( this.id.length > 0, 'indexed tandems must have an id' );
       return new Tandem( this.id + '.' + id + '_' + (this.poolElementIndex++) );
+    },
+
+    /**
+     * Get the last part of the tandem (after the last .), used in Joist for creating button names dynamically based
+     * on screen names
+     * @return {string} the tail of the tandem
+     */
+    get tail() {
+      assert && assert( this.id.indexOf( '.' ) >= 0, 'tandem ID does not have a tail' );
+
+      var lastIndexOfDot = this.id.lastIndexOf( '.' );
+      var tail = this.id.substring( lastIndexOfDot + 1 );
+      assert && assert( tail.length > 0, 'tandem ID did not have a tail' );
+      return tail;
     }
   }, {
 
