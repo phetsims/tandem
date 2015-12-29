@@ -66,19 +66,18 @@ define( function( require ) {
       return new Tandem( string );
     },
 
-    ///**
-    // * Creates a new tandem by appending the given id then underscore and a new index.  For instance:
-    // * sim.screen.model.electron_0
-    // * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
-    // * have unique identifiers.
-    // * @param id
-    // * @returns {Tandem}
-    // */
-    //createPoolElementTandem: function( id ) {
-    //  assert && assert( this.id.length > 0, 'indexed tandems must have an id' );
-    //  return new Tandem( this.id + '.' + id + '_' + (this.poolElementIndex++) );
-    //},
-
+    /**
+     * Creates a group tandem for creating multiple indexed child tandems, such as:
+     * sim.screen.model.electron_0
+     * sim.screen.model.electron_1
+     *
+     * In this case, 'sim.screen.model.electron' is the group tandem id.
+     *
+     * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
+     * have unique identifiers.
+     * @param id
+     * @returns {GroupTandem}
+     */
     createGroupTandem: function( id ) {
 
       // Unfortunately we must resort to globals here since loading through the namespace would create a cycle
