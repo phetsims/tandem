@@ -21,9 +21,6 @@ define( function( require ) {
 
     // @public {read-only}
     this.id = (id !== undefined) ? id : '';
-
-    // @private for generating indices from a pool
-    this.poolElementIndex = 0;
   }
 
   tandemNamespace.register( 'Tandem', Tandem );
@@ -69,17 +66,23 @@ define( function( require ) {
       return new Tandem( string );
     },
 
-    /**
-     * Creates a new tandem by appending the given id then underscore and a new index.  For instance:
-     * sim.screen.model.electron_0
-     * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
-     * have unique identifiers.
-     * @param id
-     * @returns {Tandem}
-     */
-    createPoolElementTandem: function( id ) {
-      assert && assert( this.id.length > 0, 'indexed tandems must have an id' );
-      return new Tandem( this.id + '.' + id + '_' + (this.poolElementIndex++) );
+    ///**
+    // * Creates a new tandem by appending the given id then underscore and a new index.  For instance:
+    // * sim.screen.model.electron_0
+    // * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
+    // * have unique identifiers.
+    // * @param id
+    // * @returns {Tandem}
+    // */
+    //createPoolElementTandem: function( id ) {
+    //  assert && assert( this.id.length > 0, 'indexed tandems must have an id' );
+    //  return new Tandem( this.id + '.' + id + '_' + (this.poolElementIndex++) );
+    //},
+
+    createGroupTandem: function( id ) {
+
+      // Unfortunately we must resort to globals here since loading through the namespace would create a cycle
+      return new GroupTandem( this.id + '.' + id );
     },
 
     /**
@@ -123,6 +126,26 @@ define( function( require ) {
       Tandem.addInstanceListener( window.tandemPreloadInstanceListeners[ i ] );
     }
   }
+
+  /**
+   * @param {string} id - id as a string (or '' for a root id)
+   * @constructor
+   * @private create with Tandem.createGroupTandem
+   * Declared in the same file to avoid circular reference errors in module loading.
+   */
+  function GroupTandem( id ) {
+
+    Tandem.call( this, id );
+
+    // @private for generating indices from a pool
+    this.groupElementIndex = 0;
+  }
+
+  inherit( Tandem, GroupTandem, {
+    createNextTandem: function() {
+      return new Tandem( this.id + '_' + (this.groupElementIndex++) );
+    }
+  } );
 
   return Tandem;
 } );
