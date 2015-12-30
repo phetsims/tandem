@@ -140,6 +140,8 @@ define( function( require ) {
     this.groupElementIndex = 0;
   }
 
+  tandemNamespace.register( 'Tandem.GroupTandem', GroupTandem );
+
   inherit( Tandem, GroupTandem, {
     createNextTandem: function() {
       return new Tandem( this.id + '_' + (this.groupElementIndex++) );
