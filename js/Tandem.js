@@ -12,6 +12,13 @@ define( function( require ) {
   // modules
   var inherit = require( 'PHET_CORE/inherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  var StringUtils = require( 'PHETCOMMON/util/StringUtils' );
+
+  // text
+  var packageString = require( 'text!REPOSITORY/package.json' );
+
+  // constants
+  var packageJSON = JSON.parse( packageString );
 
   /**
    * @param {string} id - id as a string (or '' for a root id)
@@ -114,6 +121,23 @@ define( function( require ) {
      */
     addInstanceListener: function( instanceListener ) {
       instanceListeners.push( instanceListener );
+    },
+
+    /**
+     * Create a tandem based on the name of the running simulation.
+     * @returns {Tandem}
+     */
+    createRootTandem: function() {
+      return new Tandem( StringUtils.toCamelCase( packageJSON.name ) );
+    },
+
+    /**
+     * Create a child of the root tandem.
+     * @param {string} name
+     * @returns {Tandem}
+     */
+    createStaticTandem: function( name ) {
+      return Tandem.createRootTandem().createTandem( name );
     }
   } );
 
