@@ -20,6 +20,7 @@ define( function( require ) {
    * @constructor
    */
   function TandemDragHandler( options ) {
+    assert && assert( options && options.tandem, 'tandem must be provided' );
 
     var tandemDragHandler = this;
 
@@ -63,9 +64,20 @@ define( function( require ) {
     SimpleDragHandler.call( this, newOptions );
 
     options.tandem.addInstance( this );
+
+    // @private
+    this.disposeTandemDragHandler = function() {
+      options.tandem.removeInstance( tandemDragHandler );
+    };
   }
 
   tandemNamespace.register( 'TandemDragHandler', TandemDragHandler );
 
-  return inherit( SimpleDragHandler, TandemDragHandler );
+  return inherit( SimpleDragHandler, TandemDragHandler, {
+
+    // @public
+    dispose: function() {
+      this.disposeTandemDragHandler();
+    }
+  } );
 } );
