@@ -103,6 +103,16 @@ define( function( require ) {
       var tail = this.id.substring( lastIndexOfDot + 1 );
       assert && assert( tail.length > 0, 'tandem ID did not have a tail' );
       return tail;
+    },
+
+    /**
+     * When using subtyping, the instance listeners must only be notified once rather than once for every level
+     * in the inheritance hierarchy.  When a subtype constructor has a tandem.addInstance call, it should
+     * pass a supertype tandem to the parent constructor so that it won't try to register the item twice.
+     * @returns {SupertypeTandem}
+     */
+    createSupertypeTandem: function() {
+      return new SupertypeTandem( this.id );
     }
   }, {
 
@@ -180,6 +190,27 @@ define( function( require ) {
     createNextTandem: function() {
       return new Tandem( this.id + '_' + (this.groupElementIndex++) );
     }
+    }
+  );
+
+  /**
+   * @param {string} id - id as a string (or '' for a root id)
+   * @constructor
+   * @private create with Tandem.createSupertypeTandem
+   */
+  function SupertypeTandem( id ) {
+    Tandem.call( this, id );
+  }
+
+  tandemNamespace.register( 'Tandem.SupertypeTandem', SupertypeTandem );
+
+  inherit( Tandem, SupertypeTandem, {
+
+      // @public - Override to make no-op, see createSupertypeTandem
+      addInstance: function( instance ) {},
+
+      // @public - Override to make no-op, see createSupertypeTandem
+      removeInstance: function( instance ) {}
     }
   );
 
