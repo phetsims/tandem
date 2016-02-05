@@ -2,7 +2,7 @@
 
 /**
  * Tandem is a general instance registry that can be used to track creation/disposal of instances in PhET Simulations.
- * It is used for together.js instrumentation for PhET-iO support.
+ * It is used for phetio.js instrumentation for PhET-iO support.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
@@ -151,7 +151,7 @@ define( function( require ) {
     }
   } );
 
-  // Tandem checks for listeners added before the Tandem module was loaded.  This is necessary so that together.js can 
+  // Tandem checks for listeners added before the Tandem module was loaded.  This is necessary so that phetio.js can
   // receive notifications about items created during static initialization such as Solute.js
   // which is created before Sim.js runs.
   if ( window.tandemPreloadInstanceListeners ) {
