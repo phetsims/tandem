@@ -1,7 +1,8 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * Subclass decorator for SCENERY/nodes/Text that supplies (mandatory) Tandem registration.
+ * Subtype decorator for SCENERY/nodes/Text that supplies (mandatory) Tandem registration.
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  */
 define( function( require ) {
@@ -12,11 +13,19 @@ define( function( require ) {
   var Text = require( 'SCENERY/nodes/Text' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
+  /**
+   * @param {string} text
+   * @param {Object} [options]
+   * @constructor
+   */
   function TandemText( text, options ) {
+
     assert && assert( options && options.tandem, 'TandemText must have a tandem' );
     Text.call( this, text, options );
 
     options.tandem.addInstance( this );
+
+    // @private
     this.disposeTandemText = function() {
       options.tandem.removeInstance( this );
     };
@@ -25,10 +34,11 @@ define( function( require ) {
   tandemNamespace.register( 'TandemText', TandemText );
 
   return inherit( Text, TandemText, {
+
+    // @public
     dispose: function() {
-      assert && assert( typeof Text.prototype.dispose === 'undefined', 'Super class shouldn\'t have its own dispose ' +
-                                                                       'method, or we may have accidentally overriden ' +
-                                                                       'it' );
+      assert && assert( typeof Text.prototype.dispose === 'undefined',
+        'Supertype shouldn\'t have its own dispose method, or we may have accidentally overriden it' );
       this.disposeTandemText();
     }
   } );
