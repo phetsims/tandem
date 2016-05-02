@@ -12,7 +12,7 @@ define( function( require ) {
   var Emitter = require( 'AXON/Emitter' );
   var inherit = require( 'PHET_CORE/inherit' );
   var SimpleDragHandler = require( 'SCENERY/input/SimpleDragHandler' );
-  var sun = require( 'SUN/sun' );
+  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   /**
    * @param {Object} [options]
@@ -74,7 +74,7 @@ define( function( require ) {
     };
   }
 
-  sun.register( 'TandemDragHandler', TandemDragHandler );
+  tandemNamespace.register( 'TandemDragHandler', TandemDragHandler );
 
   return inherit( SimpleDragHandler, TandemDragHandler, {
 
