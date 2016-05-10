@@ -26,8 +26,20 @@ define( function( require ) {
   function TandemButtonListener( options ) {
     var tandemButtonListener = this;
 
+    this.startedCallbacksForUpEmitter = new Emitter();
+    this.endedCallbacksForUpEmitter = new Emitter();
+
     this.startedCallbacksForOverEmitter = new Emitter();
     this.endedCallbacksForOverEmitter = new Emitter();
+
+    this.startedCallbacksForDownEmitter = new Emitter();
+    this.endedCallbacksForDownEmitter = new Emitter();
+
+    this.startedCallbacksForOutEmitter = new Emitter();
+    this.endedCallbacksForOutEmitter = new Emitter();
+
+    this.startedCallbacksForFireEmitter = new Emitter();
+    this.endedCallbacksForFireEmitter = new Emitter();
 
     options = _.extend( { tandem: null }, options );
 
@@ -37,10 +49,30 @@ define( function( require ) {
     var optionsCopy = _.clone( options );
 
     // Wrap start/end/drag options (even if they did not exist) to get the PhET-iO instrumentation.
+    optionsCopy.up = function( event, trail ) {
+      tandemButtonListener.startedCallbacksForUpEmitter.emit();
+      options.up && options.up( event, trail );
+      tandemButtonListener.endedCallbacksForUpEmitter.emit();
+    };
     optionsCopy.over = function( event, trail ) {
       tandemButtonListener.startedCallbacksForOverEmitter.emit();
       options.over && options.over( event, trail );
       tandemButtonListener.endedCallbacksForOverEmitter.emit();
+    };
+    optionsCopy.down = function( event, trail ) {
+      tandemButtonListener.startedCallbacksForDownEmitter.emit();
+      options.down && options.down( event, trail );
+      tandemButtonListener.endedCallbacksForDownEmitter.emit();
+    };
+    optionsCopy.out = function( event, trail ) {
+      tandemButtonListener.startedCallbacksForOutEmitter.emit();
+      options.out && options.out( event, trail );
+      tandemButtonListener.endedCallbacksForOutEmitter.emit();
+    };
+    optionsCopy.fire = function( event, trail ) {
+      tandemButtonListener.startedCallbacksForFireEmitter.emit();
+      options.fire && options.fire( event, trail );
+      tandemButtonListener.endedCallbacksForFireEmitter.emit();
     };
 
     ButtonListener.call( this, optionsCopy );
