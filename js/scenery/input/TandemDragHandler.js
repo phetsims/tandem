@@ -36,7 +36,9 @@ define( function( require ) {
     this.startedCallbacksForDragEndedEmitter = new Emitter(); // @public (phet-io)
     this.endedCallbacksForDragEndedEmitter = new Emitter(); // @public (phet-io)
 
-    var optionsCopy = _.clone( options );
+    // Clone the options so that we can refer to the original implementations in the
+    // augmented callbacks
+    var optionsCopy = _.clone( options ); 
 
     // For non-phet-io brands, skip tandem callbacks to save CPU
     if ( Brand.id === 'phet-io' ) {
