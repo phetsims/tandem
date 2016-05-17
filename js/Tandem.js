@@ -20,15 +20,24 @@ define( function( require ) {
   // constants
   var packageJSON = JSON.parse( packageString );
 
+  // variables
+  var launched = false;
+
   /**
    * @param {string} id - id as a string (or '' for a root id)
+   * @param {Object} [options]
    * @constructor
    */
-  function Tandem( id ) {
+  function Tandem( id, options ) {
+
+    options = _.extend( { static: false }, options );
 
     // @public {read-only}
     this.id = (id !== undefined) ? id : '';
+    this.static = options.static;
   }
+
+  var staticInstances = [];
 
   tandemNamespace.register( 'Tandem', Tandem );
 
@@ -49,8 +58,13 @@ define( function( require ) {
      * @public
      */
     addInstance: function( instance ) {
-      for ( var i = 0; i < instanceListeners.length; i++ ) {
-        instanceListeners[ i ].addInstance( this.id, instance );
+      if ( this.static && !launched ) {
+        staticInstances.push( { tandem: this, instance: instance } );
+      }
+      else {
+        for ( var i = 0; i < instanceListeners.length; i++ ) {
+          instanceListeners[ i ].addInstance( this.id, instance );
+        }
       }
     },
 
@@ -68,12 +82,17 @@ define( function( require ) {
     /**
      * Create a new Tandem by appending the given id
      * @param {string} id
+     * @param {Object} [options]
      * @returns {Tandem}
      * @public
      */
-    createTandem: function( id ) {
+    createTandem: function( id, options ) {
       var string = (this.id.length > 0) ? (this.id + '.' + id) : id;
-      return new Tandem( string );
+
+      // Any child of something static is also static
+      options = _.extend( { static: this.static }, options );
+
+      return new Tandem( string, options );
     },
 
     /**
@@ -150,7 +169,18 @@ define( function( require ) {
      * @returns {Tandem}
      */
     createStaticTandem: function( name ) {
-      return Tandem.createRootTandem().createTandem( name );
+      return Tandem.createRootTandem().createTandem( name, { static: true } );
+    },
+
+    /**
+     * When the simulation is launched, all static instances are registered.
+     */
+    launch: function() {
+      launched = true;
+      while ( staticInstances.length > 0 ) {
+        var staticInstance = staticInstances.shift();
+        staticInstance.tandem.addInstance( staticInstance.instance );
+      }
     }
   } );
 
