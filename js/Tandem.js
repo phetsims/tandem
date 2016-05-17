@@ -176,6 +176,7 @@ define( function( require ) {
      * When the simulation is launched, all static instances are registered.
      */
     launch: function() {
+      assert && assert( !launched, 'Tandem was launched twice' );
       launched = true;
       while ( staticInstances.length > 0 ) {
         var staticInstance = staticInstances.shift();
