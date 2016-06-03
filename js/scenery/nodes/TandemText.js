@@ -12,6 +12,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Text = require( 'SCENERY/nodes/Text' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   /**
    * @param {string} text
@@ -19,8 +20,7 @@ define( function( require ) {
    * @constructor
    */
   function TandemText( text, options ) {
-
-    assert && assert( options && options.tandem, 'TandemText must have a tandem' );
+    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
     Text.call( this, text, options );
 
     options.tandem.addInstance( this );

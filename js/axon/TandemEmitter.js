@@ -12,14 +12,15 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var Emitter = require( 'AXON/Emitter' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   /**
    * @param {Object} [options]
    * @constructor
    */
   function TandemEmitter( options ) {
-    assert && assert( options, 'options.tandem must exist' );
-    assert && assert( options.tandem, 'options.tandem must exist' );
+    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
+    
     Emitter.call( this );
 
     // @private (phet-io)

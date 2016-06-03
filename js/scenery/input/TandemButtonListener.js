@@ -13,6 +13,7 @@ define( function( require ) {
   var ButtonListener = require( 'SCENERY/input/ButtonListener' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Emitter = require( 'AXON/Emitter' );
+  var Tandem = require( 'TANDEM/Tandem' );
 
   /**
    * up: null          // Called on an 'up' state change, as up( event, oldState )
@@ -25,6 +26,9 @@ define( function( require ) {
    */
   function TandemButtonListener( options ) {
     var tandemButtonListener = this;
+
+    options = _.extend( { tandem: null }, options );
+    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
 
     this.startedCallbacksForUpEmitter = new Emitter();
     this.endedCallbacksForUpEmitter = new Emitter();
@@ -40,8 +44,6 @@ define( function( require ) {
 
     this.startedCallbacksForFireEmitter = new Emitter();
     this.endedCallbacksForFireEmitter = new Emitter();
-
-    options = _.extend( { tandem: null }, options );
 
     // Intercept calls to up/over/down/out/fire and augment with a phet-io compatible emitter event.
     // Clone the options so that we can refer to the original implementations in the

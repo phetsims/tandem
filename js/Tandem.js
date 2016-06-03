@@ -182,6 +182,17 @@ define( function( require ) {
         var staticInstance = staticInstances.shift();
         staticInstance.tandem.addInstance( staticInstance.instance );
       }
+    },
+
+    /**
+     * When running as phet-io, User Interface components must be registered with tandem.  This function checks the
+     * options to make sure tandem exists.
+     * @param options
+     */
+    validateOptions: function( options ) {
+      if ( phet.chipper.brand === 'phet-io' ) {
+        assert && assert( options.tandem, 'When running as PhET-iO, a tandem must be specified for each user interface component' );
+      }
     }
   } );
 
