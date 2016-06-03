@@ -186,7 +186,7 @@ define( function( require ) {
 
     /**
      * When running as phet-io, User Interface components must be registered with tandem.  This function checks the
-     * options to make sure tandem exists.
+     * options to make sure tandem exists.  See https://github.com/phetsims/phet-io/issues/77
      * @param options
      */
     validateOptions: function( options ) {
