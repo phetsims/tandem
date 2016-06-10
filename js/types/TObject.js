@@ -46,12 +46,13 @@ define( function( require ) {
         if ( phetioID === 'phetio' && methodName === 'setState' ) {
 
           // IIFE to capture iteration vars
-          ( function( wrapper, methodName, stateObjects ) {
+          (function( wrapper, methodName, stateObjects ) {
             phetio.simulationStartedListeners.push( function() {
               wrapper[ methodName ].apply( wrapper, stateObjects );
             } );
-          } )( wrapper, methodName, stateObjects );
-        } else {
+          })( wrapper, methodName, stateObjects );
+        }
+        else {
           // invoke the method on the wrapper immediately after wrapper construction using the parsed/marshalled args
           wrapper[ methodName ].apply( wrapper, stateObjects );
         }

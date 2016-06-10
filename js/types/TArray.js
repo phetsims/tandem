@@ -11,8 +11,8 @@ define( function( require ) {
   // modules
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var TObject = require( 'PHET_IO/api/TObject' );
-  var TVoid = require( 'PHET_IO/api/TVoid' );
+  var TObject = require( 'PHET_IO/types/TObject' );
+  var TVoid = require( 'PHET_IO/types/TVoid' );
 
   var TArray = function( elementType ) {
     return phetioInherit( TObject, 'TArray', function( arrayInstance, phetioID ) {

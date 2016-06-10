@@ -12,9 +12,9 @@ define( function( require ) {
   var assertInstanceOf = require( 'PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TNode = require( 'PHET_IO/api/scenery/nodes/TNode' );
-  var TString = require( 'PHET_IO/api/TString' );
-  var TVoid = require( 'PHET_IO/api/TVoid' );
+  var TNode = require( 'PHET_IO/types/scenery/nodes/TNode' );
+  var TString = require( 'PHET_IO/types/TString' );
+  var TVoid = require( 'PHET_IO/types/TVoid' );
 
   var TTandemText = phetioInherit( TNode, 'TTandemText', function( tandemText, phetioID ) {
     TNode.call( this, tandemText, phetioID );

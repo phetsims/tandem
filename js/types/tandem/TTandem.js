@@ -12,8 +12,8 @@ define( function( require ) {
   var assertInstanceOf = require( 'PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/api/TObject' );
-  var TString = require( 'PHET_IO/api/TString' );
+  var TObject = require( 'PHET_IO/types/TObject' );
+  var TString = require( 'PHET_IO/types/TString' );
 
   var TTandem = phetioInherit( TObject, 'TTandem', function( arrayInstance, phetioID ) {
     TObject.call( this, arrayInstance, phetioID );

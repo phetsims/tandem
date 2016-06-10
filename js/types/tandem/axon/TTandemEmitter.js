@@ -12,7 +12,7 @@ define( function( require ) {
   var assertInstanceOf = require( 'PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/api/TObject' );
+  var TObject = require( 'PHET_IO/types/TObject' );
 
   // Emitter for 0, 1 or 2 args
   var TTandemEmitter = function( argTypes ) {
