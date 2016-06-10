@@ -30,7 +30,8 @@ define( function( require ) {
    */
   var cloneFunction = function( parentFunction ) {
     var clone = function() {
-      return parentFunction.apply( this, arguments ); };
+      return parentFunction.apply( this, arguments );
+    };
     for ( var key in this ) {
       if ( this.hasOwnProperty( key ) ) {
         clone[ key ] = this[ key ];
@@ -96,9 +97,11 @@ define( function( require ) {
     subtype.getMethodDeclaration = function( methodName ) {
       if ( this.methods[ methodName ] ) {
         return this.methods[ methodName ];
-      } else if ( typeName === 'TObject' ) {
+      }
+      else if ( typeName === 'TObject' ) {
         return null;
-      } else {
+      }
+      else {
         return supertype.getMethodDeclaration( methodName );
       }
     };
