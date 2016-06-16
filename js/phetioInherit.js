@@ -9,18 +9,8 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var extend = require( 'PHET_CORE/extend' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-
-  var extend = function extend( obj ) {
-    _.each( Array.prototype.slice.call( arguments, 1 ), function( source ) {
-      if ( source ) {
-        for ( var prop in source ) {
-          window.Object.defineProperty( obj, prop, window.Object.getOwnPropertyDescriptor( source, prop ) );
-        }
-      }
-    } );
-    return obj;
-  };
 
   /**
    * Clone a function and all its properties, used in inheritance to make sure api additions through extend
