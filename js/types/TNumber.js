@@ -57,14 +57,26 @@ define( function( require ) {
       units + ' is not recognized as a valid unit of measurement' );
   }
 
-  var TNumber = function( units ) {
+  var TNumber = function( units, options ) {
     assert && assert( units, 'All TNumbers should specify units' );
     validate( units );
+
+    options = _.extend( {
+        type: 'FloatingPoint', // either 'FloatingPoint' | 'Integer'
+        min: -Infinity,
+        max: Infinity,
+        values: null // null | {Number[]} if it can only take certain possible values, specify them here, like [0,2,8]
+      }
+    );
     return phetioInherit( TObject, 'TNumber', function( instance, phetioID ) {
       TObject.call( this, instance, phetioID );
       assertTypeOf( instance, 'number' );
     }, {}, {
       units: units,
+      type: options.type,
+      min: options.min,
+      max: options.max,
+      values: options.values,
       documentation: 'Wrapper for the built-in JS number type (floating point, but also represents integers)',
 
       fromStateObject: function( stateObject ) {
