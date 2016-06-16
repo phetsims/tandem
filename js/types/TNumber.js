@@ -68,7 +68,7 @@ define( function( require ) {
         values: null // null | {Number[]} if it can only take certain possible values, specify them here, like [0,2,8]
       }
     );
-    return phetioInherit( TObject, 'TNumber', function( instance, phetioID ) {
+    return phetioInherit( TObject, 'TNumber(' + units + ')', function( instance, phetioID ) {
       TObject.call( this, instance, phetioID );
       assertTypeOf( instance, 'number' );
     }, {}, {
