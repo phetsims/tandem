@@ -14,8 +14,52 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
+  var validUnits = [
+    'amperes',
+    'becquerels',
+    'coulombs',
+    'degrees Celsius',
+    'farads',
+    'grams',
+    'gray',
+    'henrys',
+    'henries',
+    'hertz',
+    'joules',
+    'katals',
+    'kelvins',
+    'liters',
+    'liters/second',
+    'lumens',
+    'lux',
+    'meters',
+    'moles',
+    'moles/liter',
+    'nanometers',
+    'newtons',
+    'ohms',
+    'pascals',
+    'percent',
+    'radians',
+    'seconds',
+    'siemens',
+    'sieverts',
+    'steradians',
+    'tesla',
+    'unitless',
+    'volts',
+    'watts',
+    'webers'
+  ];
+
+  function validate( units ) {
+    assert && assert( validUnits.indexOf( units ) >= 0,
+      units + ' is not recognized as a valid unit of measurement' );
+  }
+
   var TNumber = function( units ) {
     assert && assert( units, 'All TNumbers should specify units' );
+    validate( units );
     return phetioInherit( TObject, 'TNumber', function( instance, phetioID ) {
       TObject.call( this, instance, phetioID );
       assertTypeOf( instance, 'number' );
