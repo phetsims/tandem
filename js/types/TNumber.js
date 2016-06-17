@@ -52,14 +52,9 @@ define( function( require ) {
     'webers'
   ];
 
-  function validate( units ) {
-    assert && assert( validUnits.indexOf( units ) >= 0,
-      units + ' is not recognized as a valid unit of measurement' );
-  }
-
   var TNumber = function( units, options ) {
     assert && assert( units, 'All TNumbers should specify units' );
-    validate( units );
+    assert && assert( validUnits.indexOf( units ) >= 0, units + ' is not recognized as a valid unit of measurement' );
 
     options = _.extend( {
         type: 'FloatingPoint', // either 'FloatingPoint' | 'Integer'
