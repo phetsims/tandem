@@ -17,6 +17,7 @@ define( function( require ) {
   var validUnits = [
     'amperes',
     'becquerels',
+    'centimeters',
     'coulombs',
     'degrees Celsius',
     'farads',
