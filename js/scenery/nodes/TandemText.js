@@ -1,7 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * Subtype decorator for SCENERY/nodes/Text that supplies (mandatory) Tandem registration.
+ * Subtype decorator for SCENERY/nodes/Text that supplies (optional) Tandem registration.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
@@ -23,11 +23,11 @@ define( function( require ) {
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
     Text.call( this, text, options );
 
-    options.tandem.addInstance( this );
+    options.tandem && options.tandem.addInstance( this );
 
     // @private
     this.disposeTandemText = function() {
-      options.tandem.removeInstance( this );
+      options.tandem && options.tandem.removeInstance( this );
     };
   }
 
