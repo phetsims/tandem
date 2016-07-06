@@ -30,7 +30,6 @@ define( function( require ) {
     }
   } );
 
-
   phetioNamespace.register( 'TVector2', TVector2 );
 
   return TVector2;
