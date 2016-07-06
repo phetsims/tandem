@@ -98,8 +98,7 @@ define( function( require ) {
 
     subtype.allMethods = _.extend( {}, supertype.allMethods, methods );
 
-    // TODO: It would be so nice to abandon this parallel type definition and use actual
-    // instanceof etc.
+    // TODO: It would be so nice to abandon this parallel type definition and use actual instanceof etc.
     // TODO: Can this be implemented without a name check?  The name check seems susceptible to false positives.
     subtype.hasType = function( type ) {
       return !!( subtype.typeName === type.typeName || ( supertype && supertype.hasType && supertype.hasType( type ) ) );
