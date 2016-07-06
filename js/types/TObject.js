@@ -47,7 +47,7 @@ define( function( require ) {
 
           // IIFE to capture iteration vars
           (function( wrapper, methodName, stateObjects ) {
-            phetio.simulationStartedListeners.push( function() {
+            phetio.simulationStartedEmitter.addListener( function() {
               wrapper[ methodName ].apply( wrapper, stateObjects );
             } );
           })( wrapper, methodName, stateObjects );
