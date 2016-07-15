@@ -59,27 +59,21 @@ define( function( require ) {
 
     options = _.extend( {
         type: 'FloatingPoint', // either 'FloatingPoint' | 'Integer'
-        min: -Infinity, // TODO: remove min and max in favor of keeping range only
+        min: -Infinity,
         max: Infinity,
-        range: new Range( -Infinity, Infinity ), // No defaultValue
-        stepSize: null, // This will be used for slider increments
         values: null // null | {Number[]} if it can only take certain possible values, specify them here, like [0,2,8]
-                     // TODO: enforce that values is of Array type
       },
       options
     );
-
     return phetioInherit( TObject, 'TNumber(' + units + ')', function( instance, phetioID ) {
       TObject.call( this, instance, phetioID );
       assertTypeOf( instance, 'number' );
     }, {}, {
       units: units,
       type: options.type,
-      min: options.range.min,
-      max: options.range.max,
+      min: options.min,
+      max: options.max,
       values: options.values,
-      stepSize: options.stepSize,
-      defaultValue: options.range.defaultValue,
       documentation: 'Wrapper for the built-in JS number type (floating point, but also represents integers)',
 
       fromStateObject: function( stateObject ) {
