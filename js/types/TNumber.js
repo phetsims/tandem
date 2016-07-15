@@ -12,6 +12,7 @@ define( function( require ) {
   var assertTypeOf = require( 'PHET_IO/assertions/assertTypeOf' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
+  var Range = require( 'DOT/Range' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
   var validUnits = [
@@ -59,8 +60,10 @@ define( function( require ) {
 
     options = _.extend( {
         type: 'FloatingPoint', // either 'FloatingPoint' | 'Integer'
-        min: -Infinity,
-        max: Infinity,
+        range: new Range( -Infinity, Infinity ),
+        stepSize: null, // This will be used for slider increments
+
+        // TODO: enforce that values is of Array type
         values: null // null | {Number[]} if it can only take certain possible values, specify them here, like [0,2,8]
       },
       options
@@ -71,8 +74,8 @@ define( function( require ) {
     }, {}, {
       units: units,
       type: options.type,
-      min: options.min,
-      max: options.max,
+      range: options.range,
+      stepSize: options.stepSize,
       values: options.values,
       documentation: 'Wrapper for the built-in JS number type (floating point, but also represents integers)',
 
