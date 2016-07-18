@@ -14,6 +14,7 @@ define( function( require ) {
   var SimpleDragHandler = require( 'SCENERY/input/SimpleDragHandler' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var TTandemDragHandler = require('ifphetio!PHET_IO/types/tandem/scenery/input/TTandemDragHandler');
 
   /**
    * @param {Object} [options]
@@ -71,7 +72,7 @@ define( function( require ) {
 
     SimpleDragHandler.call( this, optionsCopy );
 
-    options.tandem && options.tandem.addInstance( this );
+    options.tandem && options.tandem.addInstance( this,TTandemDragHandler );
 
     // @private
     this.disposeTandemDragHandler = function() {

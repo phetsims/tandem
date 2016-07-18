@@ -57,13 +57,14 @@ define( function( require ) {
      * @param {Object} instance - the instance to add
      * @public
      */
-    addInstance: function( instance ) {
+    addInstance: function( instance, type ) {
+      assert && assert( !!type, 'type must be specified' );
       if ( this.static && !launched ) {
-        staticInstances.push( { tandem: this, instance: instance } );
+        staticInstances.push( { tandem: this, instance: instance, type: type } );
       }
       else {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
-          instanceListeners[ i ].addInstance( this.id, instance );
+          instanceListeners[ i ].addInstance( this.id, instance, type );
         }
       }
     },
@@ -180,7 +181,7 @@ define( function( require ) {
       launched = true;
       while ( staticInstances.length > 0 ) {
         var staticInstance = staticInstances.shift();
-        staticInstance.tandem.addInstance( staticInstance.instance );
+        staticInstance.tandem.addInstance( staticInstance.instance, staticInstance.type );
       }
     },
 
@@ -223,18 +224,18 @@ define( function( require ) {
 
   inherit( Tandem, GroupTandem, {
 
-    /**
-     * @param [id] {string} optional override, used when loading a state and the tandems must be restored exactly as
-     * they were saved
-     * @returns {Tandem}
-     */
-    createSpecificTandem: function( id ) {
-      return new Tandem( this.id + '_' + id );
-    },
+      /**
+       * @param [id] {string} optional override, used when loading a state and the tandems must be restored exactly as
+       * they were saved
+       * @returns {Tandem}
+       */
+      createSpecificTandem: function( id ) {
+        return new Tandem( this.id + '_' + id );
+      },
 
-    createNextTandem: function() {
-      return new Tandem( this.id + '_' + (this.groupElementIndex++) );
-    }
+      createNextTandem: function() {
+        return new Tandem( this.id + '_' + (this.groupElementIndex++) );
+      }
     }
   );
 
