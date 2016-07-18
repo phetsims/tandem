@@ -12,7 +12,7 @@ define( function( require ) {
   var assertTypeOf = require( 'PHET_IO/assertions/assertTypeOf' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var Range = require( 'DOT/Range' );
+  var RangeWithValue = require( 'DOT/RangeWithValue' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
   var validUnits = [
@@ -60,7 +60,7 @@ define( function( require ) {
 
     options = _.extend( {
         type: 'FloatingPoint', // either 'FloatingPoint' | 'Integer'
-        range: new Range( -Infinity, Infinity ),
+        range: new RangeWithValue( -Infinity, Infinity ),
         stepSize: null, // This will be used for slider increments
 
         // TODO: enforce that values is of Array type
