@@ -42,7 +42,7 @@ define( function( require ) {
 
     // Clone the options so that we can refer to the original implementations in the
     // augmented callbacks
-    var optionsCopy = _.clone( options ); 
+    var optionsCopy = _.clone( options );
 
     // For non-phet-io brands, skip tandem callbacks to save CPU
     if ( Brand.id === 'phet-io' ) {
@@ -72,7 +72,7 @@ define( function( require ) {
 
     SimpleDragHandler.call( this, optionsCopy );
 
-    options.tandem && options.tandem.addInstance( this,TTandemDragHandler );
+    options.tandem && options.tandem.addInstance( this, TTandemDragHandler );
 
     // @private
     this.disposeTandemDragHandler = function() {

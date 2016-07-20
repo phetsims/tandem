@@ -14,6 +14,7 @@ define( function( require ) {
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Emitter = require( 'AXON/Emitter' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var TTandemButtonListener = require( 'ifphetio!PHET_IO/types/scenery/input/TTandemButtonListener' );
 
   /**
    * up: null          // Called on an 'up' state change, as up( event, oldState )
@@ -79,7 +80,7 @@ define( function( require ) {
 
     ButtonListener.call( this, optionsCopy );
 
-    options.tandem && options.tandem.addInstance( this );
+    options.tandem && options.tandem.addInstance( this, TTandemButtonListener );
   }
 
   tandemNamespace.register( 'TandemButtonListener', TandemButtonListener );
