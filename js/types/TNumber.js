@@ -75,7 +75,6 @@ define( function( require ) {
       units: units,
       type: options.type,
       range: options.range,
-      stepSize: options.stepSize,
       values: options.values,
       documentation: 'Wrapper for the built-in JS number type (floating point, but also represents integers)',
 
