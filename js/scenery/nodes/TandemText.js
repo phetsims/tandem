@@ -13,6 +13,7 @@ define( function( require ) {
   var Text = require( 'SCENERY/nodes/Text' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Tandem = require( 'TANDEM/Tandem' );
+  var TTandemText = require( 'PHET_IO/types/tandem/scenery/nodes/TTandemText' );
 
   /**
    * @param {string} text
@@ -23,7 +24,7 @@ define( function( require ) {
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
     Text.call( this, text, options );
 
-    options.tandem && options.tandem.addInstance( this );
+    options.tandem && options.tandem.addInstance( this, TTandemText );
 
     // @private
     this.disposeTandemText = function() {
