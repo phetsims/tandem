@@ -55,6 +55,7 @@ define( function( require ) {
      *
      * This is used to register instances with PhET-iO.
      * @param {Object} instance - the instance to add
+     * @param {function} type - the PhET-iO type function, such as TString or TProperty(TNumber('volts'))
      * @public
      */
     addInstance: function( instance, type ) {
@@ -253,10 +254,10 @@ define( function( require ) {
   inherit( Tandem, SupertypeTandem, {
 
       // @public - Override to make no-op, see createSupertypeTandem
-      addInstance: function( instance ) {},
+    addInstance: function( instance, type ) {},
 
       // @public - Override to make no-op, see createSupertypeTandem
-      removeInstance: function( instance ) {}
+    removeInstance: function( instance, type ) {}
     }
   );
 
