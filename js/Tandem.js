@@ -59,7 +59,9 @@ define( function( require ) {
      * @public
      */
     addInstance: function( instance, type ) {
-      assert && assert( !!type, 'type must be specified' );
+
+      // TODO: When all sims are re-instrumented with types, remove the phet.chipper.brand === 'phet-io' && part
+      phet.chipper.brand === 'phet-io' && assert && assert( !!type, 'type must be specified' );
       if ( this.static && !launched ) {
         staticInstances.push( { tandem: this, instance: instance, type: type } );
       }
