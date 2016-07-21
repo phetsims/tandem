@@ -24,7 +24,7 @@ define( function( require ) {
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
     Text.call( this, text, options );
 
-    options.tandem && options.tandem.addInstance( this, TTandemText );
+    TTandemText && options.tandem && options.tandem.addInstance( this, TTandemText );
 
     // @private
     this.disposeTandemText = function() {
