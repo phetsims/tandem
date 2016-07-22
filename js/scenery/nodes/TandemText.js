@@ -13,7 +13,9 @@ define( function( require ) {
   var Text = require( 'SCENERY/nodes/Text' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Tandem = require( 'TANDEM/Tandem' );
-  var TTandemText = require( 'PHET_IO/types/tandem/scenery/nodes/TTandemText' );
+
+  // phet-io modules
+  var TTandemText = require( 'ifphetio!PHET_IO/types/tandem/scenery/nodes/TTandemText' );
 
   /**
    * @param {string} text
