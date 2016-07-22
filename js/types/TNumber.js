@@ -35,6 +35,8 @@ define( function( require ) {
     'lumens',
     'lux',
     'meters',
+    'meters/second',
+    'meters/second/second',
     'moles',
     'moles/liter',
     'nanometers',
