@@ -66,6 +66,7 @@ define( function( require ) {
 
     // Include the supertype's API within our subtype's API, so that we can create the key entries directly on the
     // subtype.
+    // TODO: do we need this any more after moving types to sims?
     subtype.api = extend( {}, supertype.api, subtype.api );
 
     // Copy any static API entries directly to the object, so they can be traversed for type lookup (like for TGroup)
