@@ -60,6 +60,7 @@ define( function( require ) {
     }
   };
 
+  // TODO: Should the supertype be null?
   var TObject = phetioInherit( window.Object, 'TObject', function( instance, phetioID ) {
     assert && assert( instance, 'instance should be truthy' );
     assert && assert( phetioID, 'phetioID should be truthy' );
