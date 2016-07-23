@@ -20,9 +20,9 @@ define( function( require ) {
     assertInstanceOf( tandemDragHandler, phet.tandem.TandemDragHandler );
 
     var toXY = function( x, y ) { return { x: x, y: y }; };
-    toEventOnEmit( tandemDragHandler, 'CallbacksForDragStartedEmitter', 'user', phetioID, 'dragStarted', toXY );
-    toEventOnEmit( tandemDragHandler, 'CallbacksForDraggedEmitter', 'user', phetioID, 'dragged', toXY );
-    toEventOnEmit( tandemDragHandler, 'CallbacksForDragEndedEmitter', 'user', phetioID, 'dragEnded' );
+    toEventOnEmit( tandemDragHandler, 'CallbacksForDragStartedEmitter', 'user', phetioID, TTandemDragHandler, 'dragStarted', toXY );
+    toEventOnEmit( tandemDragHandler, 'CallbacksForDraggedEmitter', 'user', phetioID, TTandemDragHandler, 'dragged', toXY );
+    toEventOnEmit( tandemDragHandler, 'CallbacksForDragEndedEmitter', 'user', phetioID, TTandemDragHandler, 'dragEnded' );
   }, {}, {
     documentation: 'Drag listener for objects that can be dragged by the user.',
     events: [ 'dragStarted', 'dragged', 'dragEnded' ]

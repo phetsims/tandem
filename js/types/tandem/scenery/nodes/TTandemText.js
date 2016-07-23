@@ -11,6 +11,7 @@ define( function( require ) {
   // modules
   var assertInstanceOf = require( 'PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
+  var phetioEvents = require( 'PHET_IO/phetioEvents' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TNode = require( 'PHET_IO/types/scenery/nodes/TNode' );
   var TString = require( 'PHET_IO/types/TString' );
@@ -20,7 +21,7 @@ define( function( require ) {
     TNode.call( this, tandemText, phetioID );
     assertInstanceOf( tandemText, phet.tandem.TandemText );
     tandemText.on( 'text', function( oldText, newText ) {
-      phetioEvents.trigger( 'model', phetioID, 'textChanged', {
+      phetioEvents.trigger( 'model', phetioID, TTandemText, 'textChanged', {
         oldText: oldText,
         newText: newText
       } );
