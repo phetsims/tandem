@@ -64,20 +64,6 @@ define( function( require ) {
     //Copy the static properties onto the subtype constructor so they can be accessed 'statically'
     extend( subtype, staticProperties );
 
-    // Include the supertype's API within our subtype's API, so that we can create the key entries directly on the
-    // subtype.
-    // TODO: do we need this any more after moving types to sims?
-    subtype.api = extend( {}, supertype.api, subtype.api );
-
-    // Copy any static API entries directly to the object, so they can be traversed for type lookup (like for TGroup)
-    var keys = _.keys( subtype.api );
-    for ( var i = 0; i < keys.length; i++ ) {
-      var key = keys[ i ];
-
-      assert && assert( typeof subtype[ key ] === 'undefined', 'name collision in static api assignment' );
-      subtype[ key ] = subtype.api[ key ];
-    }
-
     subtype.typeName = typeName;
     subtype.methods = methods;
     subtype.supertype = supertype;
