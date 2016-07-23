@@ -60,7 +60,8 @@ define( function( require ) {
     }
   };
 
-  // TODO: Should the supertype be null?
+  // TObject inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
+  // However, when serialized, the TObject supertype is reported as null (not sent in the JSON).
   var TObject = phetioInherit( window.Object, 'TObject', function( instance, phetioID ) {
     assert && assert( instance, 'instance should be truthy' );
     assert && assert( phetioID, 'phetioID should be truthy' );
