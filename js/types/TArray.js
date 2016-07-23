@@ -15,7 +15,7 @@ define( function( require ) {
   var TVoid = require( 'PHET_IO/types/TVoid' );
 
   var TArray = function( elementType ) {
-    return phetioInherit( TObject, 'TArray(' + elementType.typeName + ')', function( arrayInstance, phetioID ) {
+    return phetioInherit( TObject, 'TArray', function( arrayInstance, phetioID ) {
       TObject.call( this, arrayInstance, phetioID );
       assert && assert( Array.isArray( arrayInstance ), 'TArray should wrap array instances' );
     }, {

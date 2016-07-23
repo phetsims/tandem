@@ -23,7 +23,7 @@ define( function( require ) {
    * @constructor
    */
   var TGroup = function( elementType ) {
-    return phetioInherit( TObject, 'TGroup(' + elementType.typeName + ')', function( arrayInstance, phetioID ) {
+    return phetioInherit( TObject, 'TGroup', function( arrayInstance, phetioID ) {
       TObject.call( this, arrayInstance, phetioID );
 
       // TODO: type check somehow?
