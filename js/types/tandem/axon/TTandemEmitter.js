@@ -28,7 +28,7 @@ define( function( require ) {
           p.push( a );
         }
         var parameters = { arguments: p };
-        messageIndex = phetioEvents.start( 'model', phetioID, 'emitted', parameters );
+        messageIndex = phetioEvents.start( 'model', phetioID, TTandemEmitter, 'emitted', parameters );
       } );
       tandemEmitter.callbacksEndedEmitter.addListener( function() {
         assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + argTypes.length + ', received ' + arguments.length );
