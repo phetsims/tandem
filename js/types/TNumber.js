@@ -74,10 +74,12 @@ define( function( require ) {
       TObject.call( this, instance, phetioID );
       assertTypeOf( instance, 'number' );
     }, {}, {
-      units: units,
-      type: options.type,
-      range: options.range,
-      values: options.values,
+      apiElements: { // named differently than api while it means type composite, see phetioInherit.js
+        units: units,
+        type: options.type,
+        range: options.range,
+        values: options.values
+      },
       documentation: 'Wrapper for the built-in JS number type (floating point, but also represents integers)',
 
       fromStateObject: function( stateObject ) {
