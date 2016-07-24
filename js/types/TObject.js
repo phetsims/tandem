@@ -40,9 +40,7 @@ define( function( require ) {
           stateObjects.push( parameterTypes[ k ].fromStateObject( args[ k ] ) );
         }
 
-        // Some actions should run after the sim starts up
-        // TODO: Should this be an optional parameter to the query args, specifying whether to run lazily or eagerly?
-        // TODO: Or leave this to be defined by heuristics here?
+        // phetio.setState is scheduled for after the simulation launches
         if ( phetioID === 'phetio' && methodName === 'setState' ) {
 
           // IIFE to capture iteration vars
