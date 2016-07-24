@@ -13,34 +13,14 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
 
   /**
-   * Clone a function and all its properties, used in inheritance to make sure api additions through extend
-   * don't apply across types.  See #281
-   * @param {function} parentFunction
-   * @returns {clone}
+   * @param {function} supertype Constructor for the supertype.
+   * @param {string} typeName - the name for the type, used for logic (such as TVoid not needing a return, etc)
+   * @param {function} subtype Constructor for the subtype. Generally should contain supertype.call( this, ... )
+   * @param {Object} [methods] object containing properties that will be set on the prototype.
+   * @param {Object} [staticProperties] object containing properties that will be set on the constructor function itself
    */
-  var cloneFunction = function( parentFunction ) {
-    var clone = function() {
-      return parentFunction.apply( this, arguments );
-    };
-    for ( var key in this ) {
-      if ( this.hasOwnProperty( key ) ) {
-        clone[ key ] = this[ key ];
-      }
-    }
-    return clone;
-  };
-
-  /**
-   * Private inherit function (without extend function), used for creating extendable types.
-   * See phetioInherit
-   * @param {function} supertype - Constructor for the supertype.
-   * @param {string} typeName - The name of the type
-   * @param {function} subtype - Constructor for the subtype. Generally should contain supertype.call( this, ... )
-   * @param {Object} methods - [optional] object containing instance methods, with {returnType, parameterTypes, documentation, implementation}
-   * @param {Object} staticProperties - [optional] object containing properties that will be set on the constructor function itself
-   * @private
-   */
-  var inheritBase = function( supertype, typeName, subtype, methods, staticProperties ) {
+  var phetioInherit = function( supertype, typeName, subtype, methods, staticProperties ) {
+    assert && assert( typeof typeName === 'string', 'typename must be 2nd arg' );
     assert && assert( typeof supertype === 'function' );
 
     // Copy implementations to the prototype for ease of use, see #185
@@ -92,35 +72,6 @@ define( function( require ) {
     };
 
     return subtype; // pass back the subtype so it can be returned immediately as a module export
-  };
-
-  /**
-   * @param {function} supertype Constructor for the supertype.
-   * @param {string} typeName - the name for the type, used for logic (such as TVoid not needing a return, etc)
-   * @param {function} subtype Constructor for the subtype. Generally should contain supertype.call( this, ... )
-   * @param {Object} [methods] object containing properties that will be set on the prototype.
-   * @param {Object} [staticProperties] object containing properties that will be set on the constructor function itself
-   */
-  var phetioInherit = function( supertype, typeName, subtype, methods, staticProperties ) {
-    assert && assert( typeof typeName === 'string', 'typename must be 2nd arg' );
-
-    var type = inheritBase( supertype, typeName, cloneFunction( subtype ), methods, staticProperties );
-
-    // Make it possible to declare types like this:
-    // myInstance: MyType.extend({
-    //  childInstance: childType
-    // })
-    type.extend = function( api ) {
-      var typeCopy = inheritBase( supertype, typeName, cloneFunction( subtype ), methods, staticProperties );
-      var keys = _.keys( api );
-      for ( var i = 0; i < keys.length; i++ ) {
-        var key = keys[ i ];
-        typeCopy[ key ] = api[ key ];
-      }
-      typeCopy.phetioAPIKeys = keys;
-      return typeCopy;
-    };
-    return type; // pass back the subtype so it can be returned immediately as a module export
   };
 
   phetioNamespace.register( 'phetioInherit', phetioInherit );
