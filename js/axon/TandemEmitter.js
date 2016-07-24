@@ -14,13 +14,21 @@ define( function( require ) {
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Tandem = require( 'TANDEM/Tandem' );
 
+  // phet-io modules
+  var TTandemEmitter = require( 'PHET_IO/types/tandem/axon/TTandemEmitter' );
+
   /**
    * @param {Object} [options]
    * @constructor
    */
   function TandemEmitter( options ) {
+    options = _.extend( {
+      argTypes: null,
+      tandem: null
+    }, options );
+
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
-    
+
     Emitter.call( this );
 
     // @private (phet-io)
@@ -28,7 +36,7 @@ define( function( require ) {
     this.callbacksEndedEmitter = new Emitter();
 
     // Tandem registration
-    options.tandem.addInstance( this );
+    TTandemEmitter && options.tandem.addInstance( this, TTandemEmitter( options.argTypes ) );
 
     // @private
     this.disposeTandemEmitter = function() {
