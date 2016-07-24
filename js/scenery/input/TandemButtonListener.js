@@ -14,6 +14,8 @@ define( function( require ) {
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Emitter = require( 'AXON/Emitter' );
   var Tandem = require( 'TANDEM/Tandem' );
+
+  // phet-io modules
   var TTandemButtonListener = require( 'ifphetio!PHET_IO/types/scenery/input/TTandemButtonListener' );
 
   /**

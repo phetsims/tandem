@@ -14,6 +14,8 @@ define( function( require ) {
   var SimpleDragHandler = require( 'SCENERY/input/SimpleDragHandler' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Tandem = require( 'TANDEM/Tandem' );
+
+  // phet-io modules
   var TTandemDragHandler = require('ifphetio!PHET_IO/types/tandem/scenery/input/TTandemDragHandler');
 
   /**

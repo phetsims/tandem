@@ -15,7 +15,7 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // phet-io modules
-  // TODO: Rename to TNode????
+  // TODO: Rename to TTandemNode????
   var TNode = require( 'ifphetio!PHET_IO/types/scenery/nodes/TNode' );
 
   /**
