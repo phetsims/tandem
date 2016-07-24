@@ -12,6 +12,9 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
 
+  // constants
+  var toImplementation = function( method ) {return method.implementation;};
+
   /**
    * @param {function} supertype Constructor for the supertype.
    * @param {string} typeName - the name for the type, used for logic (such as TVoid not needing a return, etc)
@@ -24,12 +27,7 @@ define( function( require ) {
     assert && assert( typeof supertype === 'function' );
 
     // Copy implementations to the prototype for ease of use, see #185
-    var prototypeMethods = {};
-    for ( var method in methods ) {
-      if ( methods.hasOwnProperty( method ) ) {
-        prototypeMethods[ method ] = methods[ method ].implementation;
-      }
-    }
+    var prototypeMethods = _.mapValues( methods, toImplementation );
 
     inherit( supertype, subtype, prototypeMethods, staticProperties );
 
