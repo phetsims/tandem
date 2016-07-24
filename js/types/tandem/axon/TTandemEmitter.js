@@ -13,6 +13,7 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TObject = require( 'PHET_IO/types/TObject' );
+  var phetioEvents = require( 'PHET_IO/phetioEvents' );
 
   // Emitter for 0, 1 or 2 args
   var TTandemEmitter = function( argTypes ) {
@@ -28,7 +29,7 @@ define( function( require ) {
           p.push( a );
         }
         var parameters = { arguments: p };
-        messageIndex = phetioEvents.start( 'model', phetioID, TTandemEmitter, 'emitted', parameters );
+        messageIndex = phetioEvents.start( 'model', phetioID, TTandemEmitter( argTypes ), 'emitted', parameters );
       } );
       tandemEmitter.callbacksEndedEmitter.addListener( function() {
         assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + argTypes.length + ', received ' + arguments.length );
