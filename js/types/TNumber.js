@@ -12,7 +12,6 @@ define( function( require ) {
   var assertTypeOf = require( 'PHET_IO/assertions/assertTypeOf' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var RangeWithValue = require( 'DOT/RangeWithValue' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
   var validUnits = [
