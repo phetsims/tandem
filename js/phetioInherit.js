@@ -9,7 +9,7 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var extend = require( 'PHET_CORE/extend' );
+  var inherit = require( 'PHET_CORE/inherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
 
   /**
@@ -31,18 +31,7 @@ define( function( require ) {
       }
     }
 
-    function F() {}
-
-    F.prototype = supertype.prototype; // so new F().__proto__ === supertype.prototype
-
-    subtype.prototype = extend( // extend will combine the properties and constructor into the new F copy
-      new F(), // so new F().__proto__ === supertype.prototype, and the prototype chain is set up nicely
-      { constructor: subtype }, // overrides the constructor properly
-      prototypeMethods // [optional] additional properties for the prototype, as an object.
-    );
-
-    //Copy the static properties onto the subtype constructor so they can be accessed 'statically'
-    extend( subtype, staticProperties );
+    inherit( supertype, subtype, prototypeMethods, staticProperties );
 
     subtype.typeName = typeName;
     subtype.methods = methods;
