@@ -18,9 +18,12 @@ define( function( require ) {
   // Emitter for 0, 1 or 2 args
   var TTandemEmitter = function( argTypes ) {
     return phetioInherit( TObject, 'TTandemEmitter', function( tandemEmitter, phetioID ) {
+
       TObject.call( this, tandemEmitter, phetioID );
       assertInstanceOf( tandemEmitter, phet.tandem.TandemEmitter );
+
       var messageIndex = null;
+
       tandemEmitter.callbacksStartedEmitter.addListener( function() {
         assert && assert( arguments.length === argTypes.length, 'Wrong number of arguments, expected ' + argTypes.length + ', received ' + arguments.length );
         var p = [];
@@ -31,6 +34,7 @@ define( function( require ) {
         var parameters = { arguments: p };
         messageIndex = phetioEvents.start( 'model', phetioID, TTandemEmitter( argTypes ), 'emitted', parameters );
       } );
+
       tandemEmitter.callbacksEndedEmitter.addListener( function() {
         assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + argTypes.length + ', received ' + arguments.length );
         messageIndex && phetioEvents.end( messageIndex );

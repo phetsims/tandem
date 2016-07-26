@@ -19,6 +19,7 @@ define( function( require ) {
     assertTypeOf( instance, 'boolean' );
   }, {}, {
     documentation: 'Wrapper for the built-in JS boolean type (true/false)',
+
     fromStateObject: function( stateObject ) {
       return stateObject;
     },
