@@ -40,8 +40,7 @@ define( function( require ) {
 
     // @public
     dispose: function() {
-      assert && assert( typeof Path.prototype.dispose === 'undefined',
-        'Supertype shouldn\'t have its own dispose method, or we may have accidentally overriden it' );
+      Path.prototype.dispose.call( this );
       this.disposeTandemPath();
     }
   } );
