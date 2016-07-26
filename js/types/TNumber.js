@@ -21,6 +21,7 @@ define( function( require ) {
     'coulombs',
     'degrees Celsius',
     'farads',
+    'kilograms',
     'grams',
     'gray',
     'henrys',
