@@ -27,6 +27,7 @@ define( function( require ) {
       } );
     } );
   }, {
+
     setText: {
       returnType: TVoid,
       parameterTypes: [ TString ],
@@ -35,6 +36,7 @@ define( function( require ) {
       },
       documentation: 'Set the text'
     },
+
     getText: {
       returnType: TString,
       parameterTypes: [],
