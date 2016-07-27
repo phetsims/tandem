@@ -63,7 +63,11 @@ define( function( require ) {
   var TObject = phetioInherit( window.Object, 'TObject', function( instance, phetioID ) {
     assert && assert( instance, 'instance should be truthy' );
     assert && assert( phetioID, 'phetioID should be truthy' );
+
+    // @public
     this.instance = instance;
+
+    // @public
     this.phetioID = phetioID;
 
     applyExpressions( instance, phetioID, this );
