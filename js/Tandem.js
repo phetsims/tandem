@@ -33,7 +33,7 @@ define( function( require ) {
     options = _.extend( { static: false }, options );
 
     // @public {read-only}
-    this.id = (id !== undefined) ? id : '';
+    this.id = ( id !== undefined ) ? id : '';
     this.static = options.static;
   }
 
@@ -72,8 +72,7 @@ define( function( require ) {
 
         if ( this.static && !launched ) {
           staticInstances.push( { tandem: this, instance: instance, type: type } );
-        }
-        else {
+        } else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
             instanceListeners[ i ].addInstance( this.id, instance, type );
           }
@@ -100,7 +99,7 @@ define( function( require ) {
      * @public
      */
     createTandem: function( id, options ) {
-      var string = (this.id.length > 0) ? (this.id + '.' + id) : id;
+      var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
 
       // Any child of something static is also static
       options = _.extend( { static: this.static }, options );
@@ -236,20 +235,19 @@ define( function( require ) {
 
   inherit( Tandem, GroupTandem, {
 
-      /**
-       * @param [id] {string} optional override, used when loading a state and the tandems must be restored exactly as
-       * they were saved
-       * @returns {Tandem}
-       */
-      createSpecificTandem: function( id ) {
-        return new Tandem( this.id + '_' + id );
-      },
+    /**
+     * @param [id] {string} optional override, used when loading a state and the tandems must be restored exactly as
+     * they were saved
+     * @returns {Tandem}
+     */
+    createSpecificTandem: function( id ) {
+      return new Tandem( this.id + '_' + id );
+    },
 
-      createNextTandem: function() {
-        return new Tandem( this.id + '_' + (this.groupElementIndex++) );
-      }
+    createNextTandem: function() {
+      return new Tandem( this.id + '_' + ( this.groupElementIndex++ ) );
     }
-  );
+  } );
 
   /**
    * @param {string} id - id as a string (or '' for a root id)
@@ -264,13 +262,13 @@ define( function( require ) {
 
   inherit( Tandem, SupertypeTandem, {
 
-      // @public - Override to make no-op, see createSupertypeTandem
+    // @public - Override to make no-op, see createSupertypeTandem
     addInstance: function( instance, type ) {},
 
-      // @public - Override to make no-op, see createSupertypeTandem
+    // @public - Override to make no-op, see createSupertypeTandem
     removeInstance: function( instance, type ) {}
-    }
-  );
+  } );
 
   return Tandem;
 } );
+
