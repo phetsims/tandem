@@ -74,7 +74,7 @@ define( function( require ) {
 
     SimpleDragHandler.call( this, optionsCopy );
 
-    TTandemDragHandler && options.tandem && options.tandem.addInstance( this, TTandemDragHandler );
+    options.tandem && options.tandem.addInstance( this, TTandemDragHandler );
 
     // @private
     this.disposeTandemDragHandler = function() {

@@ -26,7 +26,7 @@ define( function( require ) {
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
     Image.call( this, image, options );
 
-    TNode && options.tandem && options.tandem.addInstance( this, TNode );
+    options.tandem && options.tandem.addInstance( this, TNode );
 
     // @private
     this.disposeTandemImage = function() {

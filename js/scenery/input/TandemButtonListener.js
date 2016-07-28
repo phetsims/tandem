@@ -82,7 +82,7 @@ define( function( require ) {
 
     ButtonListener.call( this, optionsCopy );
 
-    TTandemButtonListener && options.tandem && options.tandem.addInstance( this, TTandemButtonListener );
+    options.tandem && options.tandem.addInstance( this, TTandemButtonListener );
   }
 
   tandemNamespace.register( 'TandemButtonListener', TandemButtonListener );
