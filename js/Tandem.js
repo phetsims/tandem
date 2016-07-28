@@ -61,14 +61,18 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
-      // TODO: When all sims are re-instrumented with types, remove the phet.chipper.brand === 'phet-io' && part
-      phet.chipper.brand === 'phet-io' && assert && assert( !!type, 'type must be specified' );
-      if ( this.static && !launched ) {
-        staticInstances.push( { tandem: this, instance: instance, type: type } );
-      }
-      else {
-        for ( var i = 0; i < instanceListeners.length; i++ ) {
-          instanceListeners[ i ].addInstance( this.id, instance, type );
+      if ( phet.chipper.brand === 'phet-io' ) {
+
+        // ifphetio returns a no-op function, so to test whether a valid T wrapper type was passed, we search for the typeName
+        assert && assert( type && type.typeName, 'type must be specified and have a typeName' );
+
+        if ( this.static && !launched ) {
+          staticInstances.push( { tandem: this, instance: instance, type: type } );
+        }
+        else {
+          for ( var i = 0; i < instanceListeners.length; i++ ) {
+            instanceListeners[ i ].addInstance( this.id, instance, type );
+          }
         }
       }
     },
