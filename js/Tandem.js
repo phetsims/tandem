@@ -61,6 +61,10 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
+      if ( !type ) {
+        console.log( 'Missing type declaration for' + this.id );
+      }
+
       if ( phet.chipper.brand === 'phet-io' ) {
 
         // ifphetio returns a no-op function, so to test whether a valid T wrapper type was passed, we search for the typeName
@@ -151,7 +155,7 @@ define( function( require ) {
      * Adds a listener that will be notified when items are registered/deregistered
      * Listeners have the form
      * {
-     *   addInstance(id,instance),   
+     *   addInstance(id,instance),
      *   removeInstance(id,instance)
      * }
      * where id is of type {string} and instance is of type {Object}
