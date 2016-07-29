@@ -62,7 +62,7 @@ define( function( require ) {
     addInstance: function( instance, type ) {
 
       if ( !type ) {
-        console.log( 'Missing type declaration for' + this.id );
+        console.log( 'Missing type declaration for ' + this.id );
       }
 
       if ( phet.chipper.brand === 'phet-io' ) {
