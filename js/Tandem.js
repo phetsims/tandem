@@ -61,11 +61,11 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
-      if ( !type ) {
-        console.log( 'Missing type declaration for ' + this.id );
-      }
-
       if ( phet.chipper.brand === 'phet-io' ) {
+
+        if ( !type ) {
+          console.log( 'Missing type declaration for ' + this.id );
+        }
 
         // ifphetio returns a no-op function, so to test whether a valid T wrapper type was passed, we search for the typeName
         assert && assert( type && type.typeName, 'type must be specified and have a typeName' );
