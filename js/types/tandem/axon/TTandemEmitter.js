@@ -17,6 +17,7 @@ define( function( require ) {
 
   // Emitter for 0, 1 or 2 args
   var TTandemEmitter = function( argTypes ) {
+    assert && assert( argTypes, 'argTypes should be defined' );
     return phetioInherit( TObject, 'TTandemEmitter', function( tandemEmitter, phetioID ) {
 
       TObject.call( this, tandemEmitter, phetioID );
