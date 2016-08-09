@@ -16,7 +16,7 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // phet-io modules
-  var TTandemDragHandler = require('ifphetio!PHET_IO/types/tandem/scenery/input/TTandemDragHandler');
+  var TTandemDragHandler = require( 'ifphetio!PHET_IO/types/tandem/scenery/input/TTandemDragHandler' );
 
   /**
    * @param {Object} [options]
@@ -78,7 +78,9 @@ define( function( require ) {
 
     // @private
     this.disposeTandemDragHandler = function() {
-      options.tandem && options.tandem.removeInstance( tandemDragHandler );
+      if ( Brand.id === 'phet-io' ) {
+        options.tandem && options.tandem.removeInstance( tandemDragHandler );
+      }
     };
   }
 
