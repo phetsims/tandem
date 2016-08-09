@@ -11,6 +11,7 @@ define( function( require ) {
   // modules
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
+  var phetio = require( 'PHET_IO/phetio' );
 
   var phetioExpressionsString = phet.chipper.getQueryParameter( 'phet-io.expressions' ) || '[]';
   var phetioExpressionsJSON = JSON.parse( phetioExpressionsString );
@@ -18,7 +19,7 @@ define( function( require ) {
   // for instance: faradaysLaw.faradaysLawScreen.resetAllButton_setVisible_true
   // multiple args should use _ delimiter, so that multiple expressions can use , delimiter
   // for example: http://localhost/faradays-law/faradays-law_en.html?ea&brand=phet-io&phet-io.log=console&phet-io.expressions=[["beaker.beakerScreen.soluteSelector","setVisible",[true]]]
-  var applyExpressions = function( instance, phetioID, wrapper ) {
+  var applyExpressions = function( instance, phetioID, wrapper, type ) {
 
     for ( var i = 0; i < phetioExpressionsJSON.length; i++ ) {
       var phetioExpression = phetioExpressionsJSON[ i ];
@@ -27,7 +28,6 @@ define( function( require ) {
         var args = phetioExpression[ 2 ];
 
         // Map using fromStateObject from the type method signature
-        var type = phetio.getType( phetioID );
         var signature = type.getMethodDeclaration( methodName );
         assert && assert( !!signature, 'Method declaration not found for ' + type.typeName + '.' + methodName );
 
@@ -70,7 +70,9 @@ define( function( require ) {
     // @public
     this.phetioID = phetioID;
 
-    applyExpressions( instance, phetioID, this );
+    // If any query parameter calls have been made, apply them now.
+    // Pass the self sub-type because this is called before the type is registered with phetio
+    applyExpressions( instance, phetioID, this, this.constructor );
   }, {}, {
     documentation: 'The root of the wrapper object hierarchy',
 
@@ -79,7 +81,6 @@ define( function( require ) {
       return o;
     }
   } );
-
 
   phetioNamespace.register( 'TObject', TObject );
 
