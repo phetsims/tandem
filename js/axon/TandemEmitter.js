@@ -36,7 +36,7 @@ define( function( require ) {
     this.callbacksEndedEmitter = new Emitter();
 
     // Tandem registration
-    TTandemEmitter && options.tandem.addInstance( this, TTandemEmitter( options.argTypes ) );
+    options.tandem.addInstance( this, TTandemEmitter( options.argTypes ) );
 
     // @private
     this.disposeTandemEmitter = function() {
