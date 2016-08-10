@@ -92,7 +92,7 @@ define( function( require ) {
 
       getAPI: function() {
         return { // named differently than api while it means type composite, see phetioInherit.js
-          units: units,
+          units: options.units,
           type: options.type,
           range: options.range,
           values: options.values
