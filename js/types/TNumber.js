@@ -14,7 +14,8 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
-  var validUnits = [
+  // valid values for options.units
+  var VALID_UNITS = [
     'amperes',
     'becquerels',
     'centimeters',
