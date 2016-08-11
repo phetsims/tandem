@@ -23,7 +23,7 @@ define( function( require ) {
    */
   function TandemEmitter( options ) {
     options = _.extend( {
-      argTypes: null,
+      phetioArgumentTypes: null,
       tandem: null
     }, options );
 
@@ -36,7 +36,7 @@ define( function( require ) {
     this.callbacksEndedEmitter = new Emitter();
 
     // Tandem registration
-    options.tandem.addInstance( this, TTandemEmitter( options.argTypes ) );
+    options.tandem.addInstance( this, TTandemEmitter( options.phetioArgumentTypes ) );
 
     // @private
     this.disposeTandemEmitter = function() {
