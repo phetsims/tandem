@@ -16,8 +16,8 @@ define( function( require ) {
   var phetioEvents = require( 'PHET_IO/phetioEvents' );
 
   // Emitter for 0, 1 or 2 args
-  var TTandemEmitter = function( argTypes ) {
-    assert && assert( argTypes, 'argTypes should be defined' );
+  var TTandemEmitter = function( phetioArgumentTypes ) {
+    assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
     return phetioInherit( TObject, 'TTandemEmitter', function( tandemEmitter, phetioID ) {
 
       TObject.call( this, tandemEmitter, phetioID );
@@ -26,18 +26,18 @@ define( function( require ) {
       var messageIndex = null;
 
       tandemEmitter.callbacksStartedEmitter.addListener( function() {
-        assert && assert( arguments.length === argTypes.length, 'Wrong number of arguments, expected ' + argTypes.length + ', received ' + arguments.length );
+        assert && assert( arguments.length === phetioArgumentTypes.length, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
         var p = [];
         for ( var i = 0; i < arguments.length; i++ ) {
           var a = arguments[ i ];
           p.push( a );
         }
         var parameters = { arguments: p };
-        messageIndex = phetioEvents.start( 'model', phetioID, TTandemEmitter( argTypes ), 'emitted', parameters );
+        messageIndex = phetioEvents.start( 'model', phetioID, TTandemEmitter( phetioArgumentTypes ), 'emitted', parameters );
       } );
 
       tandemEmitter.callbacksEndedEmitter.addListener( function() {
-        assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + argTypes.length + ', received ' + arguments.length );
+        assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
         messageIndex && phetioEvents.end( messageIndex );
       } );
     }, {}, {
