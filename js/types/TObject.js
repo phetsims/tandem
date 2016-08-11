@@ -19,6 +19,7 @@ define( function( require ) {
   // for instance: faradaysLaw.faradaysLawScreen.resetAllButton_setVisible_true
   // multiple args should use _ delimiter, so that multiple expressions can use , delimiter
   // for example: http://localhost/faradays-law/faradays-law_en.html?ea&brand=phet-io&phet-io.log=console&phet-io.expressions=[["beaker.beakerScreen.soluteSelector","setVisible",[true]]]
+  // TODO: this implementation may belong elsewhere, and perhaps should be applied at a different point in time.
   var applyExpressions = function( instance, phetioID, wrapper, type ) {
 
     for ( var i = 0; i < phetioExpressionsJSON.length; i++ ) {
