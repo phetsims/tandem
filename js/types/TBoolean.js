@@ -14,10 +14,12 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
-  var TBoolean = phetioInherit( TObject, 'TBoolean', function( instance, phetioID ) {
+  var TBoolean = function( instance, phetioID ) {
     TObject.call( this, instance, phetioID );
     assertTypeOf( instance, 'boolean' );
-  }, {}, {
+  };
+
+  phetioInherit( TObject, 'TBoolean', TBoolean, {}, {
     documentation: 'Wrapper for the built-in JS boolean type (true/false)',
 
     fromStateObject: function( stateObject ) {

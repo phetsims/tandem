@@ -17,7 +17,7 @@ define( function( require ) {
   var TString = require( 'PHET_IO/types/TString' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
 
-  var TTandemText = phetioInherit( TNode, 'TTandemText', function( tandemText, phetioID ) {
+  var TTandemText = function( tandemText, phetioID ) {
     TNode.call( this, tandemText, phetioID );
     assertInstanceOf( tandemText, phet.tandem.TandemText );
     tandemText.on( 'text', function( oldText, newText ) {
@@ -26,7 +26,9 @@ define( function( require ) {
         newText: newText
       } );
     } );
-  }, {
+  };
+
+  phetioInherit( TNode, 'TTandemText', TTandemText, {
 
     setText: {
       returnType: TVoid,

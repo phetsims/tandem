@@ -60,7 +60,7 @@ define( function( require ) {
 
   // TObject inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
   // However, when serialized, the TObject supertype is reported as null (not sent in the JSON).
-  var TObject = phetioInherit( window.Object, 'TObject', function( instance, phetioID ) {
+  var TObject = function( instance, phetioID ) {
     assert && assert( instance, 'instance should be truthy' );
     assert && assert( phetioID, 'phetioID should be truthy' );
 
@@ -73,7 +73,9 @@ define( function( require ) {
     // If any query parameter calls have been made, apply them now.
     // Pass the self sub-type because this is called before the type is registered with phetio
     applyExpressions( instance, phetioID, this, this.constructor );
-  }, {}, {
+  };
+
+  phetioInherit( window.Object, 'TObject', TObject, {}, {
     documentation: 'The root of the wrapper object hierarchy',
 
     // This is used in phetio.setState

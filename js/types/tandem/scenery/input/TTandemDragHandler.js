@@ -15,7 +15,7 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
 
-  var TTandemDragHandler = phetioInherit( TObject, 'TTandemDragHandler', function( tandemDragHandler, phetioID ) {
+  var TTandemDragHandler = function( tandemDragHandler, phetioID ) {
     TObject.call( this, tandemDragHandler, phetioID );
     assertInstanceOf( tandemDragHandler, phet.tandem.TandemDragHandler );
 
@@ -23,7 +23,9 @@ define( function( require ) {
     toEventOnEmit( tandemDragHandler, 'CallbacksForDragStartedEmitter', 'user', phetioID, TTandemDragHandler, 'dragStarted', toXY );
     toEventOnEmit( tandemDragHandler, 'CallbacksForDraggedEmitter', 'user', phetioID, TTandemDragHandler, 'dragged', toXY );
     toEventOnEmit( tandemDragHandler, 'CallbacksForDragEndedEmitter', 'user', phetioID, TTandemDragHandler, 'dragEnded' );
-  }, {}, {
+  };
+
+  phetioInherit( TObject, 'TTandemDragHandler', TTandemDragHandler, {}, {
     documentation: 'Drag listener for objects that can be dragged by the user.',
     events: [ 'dragStarted', 'dragged', 'dragEnded' ]
   } );

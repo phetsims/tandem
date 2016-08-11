@@ -19,7 +19,7 @@ define( function( require ) {
       var parameterType = parameterTypes[ i ];
       assert && assert( !!parameterType, 'parameter type was not truthy' );
     }
-    return phetioInherit( TObject, 'TFunctionWrapper', function( instance, phetioID ) {
+    return phetioInherit( TObject, 'TFunctionWrapper', function TFunctionWrapperImpl( instance, phetioID ) {
       TObject.call( instance, phetioID );
       assertTypeOf( instance, 'function' );
     }, {}, {
