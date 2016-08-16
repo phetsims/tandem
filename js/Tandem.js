@@ -72,7 +72,8 @@ define( function( require ) {
 
         if ( this.static && !launched ) {
           staticInstances.push( { tandem: this, instance: instance, type: type } );
-        } else {
+        }
+        else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
             instanceListeners[ i ].addInstance( this.id, instance, type );
           }
@@ -202,7 +203,7 @@ define( function( require ) {
      * @param options
      */
     validateOptions: function( options ) {
-      if ( phet.chipper.brand === 'phet-io' ) {
+      if ( phet.chipper.brand === 'phet-io' && phet.chipper.getQueryParameter( 'phet-io.validateTandems' ) !== 'false' ) {
         assert && assert( options.tandem, 'When running as PhET-iO, a tandem must be specified for each user interface component' );
       }
     }
