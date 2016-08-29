@@ -87,8 +87,12 @@ define( function( require ) {
      * @public
      */
     removeInstance: function( instance ) {
-      for ( var i = 0; i < instanceListeners.length; i++ ) {
-        instanceListeners[ i ].removeInstance( this.id, instance );
+
+      // Only active when running as phet-io
+      if ( phet.chipper.brand === 'phet-io' ) {
+        for ( var i = 0; i < instanceListeners.length; i++ ) {
+          instanceListeners[ i ].removeInstance( this.id, instance );
+        }
       }
     },
 
@@ -267,7 +271,7 @@ define( function( require ) {
     addInstance: function( instance, type ) {},
 
     // @public - Override to make no-op, see createSupertypeTandem
-    removeInstance: function( instance, type ) {}
+    removeInstance: function( instance ) {}
   } );
 
   return Tandem;
