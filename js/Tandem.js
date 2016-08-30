@@ -39,6 +39,7 @@ define( function( require ) {
     // @public {read-only}
     this.id = ( id !== undefined ) ? id : '';
     this.static = options.static;
+    this.isDefaultTandem = options.isDefaultTandem;
   }
 
   var staticInstances = [];
@@ -234,7 +235,7 @@ define( function( require ) {
 
       // Check to see whether the tandem is "filled in" as opposed to being a default Tandem.createOptionalTandem one.
       if ( phet.chipper.brand === 'phet-io' && phet.chipper.getQueryParameter( 'phet-io.validateTandems' ) !== 'false' ) {
-        assert && assert( !options.tandem.isDefaultTandem, 'When running as PhET-iO, a tandem must be specified for each user interface component' );
+        assert && assert( !options.tandem.isDefaultTandem, 'Default tandem instance cannot be used when running as PhET-iO' );
       }
     }
   } );
