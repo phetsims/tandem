@@ -19,6 +19,7 @@ define( function( require ) {
 
   // constants
   var packageJSON = JSON.parse( packageString );
+  var defaultTandemMap = {}; // {string} => {number} Keep track of number of each type of default tandem
 
   // variables
   var launched = false;
@@ -30,7 +31,10 @@ define( function( require ) {
    */
   function Tandem( id, options ) {
 
-    options = _.extend( { static: false }, options );
+    options = _.extend( {
+      static: false,
+      isDefaultTandem: false
+    }, options );
 
     // @public {read-only}
     this.id = ( id !== undefined ) ? id : '';
@@ -156,6 +160,26 @@ define( function( require ) {
   }, {
 
     /**
+     * In common code (sun, scenery-phet, etc), default tandems are created in the options hash to simplify
+     * the logic (instead of being null).
+     * @param {string} name - the name of the tandem
+     * @returns {Tandem}
+     */
+    createDefaultTandem: function( name ) {
+      if ( !defaultTandemMap.hasOwnProperty( name ) ) {
+        defaultTandemMap[ name ] = 0;
+      }
+
+      // Name the tandems as derivedProperty0
+      // OR: chargesAndFields.derivedProperty0
+      var tandem = rootTandem.createTandem( name + '' + defaultTandemMap[ name ], {
+        isDefaultTandem: true // for checking in validateTandems
+      } );
+      defaultTandemMap[ name ]++;
+      return tandem;
+    },
+
+    /**
      * Adds a listener that will be notified when items are registered/deregistered
      * Listeners have the form
      * {
@@ -207,11 +231,15 @@ define( function( require ) {
      * @param options
      */
     validateOptions: function( options ) {
+
+      // Check to see whether the tandem is "filled in" as opposed to being a default Tandem.createOptionalTandem one.
       if ( phet.chipper.brand === 'phet-io' && phet.chipper.getQueryParameter( 'phet-io.validateTandems' ) !== 'false' ) {
-        assert && assert( options.tandem, 'When running as PhET-iO, a tandem must be specified for each user interface component' );
+        assert && assert( !options.tandem.isDefaultTandem, 'When running as PhET-iO, a tandem must be specified for each user interface component' );
       }
     }
   } );
+
+  var rootTandem = Tandem.createRootTandem();
 
   // Tandem checks for listeners added before the Tandem module was loaded.  This is necessary so that phetio.js can
   // receive notifications about items created during static initialization such as Solute.js
