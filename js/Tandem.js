@@ -36,8 +36,10 @@ define( function( require ) {
       isDefaultTandem: false
     }, options );
 
-    // @public {read-only}
+    // @public (read-only)
     this.id = ( id !== undefined ) ? id : '';
+
+    // @private (read-only)
     this.static = options.static;
     this.isDefaultTandem = options.isDefaultTandem;
   }
