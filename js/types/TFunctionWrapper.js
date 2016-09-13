@@ -19,10 +19,11 @@ define( function( require ) {
       var parameterType = parameterTypes[ i ];
       assert && assert( !!parameterType, 'parameter type was not truthy' );
     }
-    return phetioInherit( TObject, 'TFunctionWrapper', function TFunctionWrapperImpl( instance, phetioID ) {
+    var TFunctionWrapperImpl = function TFunctionWrapperImpl( instance, phetioID ) {
       TObject.call( instance, phetioID );
       assertTypeOf( instance, 'function' );
-    }, {}, {
+    };
+    return phetioInherit( TObject, 'TFunctionWrapper', TFunctionWrapperImpl, {}, {
       documentation: 'Wrapper for the built-in JS function type',
       returnType: returnType,
       parameterTypes: parameterTypes,

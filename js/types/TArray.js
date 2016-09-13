@@ -15,10 +15,11 @@ define( function( require ) {
   var TVoid = require( 'PHET_IO/types/TVoid' );
 
   var TArray = function( elementType ) {
-    return phetioInherit( TObject, 'TArray', function TArrayImpl( arrayInstance, phetioID ) {
+    var TArrayImpl = function TArrayImpl( arrayInstance, phetioID ) {
       TObject.call( this, arrayInstance, phetioID );
       assert && assert( Array.isArray( arrayInstance ), 'TArray should wrap array instances' );
-    }, {
+    };
+    return phetioInherit( TObject, 'TArray', TArrayImpl, {
       setValue: {
         returnType: TVoid,
         parameterTypes: [], // TODO: Parameter types seems wrong here
