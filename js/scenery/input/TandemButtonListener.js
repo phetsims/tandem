@@ -28,7 +28,7 @@ define( function( require ) {
    * @constructor
    */
   function TandemButtonListener( options ) {
-    var tandemButtonListener = this;
+    var self = this;
 
     options = _.extend( { tandem: null }, options );
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
@@ -55,29 +55,29 @@ define( function( require ) {
 
     // Wrap start/end/drag options (even if they did not exist) to get the PhET-iO instrumentation.
     optionsCopy.up = function( event, trail ) {
-      tandemButtonListener.startedCallbacksForUpEmitter.emit();
+      self.startedCallbacksForUpEmitter.emit();
       options.up && options.up( event, trail );
-      tandemButtonListener.endedCallbacksForUpEmitter.emit();
+      self.endedCallbacksForUpEmitter.emit();
     };
     optionsCopy.over = function( event, trail ) {
-      tandemButtonListener.startedCallbacksForOverEmitter.emit();
+      self.startedCallbacksForOverEmitter.emit();
       options.over && options.over( event, trail );
-      tandemButtonListener.endedCallbacksForOverEmitter.emit();
+      self.endedCallbacksForOverEmitter.emit();
     };
     optionsCopy.down = function( event, trail ) {
-      tandemButtonListener.startedCallbacksForDownEmitter.emit();
+      self.startedCallbacksForDownEmitter.emit();
       options.down && options.down( event, trail );
-      tandemButtonListener.endedCallbacksForDownEmitter.emit();
+      self.endedCallbacksForDownEmitter.emit();
     };
     optionsCopy.out = function( event, trail ) {
-      tandemButtonListener.startedCallbacksForOutEmitter.emit();
+      self.startedCallbacksForOutEmitter.emit();
       options.out && options.out( event, trail );
-      tandemButtonListener.endedCallbacksForOutEmitter.emit();
+      self.endedCallbacksForOutEmitter.emit();
     };
     optionsCopy.fire = function( event, trail ) {
-      tandemButtonListener.startedCallbacksForFireEmitter.emit();
+      self.startedCallbacksForFireEmitter.emit();
       options.fire && options.fire( event, trail );
-      tandemButtonListener.endedCallbacksForFireEmitter.emit();
+      self.endedCallbacksForFireEmitter.emit();
     };
 
     ButtonListener.call( this, optionsCopy );
