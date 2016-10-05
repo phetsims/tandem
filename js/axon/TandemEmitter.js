@@ -15,7 +15,7 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // phet-io modules
-  var TTandemEmitter = require( 'PHET_IO/types/tandem/axon/TTandemEmitter' );
+  var TTandemEmitter = require( 'ifphetio!PHET_IO/types/tandem/axon/TTandemEmitter' );
 
   /**
    * @param {Object} [options]
