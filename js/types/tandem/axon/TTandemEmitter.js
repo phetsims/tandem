@@ -16,7 +16,7 @@ define( function( require ) {
   var phetioEvents = require( 'PHET_IO/phetioEvents' );
 
   // Emitter for 0, 1 or 2 args
-  var TTandemEmitter = function( phetioArgumentTypes ) {
+  function TTandemEmitter( phetioArgumentTypes ) {
     assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
     return phetioInherit( TObject, 'TTandemEmitter', function TTandemEmitterImpl( tandemEmitter, phetioID ) {
 
@@ -44,7 +44,7 @@ define( function( require ) {
       documentation: 'Emitters indicate when events have occurred, with optional arguments describing the event',
       events: [ 'emitted' ]
     } );
-  };
+  }
 
   phetioNamespace.register( 'TTandemEmitter', TTandemEmitter );
 
