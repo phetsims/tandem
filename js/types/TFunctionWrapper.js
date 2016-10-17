@@ -14,7 +14,7 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
-  var TFunctionWrapper = function( returnType, parameterTypes ) {
+  function TFunctionWrapper( returnType, parameterTypes ) {
     for ( var i = 0; i < parameterTypes.length; i++ ) {
       var parameterType = parameterTypes[ i ];
       assert && assert( !!parameterType, 'parameter type was not truthy' );
@@ -33,7 +33,7 @@ define( function( require ) {
         return 'it was a function';
       }
     } );
-  };
+  }
 
   phetioNamespace.register( 'TFunctionWrapper', TFunctionWrapper );
 

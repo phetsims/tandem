@@ -15,10 +15,10 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var TString = require( 'PHET_IO/types/TString' );
 
-  var TTandem = function( arrayInstance, phetioID ) {
+  function TTandem( arrayInstance, phetioID ) {
     TObject.call( this, arrayInstance, phetioID );
     assertInstanceOf( arrayInstance, phet.tandem.Tandem );
-  };
+  }
 
   phetioInherit( TObject, 'TTandem', TTandem, {}, {
     documentation: 'Tandems give sim elements their phet-io identifiers',

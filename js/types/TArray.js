@@ -14,7 +14,7 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
 
-  var TArray = function( elementType ) {
+  function TArray( elementType ) {
     var TArrayImpl = function TArrayImpl( arrayInstance, phetioID ) {
       TObject.call( this, arrayInstance, phetioID );
       assert && assert( Array.isArray( arrayInstance ), 'TArray should wrap array instances' );
@@ -49,7 +49,7 @@ define( function( require ) {
         return json;
       }
     } );
-  };
+  }
 
   phetioNamespace.register( 'TArray', TArray );
 

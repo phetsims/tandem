@@ -14,10 +14,10 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
-  var TString = function( instance, phetioID ) {
+  function TString( instance, phetioID ) {
     TObject.call( this, instance, phetioID );
     assertTypeOf( instance, 'string' );
-  };
+  }
 
   phetioInherit( TObject, 'TString', TString, {}, {
     documentation: 'Wrapper for the built-in JS string type',

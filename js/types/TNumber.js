@@ -100,7 +100,7 @@ define( function( require ) {
         };
       }
     } );
-  };
+  }
 
   phetioNamespace.register( 'TNumber', TNumber );
 
