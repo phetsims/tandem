@@ -4,7 +4,7 @@
  * Augments PHET_CORE/inherit by adding typeName, methods, supertype and convenience methods for PhET-iO.
  *
  * @author Sam Reid (PhET Interactive Simulations)
- * @author Andrew Adare
+ * @author Andrew Adare (PhET Interactive Simulations)
  */
 define( function( require ) {
   'use strict';
