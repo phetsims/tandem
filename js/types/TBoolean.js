@@ -15,6 +15,12 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
+  /**
+   * Wrapper type for boolean primitives
+   * @param {boolean} instance
+   * @param {string} phetioID - the full unique tandem name for the instance
+   * @constructor
+   */
   function TBoolean( instance, phetioID ) {
     TObject.call( this, instance, phetioID );
     assertTypeOf( instance, 'boolean' );
