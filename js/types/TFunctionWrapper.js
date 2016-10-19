@@ -16,7 +16,7 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
 
   /**
-   * Parametric type constructor--given return type and parameter types, this function returns a type wrapper for
+   * Parametric wrapper type constructor--given return type and parameter types, this function returns a type wrapper for
    * that class of functions.
    * @param {function} returnType - wrapper type of the individual elements in the array
    * @param {function[]} parameterTypes - wrapper types for the individual elements in the array

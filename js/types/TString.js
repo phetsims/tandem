@@ -15,6 +15,12 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
+  /**
+   * Parametric wrapper type constructor for instrumented string instances.
+   * @param {string} instance
+   * @param {string} phetioID - the full unique tandem name for the instance
+   * @constructor
+   */
   function TString( instance, phetioID ) {
     TObject.call( this, instance, phetioID );
     assertTypeOf( instance, 'string' );

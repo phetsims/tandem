@@ -16,7 +16,7 @@ define( function( require ) {
   var TVoid = require( 'PHET_IO/types/TVoid' );
 
   /**
-   * Parametric type constructor.  Given an element type, this function returns an appropriate array wrapper type.
+   * Parametric wrapper type constructor.  Given an element type, this function returns an appropriate array wrapper type.
    * @param {TObject} elementType - wrapper type of the individual elements in the array
    * @constructor
    */
