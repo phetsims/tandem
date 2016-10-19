@@ -29,10 +29,20 @@ define( function( require ) {
   phetioInherit( TObject, 'TString', TString, {}, {
     documentation: 'Wrapper for the built-in JS string type',
 
+    /**
+     * Decode a string from a state, which is already a string.
+     * @param {Object} stateObject
+     * @returns {Object}
+     */
     fromStateObject: function( stateObject ) {
       return stateObject;
     },
 
+    /**
+     * Encodes a string to a state (which also happens to be a string).
+     * @param {Object} value
+     * @returns {Object}
+     */
     toStateObject: function( value ) {
       return value;
     }

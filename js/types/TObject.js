@@ -120,7 +120,12 @@ define( function( require ) {
   phetioInherit( window.Object, 'TObject', TObject, {}, {
     documentation: 'The root of the wrapper object hierarchy',
 
-    // This is used in phetio.setState
+    /**
+     * Decodes the object from a state, used in phetio.setState.  This should be overriden
+     * by subclasses.
+     * @param o
+     * @returns {*}
+     */
     fromStateObject: function( o ) {
       return o;
     }
