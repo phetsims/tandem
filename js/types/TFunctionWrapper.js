@@ -45,7 +45,7 @@ define( function( require ) {
       wrapForSimIFrameAPI: true,
 
       toStateObject: function( value ) {
-        return 'it was a function';
+        return 'it was a function'; // TODO: throw assertion when trying to serialize a function?
       }
     } );
   }
