@@ -18,7 +18,6 @@ define( function( require ) {
   /**
    * Parametric type constructor.  Given an element type, this function returns an appropriate array wrapper type.
    * @param {TObject} elementType - wrapper type of the individual elements in the array
-   * @returns {TArray}
    * @constructor
    */
   function TArray( elementType ) {

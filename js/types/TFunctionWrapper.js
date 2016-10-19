@@ -15,6 +15,13 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
+  /**
+   * Parametric type constructor--given return type and parameter types, this function returns a type wrapper for
+   * that class of functions.
+   * @param {function} returnType - wrapper type of the individual elements in the array
+   * @param {function[]} parameterTypes - wrapper types for the individual elements in the array
+   * @constructor
+   */
   function TFunctionWrapper( returnType, parameterTypes ) {
     for ( var i = 0; i < parameterTypes.length; i++ ) {
       var parameterType = parameterTypes[ i ];
