@@ -1,9 +1,13 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
+ * TObject is the root of the wrapper type hierarchy.  All wrapper types extend from TObject.
+ * TObject also applies any "eager" customizations to instances immediately after they are
+ * registered with PhET-iO.  The customizations are supplied via the phet-io.expressions query
+ * parameter or set with TPhetIO.addExpressions.
  *
  * @author Sam Reid (PhET Interactive Simulations)
- * @author Andrew Adare
+ * @author Andrew Adare (PhET Interactive Simulations)
  */
 define( function( require ) {
   'use strict';
@@ -16,6 +20,14 @@ define( function( require ) {
   var phetioExpressionsString = phet.chipper.getQueryParameter( 'phet-io.expressions' ) || '[]';
   var phetioExpressionsJSON = JSON.parse( phetioExpressionsString );
 
+  /**
+   * Apply a customization expression to a wrapped object.
+   * @param {Object} instance
+   * @param {string} phetioID
+   * @param {Object} wrapper
+   * @param {function} type
+   * @param {Object} phetioExpression
+   */
   var applyExpression = function( instance, phetioID, wrapper, type, phetioExpression ) {
     if ( phetioID === phetioExpression[ 0 ] ) {
       var methodName = phetioExpression[ 1 ];
@@ -49,13 +61,16 @@ define( function( require ) {
         wrapper[ methodName ].apply( wrapper, stateObjects );
       }
     }
-
   };
 
-  // for instance: faradaysLaw.faradaysLawScreen.resetAllButton_setVisible_true
-  // multiple args should use _ delimiter, so that multiple expressions can use , delimiter
-  // for example: http://localhost/faradays-law/faradays-law_en.html?ea&brand=phet-io&phet-io.log=console&phet-io.expressions=[["beaker.beakerScreen.soluteSelector","setVisible",[true]]]
-  // TODO: this implementation may belong elsewhere, and perhaps should be applied at a different point in time.
+  /**
+   * Apply all customization expressions to a newly registered simulation instance.
+   *
+   * @param {Object} instance
+   * @param {string} phetioID
+   * @param {Object} wrapper
+   * @param {function} type
+   */
   var applyExpressions = function( instance, phetioID, wrapper, type ) {
 
     // Apply query parameters first
@@ -79,8 +94,12 @@ define( function( require ) {
     }
   };
 
-  // TObject inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
-  // However, when serialized, the TObject supertype is reported as null (not sent in the JSON).
+  /**
+   * Main constructor for TObject base wrapper type.
+   * @param {Object} instance
+   * @param {string} phetioID
+   * @constructor
+   */
   function TObject( instance, phetioID ) {
     assert && assert( instance, 'instance should be truthy' );
     assert && assert( phetioID, 'phetioID should be truthy' );
@@ -96,6 +115,8 @@ define( function( require ) {
     applyExpressions( instance, phetioID, this, this.constructor );
   }
 
+  // TObject inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
+  // However, when serialized, the TObject supertype is reported as null (not sent in the JSON).
   phetioInherit( window.Object, 'TObject', TObject, {}, {
     documentation: 'The root of the wrapper object hierarchy',
 
