@@ -21,6 +21,13 @@ define( function( require ) {
    * @constructor
    */
   function TArray( elementType ) {
+
+    /**
+     * This type constructor is parameterized based on the elementType.
+     * @param {Object[]} arrayInstance - the array to be wrapped
+     * @param {string} phetioID - the full unique tandem name for the instance
+     * @constructor
+     */
     var TArrayImpl = function TArrayImpl( arrayInstance, phetioID ) {
       TObject.call( this, arrayInstance, phetioID );
       assert && assert( Array.isArray( arrayInstance ), 'TArray should wrap array instances' );

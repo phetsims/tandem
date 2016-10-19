@@ -27,6 +27,13 @@ define( function( require ) {
       var parameterType = parameterTypes[ i ];
       assert && assert( !!parameterType, 'parameter type was not truthy' );
     }
+
+    /**
+     * This type constructor is parameterized based on the return type and parameter types.
+     * @param {function} instance - the array to be wrapped
+     * @param {string} phetioID - the full unique tandem name for the instance
+     * @constructor
+     */
     var TFunctionWrapperImpl = function TFunctionWrapperImpl( instance, phetioID ) {
       TObject.call( instance, phetioID );
       assertTypeOf( instance, 'function' );
