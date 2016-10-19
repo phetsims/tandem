@@ -33,6 +33,10 @@ define( function( require ) {
       assert && assert( Array.isArray( arrayInstance ), 'TArray should wrap array instances' );
     };
     return phetioInherit( TObject, 'TArray', TArrayImpl, {
+
+      /**
+       * Sets the state of the array by clearing it and adding new elements.
+       */
       setValue: {
         returnType: TVoid,
         parameterTypes: [], // TODO: Parameter types seems wrong here
@@ -46,6 +50,11 @@ define( function( require ) {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
       elementType: elementType,
 
+      /**
+       * Deserialize from a serialized state.
+       * @param {Object} stateObject - from toStateObject
+       * @returns {Object[]}
+       */
       fromStateObject: function( stateObject ) {
         var array = [];
         for ( var i = 0; i < stateObject.length; i++ ) {
@@ -54,6 +63,11 @@ define( function( require ) {
         return array;
       },
 
+      /**
+       * Serialize an array by serializing each element
+       * @param {Object[]} array
+       * @returns {Array}
+       */
       toStateObject: function( array ) {
         var json = [];
         for ( var i = 0; i < array.length; i++ ) {

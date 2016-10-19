@@ -29,10 +29,20 @@ define( function( require ) {
   phetioInherit( TObject, 'TBoolean', TBoolean, {}, {
     documentation: 'Wrapper for the built-in JS boolean type (true/false)',
 
+    /**
+     * Decode a boolean from a state, which is already a boolean.
+     * @param {Object} stateObject
+     * @returns {Object}
+     */
     fromStateObject: function( stateObject ) {
       return stateObject;
     },
 
+    /**
+     * Encodes a boolean to a state (which also happens to be a boolean).
+     * @param {Object} value
+     * @returns {Object}
+     */
     toStateObject: function( value ) {
       return value;
     }
