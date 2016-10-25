@@ -33,7 +33,8 @@ define( function( require ) {
 
     options = _.extend( {
       static: false,
-      isDefaultTandem: false
+      isDefaultTandem: false,
+      enabled: false
     }, options );
 
     // @public (read-only)
@@ -42,6 +43,7 @@ define( function( require ) {
     // @private (read-only)
     this.static = options.static;
     this.isDefaultTandem = options.isDefaultTandem;
+    this.enabled = options.enabled;
   }
 
   var staticInstances = [];
@@ -68,7 +70,7 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
-      if ( phet.chipper.brand === 'phet-io' ) {
+      if ( phet.chipper.brand === 'phet-io' && this.enabled ) {
 
         if ( !type ) {
           console.log( 'Missing type declaration for ' + this.id );
@@ -96,7 +98,7 @@ define( function( require ) {
     removeInstance: function( instance ) {
 
       // Only active when running as phet-io
-      if ( phet.chipper.brand === 'phet-io' ) {
+      if ( phet.chipper.brand === 'phet-io' && this.enabled ) {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
           instanceListeners[ i ].removeInstance( this.id, instance );
         }
