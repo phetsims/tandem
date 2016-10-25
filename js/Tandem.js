@@ -34,7 +34,7 @@ define( function( require ) {
     options = _.extend( {
       static: false,
       isDefaultTandem: false,
-      enabled: false
+      enabled: true
     }, options );
 
     // @public (read-only)
