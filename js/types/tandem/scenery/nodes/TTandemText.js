@@ -15,6 +15,7 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TFont = require( 'PHET_IO/types/scenery/util/TFont' );
   var TNode = require( 'PHET_IO/types/scenery/nodes/TNode' );
+  var TNumber = require( 'PHET_IO/types/TNumber' );
   var TString = require( 'PHET_IO/types/TString' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
 
@@ -65,7 +66,27 @@ define( function( require ) {
         return this.instance.getFont();
       },
       documentation: 'Get font options for this TTandemText instance as an object'
+    },
+
+    setMaxWidth: {
+      returnType: TVoid,
+      parameterTypes: [ TNumber() ],
+      implementation: function( maxWidth ) {
+        this.instance.setMaxWidth( maxWidth );
+      },
+      documentation: 'Set maximum width of text box in px. ' +
+        'If text is wider than maxWidth at its default font size, it is scaled down to fit.'
+    },
+
+    getMaxWidth: {
+      returnType: TNumber(),
+      parameterTypes: [],
+      implementation: function() {
+        return this.instance.maxWidth;
+      },
+      documentation: 'Get maximum width of text box in px'
     }
+
   }, {
     documentation: 'The tandem wrapper type for the scenery Text node',
     events: [ 'textChanged' ]
@@ -75,4 +96,3 @@ define( function( require ) {
 
   return TTandemText;
 } );
-
