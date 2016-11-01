@@ -13,6 +13,7 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioEvents = require( 'PHET_IO/phetioEvents' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
+  var TFont = require( 'PHET_IO/types/scenery/util/TFont' );
   var TNode = require( 'PHET_IO/types/scenery/nodes/TNode' );
   var TString = require( 'PHET_IO/types/TString' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
@@ -36,7 +37,7 @@ define( function( require ) {
       implementation: function( text ) {
         this.instance.text = text;
       },
-      documentation: 'Set the text'
+      documentation: 'Set the text content'
     },
 
     getText: {
@@ -45,7 +46,25 @@ define( function( require ) {
       implementation: function() {
         return this.instance.text;
       },
-      documentation: 'Get the text'
+      documentation: 'Get the text content'
+    },
+
+    setFontOptions: {
+      returnType: TVoid,
+      parameterTypes: [ TFont ],
+      implementation: function( font ) {
+        this.instance.setFont( font );
+      },
+      documentation: 'Set font options for this TTandemText instance, e.g. {size: 16, weight: bold}'
+    },
+
+    getFontOptions: {
+      returnType: TFont,
+      parameterTypes: [],
+      implementation: function() {
+        return this.instance.getFont();
+      },
+      documentation: 'Get font options for this TTandemText instance as an object'
     }
   }, {
     documentation: 'The tandem wrapper type for the scenery Text node',
