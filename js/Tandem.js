@@ -274,15 +274,6 @@ define( function( require ) {
 
   inherit( Tandem, GroupTandem, {
 
-    /**
-     * @param [id] {string} optional override, used when loading a state and the tandems must be restored exactly as
-     * they were saved
-     * @returns {Tandem}
-     */
-    createSpecificTandem: function( id ) {
-      return new Tandem( this.id + '_' + id );
-    },
-
     createNextTandem: function() {
       return new Tandem( this.id + '_' + ( this.groupElementIndex++ ) );
     }
