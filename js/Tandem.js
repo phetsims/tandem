@@ -154,6 +154,23 @@ define( function( require ) {
     },
 
     /**
+     * Returns a Tandem for everything except the tail.
+     * @returns {Tandem}
+     */
+    get parentTandem() {
+      assert && assert( this.id.indexOf( '.' ) >= 0, 'tandem ID does not have a tail' );
+
+      var lastIndexOfDot = this.id.lastIndexOf( '.' );
+      var headID = this.id.substring( 0, lastIndexOfDot );
+
+      return new Tandem( headID, {
+        static: this.static,
+        isDefaultTandem: this.isDefaultTandem,
+        enabled: this.enabled
+      } );
+    },
+
+    /**
      * When using subtyping, the instance listeners must only be notified once rather than once for every level
      * in the inheritance hierarchy.  When a subtype constructor has a tandem.addInstance call, it should
      * pass a supertype tandem to the parent constructor so that it won't try to register the item twice.
