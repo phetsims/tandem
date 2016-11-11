@@ -36,16 +36,17 @@ define( function( require ) {
 
       /**
        * Sets the state of the array by clearing it and adding new elements.
+       * TODO: this will need to serialized based on tandem names
        */
-      setValue: {
-        returnType: TVoid,
-        parameterTypes: [], // TODO: Parameter types seems wrong here
-        implementation: function( elements ) {
-          this.instance.length = 0;
-          this.instance.push.apply( this.instance, elements );
-        },
-        documentation: 'Sets the value of all elements in the array'
-      }
+      // setValue: {
+      //   returnType: TVoid,
+      //   parameterTypes: [], // TODO: Parameter types seems wrong here
+      //   implementation: function( elements ) {
+      //     this.instance.length = 0;
+      //     this.instance.push.apply( this.instance, elements );
+      //   },
+      //   documentation: 'Sets the value of all elements in the array'
+      // }
     }, {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
       elementType: elementType,
