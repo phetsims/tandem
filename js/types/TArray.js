@@ -13,7 +13,6 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
-  var TVoid = require( 'PHET_IO/types/TVoid' );
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an appropriate array wrapper type.
