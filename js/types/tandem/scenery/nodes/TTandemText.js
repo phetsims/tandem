@@ -75,7 +75,7 @@ define( function( require ) {
         this.instance.setMaxWidth( maxWidth );
       },
       documentation: 'Set maximum width of text box in px. ' +
-        'If text is wider than maxWidth at its default font size, it is scaled down to fit.'
+                     'If text is wider than maxWidth at its default font size, it is scaled down to fit.'
     },
 
     getMaxWidth: {
