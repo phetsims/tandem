@@ -17,7 +17,7 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetio = require( 'PHET_IO/phetio' );
 
-  var phetioExpressionsString = QueryStringMachine.get( 'phet-io.expressions', { type: 'string', defaultValue: '[]' } );
+  var phetioExpressionsString = phet.chipper.queryParameters[ 'phet-io.expressions' ];
   var phetioExpressionsJSON = JSON.parse( phetioExpressionsString );
 
   /**
