@@ -15,6 +15,12 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
 
+  /**
+   * Wrapper type for phet/tandem's TandemDragHandler class.
+   * @param tandemDragHandler
+   * @param phetioID
+   * @constructor
+   */
   function TTandemDragHandler( tandemDragHandler, phetioID ) {
     TObject.call( this, tandemDragHandler, phetioID );
     assertInstanceOf( tandemDragHandler, phet.tandem.TandemDragHandler );
