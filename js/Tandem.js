@@ -255,7 +255,7 @@ define( function( require ) {
     validateOptions: function( options ) {
 
       // Check to see whether the tandem is "filled in" as opposed to being a default Tandem.createOptionalTandem one.
-      if ( phet.chipper.brand === 'phet-io' && phet.chipper.queryParameters[ 'phet-io.validateTandems' ] !== 'false' ) {
+      if ( phet.chipper.brand === 'phet-io' && phet.chipper.queryParameters[ 'phet-io.validateTandems' ] ) {
         assert && assert( options.tandem, 'tandem should be defined in common code components' );
         assert && assert( !options.tandem.isDefaultTandem, 'Default tandem instance cannot be used when running as PhET-iO' );
       }
