@@ -19,6 +19,12 @@ define( function( require ) {
   var TString = require( 'PHET_IO/types/TString' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
 
+  /**
+   * Wrapper type for phet/tandem's TandemText class.
+   * @param tandemText
+   * @param phetioID
+   * @constructor
+   */
   function TTandemText( tandemText, phetioID ) {
     TNode.call( this, tandemText, phetioID );
     assertInstanceOf( tandemText, phet.tandem.TandemText );

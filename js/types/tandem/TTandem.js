@@ -15,6 +15,12 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var TString = require( 'PHET_IO/types/TString' );
 
+  /**
+   * Wrapper type for phet/tandem's Tandem class.
+   * @param arrayInstance
+   * @param phetioID
+   * @constructor
+   */
   function TTandem( arrayInstance, phetioID ) {
     TObject.call( this, arrayInstance, phetioID );
     assertInstanceOf( arrayInstance, phet.tandem.Tandem );
@@ -22,9 +28,21 @@ define( function( require ) {
 
   phetioInherit( TObject, 'TTandem', TTandem, {}, {
     documentation: 'Tandems give sim elements their phet-io identifiers',
+
+    /**
+     * Decodes a state into a Tandem.
+     * @param {Tandem} instance
+     * @returns {*}
+     */
     toStateObject: function( instance ) {
       return TString.toStateObject( instance.id );
     },
+
+    /**
+     * Encodes a Tandem instance to a state.
+     * @param stateObject
+     * @returns {Tandem}
+     */
     fromStateObject: function( stateObject ) {
       return new phet.tandem.Tandem( TString.fromStateObject( stateObject ) );
     }

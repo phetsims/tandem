@@ -15,7 +15,13 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
   var phetioEvents = require( 'PHET_IO/phetioEvents' );
 
-  // Emitter for 0, 1 or 2 args
+  /**
+   * Wrapper type for phet/tandem's TandemEmitter class.
+   * Emitter for 0, 1 or 2 args
+   * @param phetioArgumentTypes
+   * @returns {*}
+   * @constructor
+   */
   function TTandemEmitter( phetioArgumentTypes ) {
     assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
     return phetioInherit( TObject, 'TTandemEmitter', function TTandemEmitterImpl( tandemEmitter, phetioID ) {
