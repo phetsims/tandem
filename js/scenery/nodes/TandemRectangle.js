@@ -28,8 +28,19 @@ define( function( require ) {
    * @constructor
    */
   function TandemRectangle( x, y, width, height, cornerXRadius, cornerYRadius, options ) {
+
+    // the options is the first value that is an object instead of a number.  Start at the end because x might be a bounds!
+    var args = Array.prototype.slice.call( arguments );
+    for ( var i = args.length - 1; i >= 0; i++ ) {
+      var a = args[ i ];
+      if ( typeof a === 'object' ) {
+        options = a;
+        break;
+      }
+    }
+
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
-    Rectangle.call( this, x, y, width, height, cornerXRadius, cornerYRadius, options );
+    Rectangle.apply( this, arguments );
 
     options.tandem && options.tandem.addInstance( this, TNode ); // TODO: Create TRectangle
 
