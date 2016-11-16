@@ -22,12 +22,14 @@ define( function( require ) {
    * @param {number} y
    * @param {number} width
    * @param {number} height
+   * @param {number} cornerXRadius
+   * @param {number} cornerYRadius
    * @param {Object} [options]
    * @constructor
    */
-  function TandemRectangle( x, y, width, height, options ) {
+  function TandemRectangle( x, y, width, height, cornerXRadius, cornerYRadius, options ) {
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
-    Rectangle.call( this, x, y, width, height, options );
+    Rectangle.call( this, x, y, width, height, cornerXRadius, cornerYRadius, options );
 
     options.tandem && options.tandem.addInstance( this, TNode ); // TODO: Create TRectangle
 
