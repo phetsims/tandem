@@ -35,11 +35,10 @@ define( function( require ) {
 
       /**
        * Sets the state of the array by clearing it and adding new elements.
-       * TODO: this will need to serialized based on tandem names
        */
       // setValue: {
       //   returnType: TVoid,
-      //   parameterTypes: [], // TODO: Parameter types seems wrong here
+      //   parameterTypes: [],
       //   implementation: function( elements ) {
       //     this.instance.length = 0;
       //     this.instance.push.apply( this.instance, elements );
