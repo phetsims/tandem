@@ -82,8 +82,7 @@ define( function( require ) {
     if ( window.phetioExpressions ) {
       for ( i = 0; i < window.phetioExpressions.length; i++ ) {
 
-        // TODO: When https://github.com/phetsims/phet-io/issues/573 is addressed, there will be no need to package as
-        // an array
+        // When https://github.com/phetsims/phet-io/issues/573 is addressed, there will be no need to package as array
         var expression = [
           window.phetioExpressions[ i ].phetioID,
           window.phetioExpressions[ i ].method,
