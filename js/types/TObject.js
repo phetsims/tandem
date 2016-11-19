@@ -3,7 +3,7 @@
 /**
  * TObject is the root of the wrapper type hierarchy.  All wrapper types extend from TObject.
  * TObject also applies any "eager" customizations to instances immediately after they are
- * registered with PhET-iO.  The customizations are supplied via the phet-io.expressions query
+ * registered with PhET-iO.  The customizations are supplied via the phetioExpressions query
  * parameter or set with TPhetIO.addExpressions.
  *
  * @author Sam Reid (PhET Interactive Simulations)
@@ -17,7 +17,7 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetio = require( 'PHET_IO/phetio' );
 
-  var phetioExpressionsString = phet.chipper.queryParameters[ 'phet-io.expressions' ];
+  var phetioExpressionsString = phet.chipper.queryParameters.phetioExpressions;
   var phetioExpressionsJSON = JSON.parse( phetioExpressionsString );
 
   /**
