@@ -123,7 +123,7 @@ define( function( require ) {
      * Decodes the object from a state, used in phetio.setState.  This should be overriden
      * by subclasses.
      * @param o
-     * @returns {*}
+     * @returns {Object}
      */
     fromStateObject: function( o ) {
       return o;
