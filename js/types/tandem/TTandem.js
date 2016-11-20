@@ -32,7 +32,7 @@ define( function( require ) {
     /**
      * Decodes a state into a Tandem.
      * @param {Tandem} instance
-     * @returns {*}
+     * @returns {Object}
      */
     toStateObject: function( instance ) {
       return TString.toStateObject( instance.id );

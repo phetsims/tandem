@@ -19,7 +19,7 @@ define( function( require ) {
    * Wrapper type for phet/tandem's TandemEmitter class.
    * Emitter for 0, 1 or 2 args
    * @param phetioArgumentTypes
-   * @returns {*}
+   * @returns {TTandemEmitterImpl}
    * @constructor
    */
   function TTandemEmitter( phetioArgumentTypes ) {
