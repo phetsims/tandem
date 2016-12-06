@@ -22,7 +22,7 @@ define( function( require ) {
    * @param {Object} [options]
    * @constructor
    */
-  function TandemRectangle( radius, options ) {
+  function TandemCircle( radius, options ) {
 
     // Handle new Circle( { radius: ... } )
     if ( typeof radius === 'object' ) {
@@ -40,9 +40,9 @@ define( function( require ) {
     };
   }
 
-  tandemNamespace.register( 'TandemRectangle', TandemRectangle );
+  tandemNamespace.register( 'TandemCircle', TandemCircle );
 
-  return inherit( Circle, TandemRectangle, {
+  return inherit( Circle, TandemCircle, {
 
     // @public
     dispose: function() {
