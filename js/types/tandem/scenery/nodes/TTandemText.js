@@ -41,7 +41,7 @@ define( function( require ) {
 
     addTextChangedListener: {
       returnType: TVoid,
-      parameterTypes: TFunctionWrapper( TVoid, [ TString ] ),
+      parameterTypes: [ TFunctionWrapper( TVoid, [ TString ] ) ],
       implementation: function( listener ) {
         this.on( 'text', function( oldText, newText ) {
           listener( newText );
