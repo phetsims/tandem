@@ -18,6 +18,7 @@ define( function( require ) {
   var TNumber = require( 'PHET_IO/types/TNumber' );
   var TString = require( 'PHET_IO/types/TString' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
+  var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
 
   /**
    * Wrapper type for phet/tandem's TandemText class.
@@ -37,6 +38,17 @@ define( function( require ) {
   }
 
   phetioInherit( TNode, 'TTandemText', TTandemText, {
+
+    addTextChangedListener: {
+      returnType: TVoid,
+      parameterTypes: TFunctionWrapper( TVoid, [ TString ] ),
+      implementation: function( listener ) {
+        this.on( 'text', function( oldText, newText ) {
+          listener( newText );
+        } );
+      },
+      documentation: 'Add a listener for when the text has changed.'
+    },
 
     setText: {
       returnType: TVoid,
