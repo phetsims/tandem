@@ -16,13 +16,13 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // phet-io modules
-  var TTandemDragHandler = require( 'ifphetio!PHET_IO/types/tandem/scenery/input/TTandemDragHandler' );
+  var TTandemSimpleDragHandler = require( 'ifphetio!PHET_IO/types/tandem/scenery/input/TTandemSimpleDragHandler' );
 
   /**
    * @param {Object} [options]
    * @constructor
    */
-  function TandemDragHandler( options ) {
+  function TandemSimpleDragHandler( options ) {
 
     var self = this;
     
@@ -75,23 +75,23 @@ define( function( require ) {
 
     SimpleDragHandler.call( this, optionsCopy );
 
-    options.tandem && options.tandem.addInstance( this, TTandemDragHandler );
+    options.tandem && options.tandem.addInstance( this, TTandemSimpleDragHandler );
 
     // @private
-    this.disposeTandemDragHandler = function() {
+    this.disposeTandemSimpleDragHandler = function() {
       if ( Brand.id === 'phet-io' ) {
         options.tandem && options.tandem.removeInstance( self );
       }
     };
   }
 
-  tandemNamespace.register( 'TandemDragHandler', TandemDragHandler );
+  tandemNamespace.register( 'TandemSimpleDragHandler', TandemSimpleDragHandler );
 
-  return inherit( SimpleDragHandler, TandemDragHandler, {
+  return inherit( SimpleDragHandler, TandemSimpleDragHandler, {
 
     // @public
     dispose: function() {
-      this.disposeTandemDragHandler();
+      this.disposeTandemSimpleDragHandler();
     }
   } );
 } );
