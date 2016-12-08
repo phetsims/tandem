@@ -16,28 +16,28 @@ define( function( require ) {
   var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
 
   /**
-   * Wrapper type for phet/tandem's TandemDragHandler class.
-   * @param tandemDragHandler
+   * Wrapper type for phet/tandem's TandemSimpleDragHandler class.
+   * @param tandemSimpleDragHandler
    * @param phetioID
    * @constructor
    */
-  function TTandemDragHandler( tandemDragHandler, phetioID ) {
-    TObject.call( this, tandemDragHandler, phetioID );
-    assertInstanceOf( tandemDragHandler, phet.tandem.TandemDragHandler );
+  function TTandemSimpleDragHandler( tandemSimpleDragHandler, phetioID ) {
+    TObject.call( this, tandemSimpleDragHandler, phetioID );
+    assertInstanceOf( tandemSimpleDragHandler, phet.tandem.TandemSimpleDragHandler );
 
     var toXY = function( x, y ) { return { x: x, y: y }; };
-    toEventOnEmit( tandemDragHandler.startedCallbacksForDragStartedEmitter, tandemDragHandler.endedCallbacksForDragStartedEmitter, 'user', phetioID, TTandemDragHandler, 'dragStarted', toXY );
-    toEventOnEmit( tandemDragHandler.startedCallbacksForDraggedEmitter, tandemDragHandler.endedCallbacksForDraggedEmitter, 'user', phetioID, TTandemDragHandler, 'dragged', toXY );
-    toEventOnEmit( tandemDragHandler.startedCallbacksForDragEndedEmitter, tandemDragHandler.endedCallbacksForDragEndedEmitter, 'user', phetioID, TTandemDragHandler, 'dragEnded' );
+    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDragStartedEmitter, tandemSimpleDragHandler.endedCallbacksForDragStartedEmitter, 'user', phetioID, TTandemSimpleDragHandler, 'dragStarted', toXY );
+    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDraggedEmitter, tandemSimpleDragHandler.endedCallbacksForDraggedEmitter, 'user', phetioID, TTandemSimpleDragHandler, 'dragged', toXY );
+    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDragEndedEmitter, tandemSimpleDragHandler.endedCallbacksForDragEndedEmitter, 'user', phetioID, TTandemSimpleDragHandler, 'dragEnded' );
   }
 
-  phetioInherit( TObject, 'TTandemDragHandler', TTandemDragHandler, {}, {
+  phetioInherit( TObject, 'TTandemSimpleDragHandler', TTandemSimpleDragHandler, {}, {
     documentation: 'Drag listener for objects that can be dragged by the user.',
     events: [ 'dragStarted', 'dragged', 'dragEnded' ]
   } );
 
-  phetioNamespace.register( 'TTandemDragHandler', TTandemDragHandler );
+  phetioNamespace.register( 'TTandemSimpleDragHandler', TTandemSimpleDragHandler );
 
-  return TTandemDragHandler;
+  return TTandemSimpleDragHandler;
 } );
 
