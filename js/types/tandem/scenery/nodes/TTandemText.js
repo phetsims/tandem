@@ -43,7 +43,7 @@ define( function( require ) {
       returnType: TVoid,
       parameterTypes: [ TFunctionWrapper( TVoid, [ TString ] ) ],
       implementation: function( listener ) {
-        this.on( 'text', function( oldText, newText ) {
+        this.instance.on( 'text', function( oldText, newText ) {
           listener( newText );
         } );
       },
