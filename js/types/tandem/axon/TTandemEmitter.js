@@ -33,21 +33,24 @@ define( function( require ) {
 
       var messageIndex = null;
 
-      tandemEmitter.callbacksStartedEmitter.addListener( function() {
-        assert && assert( arguments.length === phetioArgumentTypes.length, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
-        var p = [];
-        for ( var i = 0; i < arguments.length; i++ ) {
-          var a = arguments[ i ];
-          p.push( a );
-        }
-        var parameters = { arguments: p };
-        messageIndex = phetioEvents.start( 'model', phetioID, TTandemEmitter( phetioArgumentTypes ), 'emitted', parameters );
-      } );
+      // Allow certain Emitters to suppress their data output, such as the frameCompletedEmitter
+      if ( tandemEmitter.phetioEmitData ) {
+        tandemEmitter.callbacksStartedEmitter.addListener( function() {
+          assert && assert( arguments.length === phetioArgumentTypes.length, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
+          var p = [];
+          for ( var i = 0; i < arguments.length; i++ ) {
+            var a = arguments[ i ];
+            p.push( a );
+          }
+          var parameters = { arguments: p };
+          messageIndex = phetioEvents.start( 'model', phetioID, TTandemEmitter( phetioArgumentTypes ), 'emitted', parameters );
+        } );
 
-      tandemEmitter.callbacksEndedEmitter.addListener( function() {
-        assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
-        messageIndex && phetioEvents.end( messageIndex );
-      } );
+        tandemEmitter.callbacksEndedEmitter.addListener( function() {
+          assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
+          messageIndex && phetioEvents.end( messageIndex );
+        } );
+      }
     }, {
       addListener: {
         returnType: TVoid,
