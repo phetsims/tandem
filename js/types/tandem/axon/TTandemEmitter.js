@@ -14,6 +14,8 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TObject = require( 'PHET_IO/types/TObject' );
   var phetioEvents = require( 'PHET_IO/phetioEvents' );
+  var TVoid = require( 'PHET_IO/types/TVoid' );
+  var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
 
   /**
    * Wrapper type for phet/tandem's TandemEmitter class.
@@ -46,7 +48,16 @@ define( function( require ) {
         assert && assert( arguments.length === 0, 'Wrong number of arguments, expected ' + phetioArgumentTypes.length + ', received ' + arguments.length );
         messageIndex && phetioEvents.end( messageIndex );
       } );
-    }, {}, {
+    }, {
+      addListener: {
+        returnType: TVoid,
+        parameterTypes: [ TFunctionWrapper( TVoid, phetioArgumentTypes ) ],
+        implementation: function( listener ) {
+          this.instance.addListener( listener );
+        },
+        documentation: 'Add a listener which will be called when the emitter emits.'
+      }
+    }, {
       documentation: 'Emitters indicate when events have occurred, with optional arguments describing the event',
       events: [ 'emitted' ]
     } );
