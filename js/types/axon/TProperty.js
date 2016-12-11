@@ -14,7 +14,7 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
   var TObject = require( 'PHET_IO/types/TObject' );
-  var toEventOnStatic = require( 'PHET_IO/events/toEventOnStatic' );
+  var toEventOnEmit = require( 'PHET_IO/events/toEventOnEmit' );
   var TVoid = require( 'PHET_IO/types/TVoid' );
   var StringUtils = require( 'PHETCOMMON/util/StringUtils' );
   var phetio = require( 'PHET_IO/phetio' );
@@ -35,7 +35,13 @@ define( function( require ) {
       assertInstanceOf( property, phet.axon.Property );
       TObject.call( this, property, phetioID );
 
-      toEventOnStatic( property.events, 'CallbacksForChanged', 'model', phetioID, TProperty( phetioValueType, options ), 'changed',
+      toEventOnEmit(
+        property.startedCallbacksForChangedEmitter,
+        property.endedCallbacksForChangedEmitter,
+        'model',
+        phetioID,
+        TProperty( phetioValueType, options ),
+        'changed',
         function( newValue, oldValue ) {
           return {
             oldValue: phetioValueType.toStateObject( oldValue ),
