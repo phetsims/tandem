@@ -24,10 +24,13 @@ define( function( require ) {
   function TandemEmitter( options ) {
     options = _.extend( {
       phetioArgumentTypes: null,
-      tandem: null
+      tandem: null,
+      phetioEmitData: true // Can be overriden to suppress data from the phet-io data stream
     }, options );
 
     Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
+
+    this.phetioEmitData = options.phetioEmitData;
 
     Emitter.call( this );
 
