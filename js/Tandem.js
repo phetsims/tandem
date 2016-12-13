@@ -12,7 +12,7 @@ define( function( require ) {
   // modules
   var inherit = require( 'PHET_CORE/inherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  var StringUtils = require( 'PHETCOMMON/util/StringUtils' );
+  var toCamelCase = require( 'PHET_CORE/toCamelCase' );
 
   // text
   var packageString = require( 'text!REPOSITORY/package.json' );
@@ -223,7 +223,7 @@ define( function( require ) {
      * @returns {Tandem}
      */
     createRootTandem: function() {
-      return new Tandem( StringUtils.toCamelCase( packageJSON.name ) );
+      return new Tandem( toCamelCase( packageJSON.name ) );
     },
 
     /**
