@@ -113,7 +113,9 @@ define( function( require ) {
      * @public
      */
     createTandem: function( id, options ) {
-      assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
+
+      // TODO: validate id, see https://github.com/phetsims/tandem/issues/17
+      // assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
       var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
 
       // Any child of something static is also static
