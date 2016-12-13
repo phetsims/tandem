@@ -113,6 +113,7 @@ define( function( require ) {
      * @public
      */
     createTandem: function( id, options ) {
+      assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
       var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
 
       // Any child of something static is also static
