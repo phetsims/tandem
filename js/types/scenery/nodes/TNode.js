@@ -109,7 +109,13 @@ define( function( require ) {
       documentation: 'Set the rotation of the node, in radians'
     }
   }, {
-    documentation: 'The base type for graphical and potentially interactive objects'
+    documentation: 'The base type for graphical and potentially interactive objects',
+
+    // TODO: this is used when TNodes are put in an observable array, for formatting items for the data stream
+    // There is probably a better way to go about solving this.
+    toStateObject: function( node ) {
+      return node.constructor.name;
+    }
   } );
 
   phetioNamespace.register( 'TNode', TNode );
