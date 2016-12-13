@@ -70,7 +70,7 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
-      if ( phet.chipper.brand === 'phet-io' && this.enabled ) {
+      if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' && this.enabled ) {
 
         if ( !type ) {
           console.log( 'Missing type declaration for ' + this.id );
@@ -255,7 +255,7 @@ define( function( require ) {
     validateOptions: function( options ) {
 
       // Check to see whether the tandem is "filled in" as opposed to being a default Tandem.createOptionalTandem one.
-      if ( phet.chipper.brand === 'phet-io' && phet.chipper.queryParameters.phetioValidateTandems ) {
+      if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' && phet.chipper.queryParameters.phetioValidateTandems ) {
         assert && assert( options.tandem, 'tandem should be defined in common code components' );
         assert && assert( !options.tandem.isDefaultTandem, 'Default tandem instance cannot be used when running as PhET-iO' );
       }
