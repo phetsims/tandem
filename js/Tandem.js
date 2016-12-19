@@ -263,6 +263,17 @@ define( function( require ) {
         assert && assert( options.tandem, 'tandem should be defined in common code components' );
         assert && assert( !options.tandem.isDefaultTandem, 'Default tandem instance cannot be used when running as PhET-iO' );
       }
+    },
+
+    /**
+     * When running in PhET-iO brand, some code (such as user interface components) must be instrumented for PhET-iO.
+     * Uninstrumented files should call this function to indicate they still need to be instrumented, so they aren't
+     * missed.  See https://github.com/phetsims/phet-io/issues/668
+     */
+    indicateUninstrumentedCode: function() {
+      if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' && phet.chipper.queryParameters.phetioValidateTandems ) {
+        assert && assert( false, 'Uninstrumented code detected' );
+      }
     }
   } );
 
