@@ -13,6 +13,7 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var TObject = require( 'PHET_IO/types/TObject' );
+  var TVoid = require( 'PHET_IO/types/TVoid' );
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an appropriate array wrapper type.
@@ -31,21 +32,7 @@ define( function( require ) {
       TObject.call( this, arrayInstance, phetioID );
       assert && assert( Array.isArray( arrayInstance ), 'TArray should wrap array instances' );
     };
-    return phetioInherit( TObject, 'TArray', TArrayImpl, {
-
-      /**
-       * Sets the state of the array by clearing it and adding new elements.
-       */
-      // setValue: {
-      //   returnType: TVoid,
-      //   parameterTypes: [],
-      //   implementation: function( elements ) {
-      //     this.instance.length = 0;
-      //     this.instance.push.apply( this.instance, elements );
-      //   },
-      //   documentation: 'Sets the value of all elements in the array'
-      // }
-    }, {
+    return phetioInherit( TObject, 'TArray', TArrayImpl, {}, {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
       elementType: elementType,
 
@@ -73,6 +60,11 @@ define( function( require ) {
           json.push( elementType.toStateObject( array[ i ] ) );
         }
         return json;
+      },
+
+      setValue: function( instance, elements ) {
+        instance.length = 0;
+        instance.push.apply( instance, elements );
       }
     } );
   }
