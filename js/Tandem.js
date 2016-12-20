@@ -115,7 +115,7 @@ define( function( require ) {
     createTandem: function( id, options ) {
 
       // Make sure the id was provided
-      // assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
+      assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
 
       var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
 
