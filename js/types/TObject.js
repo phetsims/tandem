@@ -22,14 +22,12 @@ define( function( require ) {
 
   /**
    * Apply a customization expression to a wrapped object.
-   * @param {Object} instance
-   * @param {string} phetioID
    * @param {Object} wrapper
    * @param {function} type
    * @param {Object} phetioExpression
    */
-  var applyExpression = function( instance, phetioID, wrapper, type, phetioExpression ) {
-    if ( phetioID === phetioExpression[ 0 ] ) {
+  var applyExpression = function( wrapper, type, phetioExpression ) {
+    if ( wrapper.phetioID === phetioExpression[ 0 ] ) {
       var methodName = phetioExpression[ 1 ];
       var args = phetioExpression[ 2 ];
 
@@ -47,7 +45,7 @@ define( function( require ) {
       }
 
       // phetio.setState is scheduled for after the simulation launches
-      if ( phetioID === 'phetio' && methodName === 'setState' ) {
+      if ( wrapper.phetioID === 'phetio' && methodName === 'setState' ) {
 
         // IIFE to capture iteration vars
         (function( wrapper, methodName, stateObjects ) {
@@ -66,16 +64,14 @@ define( function( require ) {
   /**
    * Apply all customization expressions to a newly registered simulation instance.
    *
-   * @param {Object} instance
-   * @param {string} phetioID
    * @param {Object} wrapper
    * @param {function} type
    */
-  var applyExpressions = function( instance, phetioID, wrapper, type ) {
+  var applyExpressions = function( wrapper, type ) {
 
     // Apply query parameters first
     for ( var i = 0; i < phetioExpressionsJSON.length; i++ ) {
-      applyExpression( instance, phetioID, wrapper, type, phetioExpressionsJSON[ i ] );
+      applyExpression( wrapper, type, phetioExpressionsJSON[ i ] );
     }
 
     // Apply values set through addExpressions
@@ -88,7 +84,7 @@ define( function( require ) {
           window.phetioExpressions[ i ].method,
           window.phetioExpressions[ i ].args
         ];
-        applyExpression( instance, phetioID, wrapper, type, expression );
+        applyExpression( wrapper, type, expression );
       }
     }
   };
@@ -111,7 +107,7 @@ define( function( require ) {
 
     // If any query parameter calls have been made, apply them now.
     // Pass the self sub-type because this is called before the type is registered with phetio
-    applyExpressions( instance, phetioID, this, this.constructor );
+    applyExpressions( this, this.constructor );
   }
 
   // TObject inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
