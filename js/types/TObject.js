@@ -17,7 +17,7 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetio = require( 'PHET_IO/phetio' );
 
-  var phetioExpressionsString = phet.chipper.queryParameters.phetioExpressions;
+  var phetioExpressionsString = window.phetio.queryParameters.phetioExpressions;
   var phetioExpressionsJSON = JSON.parse( phetioExpressionsString );
 
   /**
