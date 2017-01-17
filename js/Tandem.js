@@ -260,7 +260,7 @@ define( function( require ) {
 
       // Check to see whether the tandem is "filled in" as opposed to being a default Tandem.createOptionalTandem one.
       if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' &&
-           window.phetio && window.phetio.queryParameters && window.phetio.queryParameters.phetioValidateTandems ) {
+           phet.phetio && phet.phetio.queryParameters && phet.phetio.queryParameters.phetioValidateTandems ) {
         assert && assert( options.tandem, 'tandem should be defined in common code components' );
         assert && assert( !options.tandem.isDefaultTandem, 'Default tandem instance cannot be used when running as PhET-iO' );
       }
@@ -273,7 +273,7 @@ define( function( require ) {
      */
     indicateUninstrumentedCode: function() {
       if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' &&
-           window.phetio && window.phetio.queryParameters && window.phetio.queryParameters.phetioValidateTandems ) {
+           phet.phetio && phet.phetio.queryParameters && phet.phetio.queryParameters.phetioValidateTandems ) {
         assert && assert( false, 'Uninstrumented code detected' );
       }
     }
