@@ -199,7 +199,7 @@ define( function( require ) {
       // Name the tandems as derivedProperty0
       // OR: chargesAndFields.derivedProperty0
       var tandem = rootTandem.createTandem( name + '' + defaultTandemMap[ name ], {
-        isDefaultTandem: true // for checking in validateTandems
+        isDefaultTandem: true // for checking in validateOptions
       } );
       defaultTandemMap[ name ]++;
       return tandem;
