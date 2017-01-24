@@ -19,7 +19,6 @@ define( function( require ) {
 
   // constants
   var packageJSON = JSON.parse( packageString );
-  var defaultTandemMap = {}; // {string} => {number} Keep track of number of each type of default tandem
 
   // variables
   var launched = false;
@@ -33,7 +32,7 @@ define( function( require ) {
 
     options = _.extend( {
       static: false,
-      isDefaultTandem: false,
+      tandemRequiredButNotSupplied: false, // When set to true, if there isn't a tandem supplied, it will fail out.
       enabled: true
     }, options );
 
@@ -42,7 +41,7 @@ define( function( require ) {
 
     // @private (read-only)
     this.static = options.static;
-    this.isDefaultTandem = options.isDefaultTandem;
+    this.tandemRequiredButNotSupplied = options.tandemRequiredButNotSupplied;
     this.enabled = options.enabled;
   }
 
@@ -169,7 +168,7 @@ define( function( require ) {
 
       return new Tandem( headID, {
         static: this.static,
-        isDefaultTandem: this.isDefaultTandem,
+        tandemRequiredButNotSupplied: this.tandemRequiredButNotSupplied,
         enabled: this.enabled
       } );
     },
@@ -186,23 +185,14 @@ define( function( require ) {
   }, {
 
     /**
-     * In common code (sun, scenery-phet, etc), default tandems are created in the options hash to simplify
-     * the logic (instead of being null).
-     * @param {string} name - the name of the tandem
+     * Some common code (such as CheckBox or RadioButton) must always be instrumented and hence requires a tandem to be
+     * passed in.  The options hash indicates this with {tandem: Tandem.tandemRequired()}
      * @returns {Tandem}
      */
-    createDefaultTandem: function( name ) {
-      if ( !defaultTandemMap.hasOwnProperty( name ) ) {
-        defaultTandemMap[ name ] = 0;
-      }
-
-      // Name the tandems as derivedProperty0
-      // OR: chargesAndFields.derivedProperty0
-      var tandem = rootTandem.createTandem( name + '' + defaultTandemMap[ name ], {
-        isDefaultTandem: true // for checking in validateOptions
+    tandemRequired: function() {
+      return rootTandem.createTandem( 'requiredTandem', { // TODO: for partially instrumented sims, should we add a numeric counter, like requiredTandem12
+        tandemRequiredButNotSupplied: true // will be checked in addInstance
       } );
-      defaultTandemMap[ name ]++;
-      return tandem;
     },
 
     /**
@@ -262,7 +252,7 @@ define( function( require ) {
       if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' &&
            phet.phetio && phet.phetio.queryParameters && phet.phetio.queryParameters.phetioValidateTandems ) {
         assert && assert( options.tandem, 'tandem should be defined in common code components' );
-        assert && assert( !options.tandem.isDefaultTandem, 'Default tandem instance cannot be used when running as PhET-iO' );
+        assert && assert( !options.tandem.tandemRequiredButNotSupplied, 'Default tandem instance cannot be used when running as PhET-iO' );
       }
     },
 
