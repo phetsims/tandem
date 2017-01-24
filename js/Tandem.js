@@ -32,8 +32,9 @@ define( function( require ) {
 
     options = _.extend( {
       static: false,
+      enabled: true,
       tandemRequiredButNotSupplied: false, // When set to true, if there isn't a tandem supplied, it will fail out.
-      enabled: true
+      tandemOptionalAndNotSupplied: false
     }, options );
 
     // @public (read-only)
@@ -42,6 +43,7 @@ define( function( require ) {
     // @private (read-only)
     this.static = options.static;
     this.tandemRequiredButNotSupplied = options.tandemRequiredButNotSupplied;
+    this.tandemOptionalAndNotSupplied = options.tandemOptionalAndNotSupplied;
     this.enabled = options.enabled;
   }
 
@@ -72,8 +74,6 @@ define( function( require ) {
       if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' && this.enabled ) {
 
         assert && assert( !this.tandemRequiredButNotSupplied, 'Tandem was required but not supplied' );
-        // TODO: support optional tandems
-        // if(!options.tandem.isDefaultTandem || (isOptional && tandemSupplied))
 
         if ( !type ) {
           console.log( 'Missing type declaration for ' + this.id );
@@ -81,6 +81,11 @@ define( function( require ) {
 
         // ifphetio returns a no-op function, so to test whether a valid T wrapper type was passed, we search for the typeName
         assert && assert( type && type.typeName, 'type must be specified and have a typeName' );
+
+        if ( this.tandemOptionalAndNotSupplied ) {
+          return; // For optionally instrumented types that are not provided tandems, the instance isn't really "added"
+                  // but likewise, it in not an error
+        }
 
         if ( this.static && !launched ) {
           staticInstances.push( { tandem: this, instance: instance, type: type } );
@@ -196,6 +201,17 @@ define( function( require ) {
     tandemRequired: function() {
       return rootTandem.createTandem( 'requiredTandem', { // TODO: for partially instrumented sims, should we add a numeric counter, like requiredTandem12
         tandemRequiredButNotSupplied: true // will be checked in addInstance
+      } );
+    },
+
+    /**
+     * Some common code (such as ObservableArray) must always be instrumented and hence requires a tandem to be
+     * passed in.  The options hash indicates this with {tandem: Tandem.tandemRequired()}
+     * @returns {Tandem}
+     */
+    tandemOptional: function() {
+      return rootTandem.createTandem( 'optionalTandem', { // TODO: for partially instrumented sims, should we add a numeric counter, like requiredTandem12
+        tandemOptionalAndNotSupplied: true
       } );
     },
 
