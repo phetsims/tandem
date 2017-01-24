@@ -262,17 +262,14 @@ define( function( require ) {
     },
 
     /**
-     * When running as phet-io, User Interface components must be registered with tandem.  This function checks the
-     * options to make sure tandem exists.  See https://github.com/phetsims/phet-io/issues/77
+     * Catch cases where tandem is being supplied to a class that doesn't support tandem.
      * @param options
      */
-    validateOptions: function( options ) {
+    disallowTandem: function( options ) {
 
-      // Check to see whether the tandem is "filled in" as opposed to being a default Tandem.createOptionalTandem one.
       if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' &&
            phet.phetio && phet.phetio.queryParameters && phet.phetio.queryParameters.phetioValidateTandems ) {
-        assert && assert( options.tandem, 'tandem should be defined in common code components' );
-        assert && assert( !options.tandem.tandemRequiredButNotSupplied, 'Default tandem instance cannot be used when running as PhET-iO' );
+        assert && assert( !options.tandem, 'tandem is not allowed' );
       }
     },
 
