@@ -24,12 +24,15 @@ define( function( require ) {
    */
   function TandemCircle( radius, options ) {
 
+    options = _.extend( {
+      tandem: Tandem.tandemRequired()
+    }, options );
+
     // Handle new Circle( { radius: ... } )
     if ( typeof radius === 'object' ) {
       options = radius;
     }
 
-    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
     Circle.apply( this, arguments );
 
     options.tandem && options.tandem.addInstance( this, TNode ); // TODO: Create TCircle

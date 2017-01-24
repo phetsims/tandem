@@ -23,7 +23,7 @@ define( function( require ) {
    * @constructor
    */
   function TandemPath( shape, options ) {
-    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
+    options = _.extend( { tandem: Tandem.tandemRequired() }, options );
     Path.call( this, shape, options );
 
     options.tandem && options.tandem.addInstance( this, TNode );

@@ -23,7 +23,7 @@ define( function( require ) {
    * @constructor
    */
   function TandemText( text, options ) {
-    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
+    options = _.extend( { tandem: Tandem.tandemRequired() }, options );
     Text.call( this, text, options );
 
     options.tandem && options.tandem.addInstance( this, TTandemText );

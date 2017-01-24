@@ -25,13 +25,11 @@ define( function( require ) {
   function TandemSimpleDragHandler( options ) {
 
     var self = this;
-    
+
     // NOTE: supertype options start/end/drag will be wrapped to provide PhET-iO instrumentation.
     options = _.extend( {
-      tandem: null
+      tandem: Tandem.tandemRequired()
     }, options );
-
-    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
 
     // Generate all emitters in every case to minimize the number of hidden classes,
     // see http://www.html5rocks.com/en/tutorials/speed/v8/

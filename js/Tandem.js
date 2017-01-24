@@ -71,6 +71,10 @@ define( function( require ) {
 
       if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' && this.enabled ) {
 
+        assert && assert( !this.tandemRequiredButNotSupplied, 'Tandem was required but not supplied' );
+        // TODO: support optional tandems
+        // if(!options.tandem.isDefaultTandem || (isOptional && tandemSupplied))
+
         if ( !type ) {
           console.log( 'Missing type declaration for ' + this.id );
         }

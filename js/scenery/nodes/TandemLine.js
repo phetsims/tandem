@@ -27,7 +27,7 @@ define( function( require ) {
    */
   function TandemLine( x1, y1, x2, y2, options ) {
 
-    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
+    options = _.extend( { tandem: Tandem.tandemRequired() }, options );
     Line.apply( this, arguments );
 
     options.tandem && options.tandem.addInstance( this, TNode ); // TODO: Create TLine

@@ -30,8 +30,7 @@ define( function( require ) {
   function TandemButtonListener( options ) {
     var self = this;
 
-    options = _.extend( { tandem: null }, options );
-    Tandem.validateOptions( options ); // The tandem is required when brand==='phet-io'
+    options = _.extend( { tandem: Tandem.tandemRequired() }, options );
 
     this.startedCallbacksForUpEmitter = new Emitter();
     this.endedCallbacksForUpEmitter = new Emitter();
