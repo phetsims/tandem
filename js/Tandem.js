@@ -23,6 +23,9 @@ define( function( require ) {
   // variables
   var launched = false;
 
+  // increment names of required tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
+  var requiredTandemIndex = 0;
+
   /**
    * @param {string} id - id as a string (or '' for a root id)
    * @param {Object} [options]
@@ -73,7 +76,9 @@ define( function( require ) {
 
       if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' && this.enabled ) {
 
-        assert && assert( !this.tandemRequiredButNotSupplied, 'Tandem was required but not supplied' );
+        if ( phet.phetio.queryParameters.phetioValidateTandems ) {
+          assert && assert( !this.tandemRequiredButNotSupplied, 'Tandem was required but not supplied' );
+        }
 
         if ( !type ) {
           console.log( 'Missing type declaration for ' + this.id );
@@ -199,7 +204,7 @@ define( function( require ) {
      * @returns {Tandem}
      */
     tandemRequired: function() {
-      return rootTandem.createTandem( 'requiredTandem', { // TODO: for partially instrumented sims, should we add a numeric counter, like requiredTandem12
+      return rootTandem.createTandem( 'requiredTandem' + (requiredTandemIndex++), { // TODO: for partially instrumented sims, should we add a numeric counter, like requiredTandem12
         tandemRequiredButNotSupplied: true // will be checked in addInstance
       } );
     },
