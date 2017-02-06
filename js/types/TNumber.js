@@ -47,6 +47,7 @@ define( function( require ) {
     'pascals',
     'percent',
     'radians',
+    'radians/second',
     'seconds',
     'siemens',
     'sieverts',
