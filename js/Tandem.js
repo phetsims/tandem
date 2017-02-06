@@ -210,8 +210,9 @@ define( function( require ) {
     },
 
     /**
-     * Some common code (such as ObservableArray) must always be instrumented and hence requires a tandem to be
-     * passed in.  The options hash indicates this with {tandem: Tandem.tandemRequired()}
+     *
+     * Used to indicate a common code component that supports tandem, but doesn't not require it.
+     * If a tandem is not passed through to this instance, then it will not be instrumented.
      * @returns {Tandem}
      */
     tandemOptional: function() {
