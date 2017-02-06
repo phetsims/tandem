@@ -21,14 +21,14 @@ define( function( require ) {
   var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
 
   /**
-   * Wrapper type for phet/tandem's TandemText class.
+   * Wrapper type for phet/tandem's Text class.
    * @param tandemText
    * @param phetioID
    * @constructor
    */
   function TTandemText( tandemText, phetioID ) {
     TNode.call( this, tandemText, phetioID );
-    assertInstanceOf( tandemText, phet.tandem.TandemText );
+    assertInstanceOf( tandemText, phet.tandem.Text );
     tandemText.on( 'text', function( oldText, newText ) {
       phetioEvents.trigger( 'model', phetioID, TTandemText, 'textChanged', {
         oldText: oldText,
