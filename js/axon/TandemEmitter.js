@@ -28,6 +28,8 @@ define( function( require ) {
       phetioEmitData: true // Can be overriden to suppress data from the phet-io data stream
     }, options );
 
+    var self = this;
+
     this.phetioEmitData = options.phetioEmitData;
 
     Emitter.call( this );
@@ -43,7 +45,7 @@ define( function( require ) {
     this.disposeTandemEmitter = function() {
 
       // Tandem de-registration
-      options.tandem.removeInstance( this );
+      options.tandem.removeInstance( self );
     };
   }
 
