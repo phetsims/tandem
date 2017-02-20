@@ -90,6 +90,7 @@ define( function( require ) {
     // @public
     dispose: function() {
       this.disposeTandemSimpleDragHandler();
+      SimpleDragHandler.prototype.dispose && SimpleDragHandler.prototype.dispose.call( this );
     }
   } );
 } );
