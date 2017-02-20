@@ -77,6 +77,7 @@ define( function( require ) {
     // @public
     dispose: function() {
       this.disposeTandemEmitter();
+      Emitter.prototype.dispose.call( this );
     }
   } );
 } );
