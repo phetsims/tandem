@@ -88,12 +88,6 @@ define( function( require ) {
         assert && assert( type && type.typeName, 'type must be specified and have a typeName' );
 
         if ( this.tandemOptionalAndNotSupplied ) {
-          var stackTrace = new Error().stack;
-          if ( stackTrace.indexOf( 'PhetFont' ) === -1 ) {
-            console.log( 'tandem not supplied!!!!!' );
-            console.log( 'this.id = ' + this.id );
-            console.log( 'stackTrace = ' + stackTrace );
-          }
           return; // For optionally instrumented types that are not provided tandems, the instance isn't really "added"
                   // but likewise, it in not an error
         }
