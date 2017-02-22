@@ -43,6 +43,8 @@ define( function( require ) {
     'moles/liter',
     'nanometers',
     'newtons',
+    'newtons/meters',
+    'newtons-second/meters',
     'ohms',
     'pascals',
     'percent',
