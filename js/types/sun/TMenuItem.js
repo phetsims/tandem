@@ -17,7 +17,7 @@ define( function( require ) {
 
 
   /**
-   * Wrapper type for phet/joist's MenuItem
+   * Wrapper type for phet/sun's MenuItem
    * @param menuItem
    * @param phetioID
    * @constructor
@@ -26,7 +26,7 @@ define( function( require ) {
     assertInstanceOf( menuItem, phet.scenery.Node );
     TNode.call( this, menuItem, phetioID );
 
-    // Menu item from Joist, it is defined in PhetMenu.js and does not have its own type
+    // MenuItem from Sun, it is defined in PhetMenu.js and does not have its own type
 
     toEventOnEmit(
       menuItem.startedCallbacksForFiredEmitter,
