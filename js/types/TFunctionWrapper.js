@@ -42,11 +42,7 @@ define( function( require ) {
       documentation: 'Wrapper for the built-in JS function type',
       returnType: returnType,
       parameterTypes: parameterTypes,
-      wrapForSimIFrameAPI: true,
-
-      toStateObject: function( value ) {
-        return 'it was a function'; // TODO: throw assertion when trying to serialize a function?
-      }
+      wrapForSimIFrameAPI: true
     } );
   }
 
