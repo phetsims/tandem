@@ -80,6 +80,14 @@ define( function( require ) {
           assert && assert( !this.tandemRequiredButNotSupplied, 'Tandem was required but not supplied' );
         }
 
+        // validateTandems is false and printMissingTandems flag is present for a tandem that is required but not supplied.
+        else if ( phet.phetio.queryParameters.printMissingTandems && this.tandemRequiredButNotSupplied ) {
+          var stackTrace = new Error().stack;
+          console.log( 'Required Tandem not supplied.\n' +
+                       'this.id = ' + this.id + '\n' +
+                       'Stack trace: ' + stackTrace );
+        }
+
         if ( !type ) {
           console.log( 'Missing type declaration for ' + this.id );
         }
@@ -88,8 +96,20 @@ define( function( require ) {
         assert && assert( type && type.typeName, 'type must be specified and have a typeName' );
 
         if ( this.tandemOptionalAndNotSupplied ) {
-          return; // For optionally instrumented types that are not provided tandems, the instance isn't really "added"
-                  // but likewise, it in not an error
+          if ( phet.phetio.queryParameters.printMissingTandems ) {
+            var stackTrace2 = new Error().stack;
+
+            // Generally PhETFont is not desired because there are so many untandemized instances.
+            if ( stackTrace2.indexOf( 'PhetFont' ) === -1 ) {
+              console.log( 'Optional Tandem not supplied.\n' +
+                           'this.id = ' + this.id + '\n' +
+                           'Stack trace: ' + stackTrace2 );
+            }
+          }
+
+          // For optionally instrumented types that are not provided tandems, the instance isn't really "added"
+          // but likewise, it in not an error
+          return;
         }
 
         if ( this.static && !launched ) {
@@ -285,9 +305,24 @@ define( function( require ) {
      * missed.  See https://github.com/phetsims/phet-io/issues/668
      */
     indicateUninstrumentedCode: function() {
+
+      // Guard against undefined errors
       if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' &&
-           phet.phetio && phet.phetio.queryParameters && phet.phetio.queryParameters.phetioValidateTandems ) {
-        assert && assert( false, 'Uninstrumented code detected' );
+           phet.phetio && phet.phetio.queryParameters ) {
+
+        // Assert if validating tandems
+        if ( phet.phetio.queryParameters.phetioValidateTandems ) {
+          assert && assert( false, 'Uninstrumented code detected' );
+        }
+
+        // Print stack trace if query parameter supplied
+        if ( phet.phetio.queryParameters.printMissingTandems ) {
+          var stackTrace = new Error().stack;
+          console.log( 'Uninstrumented Code! Tandem not supplied.\n' +
+                       'this.id = ' + this.id + '\n' +
+                       'Stack trace: ' + stackTrace );
+        }
+
       }
     }
   } );
