@@ -26,6 +26,9 @@ define( function( require ) {
   // increment names of required tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
   var requiredTandemIndex = 0;
 
+  // increment names of required tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
+  var optionalTandemIndex = 0;
+
   /**
    * @param {string} id - id as a string (or '' for a root id)
    * @param {Object} [options]
@@ -224,7 +227,7 @@ define( function( require ) {
      * @returns {Tandem}
      */
     tandemRequired: function() {
-      return rootTandem.createTandem( 'requiredTandem' + (requiredTandemIndex++), { // TODO: for partially instrumented sims, should we add a numeric counter, like requiredTandem12
+      return rootTandem.createTandem( 'requiredTandem' + (requiredTandemIndex++), {
         tandemRequiredButNotSupplied: true // will be checked in addInstance
       } );
     },
@@ -236,7 +239,7 @@ define( function( require ) {
      * @returns {Tandem}
      */
     tandemOptional: function() {
-      return rootTandem.createTandem( 'optionalTandem', { // TODO: for partially instrumented sims, should we add a numeric counter, like requiredTandem12
+      return rootTandem.createTandem( 'optionalTandem' + (optionalTandemIndex++), {
         tandemOptionalAndNotSupplied: true
       } );
     },
@@ -319,7 +322,6 @@ define( function( require ) {
         if ( phet.phetio.queryParameters.printMissingTandems ) {
           var stackTrace = new Error().stack;
           console.log( 'Uninstrumented Code! Tandem not supplied.\n' +
-                       'this.id = ' + this.id + '\n' +
                        'Stack trace: ' + stackTrace );
         }
 
