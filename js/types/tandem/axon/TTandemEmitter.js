@@ -9,13 +9,13 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var assertInstanceOf = require( 'PHET_IO/assertions/assertInstanceOf' );
-  var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/types/TObject' );
-  var phetioEvents = require( 'PHET_IO/phetioEvents' );
-  var TVoid = require( 'PHET_IO/types/TVoid' );
-  var TFunctionWrapper = require( 'PHET_IO/types/TFunctionWrapper' );
+  var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
+  var phetioNamespace = require( 'ifphetio!PHET_IO/phetioNamespace' );
+  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
+  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
+  var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
+  var TFunctionWrapper = require( 'ifphetio!PHET_IO/types/TFunctionWrapper' );
 
   /**
    * Wrapper type for phet/tandem's TandemEmitter class.
