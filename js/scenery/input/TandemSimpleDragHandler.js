@@ -16,7 +16,7 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // phet-io modules
-  var TTandemSimpleDragHandler = require( 'ifphetio!PHET_IO/types/tandem/scenery/input/TTandemSimpleDragHandler' );
+  var TTandemSimpleDragHandler = require( 'TANDEM/scenery/input/TTandemSimpleDragHandler' );
 
   /**
    * @param {Object} [options]

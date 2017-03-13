@@ -11,7 +11,7 @@ define( function( require ) {
   // modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var phetioNamespace = require( 'ifphetio!PHET_IO/phetioNamespace' );
+  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var toEventOnEmit = require( 'ifphetio!PHET_IO/events/toEventOnEmit' );
 
@@ -36,7 +36,7 @@ define( function( require ) {
     events: [ 'dragStarted', 'dragged', 'dragEnded' ]
   } );
 
-  phetioNamespace.register( 'TTandemSimpleDragHandler', TTandemSimpleDragHandler );
+  tandemNamespace.register( 'TTandemSimpleDragHandler', TTandemSimpleDragHandler );
 
   return TTandemSimpleDragHandler;
 } );

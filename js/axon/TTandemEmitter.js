@@ -11,7 +11,7 @@ define( function( require ) {
   // modules
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertions/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
-  var phetioNamespace = require( 'ifphetio!PHET_IO/phetioNamespace' );
+  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
   var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var TVoid = require( 'ifphetio!PHET_IO/types/TVoid' );
@@ -66,7 +66,7 @@ define( function( require ) {
     } );
   }
 
-  phetioNamespace.register( 'TTandemEmitter', TTandemEmitter );
+  tandemNamespace.register( 'TTandemEmitter', TTandemEmitter );
 
   return TTandemEmitter;
 } );
