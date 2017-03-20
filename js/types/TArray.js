@@ -16,7 +16,8 @@ define( function( require ) {
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an appropriate array wrapper type.
-   * @param {TObject} elementType - wrapper type of the individual elements in the array
+   * @param {TObject} elementType - wrapper type of the individual elements in the array. If loaded by phet (not phet-io)
+   *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
   function TArray( elementType ) {
