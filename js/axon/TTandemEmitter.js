@@ -20,13 +20,15 @@ define( function( require ) {
   /**
    * Wrapper type for phet/tandem's TandemEmitter class.
    * Emitter for 0, 1 or 2 args
-   * @param {function[]} phetioArgumentTypes
+   * @param {function[]} phetioArgumentTypes - If loaded by phet (not phet-io), the array will be of functions
+   *                                          returned by the 'ifphetio!' plugin.
    * @returns {TTandemEmitterImpl}
    * @constructor
    */
   function TTandemEmitter( phetioArgumentTypes ) {
-    assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
-    return phetioInherit( TObject, 'TTandemEmitter', function TTandemEmitterImpl( tandemEmitter, phetioID ) {
+
+    var TTandemEmitterImpl = function TTandemEmitterImpl( tandemEmitter, phetioID ) {
+      assert && assert( phetioArgumentTypes, 'phetioArgumentTypes should be defined' );
 
       TObject.call( this, tandemEmitter, phetioID );
       assertInstanceOf( tandemEmitter, phet.tandem.TandemEmitter );
@@ -51,7 +53,9 @@ define( function( require ) {
           messageIndex && phetioEvents.end( messageIndex );
         } );
       }
-    }, {
+    };
+
+    return phetioInherit( TObject, 'TTandemEmitter', TTandemEmitterImpl, {
       addListener: {
         returnType: TVoid,
         parameterTypes: [ TFunctionWrapper( TVoid, phetioArgumentTypes ) ],
