@@ -26,9 +26,9 @@ define( function( require ) {
     assertInstanceOf( tandemSimpleDragHandler, phet.tandem.TandemSimpleDragHandler );
 
     var toXY = function( x, y ) { return { x: x, y: y }; };
-    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDragStartedEmitter, tandemSimpleDragHandler.endedCallbacksForDragStartedEmitter, 'user', phetioID, TTandemSimpleDragHandler, 'dragStarted', toXY );
-    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDraggedEmitter, tandemSimpleDragHandler.endedCallbacksForDraggedEmitter, 'user', phetioID, TTandemSimpleDragHandler, 'dragged', toXY );
-    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDragEndedEmitter, tandemSimpleDragHandler.endedCallbacksForDragEndedEmitter, 'user', phetioID, TTandemSimpleDragHandler, 'dragEnded' );
+    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDragStartedEmitter, tandemSimpleDragHandler.endedCallbacksForDragStartedEmitter, 'user', phetioID, this.constructor, 'dragStarted', toXY );
+    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDraggedEmitter, tandemSimpleDragHandler.endedCallbacksForDraggedEmitter, 'user', phetioID, this.constructor, 'dragged', toXY );
+    toEventOnEmit( tandemSimpleDragHandler.startedCallbacksForDragEndedEmitter, tandemSimpleDragHandler.endedCallbacksForDragEndedEmitter, 'user', phetioID, this.constructor, 'dragEnded' );
   }
 
   phetioInherit( TObject, 'TTandemSimpleDragHandler', TTandemSimpleDragHandler, {}, {
