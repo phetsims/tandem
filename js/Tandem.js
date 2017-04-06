@@ -185,7 +185,7 @@ define( function( require ) {
     /**
      * Get the last part of the tandem (after the last .), used in Joist for creating button names dynamically based
      * on screen names
-     * @return {string} the tail of the tandem
+     * @returns {string} the tail of the tandem
      */
     get tail() {
       assert && assert( this.id.indexOf( '.' ) >= 0, 'tandem ID does not have a tail' );
