@@ -361,6 +361,7 @@ define( function( require ) {
 
   inherit( Tandem, GroupTandem, {
 
+    // @public
     createNextTandem: function() {
       return new Tandem( this.id + '_' + ( this.groupElementIndex++ ) );
     }
