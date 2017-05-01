@@ -123,6 +123,18 @@ define( function( require ) {
      */
     fromStateObject: function( o ) {
       return o;
+    },
+
+    /**
+     * Defaults to reference identity, returning the phetioID of the instance.  Subclasses provide their own
+     * toStateObject implementation to provide structure-based representations.
+     * @param {Object} o
+     * @returns {string}
+     */
+    toStateObject: function( o ) {
+      return o === null ? 'null' :
+             o === undefined ? 'undefined' :
+             o.phetioID;
     }
   } );
 
