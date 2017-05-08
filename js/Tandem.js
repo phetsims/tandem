@@ -13,6 +13,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var toCamelCase = require( 'PHET_CORE/toCamelCase' );
+  var Brand = require( 'BRAND/Brand' );
 
   // text
   var packageString = require( 'text!REPOSITORY/package.json' );
@@ -80,7 +81,7 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
-      if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' && this.enabled ) {
+      if ( Brand.phetioEnabled && this.enabled ) {
 
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
           assert && assert( !this.tandemRequiredButNotSupplied, 'Tandem was required but not supplied' );
@@ -299,8 +300,7 @@ define( function( require ) {
      */
     disallowTandem: function( options ) {
 
-      if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' &&
-           phet.phetio && phet.phetio.queryParameters && phet.phetio.queryParameters.phetioValidateTandems ) {
+      if ( Brand.phetioEnabled && phet.phetio.queryParameters.phetioValidateTandems ) {
         assert && assert( !options.tandem, 'tandem is not allowed' );
       }
     },
@@ -313,8 +313,7 @@ define( function( require ) {
     indicateUninstrumentedCode: function() {
 
       // Guard against undefined errors
-      if ( window.phet && window.phet.chipper && phet.chipper.brand === 'phet-io' &&
-           phet.phetio && phet.phetio.queryParameters ) {
+      if ( Brand.phetioEnabled && phet.phetio.queryParameters ) {
 
         // Assert if validating tandems
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -324,7 +323,7 @@ define( function( require ) {
         // Print stack trace if query parameter supplied
         if ( phet.phetio.queryParameters.printMissingTandems ) {
           var stackTrace = new Error().stack;
-          console.log( 'Uninstrumented Code! Tandem not supplied: ' +  (uninstrumentCodeIndex ++) + '.\n' +
+          console.log( 'Uninstrumented Code! Tandem not supplied: ' + (uninstrumentCodeIndex++) + '.\n' +
                        'Stack trace: ' + stackTrace );
         }
 
