@@ -300,7 +300,7 @@ define( function( require ) {
      */
     disallowTandem: function( options ) {
 
-      if ( Brand.phetioEnabled && phet.phetio.queryParameters.phetioValidateTandems ) {
+      if ( Tandem.validationEnabled() ) {
         assert && assert( !options.tandem, 'tandem is not allowed' );
       }
     },
@@ -328,6 +328,18 @@ define( function( require ) {
         }
 
       }
+    },
+
+    /**
+     * Determine whether or not tandem validation is turned on for the sim.
+     * @returns {Boolean} If tandems are being validated or not.
+     */
+    validationEnabled: function(){
+      if ( Brand.phetioEnabled && phet && phet.phetio && phet.phetio.queryParameters &&
+           phet.phetio.queryParameters.phetioValidateTandems ) {
+        return true;
+      }
+      return false;
     }
   } );
 
