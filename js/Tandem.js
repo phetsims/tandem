@@ -138,7 +138,7 @@ define( function( require ) {
     removeInstance: function( instance ) {
 
       // Only active when running as phet-io
-      if ( phet.chipper.brand === 'phet-io' && this.enabled ) {
+      if ( Brand.phetioEnabled && this.enabled ) {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
           instanceListeners[ i ].removeInstance( this.id, instance );
         }
