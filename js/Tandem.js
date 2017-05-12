@@ -40,21 +40,24 @@ define( function( require ) {
    */
   function Tandem( id, options ) {
 
-    options = _.extend( {
+    // @private - these options are stored on the instance so they can be passed through the super type inheritance chain.
+    // Note: Make sure that added options here are also added to options for inheritance (createSuperTypeTandem)
+    // and/or for composition (createTandem) as they make sense.
+    this.options = _.extend( {
       static: false,
       enabled: true,
-      tandemRequiredButNotSupplied: false, // When set to true, if there isn't a tandem supplied, it will fail out.
-      tandemOptionalAndNotSupplied: false
+      supplied: true, // if the tandem is not supplied and required, an error will be thrown.
+      required: true // require === false means it is an optional tandem
     }, options );
 
     // @public (read-only)
     this.id = ( id !== undefined ) ? id : '';
+    this.required = this.options.required;
+    this.supplied = this.options.supplied;
 
     // @private (read-only)
-    this.static = options.static;
-    this.tandemRequiredButNotSupplied = options.tandemRequiredButNotSupplied;
-    this.tandemOptionalAndNotSupplied = options.tandemOptionalAndNotSupplied;
-    this.enabled = options.enabled;
+    this.static = this.options.static;
+    this.enabled = this.options.enabled;
   }
 
   var staticInstances = [];
@@ -84,11 +87,11 @@ define( function( require ) {
       if ( Brand.phetioEnabled && this.enabled ) {
 
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
-          assert && assert( !this.tandemRequiredButNotSupplied, 'Tandem was required but not supplied' );
+          assert && assert( !(this.required && !this.supplied), 'Tandem was required but not supplied' );
         }
 
         // validateTandems is false and printMissingTandems flag is present for a tandem that is required but not supplied.
-        else if ( phet.phetio.queryParameters.printMissingTandems && this.tandemRequiredButNotSupplied ) {
+        else if ( phet.phetio.queryParameters.printMissingTandems && (this.required && !this.supplied) ) {
           var stackTrace = new Error().stack;
           console.log( 'Required Tandem not supplied.\n' +
                        'this.id = ' + this.id + '\n' +
@@ -102,7 +105,7 @@ define( function( require ) {
         // ifphetio returns a no-op function, so to test whether a valid T wrapper type was passed, we search for the typeName
         assert && assert( type && type.typeName, 'type must be specified and have a typeName' );
 
-        if ( this.tandemOptionalAndNotSupplied ) {
+        if ( !this.required && !this.supplied ) {
           if ( phet.phetio.queryParameters.printMissingTandems ) {
             var stackTrace2 = new Error().stack;
 
@@ -209,7 +212,8 @@ define( function( require ) {
 
       return new Tandem( headID, {
         static: this.static,
-        tandemRequiredButNotSupplied: this.tandemRequiredButNotSupplied,
+        required: this.required,
+        supplied: this.supplied,
         enabled: this.enabled
       } );
     },
@@ -221,7 +225,17 @@ define( function( require ) {
      * @returns {SupertypeTandem}
      */
     createSupertypeTandem: function() {
-      return new SupertypeTandem( this.id );
+      return new SupertypeTandem( this.id, this.options );
+    },
+
+    /**
+     * Return true if this tandem is legal and can be used by the phet-io system.
+     * @returns {boolean}
+     */
+    isLegalAndUsable: function() {
+
+      // A tandem is legal if it has been supplied or, if it hasn't been supplied, if it is optional.
+      return this.supplied || (this.optional && !this.supplied);
     }
   }, {
 
@@ -232,7 +246,8 @@ define( function( require ) {
      */
     tandemRequired: function() {
       return rootTandem.createTandem( 'requiredTandem' + (requiredTandemIndex++), {
-        tandemRequiredButNotSupplied: true // will be checked in addInstance
+        required: true,
+        supplied: false
       } );
     },
 
@@ -244,7 +259,8 @@ define( function( require ) {
      */
     tandemOptional: function() {
       return rootTandem.createTandem( 'optionalTandem' + (optionalTandemIndex++), {
-        tandemOptionalAndNotSupplied: true
+        required: false,
+        supplied: false
       } );
     },
 
@@ -334,12 +350,9 @@ define( function( require ) {
      * Determine whether or not tandem validation is turned on for the sim.
      * @returns {Boolean} If tandems are being validated or not.
      */
-    validationEnabled: function(){
-      if ( Brand.phetioEnabled && phet && phet.phetio && phet.phetio.queryParameters &&
-           phet.phetio.queryParameters.phetioValidateTandems ) {
-        return true;
-      }
-      return false;
+    validationEnabled: function() {
+      return Brand.phetioEnabled && phet && phet.phetio && phet.phetio.queryParameters &&
+             phet.phetio.queryParameters.phetioValidateTandems;
     }
   } );
 
@@ -380,11 +393,12 @@ define( function( require ) {
 
   /**
    * @param {string} id - id as a string (or '' for a root id)
+   * @param {Object} options
    * @constructor
    * @private create with Tandem.createSupertypeTandem
    */
-  function SupertypeTandem( id ) {
-    Tandem.call( this, id );
+  function SupertypeTandem( id, options ) {
+    Tandem.call( this, id, options );
   }
 
   tandemNamespace.register( 'Tandem.SupertypeTandem', SupertypeTandem );
