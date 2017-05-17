@@ -43,6 +43,7 @@ define( function( require ) {
 
     // @private
     this.disposeTandemEmitter = function() {
+      this.listeners.length = 0;
 
       // Tandem de-registration
       options.tandem.removeInstance( self );
