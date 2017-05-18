@@ -31,7 +31,7 @@ define( function( require ) {
   var optionalTandemIndex = 0;
 
   // increment names of required tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
-  var uninstrumentCodeIndex = 0;
+  var uninstrumentedCodeIndex = 0;
 
   /**
    * @param {string} id - id as a string (or '' for a root id)
@@ -339,7 +339,7 @@ define( function( require ) {
         // Print stack trace if query parameter supplied
         if ( phet.phetio.queryParameters.printMissingTandems ) {
           var stackTrace = new Error().stack;
-          console.log( 'Uninstrumented Code! Tandem not supplied: ' + (uninstrumentCodeIndex++) + '.\n' +
+          console.log( 'Uninstrumented Code! Tandem not supplied: ' + (uninstrumentedCodeIndex++) + '.\n' +
                        'Stack trace: ' + stackTrace );
         }
 
