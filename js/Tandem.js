@@ -86,25 +86,23 @@ define( function( require ) {
 
       if ( Brand.phetioEnabled && this.enabled ) {
 
+        // Throw an error if the tandem is tandemRequired() but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
           assert && assert( !(this.required && !this.supplied), 'Tandem was required but not supplied' );
         }
 
-        // validateTandems is false and printMissingTandems flag is present for a tandem that is required but not supplied.
-        else if ( phet.phetio.queryParameters.printMissingTandems && (this.required && !this.supplied) ) {
+        // ValidateTandems is false and printMissingTandems flag is present for a tandem that is required but not supplied.
+        if ( phet.phetio.queryParameters.printMissingTandems && (this.required && !this.supplied) ) {
           var stackTrace = new Error().stack;
           console.log( 'Required Tandem not supplied.\n' +
                        'this.id = ' + this.id + '\n' +
                        'Stack trace: ' + stackTrace );
         }
 
-        if ( !type ) {
-          console.log( 'Missing type declaration for ' + this.id );
-        }
+        // ifphetio returns a no-op function, so to test whether a valid "T" wrapper type was passed, we search for the typeName
+        assert && assert( type && type.typeName, 'type must be specified and have a typeName for ' + this.id );
 
-        // ifphetio returns a no-op function, so to test whether a valid T wrapper type was passed, we search for the typeName
-        assert && assert( type && type.typeName, 'type must be specified and have a typeName' );
-
+        // If tandem is tandemOptional, then don't add the instance
         if ( !this.required && !this.supplied ) {
           if ( phet.phetio.queryParameters.printMissingTandems ) {
             var stackTrace2 = new Error().stack;
