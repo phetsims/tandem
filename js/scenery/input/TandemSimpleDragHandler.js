@@ -8,7 +8,6 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var Brand = require( 'BRAND/Brand' );
   var Emitter = require( 'AXON/Emitter' );
   var inherit = require( 'PHET_CORE/inherit' );
   var SimpleDragHandler = require( 'SCENERY/input/SimpleDragHandler' );
@@ -47,7 +46,7 @@ define( function( require ) {
     var optionsCopy = _.clone( options );
 
     // For non-phet-io brands, skip tandem callbacks to save CPU
-    if ( Brand.id === 'phet-io' ) {
+    if ( phet.phetio ) {
 
       // Wrap start/end/drag options (even if they did not exist) to get the PhET-iO instrumentation.
       optionsCopy.start = function( event, trail ) {
@@ -77,7 +76,7 @@ define( function( require ) {
 
     // @private
     this.disposeTandemSimpleDragHandler = function() {
-      if ( Brand.id === 'phet-io' ) {
+      if ( phet.phetio ) {
         options.tandem && options.tandem.removeInstance( self );
       }
     };

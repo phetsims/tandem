@@ -13,7 +13,6 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var toCamelCase = require( 'PHET_CORE/toCamelCase' );
-  var Brand = require( 'BRAND/Brand' );
 
   // text
   var packageString = require( 'text!REPOSITORY/package.json' );
@@ -84,7 +83,7 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
-      if ( Brand.phetioEnabled && this.enabled ) {
+      if ( phet.phetio && this.enabled ) {
 
         // Throw an error if the tandem is tandemRequired() but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -139,7 +138,7 @@ define( function( require ) {
     removeInstance: function( instance ) {
 
       // Only active when running as phet-io
-      if ( Brand.phetioEnabled && this.enabled ) {
+      if ( phet.phetio && this.enabled ) {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
           instanceListeners[ i ].removeInstance( this.id, instance );
         }
@@ -327,7 +326,7 @@ define( function( require ) {
     indicateUninstrumentedCode: function() {
 
       // Guard against undefined errors
-      if ( Brand.phetioEnabled && phet.phetio.queryParameters ) {
+      if ( phet.phetio ) {
 
         // Assert if validating tandems
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -349,8 +348,7 @@ define( function( require ) {
      * @returns {Boolean} If tandems are being validated or not.
      */
     validationEnabled: function() {
-      return Brand.phetioEnabled && phet && phet.phetio && phet.phetio.queryParameters &&
-             phet.phetio.queryParameters.phetioValidateTandems;
+      return phet.phetio && phet.phetio.queryParameters.phetioValidateTandems;
     }
   } );
 
