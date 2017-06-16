@@ -83,7 +83,7 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
-      if ( phet.phetio && this.enabled ) {
+      if ( window.phet && phet.phetio && this.enabled ) {
 
         // Throw an error if the tandem is tandemRequired() but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -138,7 +138,7 @@ define( function( require ) {
     removeInstance: function( instance ) {
 
       // Only active when running as phet-io
-      if ( phet.phetio && this.enabled ) {
+      if ( window.phet && phet.phetio && this.enabled ) {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
           instanceListeners[ i ].removeInstance( this.id, instance );
         }
@@ -326,7 +326,7 @@ define( function( require ) {
     indicateUninstrumentedCode: function() {
 
       // Guard against undefined errors
-      if ( phet.phetio ) {
+      if ( window.phet && phet.phetio ) {
 
         // Assert if validating tandems
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -348,7 +348,7 @@ define( function( require ) {
      * @returns {Boolean} If tandems are being validated or not.
      */
     validationEnabled: function() {
-      return phet.phetio && phet.phetio.queryParameters.phetioValidateTandems;
+      return window.phet && phet.phetio && phet.phetio.queryParameters.phetioValidateTandems;
     }
   } );
 

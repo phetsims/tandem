@@ -46,7 +46,7 @@ define( function( require ) {
     var optionsCopy = _.clone( options );
 
     // For non-phet-io brands, skip tandem callbacks to save CPU
-    if ( phet.phetio ) {
+    if ( window.phet && phet.phetio ) {
 
       // Wrap start/end/drag options (even if they did not exist) to get the PhET-iO instrumentation.
       optionsCopy.start = function( event, trail ) {
@@ -76,7 +76,7 @@ define( function( require ) {
 
     // @private
     this.disposeTandemSimpleDragHandler = function() {
-      if ( phet.phetio ) {
+      if ( window.phet && phet.phetio ) {
         options.tandem && options.tandem.removeInstance( self );
       }
     };
