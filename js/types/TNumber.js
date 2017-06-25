@@ -18,6 +18,7 @@ define( function( require ) {
   // valid values for options.units
   var VALID_UNITS = [
     'amperes',
+    'milliamperes',
     'becquerels',
     'centimeters',
     'centimeters-squared',
