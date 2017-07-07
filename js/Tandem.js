@@ -26,10 +26,10 @@ define( function( require ) {
   // increment names of required tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
   var requiredTandemIndex = 0;
 
-  // increment names of required tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
+  // increment names of optional tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
   var optionalTandemIndex = 0;
 
-  // increment names of required tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
+  // increment names of uninstrumented common code tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
   var uninstrumentedCodeIndex = 0;
 
   /**
