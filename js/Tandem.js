@@ -73,7 +73,7 @@ define( function( require ) {
 
     /**
      * Adds an instance of any type.  For example, it could be an axon Property, scenery Node or Sun button.  Each
-     * item should only be added to the registry once, but that is not enforced here in Tandem.  For PhET-iO, phet-io.js
+     * item should only be added to the registry once, but that is not enforced here in Tandem.  For PhET-iO, phetio.js
      * enforces one entry per ID in phetio.addInstance
      *
      * This is used to register instances with PhET-iO.
