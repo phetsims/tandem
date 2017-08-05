@@ -15,7 +15,6 @@ define( function( require ) {
   // modules
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var phetio = require( 'PHET_IO/phetio' );
 
   var phetioExpressionsString = phet.phetio.queryParameters.phetioExpressions;
   var phetioExpressionsJSON = JSON.parse( phetioExpressionsString );
@@ -49,7 +48,11 @@ define( function( require ) {
 
         // IIFE to capture iteration vars
         (function( wrapper, methodName, stateObjects ) {
-          phetio.simulationStartedEmitter.addListener( function() {
+
+          // load phetio from the globals instead of a requirejs plugin to break a requirejs module cycle.
+          // This is guaranteed to exist because SimLauncher loads phetio early on, and this is only called once
+          // objects start to get wrapped for phet-io
+          window.phet.phetIo.phetio.simulationStartedEmitter.addListener( function() {
             wrapper[ methodName ].apply( wrapper, stateObjects );
           } );
         })( wrapper, methodName, stateObjects );
