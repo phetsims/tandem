@@ -13,7 +13,7 @@ define( function( require ) {
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
-  var toEventOnEmit = require( 'ifphetio!PHET_IO/events/toEventOnEmit' );
+  var toEventOnEmit = require( 'ifphetio!PHET_IO/toEventOnEmit' );
 
   /**
    * Wrapper type for phet/tandem's TandemSimpleDragHandler class.
