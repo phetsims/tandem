@@ -32,14 +32,14 @@ define( function( require ) {
 
     // Generate all emitters in every case to minimize the number of hidden classes,
     // see http://www.html5rocks.com/en/tutorials/speed/v8/
-    this.startedCallbacksForDragStartedEmitter = new Emitter(); // @public (phet-io)
-    this.endedCallbacksForDragStartedEmitter = new Emitter(); // @public (phet-io)
+    this.startedCallbacksForDragStartedEmitter = new Emitter( { indicateCallbacks: false } ); // @public (phet-io)
+    this.endedCallbacksForDragStartedEmitter = new Emitter( { indicateCallbacks: false } ); // @public (phet-io)
 
-    this.startedCallbacksForDraggedEmitter = new Emitter(); // @public (phet-io)
-    this.endedCallbacksForDraggedEmitter = new Emitter(); // @public (phet-io)
+    this.startedCallbacksForDraggedEmitter = new Emitter( { indicateCallbacks: false } ); // @public (phet-io)
+    this.endedCallbacksForDraggedEmitter = new Emitter( { indicateCallbacks: false } ); // @public (phet-io)
 
-    this.startedCallbacksForDragEndedEmitter = new Emitter(); // @public (phet-io)
-    this.endedCallbacksForDragEndedEmitter = new Emitter(); // @public (phet-io)
+    this.startedCallbacksForDragEndedEmitter = new Emitter( { indicateCallbacks: false } ); // @public (phet-io)
+    this.endedCallbacksForDragEndedEmitter = new Emitter( { indicateCallbacks: false } ); // @public (phet-io)
 
     // Clone the options so that we can refer to the original implementations in the
     // augmented callbacks
