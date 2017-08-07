@@ -92,10 +92,9 @@ define( function( require ) {
 
         // ValidateTandems is false and printMissingTandems flag is present for a tandem that is required but not supplied.
         if ( phet.phetio.queryParameters.printMissingTandems && (this.required && !this.supplied) ) {
-          var stackTrace = new Error().stack;
           console.log( 'Required Tandem not supplied.\n' +
                        'this.id = ' + this.id + '\n' +
-                       'Stack trace: ' + stackTrace );
+                       'Stack trace: ' + new Error().stack );
         }
 
         // ifphetio returns a no-op function, so to test whether a valid "T" wrapper type was passed, we search for the typeName
@@ -104,13 +103,13 @@ define( function( require ) {
         // If tandem is tandemOptional, then don't add the instance
         if ( !this.required && !this.supplied ) {
           if ( phet.phetio.queryParameters.printMissingTandems ) {
-            var stackTrace2 = new Error().stack;
+            var stackTrace = new Error().stack;
 
             // Generally PhETFont is not desired because there are so many untandemized instances.
-            if ( stackTrace2.indexOf( 'PhetFont' ) === -1 ) {
+            if ( stackTrace.indexOf( 'PhetFont' ) === -1 ) {
               console.log( 'Optional Tandem not supplied.\n' +
                            'this.id = ' + this.id + '\n' +
-                           'Stack trace: ' + stackTrace2 );
+                           'Stack trace: ' + stackTrace );
             }
           }
 
