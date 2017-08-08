@@ -52,8 +52,8 @@ define( function( require ) {
     };
 
     // Combine the subtype's with events from all parents into a single array, see https://github.com/phetsims/phet-io/issues/1069
-    supertype.allEvents = supertype.allEvents || [];
-    subtype.allEvents = supertype.allEvents.concat( subtype.events || [] );
+    var supertypeEvents = supertype.allEvents || [];
+    subtype.allEvents = supertypeEvents.concat( subtype.events || [] );
     subtype.allMethods = _.extend( {}, supertype.allMethods, methods );
 
     return subtype; // pass back the subtype so it can be returned immediately as a module export
