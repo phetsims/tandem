@@ -16,14 +16,6 @@ define( function( require ) {
   // constants
   var toImplementation = function( method ) {return method.implementation;};
 
-  var setAllEvents = function( type ) {
-    type.events = type.events || [];
-    if ( type.typeName === 'TObject' ) {
-      return type.events;
-    }
-    return type.events.concat( setAllEvents( type.supertype ) );
-  };
-
   /**
    * @param {function} supertype Constructor for the supertype.
    * @param {string} typeName - the name for the type, used for logic (such as TVoid not needing a return, etc)
@@ -60,8 +52,8 @@ define( function( require ) {
     };
 
     // Combine the subtype's with events from all parents into a single array, see https://github.com/phetsims/phet-io/issues/1069
-    subtype.allEvents = setAllEvents( subtype );
-
+    supertype.allEvents = supertype.allEvents || [];
+    subtype.allEvents = supertype.allEvents.concat( subtype.events || [] );
     subtype.allMethods = _.extend( {}, supertype.allMethods, methods );
 
     return subtype; // pass back the subtype so it can be returned immediately as a module export
