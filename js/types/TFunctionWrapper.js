@@ -30,7 +30,7 @@ define( function( require ) {
 
     /**
      * This type constructor is parameterized based on the return type and parameter types.
-     * @param {function} instance - the array to be wrapped
+     * @param {function} instance - the function to be wrapped
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
