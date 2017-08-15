@@ -38,7 +38,12 @@ define( function( require ) {
       TObject.call( instance, phetioID );
       assertTypeOf( instance, 'function' );
     };
-    return phetioInherit( TObject, 'TFunctionWrapper', TFunctionWrapperImpl, {}, {
+
+    // Add the parameter types to the TFunctionWrapper's type name.
+    var typeName = 'TFunctionWrapper( ' + parameterTypes.map( function(parameter){ return parameter.typeName;})
+      .join( ', ' ) + ' )';
+
+    return phetioInherit( TObject, typeName, TFunctionWrapperImpl, {}, {
       documentation: 'Wrapper for the built-in JS function type',
       returnType: returnType,
       parameterTypes: parameterTypes,
