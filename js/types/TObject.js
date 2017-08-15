@@ -119,7 +119,7 @@ define( function( require ) {
     documentation: 'The root of the wrapper object hierarchy',
 
     /**
-     * Decodes the object from a state, used in phetio.setState.  This should be overriden
+     * Decodes the object from a state, used in phetio.setState.  This should be overridden
      * by subclasses.
      * @param o
      * @returns {Object}
@@ -129,7 +129,7 @@ define( function( require ) {
     },
 
     /**
-     * Defaults to reference identity, returning the phetioID of the instance.  Subclasses provide their own
+     * Return the json that TObject is wrapping.  Subclasses provide their own
      * toStateObject implementation to provide structure-based representations.
      * @param {Object} o
      * @returns {string}
@@ -137,7 +137,7 @@ define( function( require ) {
     toStateObject: function( o ) {
       return o === null ? 'null' :
              o === undefined ? 'undefined' :
-             o.phetioID;
+             o;
     },
 
     // Flag if type is only to be used in the data stream, and not interoperated on.
