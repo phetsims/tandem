@@ -137,7 +137,7 @@ define( function( require ) {
     toStateObject: function( o ) {
       return o === null ? 'null' :
              o === undefined ? 'undefined' :
-             o;
+             o.phetioID;
     },
 
     // Flag if type is only to be used in the data stream, and not interoperated on.
