@@ -43,8 +43,11 @@ define( function( require ) {
     // Note: Make sure that added options here are also added to options for inheritance (createSuperTypeTandem)
     // and/or for composition (createTandem) as they make sense.
     this.options = _.extend( {
-      static: false,
-      enabled: true,
+      static: false, // non-static tandems are registered as they are created.  Static tandems are buffered, then the
+                     // buffer is flushed once the sim starts.  Static tandems (for instances created outside of
+                     // SimLauncher) must be stored until listeners are attached so they won't be missed
+      enabled: true, // enabled tandems notify listeners when they are added.  Disabled tandems do not notify listeners
+                     // but children of a disabled tandem may be enabled.
       supplied: true, // if the tandem is not supplied and required, an error will be thrown.
       required: true // require === false means it is an optional tandem
     }, options );
