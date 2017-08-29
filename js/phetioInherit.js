@@ -32,6 +32,16 @@ define( function( require ) {
 
     inherit( supertype, subtype, prototypeMethods, staticProperties );
 
+    staticProperties = staticProperties || {};
+
+    if ( staticProperties.parameterTypes ) {
+      assert && assert ( staticProperties.parameterTypes instanceof Array, 'parameterTypes expected to be array' );
+
+      // Add the parameter types to the TFunctionWrapper's type name.
+      typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameter ) { return parameter.typeName;} )
+        .join( ', ' ) + '>';
+    }
+
     subtype.typeName = typeName;
     subtype.methods = methods;
     subtype.supertype = supertype;
