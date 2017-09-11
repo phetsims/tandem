@@ -86,7 +86,7 @@ define( function( require ) {
      *
      * This is used to register instances with PhET-iO.
      * @param {Object} instance - the instance to add
-     * @param {function} type - the PhET-iO type function, such as TString or TProperty(TNumber('volts'))
+     * @param {function} type - the PhET-iO type function, such as TString or TProperty(TNumber)
      * @public
      */
     addInstance: function( instance, type ) {
