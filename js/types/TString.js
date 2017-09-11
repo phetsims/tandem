@@ -11,8 +11,8 @@ define( function( require ) {
 
   // modules
   var assertTypeOf = require( 'PHET_IO/assertions/assertTypeOf' );
-  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
+  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
   /**

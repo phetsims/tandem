@@ -9,8 +9,8 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
+  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
 
   function TObjectState() { }
 
