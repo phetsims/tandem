@@ -10,20 +10,15 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var assertTypeOf = require( 'PHET_IO/assertions/assertTypeOf' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
   /**
-   * Wrapper type for boolean primitives
-   * @param {boolean} instance
-   * @param {string} phetioID - the full unique tandem name for the instance
    * @constructor
    */
-  function TBoolean( instance, phetioID ) {
-    TObject.call( this, instance, phetioID );
-    assertTypeOf( instance, 'boolean' );
+  function TBoolean() {
+    assert && assert( false, 'should never be called' );
   }
 
   phetioInherit( TObject, 'TBoolean', TBoolean, {}, {

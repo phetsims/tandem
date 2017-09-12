@@ -15,14 +15,10 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
 
   /**
-   *
-   * @param instance
-   * @param phetioID
    * @constructor
    */
-  function TVoid( instance, phetioID ) {
-    TObject.call( this, instance, phetioID );
-    assert && assert( false, 'cannot instantiate TVoid' );
+  function TVoid() {
+    assert && assert( false, 'should never be called' );
   }
 
   phetioInherit( TObject, 'TVoid', TVoid,

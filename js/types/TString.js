@@ -10,20 +10,16 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var assertTypeOf = require( 'PHET_IO/assertions/assertTypeOf' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TObject = require( 'PHET_IO/types/TObject' );
 
   /**
    * Parametric wrapper type constructor for instrumented string instances.
-   * @param {string} instance
-   * @param {string} phetioID - the full unique tandem name for the instance
    * @constructor
    */
-  function TString( instance, phetioID ) {
-    TObject.call( this, instance, phetioID );
-    assertTypeOf( instance, 'string' );
+  function TString() {
+    assert && assert( false, 'should never be called' );
   }
 
   phetioInherit( TObject, 'TString', TString, {}, {
