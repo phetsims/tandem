@@ -166,8 +166,13 @@ define( function( require ) {
 
       var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
 
-      // Any child of something static is also static
-      options = _.extend( { static: this.static, enabled: this.enabled }, options );
+      // Any child of something should be passed these inherited options.
+      options = _.extend( {
+        static: this.static,
+        enabled: this.enabled,
+        supplied: this.supplied,
+        required: this.required
+      }, options );
 
       return new Tandem( string, options );
     },
