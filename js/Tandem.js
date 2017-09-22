@@ -366,15 +366,6 @@ define( function( require ) {
 
   var rootTandem = Tandem.createRootTandem();
 
-  // Tandem checks for listeners added before the Tandem module was loaded.  This is necessary so that phetio.js can
-  // receive notifications about items created during static initialization such as Solute.js
-  // which is created before Sim.js runs.
-  if ( window.tandemPreloadInstanceListeners ) {
-    for ( var i = 0; i < window.tandemPreloadInstanceListeners.length; i++ ) {
-      Tandem.addInstanceListener( window.tandemPreloadInstanceListeners[ i ] );
-    }
-  }
-
   /**
    * @param {string} id - id as a string (or '' for a root id)
    * @constructor
