@@ -58,7 +58,7 @@ define( function( require ) {
     }, options );
 
     // @public (read-only)
-    this.id = ( id !== undefined ) ? id : '';
+    this.id = (id !== undefined) ? id : '';
     this.required = this.options.required;
     this.supplied = this.options.supplied;
 
@@ -164,7 +164,7 @@ define( function( require ) {
       // Make sure the id was provided
       assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
 
-      var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
+      var string = (this.id.length > 0) ? (this.id + '.' + id) : id;
 
       // Any child of something should be passed these inherited options.
       options = _.extend( {
@@ -395,7 +395,7 @@ define( function( require ) {
 
     // @public
     createNextTandem: function() {
-      return new Tandem( this.id + '_' + ( this.groupElementIndex++ ) );
+      return new Tandem( this.id + '_' + (this.groupElementIndex++) );
     }
   } );
 
