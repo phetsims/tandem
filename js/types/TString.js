@@ -15,7 +15,6 @@ define( function( require ) {
   var TObject = require( 'PHET_IO/types/TObject' );
 
   /**
-   * Parametric wrapper type constructor for instrumented string instances.
    * @constructor
    */
   function TString() {
