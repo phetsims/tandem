@@ -55,6 +55,8 @@ define( function( require ) {
        * @returns {Array}
        */
       toStateObject: function( array ) {
+        assert && assert( elementType.toStateObject, elementType.typeName + ' does not have a toStateObject method.');
+
         var json = [];
         for ( var i = 0; i < array.length; i++ ) {
           json.push( elementType.toStateObject( array[ i ] ) );
