@@ -244,7 +244,7 @@ define( function( require ) {
     isLegalAndUsable: function() {
 
       // If we are not in phet-io mode, then the tandem is not legal and usable
-      if ( window.phet && phet.phetio ) {
+      if ( window.phet && !phet.phetio ) {
         return false;
       }
 
