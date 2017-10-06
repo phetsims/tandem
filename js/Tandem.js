@@ -243,6 +243,11 @@ define( function( require ) {
      */
     isLegalAndUsable: function() {
 
+      // If we are not in phet-io mode, then the tandem is not legal and usable
+      if ( window.phet && phet.phetio ) {
+        return false;
+      }
+
       // A tandem is legal if it has been supplied or, if it hasn't been supplied, if it is optional.
       return this.supplied || (this.optional && !this.supplied);
     }
