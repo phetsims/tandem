@@ -19,6 +19,7 @@ define( function( require ) {
 
   // constants
   var packageJSON = JSON.parse( packageString );
+  var PHET_IO_ENABLED = window.phet && window.phet.phetio;
 
   // variables
   var launched = false;
@@ -91,7 +92,7 @@ define( function( require ) {
      */
     addInstance: function( instance, type ) {
 
-      if ( window.phet && phet.phetio && this.enabled ) {
+      if ( PHET_IO_ENABLED && this.enabled ) {
 
         // Throw an error if the tandem is tandemRequired() but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -145,7 +146,7 @@ define( function( require ) {
     removeInstance: function( instance ) {
 
       // Only active when running as phet-io
-      if ( window.phet && phet.phetio && this.enabled ) {
+      if ( PHET_IO_ENABLED && this.enabled ) {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
           instanceListeners[ i ].removeInstance( this.id, instance );
         }
@@ -243,8 +244,8 @@ define( function( require ) {
      */
     isLegalAndUsable: function() {
 
-      // If we are not in phet-io mode, then the tandem is not legal and usable
-      if ( window.phet && !phet.phetio ) {
+      // If we are not in phet-io mode, then the tandem is not legal and usable.
+      if ( !PHET_IO_ENABLED ) {
         return false;
       }
 
@@ -343,7 +344,7 @@ define( function( require ) {
     indicateUninstrumentedCode: function() {
 
       // Guard against undefined errors
-      if ( window.phet && phet.phetio ) {
+      if ( PHET_IO_ENABLED ) {
 
         // Assert if validating tandems
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -365,7 +366,7 @@ define( function( require ) {
      * @returns {Boolean} If tandems are being validated or not.
      */
     validationEnabled: function() {
-      return window.phet && phet.phetio && phet.phetio.queryParameters.phetioValidateTandems;
+      return PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
     }
   } );
 
