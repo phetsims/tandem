@@ -77,9 +77,6 @@ define( function( require ) {
 
   inherit( Object, Tandem, {
 
-    // @public (read-only) permit checking whether something is probably a Tandem instance for error checking
-    isTandem: true,
-
     /**
      * Adds an instance of any type.  For example, it could be an axon Property, scenery Node or Sun button.  Each
      * item should only be added to the registry once, but that is not enforced here in Tandem.  For PhET-iO, phetio.js
