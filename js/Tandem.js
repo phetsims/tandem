@@ -19,7 +19,7 @@ define( function( require ) {
 
   // constants
   var packageJSON = JSON.parse( packageString );
-  var PHET_IO_ENABLED = window.phet && window.phet.phetio;
+  var PHET_IO_ENABLED = !!(window.phet && window.phet.phetio);
 
   // variables
   var launched = false;
@@ -85,9 +85,10 @@ define( function( require ) {
      * This is used to register instances with PhET-iO.
      * @param {Object} instance - the instance to add
      * @param {function} type - the PhET-iO type function, such as TString or TProperty(TNumber)
+     * @param {Object} options
      * @public
      */
-    addInstance: function( instance, type ) {
+    addInstance: function( instance, type, options ) {
 
       if ( PHET_IO_ENABLED && this.enabled ) {
 
@@ -129,7 +130,7 @@ define( function( require ) {
         }
         else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
-            instanceListeners[ i ].addInstance( this.id, instance, type );
+            instanceListeners[ i ].addInstance( this.id, instance, type, options );
           }
         }
       }
