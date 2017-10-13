@@ -21,9 +21,6 @@ define( function( require ) {
    */
   function TSimIFrameAPI( instance, phetioID ) {
     TObject.call( this, instance, phetioID );
-    assert && assert( false, 'cannot instantiate TSimIFrameAPI' );
-
-
   }
 
   phetioInherit( TObject, 'TSimIFrameAPI', TSimIFrameAPI,
