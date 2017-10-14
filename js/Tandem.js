@@ -126,7 +126,7 @@ define( function( require ) {
         }
 
         if ( this.static && !launched ) {
-          staticInstances.push( { tandem: this, instance: instance, type: type } );
+          staticInstances.push( { tandem: this, instance: instance, type: type, options: options } );
         }
         else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
@@ -319,7 +319,7 @@ define( function( require ) {
       launched = true;
       while ( staticInstances.length > 0 ) {
         var staticInstance = staticInstances.shift();
-        staticInstance.tandem.addInstance( staticInstance.instance, staticInstance.type );
+        staticInstance.tandem.addInstance( staticInstance.instance, staticInstance.type, staticInstance.options );
       }
     },
 
