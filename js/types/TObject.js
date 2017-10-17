@@ -138,11 +138,7 @@ define( function( require ) {
       return o === null ? 'null' :
              o === undefined ? 'undefined' :
              o.phetioID;
-    },
-
-    // Flag if type is only to be used in the data stream, and not interoperated on.
-    // See phetio.getAPIForType() for more information.
-    dataStreamOnlyType: false
+    }
   } );
 
   phetioNamespace.register( 'TObject', TObject );
