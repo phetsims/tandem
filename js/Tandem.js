@@ -408,10 +408,10 @@ define( function( require ) {
 
   inherit( Tandem, SupertypeTandem, {
 
-    // @public - Override to make no-op, see createSupertypeTandem
+    // @public - This method overrides the method from Tandem to make no-op, see Tandem.createSupertypeTandem
     addInstance: function( instance, type ) {},
 
-    // @public - Override to make no-op, see createSupertypeTandem
+    // @public - This method overrides the method from Tandem to make no-op, see Tandem.createSupertypeTandem
     removeInstance: function( instance ) {}
   } );
 
