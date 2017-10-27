@@ -142,6 +142,9 @@ define( function( require ) {
      * @public
      */
     removeInstance: function( instance ) {
+      if ( !this.required && !this.supplied ) {
+        return;
+      }
 
       // Only active when running as phet-io
       if ( PHET_IO_ENABLED && this.enabled ) {
