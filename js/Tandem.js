@@ -45,11 +45,6 @@ define( function( require ) {
     // and/or for composition (createTandem) as they make sense.
     this.options = _.extend( {
 
-      // Non-static tandems are registered as they are created. Static tandems are buffered, then the
-      // buffer is flushed once the sim starts. Static tandems (for instances created outside of
-      // SimLauncher) must be stored until listeners are attached so they won't be missed.
-      static: false,
-
       // Enabled tandems notify listeners when they are added. Disabled tandems do not notify listeners,
       // but children of a disabled tandem may be enabled.
       enabled: true,
@@ -64,11 +59,10 @@ define( function( require ) {
     this.supplied = this.options.supplied;
 
     // @private (read-only)
-    this.static = this.options.static;
     this.enabled = this.options.enabled;
   }
 
-  var staticInstances = [];
+  var bufferedInstances = [];
 
   tandemNamespace.register( 'Tandem', Tandem );
 
@@ -125,8 +119,8 @@ define( function( require ) {
           return;
         }
 
-        if ( this.static && !launched ) {
-          staticInstances.push( { tandem: this, instance: instance, type: type, options: options } );
+        if ( !launched ) {
+          bufferedInstances.push( { tandem: this, instance: instance, type: type, options: options } );
         }
         else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
@@ -170,7 +164,6 @@ define( function( require ) {
 
       // Any child of something should be passed these inherited options.
       options = _.extend( {
-        static: this.static,
         enabled: this.enabled,
         supplied: this.supplied,
         required: this.required
@@ -222,7 +215,6 @@ define( function( require ) {
       var headID = this.id.substring( 0, lastIndexOfDot );
 
       return new Tandem( headID, {
-        static: this.static,
         required: this.required,
         supplied: this.supplied,
         enabled: this.enabled
@@ -311,18 +303,18 @@ define( function( require ) {
      * @returns {Tandem}
      */
     createStaticTandem: function( name ) {
-      return Tandem.createRootTandem().createTandem( name, { static: true } );
+      return Tandem.createRootTandem().createTandem( name );
     },
 
     /**
-     * When the simulation is launched, all static instances are registered.
+     * When all listeners are listening, all buffered instances are registered.
      */
     launch: function() {
       assert && assert( !launched, 'Tandem was launched twice' );
       launched = true;
-      while ( staticInstances.length > 0 ) {
-        var staticInstance = staticInstances.shift();
-        staticInstance.tandem.addInstance( staticInstance.instance, staticInstance.type, staticInstance.options );
+      while ( bufferedInstances.length > 0 ) {
+        var instance = bufferedInstances.shift();
+        instance.tandem.addInstance( instance.instance, instance.type, instance.options );
       }
     },
 
