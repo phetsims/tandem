@@ -22,7 +22,7 @@ define( function( require ) {
    * @constructor
    */
   function TTandem( arrayInstance, phetioID ) {
-    assertInstanceOf( arrayInstance, phet.tandem.Tandem );
+    assert && assertInstanceOf( arrayInstance, phet.tandem.Tandem );
     TObject.call( this, arrayInstance, phetioID );
   }
 
