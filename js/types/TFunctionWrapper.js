@@ -10,7 +10,6 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var assertTypeOf = require( 'PHET_IO/assertions/assertTypeOf' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
   var TObject = require( 'PHET_IO/types/TObject' );
@@ -36,7 +35,7 @@ define( function( require ) {
      */
     var TFunctionWrapperImpl = function TFunctionWrapperImpl( instance, phetioID ) {
       TObject.call( instance, phetioID );
-      assertTypeOf( instance, 'function' );
+      assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
     };
 
     return phetioInherit( TObject, 'TFunctionWrapper', TFunctionWrapperImpl, {}, {
