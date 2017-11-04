@@ -22,8 +22,8 @@ define( function( require ) {
    * @constructor
    */
   function TTandem( arrayInstance, phetioID ) {
-    TObject.call( this, arrayInstance, phetioID );
     assertInstanceOf( arrayInstance, phet.tandem.Tandem );
+    TObject.call( this, arrayInstance, phetioID );
   }
 
   phetioInherit( TObject, 'TTandem', TTandem, {}, {
