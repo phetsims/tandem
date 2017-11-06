@@ -41,8 +41,8 @@ define( function( require ) {
   function Tandem( id, options ) {
 
     // @private - these options are stored on the instance so they can be passed through the super type inheritance chain.
-    // Note: Make sure that added options here are also added to options for inheritance (createSuperTypeTandem)
-    // and/or for composition (createTandem) as they make sense.
+    // Note: Make sure that added options here are also added to options for inheritance (createSupertypeTandem)
+    // and/or for composition (createTandem) as they make sense.         
     this.options = _.extend( {
 
       // Enabled tandems notify listeners when they are added. Disabled tandems do not notify listeners,
