@@ -24,12 +24,6 @@ define( function( require ) {
   // variables
   var launched = false;
 
-  // increment names of required tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
-  var requiredTandemIndex = 0;
-
-  // increment names of optional tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
-  var optionalTandemIndex = 0;
-
   // increment names of uninstrumented common code tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
   var uninstrumentedCodeIndex = 0;
 
@@ -42,7 +36,7 @@ define( function( require ) {
 
     // @private - these options are stored on the instance so they can be passed through the super type inheritance chain.
     // Note: Make sure that added options here are also added to options for inheritance (createSupertypeTandem)
-    // and/or for composition (createTandem) as they make sense.         
+    // and/or for composition (createTandem) as they make sense.
     this.options = _.extend( {
 
       // Enabled tandems notify listeners when they are added. Disabled tandems do not notify listeners,
@@ -253,10 +247,7 @@ define( function( require ) {
      * @returns {Tandem}
      */
     tandemRequired: function() {
-      return rootTandem.createTandem( 'requiredTandem' + (requiredTandemIndex++), {
-        required: true,
-        supplied: false
-      } );
+      return requiredTandem;
     },
 
     /**
@@ -266,10 +257,7 @@ define( function( require ) {
      * @returns {Tandem}
      */
     tandemOptional: function() {
-      return rootTandem.createTandem( 'optionalTandem' + (optionalTandemIndex++), {
-        required: false,
-        supplied: false
-      } );
+      return optionalTandem;
     },
 
     /**
@@ -364,6 +352,16 @@ define( function( require ) {
   } );
 
   var rootTandem = Tandem.createRootTandem();
+
+  var optionalTandem = rootTandem.createTandem( 'optionalTandem', {
+    required: false,
+    supplied: false
+  } );
+
+  var requiredTandem = rootTandem.createTandem( 'requiredTandem', {
+    required: true,
+    supplied: false
+  } );
 
   /**
    * @param {string} id - id as a string (or '' for a root id)
