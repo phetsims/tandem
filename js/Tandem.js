@@ -73,7 +73,7 @@ define( function( require ) {
      * This is used to register instances with PhET-iO.
      * @param {Object} instance - the instance to add
      * @param {function} type - the PhET-iO type function, such as TString or TProperty(TNumber)
-     * @param {Object} options
+     * @param {Object} [options] - tandem flags, see phetio.js
      * @public
      */
     addInstance: function( instance, type, options ) {
