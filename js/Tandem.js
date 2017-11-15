@@ -35,7 +35,7 @@ define( function( require ) {
   function Tandem( id, options ) {
 
     // @private - these options are stored on the instance so they can be passed through the super type inheritance chain.
-    // Note: Make sure that added options here are also added to options for inheritance (createSupertypeTandem)
+    // Note: Make sure that added options here are also added to options for inheritance
     // and/or for composition (createTandem) as they make sense.
     this.options = _.extend( {
 
@@ -72,13 +72,14 @@ define( function( require ) {
      *
      * This is used to register instances with PhET-iO.
      * @param {Object} instance - the instance to add
-     * @param {function} type - the PhET-iO type function, such as TString or TProperty(TNumber)
-     * @param {Object} [options] - tandem flags, see phetio.js
+     * @param {Object} options - tandem flags, see phetio.js, must include the phetioType (so technically is not optional)
      * @public
      */
-    addInstance: function( instance, type, options ) {
+    addInstance: function( instance, options ) {
 
       if ( PHET_IO_ENABLED && this.enabled ) {
+
+        var type = options.phetioType;
 
         // Throw an error if the tandem is tandemRequired() but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -93,7 +94,9 @@ define( function( require ) {
         }
 
         // ifphetio returns a no-op function, so to test whether a valid "T" wrapper type was passed, we search for the typeName
-        assert && assert( type && type.typeName, 'type must be specified and have a typeName for ' + this.id );
+        if ( this.supplied ) {
+          assert && assert( type && type.typeName, 'type must be specified and have a typeName for ' + this.id );
+        }
 
         // If tandem is tandemOptional, then don't add the instance
         if ( !this.required && !this.supplied ) {
@@ -114,7 +117,7 @@ define( function( require ) {
         }
 
         if ( !launched ) {
-          bufferedInstances.push( { tandem: this, instance: instance, type: type, options: options } );
+          bufferedInstances.push( { tandem: this, instance: instance, options: options } );
         }
         else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
@@ -216,16 +219,6 @@ define( function( require ) {
     },
 
     /**
-     * When using subtyping, the instance listeners must only be notified once rather than once for every level
-     * in the inheritance hierarchy.  When a subtype constructor has a tandem.addInstance call, it should
-     * pass a supertype tandem to the parent constructor so that it won't try to register the item twice.
-     * @returns {SupertypeTandem}
-     */
-    createSupertypeTandem: function() {
-      return new SupertypeTandem( this.id, this.options );
-    },
-
-    /**
      * Return true if this tandem is legal and can be used by the phet-io system.
      * @returns {boolean}
      */
@@ -302,7 +295,7 @@ define( function( require ) {
       launched = true;
       while ( bufferedInstances.length > 0 ) {
         var instance = bufferedInstances.shift();
-        instance.tandem.addInstance( instance.instance, instance.type, instance.options );
+        instance.tandem.addInstance( instance.instance, instance.options );
       }
     },
 
@@ -387,27 +380,5 @@ define( function( require ) {
     }
   } );
 
-  /**
-   * @param {string} id - id as a string (or '' for a root id)
-   * @param {Object} options
-   * @constructor
-   * @private create with Tandem.createSupertypeTandem
-   */
-  function SupertypeTandem( id, options ) {
-    Tandem.call( this, id, options );
-  }
-
-  tandemNamespace.register( 'Tandem.SupertypeTandem', SupertypeTandem );
-
-  inherit( Tandem, SupertypeTandem, {
-
-    // @public - This method overrides the method from Tandem to make no-op, see Tandem.createSupertypeTandem
-    addInstance: function( instance, type, options ) {},
-
-    // @public - This method overrides the method from Tandem to make no-op, see Tandem.createSupertypeTandem
-    removeInstance: function( instance ) {}
-  } );
-
   return Tandem;
 } );
-
