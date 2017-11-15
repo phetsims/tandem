@@ -12,8 +12,8 @@ define( function( require ) {
   var assertInstanceOf = require( 'ifphetio!PHET_IO/assertInstanceOf' );
   var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  var TObject = require( 'ifphetio!PHET_IO/types/TObject' );
-  var TString = require( 'ifphetio!PHET_IO/types/TString' );
+  var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
+  var StringIO = require( 'ifphetio!PHET_IO/types/StringIO' );
 
   /**
    * Wrapper type for phet/tandem's Tandem class.
@@ -23,10 +23,10 @@ define( function( require ) {
    */
   function TTandem( arrayInstance, phetioID ) {
     assert && assertInstanceOf( arrayInstance, phet.tandem.Tandem );
-    TObject.call( this, arrayInstance, phetioID );
+    ObjectIO.call( this, arrayInstance, phetioID );
   }
 
-  phetioInherit( TObject, 'TTandem', TTandem, {}, {
+  phetioInherit( ObjectIO, 'TTandem', TTandem, {}, {
     documentation: 'Tandems give sim elements their phet-io identifiers',
 
     /**
@@ -35,7 +35,7 @@ define( function( require ) {
      * @returns {Object}
      */
     toStateObject: function( instance ) {
-      return TString.toStateObject( instance.id );
+      return StringIO.toStateObject( instance.id );
     },
 
     /**
@@ -44,7 +44,7 @@ define( function( require ) {
      * @returns {Tandem}
      */
     fromStateObject: function( stateObject ) {
-      return new phet.tandem.Tandem( TString.fromStateObject( stateObject ) );
+      return new phet.tandem.Tandem( StringIO.fromStateObject( stateObject ) );
     }
   } );
 
