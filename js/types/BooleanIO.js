@@ -17,11 +17,11 @@ define( function( require ) {
   /**
    * @constructor
    */
-  function TBoolean() {
+  function BooleanIO() {
     assert && assert( false, 'should never be called' );
   }
 
-  phetioInherit( TObject, 'TBoolean', TBoolean, {}, {
+  phetioInherit( TObject, 'BooleanIO', BooleanIO, {}, {
     documentation: 'Wrapper for the built-in JS boolean type (true/false)',
 
     /**
@@ -43,7 +43,7 @@ define( function( require ) {
     }
   } );
 
-  phetioNamespace.register( 'TBoolean', TBoolean );
+  phetioNamespace.register( 'BooleanIO', BooleanIO );
 
-  return TBoolean;
+  return BooleanIO;
 } );

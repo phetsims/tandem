@@ -1,0 +1,18 @@
+diff a/js/types/NumberIO.js b/js/types/NumberIO.js	(rejected hunks)
+@@ -17,13 +17,13 @@ define( function( require ) {
+   /**
+    * @constructor
+    */
+-  function TNumber() {
++  function NumberIO() {
+     assert && assert( false, 'should never be called' );
+   }
+ 
+-  phetioNamespace.register( 'TNumber', TNumber );
++  phetioNamespace.register( 'NumberIO', NumberIO );
+ 
+-  return phetioInherit( TObject, 'TNumber', TNumber, {}, {
++  return phetioInherit( TObject, 'NumberIO', NumberIO, {}, {
+     documentation: 'Wrapper for the built-in JS number type (floating point, but also represents integers)',
+ 
+     /**

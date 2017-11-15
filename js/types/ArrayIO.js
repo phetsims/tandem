@@ -20,7 +20,7 @@ define( function( require ) {
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
-  function TArray( elementType ) {
+  function ArrayIO( elementType ) {
 
     /**
      * This type constructor is parameterized based on the elementType.
@@ -30,9 +30,9 @@ define( function( require ) {
      */
     var TArrayImpl = function TArrayImpl( arrayInstance, phetioID ) {
       TObject.call( this, arrayInstance, phetioID );
-      assert && assert( Array.isArray( arrayInstance ), 'TArray should wrap array instances' );
+      assert && assert( Array.isArray( arrayInstance ), 'ArrayIO should wrap array instances' );
     };
-    return phetioInherit( TObject, 'TArray', TArrayImpl, {}, {
+    return phetioInherit( TObject, 'ArrayIO', TArrayImpl, {}, {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
       elementType: elementType,
 
@@ -71,7 +71,7 @@ define( function( require ) {
     } );
   }
 
-  phetioNamespace.register( 'TArray', TArray );
+  phetioNamespace.register( 'ArrayIO', ArrayIO );
 
-  return TArray;
+  return ArrayIO;
 } );

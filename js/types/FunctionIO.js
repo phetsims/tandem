@@ -21,7 +21,7 @@ define( function( require ) {
    * @param {function[]} parameterTypes - wrapper TTypes for the individual arguments of the wrapped function
    * @constructor
    */
-  function TFunctionWrapper( returnType, parameterTypes ) {
+  function FunctionIO( returnType, parameterTypes ) {
     for ( var i = 0; i < parameterTypes.length; i++ ) {
       var parameterType = parameterTypes[ i ];
       assert && assert( !!parameterType, 'parameter type was not truthy' );
@@ -38,7 +38,7 @@ define( function( require ) {
       assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
     };
 
-    return phetioInherit( TObject, 'TFunctionWrapper', TFunctionWrapperImpl, {}, {
+    return phetioInherit( TObject, 'FunctionIO', TFunctionWrapperImpl, {}, {
       documentation: 'Wrapper for the built-in JS function type',
       returnType: returnType,
       parameterTypes: parameterTypes,
@@ -46,7 +46,7 @@ define( function( require ) {
     } );
   }
 
-  phetioNamespace.register( 'TFunctionWrapper', TFunctionWrapper );
+  phetioNamespace.register( 'FunctionIO', FunctionIO );
 
-  return TFunctionWrapper;
+  return FunctionIO;
 } );
