@@ -18,7 +18,7 @@ define( function( require ) {
 
   /**
    * @param {function} supertype Constructor for the supertype.
-   * @param {string} typeName - the name for the type, used for logic (such as TVoid not needing a return, etc)
+   * @param {string} typeName - the name for the type, used for logic (such as VoidIO not needing a return, etc)
    * @param {function} subtype Constructor for the subtype. Generally should contain supertype.call( this, ... )
    * @param {Object} [methods] object containing properties that will be set on the prototype.
    * @param {Object} [staticProperties] object containing properties that will be set on the constructor function itself
@@ -53,7 +53,7 @@ define( function( require ) {
       if ( this.methods[ methodName ] ) {
         return this.methods[ methodName ];
       }
-      else if ( typeName === 'TObject' ) {
+      else if ( typeName === 'ObjectIO' ) {
         return null;
       }
       else {
