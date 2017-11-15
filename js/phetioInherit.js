@@ -37,7 +37,7 @@ define( function( require ) {
     if ( staticProperties.parameterTypes ) {
       assert && assert ( staticProperties.parameterTypes instanceof Array, 'parameterTypes expected to be array' );
 
-      // Add the parameter types to the TFunctionWrapper's type name.
+      // Add the parameter types to the FunctionIO's type name.
       typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameter ) { return parameter.typeName;} )
         .join( ', ' ) + '>';
     }
