@@ -12,16 +12,16 @@ define( function( require ) {
   // modules
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/types/TObject' );
+  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
    * @constructor
    */
-  function TString() {
+  function StringIO() {
     assert && assert( false, 'should never be called' );
   }
 
-  phetioInherit( TObject, 'TString', TString, {}, {
+  phetioInherit( ObjectIO, 'StringIO', StringIO, {}, {
     documentation: 'Wrapper for the built-in JS string type',
 
     /**
@@ -43,7 +43,7 @@ define( function( require ) {
     }
   } );
 
-  phetioNamespace.register( 'TString', TString );
+  phetioNamespace.register( 'StringIO', StringIO );
 
-  return TString;
+  return StringIO;
 } );

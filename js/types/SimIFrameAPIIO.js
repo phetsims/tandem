@@ -11,7 +11,7 @@ define( function( require ) {
   // modules
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/types/TObject' );
+  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
    *
@@ -19,11 +19,11 @@ define( function( require ) {
    * @param phetioID
    * @constructor
    */
-  function TSimIFrameAPI( instance, phetioID ) {
-    TObject.call( this, instance, phetioID );
+  function SimIFrameAPIIO( instance, phetioID ) {
+    ObjectIO.call( this, instance, phetioID );
   }
 
-  phetioInherit( TObject, 'TSimIFrameAPI', TSimIFrameAPI,
+  phetioInherit( ObjectIO, 'SimIFrameAPIIO', SimIFrameAPIIO,
 
     // Instance methods
     {},
@@ -35,7 +35,7 @@ define( function( require ) {
     }
   );
 
-  phetioNamespace.register( 'TSimIFrameAPI', TSimIFrameAPI );
+  phetioNamespace.register( 'SimIFrameAPIIO', SimIFrameAPIIO );
 
-  return TSimIFrameAPI;
+  return SimIFrameAPIIO;
 } );

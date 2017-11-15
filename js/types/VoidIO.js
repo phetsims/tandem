@@ -12,16 +12,16 @@ define( function( require ) {
   // modules
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/types/TObject' );
+  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
    * @constructor
    */
-  function TVoid() {
+  function VoidIO() {
     assert && assert( false, 'should never be called' );
   }
 
-  phetioInherit( TObject, 'TVoid', TVoid,
+  phetioInherit( ObjectIO, 'VoidIO', VoidIO,
 
     // Instance methods
     {},
@@ -32,7 +32,7 @@ define( function( require ) {
     }
   );
 
-  phetioNamespace.register( 'TVoid', TVoid );
+  phetioNamespace.register( 'VoidIO', VoidIO );
 
-  return TVoid;
+  return VoidIO;
 } );

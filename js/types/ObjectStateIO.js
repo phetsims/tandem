@@ -1,7 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * TObjectState is used for using the structured cloning algorithm for transmitting data across frames
+ * ObjectStateIO is used for using the structured cloning algorithm for transmitting data across frames
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
@@ -12,9 +12,9 @@ define( function( require ) {
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
 
-  function TObjectState() { }
+  function ObjectStateIO() { }
 
-  phetioInherit( window.Object, 'TObjectState', TObjectState, {}, {
+  phetioInherit( window.Object, 'ObjectStateIO', ObjectStateIO, {}, {
 
     /**
      * Identity function for deserialization.
@@ -35,7 +35,7 @@ define( function( require ) {
     }
   } );
 
-  phetioNamespace.register( 'TObjectState', TObjectState );
+  phetioNamespace.register( 'ObjectStateIO', ObjectStateIO );
 
-  return TObjectState;
+  return ObjectStateIO;
 } );

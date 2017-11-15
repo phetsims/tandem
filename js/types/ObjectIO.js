@@ -1,7 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * TObject is the root of the wrapper type hierarchy.  All wrapper types extend from TObject.
+ * ObjectIO is the root of the wrapper type hierarchy.  All wrapper types extend from ObjectIO.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -14,12 +14,12 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
 
   /**
-   * Main constructor for TObject base wrapper type.
+   * Main constructor for ObjectIO base wrapper type.
    * @param {Object} instance
    * @param {string} phetioID
    * @constructor
    */
-  function TObject( instance, phetioID ) {
+  function ObjectIO( instance, phetioID ) {
     assert && assert( instance, 'instance should be truthy' );
     assert && assert( phetioID, 'phetioID should be truthy' );
 
@@ -30,9 +30,9 @@ define( function( require ) {
     this.phetioID = phetioID;
   }
 
-  // TObject inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
-  // However, when serialized, the TObject supertype is reported as null (not sent in the JSON).
-  phetioInherit( window.Object, 'TObject', TObject, {}, {
+  // ObjectIO inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
+  // However, when serialized, the ObjectIO supertype is reported as null (not sent in the JSON).
+  phetioInherit( window.Object, 'ObjectIO', ObjectIO, {}, {
     documentation: 'The root of the wrapper object hierarchy',
 
     /**
@@ -46,7 +46,7 @@ define( function( require ) {
     },
 
     /**
-     * Return the json that TObject is wrapping.  Subclasses provide their own
+     * Return the json that ObjectIO is wrapping.  Subclasses provide their own
      * toStateObject implementation to provide structure-based representations.
      * @param {Object} o
      * @returns {string}
@@ -58,7 +58,7 @@ define( function( require ) {
     }
   } );
 
-  phetioNamespace.register( 'TObject', TObject );
+  phetioNamespace.register( 'ObjectIO', ObjectIO );
 
-  return TObject;
+  return ObjectIO;
 } );

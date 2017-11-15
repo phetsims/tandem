@@ -12,11 +12,11 @@ define( function( require ) {
   // modules
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/types/TObject' );
+  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
    * Parametric wrapper type constructor.  Given an element type, this function returns an appropriate array wrapper type.
-   * @param {TObject} elementType - wrapper type of the individual elements in the array. If loaded by phet (not phet-io)
+   * @param {ObjectIO} elementType - wrapper type of the individual elements in the array. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
@@ -29,10 +29,10 @@ define( function( require ) {
      * @constructor
      */
     var TArrayImpl = function TArrayImpl( arrayInstance, phetioID ) {
-      TObject.call( this, arrayInstance, phetioID );
+      ObjectIO.call( this, arrayInstance, phetioID );
       assert && assert( Array.isArray( arrayInstance ), 'ArrayIO should wrap array instances' );
     };
-    return phetioInherit( TObject, 'ArrayIO', TArrayImpl, {}, {
+    return phetioInherit( ObjectIO, 'ArrayIO', TArrayImpl, {}, {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
       elementType: elementType,
 

@@ -12,7 +12,7 @@ define( function( require ) {
   // modules
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/types/TObject' );
+  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
    * @constructor
@@ -21,7 +21,7 @@ define( function( require ) {
     assert && assert( false, 'should never be called' );
   }
 
-  phetioInherit( TObject, 'BooleanIO', BooleanIO, {}, {
+  phetioInherit( ObjectIO, 'BooleanIO', BooleanIO, {}, {
     documentation: 'Wrapper for the built-in JS boolean type (true/false)',
 
     /**

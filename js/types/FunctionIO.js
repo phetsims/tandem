@@ -12,7 +12,7 @@ define( function( require ) {
   // modules
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var TObject = require( 'PHET_IO/types/TObject' );
+  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
    * Parametric wrapper type constructor--given return type and parameter types, this function returns a type wrapper for
@@ -34,11 +34,11 @@ define( function( require ) {
      * @constructor
      */
     var TFunctionWrapperImpl = function TFunctionWrapperImpl( instance, phetioID ) {
-      TObject.call( instance, phetioID );
+      ObjectIO.call( instance, phetioID );
       assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
     };
 
-    return phetioInherit( TObject, 'FunctionIO', TFunctionWrapperImpl, {}, {
+    return phetioInherit( ObjectIO, 'FunctionIO', TFunctionWrapperImpl, {}, {
       documentation: 'Wrapper for the built-in JS function type',
       returnType: returnType,
       parameterTypes: parameterTypes,
