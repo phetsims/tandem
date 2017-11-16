@@ -17,8 +17,8 @@ define( function( require ) {
   /**
    * Parametric wrapper type constructor--given return type and parameter types, this function returns a type wrapper for
    * that class of functions.
-   * @param {function} returnType - wrapper TType of the return type of the wrapped function
-   * @param {function[]} parameterTypes - wrapper TTypes for the individual arguments of the wrapped function
+   * @param {function} returnType - wrapper IO Type of the return type of the wrapped function
+   * @param {function[]} parameterTypes - wrapper IO Types for the individual arguments of the wrapped function
    * @constructor
    */
   function FunctionIO( returnType, parameterTypes ) {
@@ -33,7 +33,7 @@ define( function( require ) {
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var FunctionIOImpl = function TFunctionWrapperImpl( instance, phetioID ) {
+    var FunctionIOImpl = function FunctionIOImpl( instance, phetioID ) {
       ObjectIO.call( instance, phetioID );
       assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
     };

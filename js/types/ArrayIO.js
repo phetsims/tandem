@@ -28,7 +28,7 @@ define( function( require ) {
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var ArrayIOImpl = function TArrayImpl( arrayInstance, phetioID ) {
+    var ArrayIOImpl = function ArrayIOImpl( arrayInstance, phetioID ) {
       ObjectIO.call( this, arrayInstance, phetioID );
       assert && assert( Array.isArray( arrayInstance ), 'ArrayIO should wrap array instances' );
     };
