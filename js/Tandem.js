@@ -103,7 +103,7 @@ define( function( require ) {
           if ( phet.phetio.queryParameters.printMissingTandems ) {
             var stackTrace = new Error().stack;
 
-            // Generally PhETFont is not desired because there are so many untandemized instances.
+            // Generally Font is not desired because there are so many untandemized instances.
             if ( stackTrace.indexOf( 'PhetFont' ) === -1 ) {
               console.log( 'Optional Tandem not supplied.\n' +
                            'this.id = ' + this.id + '\n' +
