@@ -33,12 +33,12 @@ define( function( require ) {
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var TFunctionWrapperImpl = function TFunctionWrapperImpl( instance, phetioID ) {
+    var FunctionIOImpl = function TFunctionWrapperImpl( instance, phetioID ) {
       ObjectIO.call( instance, phetioID );
       assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
     };
 
-    return phetioInherit( ObjectIO, 'FunctionIO', TFunctionWrapperImpl, {}, {
+    return phetioInherit( ObjectIO, 'FunctionIO', FunctionIOImpl, {}, {
       documentation: 'Wrapper for the built-in JS function type',
       returnType: returnType,
       parameterTypes: parameterTypes,

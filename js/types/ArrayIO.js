@@ -28,11 +28,11 @@ define( function( require ) {
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var TArrayImpl = function TArrayImpl( arrayInstance, phetioID ) {
+    var ArrayIOImpl = function TArrayImpl( arrayInstance, phetioID ) {
       ObjectIO.call( this, arrayInstance, phetioID );
       assert && assert( Array.isArray( arrayInstance ), 'ArrayIO should wrap array instances' );
     };
-    return phetioInherit( ObjectIO, 'ArrayIO', TArrayImpl, {}, {
+    return phetioInherit( ObjectIO, 'ArrayIO', ArrayIOImpl, {}, {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
       elementType: elementType,
 
