@@ -24,13 +24,13 @@ define( function( require ) {
 
     /**
      * This type constructor is parameterized based on the elementType.
-     * @param {Object[]} arrayInstance - the array to be wrapped
+     * @param {Object[]} array - the array to be wrapped
      * @param {string} phetioID - the full unique tandem name for the instance
      * @constructor
      */
-    var ArrayIOImpl = function ArrayIOImpl( arrayInstance, phetioID ) {
-      ObjectIO.call( this, arrayInstance, phetioID );
-      assert && assert( Array.isArray( arrayInstance ), 'ArrayIO should wrap array instances' );
+    var ArrayIOImpl = function ArrayIOImpl( array, phetioID ) {
+      assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
+      ObjectIO.call( this, array, phetioID );
     };
     return phetioInherit( ObjectIO, 'ArrayIO', ArrayIOImpl, {}, {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
@@ -55,6 +55,7 @@ define( function( require ) {
        * @returns {Array}
        */
       toStateObject: function( array ) {
+        assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
         assert && assert( elementType.toStateObject, elementType.typeName + ' does not have a toStateObject method.');
 
         var json = [];
@@ -64,9 +65,10 @@ define( function( require ) {
         return json;
       },
 
-      setValue: function( instance, elements ) {
-        instance.length = 0;
-        instance.push.apply( instance, elements );
+      setValue: function( array, elements ) {
+        assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
+        array.length = 0;
+        array.push.apply( array, elements );
       }
     } );
   }

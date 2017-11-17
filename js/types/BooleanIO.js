@@ -30,6 +30,7 @@ define( function( require ) {
      * @returns {Object}
      */
     fromStateObject: function( stateObject ) {
+      assert && assert( typeof value === 'boolean', 'value should be boolean' );
       return stateObject;
     },
 
@@ -39,6 +40,7 @@ define( function( require ) {
      * @returns {Object}
      */
     toStateObject: function( value ) {
+      assert && assert( typeof value === 'boolean', 'value should be boolean' );
       return value;
     }
   } );

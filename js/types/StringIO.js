@@ -30,6 +30,7 @@ define( function( require ) {
      * @returns {Object}
      */
     fromStateObject: function( stateObject ) {
+      assert && assert( typeof stateObject === 'string', 'value should be string' );
       return stateObject;
     },
 
@@ -39,6 +40,7 @@ define( function( require ) {
      * @returns {Object}
      */
     toStateObject: function( value ) {
+      assert && assert( typeof value === 'string', 'value should be string, but it was ' + (typeof value) );
       return value;
     }
   } );

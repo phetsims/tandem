@@ -34,8 +34,8 @@ define( function( require ) {
      * @constructor
      */
     var FunctionIOImpl = function FunctionIOImpl( instance, phetioID ) {
-      ObjectIO.call( instance, phetioID );
       assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
+      ObjectIO.call( instance, phetioID );
     };
 
     return phetioInherit( ObjectIO, 'FunctionIO', FunctionIOImpl, {}, {
