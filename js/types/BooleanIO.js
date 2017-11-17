@@ -30,7 +30,7 @@ define( function( require ) {
      * @returns {Object}
      */
     fromStateObject: function( stateObject ) {
-      assert && assert( typeof value === 'boolean', 'value should be boolean' );
+      assert && assert( typeof stateObject === 'boolean', 'value should be boolean' );
       return stateObject;
     },
 
