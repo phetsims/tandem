@@ -22,6 +22,7 @@ define( function( require ) {
    */
   var phetioInherit = function( supertype, typeName, subtype, methods, staticProperties ) {
     assert && assert( typeof typeName === 'string', 'typename must be 2nd arg' );
+    assert && assert( typeName.indexOf( 'IO' ) === typeName.length - 'IO'.length, 'type name must end with IO' );
     assert && assert( typeof supertype === 'function' );
 
     inherit( supertype, subtype, methods, staticProperties );
@@ -29,7 +30,7 @@ define( function( require ) {
     staticProperties = staticProperties || {};
 
     if ( staticProperties.parameterTypes ) {
-      assert && assert ( staticProperties.parameterTypes instanceof Array, 'parameterTypes expected to be array' );
+      assert && assert( staticProperties.parameterTypes instanceof Array, 'parameterTypes expected to be array' );
 
       // Add the parameter types to the FunctionIO's type name.
       typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameter ) { return parameter.typeName;} )
