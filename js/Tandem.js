@@ -235,25 +235,6 @@ define( function( require ) {
   }, {
 
     /**
-     * Some common code (such as CheckBox or RadioButton) must always be instrumented and hence requires a tandem to be
-     * passed in.  The options hash indicates this with {tandem: Tandem.tandemRequired()}
-     * @returns {Tandem}
-     */
-    tandemRequired: function() {
-      return requiredTandem;
-    },
-
-    /**
-     *
-     * Used to indicate a common code component that supports tandem, but doesn't not require it.
-     * If a tandem is not passed through to this instance, then it will not be instrumented.
-     * @returns {Tandem}
-     */
-    tandemOptional: function() {
-      return optionalTandem;
-    },
-
-    /**
      * Adds a listener that will be notified when items are registered/deregistered
      * Listeners have the form
      * {
@@ -268,23 +249,6 @@ define( function( require ) {
      */
     addInstanceListener: function( instanceListener ) {
       instanceListeners.push( instanceListener );
-    },
-
-    /**
-     * Create a tandem based on the name of the running simulation.
-     * @returns {Tandem}
-     */
-    createRootTandem: function() {
-      return new Tandem( toCamelCase( packageJSON.name ) );
-    },
-
-    /**
-     * Create a child of the root tandem.
-     * @param {string} name
-     * @returns {Tandem}
-     */
-    createStaticTandem: function( name ) {
-      return Tandem.createRootTandem().createTandem( name );
     },
 
     /**
@@ -344,14 +308,23 @@ define( function( require ) {
     }
   } );
 
-  var rootTandem = Tandem.createRootTandem();
+  // The next few statics are created outside the static block because they instantiate Tandem instances.
+  Tandem.rootTandem = new Tandem( toCamelCase( packageJSON.name ) );
 
-  var optionalTandem = rootTandem.createTandem( 'optionalTandem', {
+  /**
+   * Used to indicate a common code component that supports tandem, but doesn't not require it.
+   * If a tandem is not passed through to this instance, then it will not be instrumented.
+   */
+  Tandem.optional = Tandem.rootTandem.createTandem( 'optionalTandem', {
     required: false,
     supplied: false
   } );
 
-  var requiredTandem = rootTandem.createTandem( 'requiredTandem', {
+  /**
+   * Some common code (such as CheckBox or RadioButton) must always be instrumented and hence requires a tandem to be
+   * passed in.
+   */
+  Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
     required: true,
     supplied: false
   } );
