@@ -22,6 +22,8 @@ define( function( require ) {
   var PHET_IO_ENABLED = !!(window.phet && window.phet.phetio);
 
   // variables
+  // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called
+  // and buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
   var launched = false;
 
   // increment names of uninstrumented common code tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
@@ -253,6 +255,8 @@ define( function( require ) {
 
     /**
      * When all listeners are listening, all buffered instances are registered.
+     * @public
+     * @static
      */
     launch: function() {
       assert && assert( !launched, 'Tandem was launched twice' );
@@ -265,7 +269,9 @@ define( function( require ) {
 
     /**
      * Catch cases where tandem is being supplied to a class that doesn't support tandem.
-     * @param options
+     * @param {Object} [options]
+     * @public
+     * @static
      */
     disallowTandem: function( options ) {
 
@@ -278,6 +284,8 @@ define( function( require ) {
      * When running in PhET-iO brand, some code (such as user interface components) must be instrumented for PhET-iO.
      * Uninstrumented files should call this function to indicate they still need to be instrumented, so they aren't
      * missed.  See https://github.com/phetsims/phet-io/issues/668
+     * @public
+     * @static
      */
     indicateUninstrumentedCode: function() {
 
@@ -302,6 +310,8 @@ define( function( require ) {
     /**
      * Determine whether or not tandem validation is turned on for the sim.
      * @returns {Boolean} If tandems are being validated or not.
+     * @public
+     * @static
      */
     validationEnabled: function() {
       return PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
@@ -309,11 +319,15 @@ define( function( require ) {
   } );
 
   // The next few statics are created outside the static block because they instantiate Tandem instances.
+  // @public
+  // @static
   Tandem.rootTandem = new Tandem( toCamelCase( packageJSON.name ) );
 
   /**
    * Used to indicate a common code component that supports tandem, but doesn't not require it.
    * If a tandem is not passed through to this instance, then it will not be instrumented.
+   * @public
+   * @static
    */
   Tandem.optional = Tandem.rootTandem.createTandem( 'optionalTandem', {
     required: false,
@@ -323,6 +337,8 @@ define( function( require ) {
   /**
    * Some common code (such as CheckBox or RadioButton) must always be instrumented and hence requires a tandem to be
    * passed in.
+   * @public
+   * @static
    */
   Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
     required: true,
