@@ -61,10 +61,14 @@ define( function( require ) {
 
     // @public (read-only)
     this.id = (id !== undefined) ? id : '';
+
+    // @private
     this.required = this.options.required;
+
+    // @private
     this.supplied = this.options.supplied;
 
-    // @private (read-only)
+    // @private
     this.enabled = this.options.enabled;
   }
 
