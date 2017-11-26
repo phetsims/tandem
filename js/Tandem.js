@@ -1,8 +1,8 @@
 // Copyright 2015, University of Colorado Boulder
 
 /**
- * Tandem is a general instance registry that can be used to track creation/disposal of instances in PhET Simulations.
- * It is used for phetio.js instrumentation for PhET-iO support.
+ * Tandem is used to assign unique identifiers to instances in PhET simulations and register/unregister them in a registry.
+ * It is used to support PhET-iO.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
@@ -21,21 +21,29 @@ define( function( require ) {
   var packageJSON = JSON.parse( packageString );
   var PHET_IO_ENABLED = !!(window.phet && window.phet.phetio);
 
+  // Listeners that will be notified when items are registered/deregistered
+  var instanceListeners = [];
+
   // variables
   // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called
   // and buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
   var launched = false;
+  var bufferedInstances = [];
 
   // increment names of uninstrumented common code tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
   var uninstrumentedCodeIndex = 0;
 
   /**
+   * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
+   * a tandem must be created from scratch.
+   *
    * @param {string} id - id as a string (or '' for a root id)
    * @param {Object} [options]
    * @constructor
    */
   function Tandem( id, options ) {
 
+    // TODO: don't store this.options
     // @private - these options are stored on the instance so they can be passed through the super type inheritance chain.
     // Note: Make sure that added options here are also added to options for inheritance
     // and/or for composition (createTandem) as they make sense.
@@ -45,8 +53,11 @@ define( function( require ) {
       // but children of a disabled tandem may be enabled.
       enabled: true,
 
-      supplied: true, // if the tandem is not supplied and required, an error will be thrown.
-      required: true // require === false means it is an optional tandem
+      // if the tandem is not supplied and required, an error will be thrown.
+      supplied: true,
+
+      // required === false means it is an optional tandem
+      required: true
     }, options );
 
     // @public (read-only)
@@ -58,12 +69,7 @@ define( function( require ) {
     this.enabled = this.options.enabled;
   }
 
-  var bufferedInstances = [];
-
   tandemNamespace.register( 'Tandem', Tandem );
-
-  // Listeners that will be notified when items are registered/deregistered
-  var instanceListeners = [];
 
   inherit( Object, Tandem, {
 
@@ -206,6 +212,7 @@ define( function( require ) {
     /**
      * Returns a Tandem for everything except the tail.
      * @returns {Tandem}
+     * @public
      */
     get parentTandem() {
       assert && assert( this.id.indexOf( '.' ) >= 0, 'tandem ID does not have a tail' );
@@ -223,6 +230,7 @@ define( function( require ) {
     /**
      * Return true if this tandem is legal and can be used by the phet-io system.
      * @returns {boolean}
+     * @public
      */
     isLegalAndUsable: function() {
 
@@ -319,8 +327,13 @@ define( function( require ) {
   } );
 
   // The next few statics are created outside the static block because they instantiate Tandem instances.
-  // @public
-  // @static
+
+  /**
+   * The root tandem for a simulation
+   * @public
+   * @static
+   * @type {Tandem}
+   */
   Tandem.rootTandem = new Tandem( toCamelCase( packageJSON.name ) );
 
   /**
@@ -346,10 +359,10 @@ define( function( require ) {
   } );
 
   /**
+   * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
    * @param {string} id - id as a string (or '' for a root id)
    * @constructor
    * @private create with Tandem.createGroupTandem
-   * Declared in the same file to avoid circular reference errors in module loading.
    */
   function GroupTandem( id ) {
 
@@ -363,7 +376,11 @@ define( function( require ) {
 
   inherit( Tandem, GroupTandem, {
 
-    // @public
+    /**
+     * Creates the next tandem in the group.
+     * @returns {Tandem}
+     * @public
+     */
     createNextTandem: function() {
       return new Tandem( this.id + '_' + (this.groupElementIndex++) );
     }
