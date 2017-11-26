@@ -43,10 +43,9 @@ define( function( require ) {
    */
   function Tandem( id, options ) {
 
-    // TODO: don't store this.options
-    // @private - these options are stored on the instance so they can be passed through the super type inheritance chain.
-    // Note: Make sure that added options here are also added to options for inheritance
-    // and/or for composition (createTandem) as they make sense.
+    // @private - options (even subtype options) must be stored on the instance so they can be passed through the super
+    // type inheritance chain. Note: Make sure that added options here are also added to options for inheritance and/or
+    // for composition (createTandem) as they make sense.
     this.options = _.extend( {
 
       // Enabled tandems notify listeners when they are added. Disabled tandems do not notify listeners,
@@ -270,8 +269,8 @@ define( function( require ) {
       assert && assert( !launched, 'Tandem was launched twice' );
       launched = true;
       while ( bufferedInstances.length > 0 ) {
-        var instance = bufferedInstances.shift();
-        instance.tandem.addInstance( instance.instance, instance.options );
+        var tandem = bufferedInstances.shift();
+        tandem.tandem.addInstance( tandem.instance, tandem.options );
       }
     },
 
