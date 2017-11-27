@@ -4,6 +4,7 @@
  * Parametric IO Type wrapper that adds support for null values in toStateObject/fromStateObject. This type is to
  * prevent the propagation of null handling, mainly in to/fromStateObject, in each type. This also makes null
  * explicit for phet-io.
+ *
  * Sample usage:
  *
  *  this.ageProperty = new Property( null, {
@@ -37,49 +38,49 @@ define( function( require ) {
 
     return phetioInherit( ObjectIO, 'NullableIO', NullableIOImpl, {}, {
 
-        // Signify parameterTypes to phetioInherit
-        parameterTypes: [ ioType ],
+      // Signify parameterTypes to phetioInherit
+      parameterTypes: [ ioType ],
 
-        // Signify documentation, used in documentation wrappers
-        documentation: 'A wrapper to wrap another IOType, adding support for null.',
+      // Signify documentation, used in documentation wrappers
+      documentation: 'A wrapper to wrap another IOType, adding support for null.',
 
-        /**
-         * If the argument is null, returns null.
-         * Otherwise converts the instance to a state object for serialization.
-         * @param {Object|null} instance - of type {ioType|null}
-         * @returns {Object|null}
-         * @public
-         * @static
-         */
-        toStateObject: function( instance ) {
-          if ( instance === null ) {
-            return null;
-          }
-          else {
-            return ioType.toStateObject( instance );
-          }
-        },
+      /**
+       * If the argument is null, returns null.
+       * Otherwise converts the instance to a state object for serialization.
+       * @param {Object|null} instance - of type {ioType|null}
+       * @returns {Object|null}
+       * @public
+       * @static
+       */
+      toStateObject: function( instance ) {
+        if ( instance === null ) {
+          return null;
+        }
+        else {
+          return ioType.toStateObject( instance );
+        }
+      },
 
-        /**
-         * If the argument is null, returns null.
-         * Otherwise converts a state object to an instance of the underlying type.
-         * @param {Object|null} stateObject
-         * @returns {Object|null}
-         * @public
-         * @static
-         */
-        fromStateObject: function( stateObject ) {
-          if ( stateObject === null ) {
-            return null;
-          }
-          else {
-            return ioType.fromStateObject( stateObject );
-          }
+      /**
+       * If the argument is null, returns null.
+       * Otherwise converts a state object to an instance of the underlying type.
+       * @param {Object|null} stateObject
+       * @returns {Object|null}
+       * @public
+       * @static
+       */
+      fromStateObject: function( stateObject ) {
+        if ( stateObject === null ) {
+          return null;
+        }
+        else {
+          return ioType.fromStateObject( stateObject );
         }
       }
-    );
+    } );
   }
 
   phetioNamespace.register( 'NullableIO', NullableIO );
+
   return NullableIO;
 } );
