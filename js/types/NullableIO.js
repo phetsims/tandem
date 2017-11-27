@@ -1,7 +1,9 @@
 // Copyright 2017, University of Colorado Boulder
 
 /**
- * Parametric IO Type wrapper that adds support for null values in toStateObject/fromStateObject.
+ * Parametric IO Type wrapper that adds support for null values in toStateObject/fromStateObject. This type is to
+ * prevent the propagation of null handling, mainly in to/fromStateObject, in each type. This also makes null
+ * explicit for phet-io.
  * Sample usage:
  *
  *  this.ageProperty = new Property( null, {
