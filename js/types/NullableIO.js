@@ -46,34 +46,34 @@ define( function( require ) {
         /**
          * If the argument is null, returns null.
          * Otherwise converts the instance to a state object for serialization.
-         * @param {Object|null} instanceOrNull - of type {ioType|null}
+         * @param {Object|null} instance - of type {ioType|null}
          * @returns {Object|null}
          * @public
          * @static
          */
-        toStateObject: function( instanceOrNull ) {
-          if ( instanceOrNull === null ) {
+        toStateObject: function( instance ) {
+          if ( instance === null ) {
             return null;
           }
           else {
-            return ioType.toStateObject( instanceOrNull );
+            return ioType.toStateObject( instance );
           }
         },
 
         /**
          * If the argument is null, returns null.
          * Otherwise converts a state object to an instance of the underlying type.
-         * @param {Object|null} stateObjectOrNull
+         * @param {Object|null} stateObject
          * @returns {Object|null}
          * @public
          * @static
          */
-        fromStateObject: function( stateObjectOrNull ) {
-          if ( stateObjectOrNull === null ) {
+        fromStateObject: function( stateObject ) {
+          if ( stateObject === null ) {
             return null;
           }
           else {
-            return ioType.fromStateObject( stateObjectOrNull );
+            return ioType.fromStateObject( stateObject );
           }
         }
       }
