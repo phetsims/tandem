@@ -1,8 +1,8 @@
 // Copyright 2015, University of Colorado Boulder
 
 /**
- * Tandem is used to assign unique identifiers to instances in PhET simulations and register/unregister them in a registry.
- * It is used to support PhET-iO.
+ * Tandem is used to assign unique identifiers to instances in PhET simulations and register/unregister them in a
+ * registry. It is used to support PhET-iO.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
@@ -18,7 +18,7 @@ define( function( require ) {
   var packageString = require( 'text!REPOSITORY/package.json' );
 
   // constants
-  var packageJSON = JSON.parse( packageString );
+  var packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
   var PHET_IO_ENABLED = !!(window.phet && window.phet.phetio);
 
   // Listeners that will be notified when items are registered/deregistered
@@ -30,7 +30,8 @@ define( function( require ) {
   var launched = false;
   var bufferedInstances = [];
 
-  // increment names of uninstrumented common code tandems to avoid collisions for uninstrumented sims with phetioValidateTandems=false
+  // increment names of uninstrumented common code tandems to avoid collisions for uninstrumented sims with
+  // phetioValidateTandems=false
   var uninstrumentedCodeIndex = 0;
 
   /**
@@ -92,7 +93,7 @@ define( function( require ) {
 
         var type = options.phetioType;
 
-        // Throw an error if the tandem is tandemRequired() but not supplied
+        // Throw an error if the tandem is required but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
           assert && assert( !(this.required && !this.supplied), 'Tandem was required but not supplied' );
         }
@@ -109,7 +110,7 @@ define( function( require ) {
           assert && assert( type && type.typeName, 'type must be specified and have a typeName for ' + this.id );
         }
 
-        // If tandem is tandemOptional, then don't add the instance
+        // If tandem is optional, then don't add the instance
         if ( !this.required && !this.supplied ) {
           if ( phet.phetio.queryParameters.printMissingTandems ) {
             var stackTrace = new Error().stack;
@@ -344,6 +345,7 @@ define( function( require ) {
    * If a tandem is not passed through to this instance, then it will not be instrumented.
    * @public
    * @static
+   * @type {Tandem}
    */
   Tandem.optional = Tandem.rootTandem.createTandem( 'optionalTandem', {
     required: false,
@@ -355,6 +357,7 @@ define( function( require ) {
    * passed in.
    * @public
    * @static
+   * @type {Tandem}
    */
   Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
     required: true,
