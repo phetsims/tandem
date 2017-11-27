@@ -44,7 +44,7 @@ define( function( require ) {
         documentation: 'A wrapper to wrap another IOType, adding support for null.',
 
         /**
-         * Converts the instance to a state object for serialization.
+         * If the argument is null, returns null--otherwise converts the instance to a state object for serialization.
          * @param {Object|null} instanceOrNull - of type {ioType|null}
          * @returns {Object|null}
          * @public
@@ -60,7 +60,7 @@ define( function( require ) {
         },
 
         /**
-         * Converts a state object to underlying type if it is non-null.
+         * If the argument is null, returns null--otherwise converts a state object to underlying type.
          * @param {Object|null} instanceOrNull
          * @returns {Object|null}
          * @public
