@@ -192,6 +192,7 @@ define( function( require ) {
      * have unique identifiers.
      * @param id
      * @returns {GroupTandem}
+     * @public
      */
     createGroupTandem: function( id ) {
 
@@ -203,6 +204,7 @@ define( function( require ) {
      * Get the last part of the tandem (after the last .), used in Joist for creating button names dynamically based
      * on screen names
      * @returns {string} the tail of the tandem
+     * @public
      */
     get tail() {
       assert && assert( this.id.indexOf( '.' ) >= 0, 'tandem ID does not have a tail' );
