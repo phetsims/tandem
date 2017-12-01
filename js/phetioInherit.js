@@ -61,8 +61,10 @@ define( function( require ) {
     subtype.allEvents = supertypeEvents.concat( subtype.events || [] );
     subtype.allMethods = _.extend( {}, supertype.allMethods, methods );
 
+    debugger;
     // Copy supertype's static methods to subtype, see https://github.com/phetsims/phet-io/issues/1273
     for ( var staticProperty in supertype ) {
+      debugger;
       if ( supertype.hasOwnProperty( staticProperty ) ) {
 
         // If the subtype already provides the property, keep the subtype version.  If not, take the supertype property.
