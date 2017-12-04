@@ -44,10 +44,10 @@ define( function( require ) {
    */
   function Tandem( id, options ) {
 
-    // @private - options (even subtype options) must be stored on the instance so they can be passed through the super
-    // type inheritance chain. Note: Make sure that added options here are also added to options for inheritance and/or
-    // for composition (createTandem) as they make sense.
-    this.options = _.extend( {
+    // options (even subtype options) must be stored on the instance so they can be passed through to children
+    // Note: Make sure that added options here are also added to options for inheritance and/or
+    // for composition (createTandem/parentTandem) as they make sense.
+    options = _.extend( {
 
       // Enabled tandems notify listeners when they are added. Disabled tandems do not notify listeners,
       // but children of a disabled tandem may be enabled.
@@ -64,13 +64,13 @@ define( function( require ) {
     this.id = ( id !== undefined ) ? id : '';
 
     // @private
-    this.required = this.options.required;
+    this.required = options.required;
 
     // @private
-    this.supplied = this.options.supplied;
+    this.supplied = options.supplied;
 
     // @private
-    this.enabled = this.options.enabled;
+    this.enabled = options.enabled;
   }
 
   tandemNamespace.register( 'Tandem', Tandem );
@@ -171,7 +171,8 @@ define( function( require ) {
 
       var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
 
-      // Any child of something should be passed these inherited options.
+      // Any child of something should be passed all inherited options. Make sure that this extend call includes all
+      // that make sense from the constructor's extend call.
       options = _.extend( {
         enabled: this.enabled,
         supplied: this.supplied,
