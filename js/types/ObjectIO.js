@@ -1,8 +1,8 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * ObjectIO is the root of the IO Type hierarchy.  All wrapper types extend from ObjectIO.  This is an abstract class
- * and should not be instantiated directly.
+ * ObjectIO is the root of the IO Type hierarchy.  All wrapper types extend from ObjectIO.  This type can be subtyped or
+ * used directly for types that only need toStateObject/fromStateObject.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -19,6 +19,7 @@ define( function( require ) {
    * @param {Object} instance
    * @param {string} phetioID
    * @constructor
+   * @abstract
    */
   function ObjectIO( instance, phetioID ) {
     assert && assert( instance, 'instance should be truthy' );
@@ -37,8 +38,8 @@ define( function( require ) {
     documentation: 'The root of the wrapper object hierarchy',
 
     /**
-     * Decodes the object from a state, used in phetio.setState.  This should be overridden
-     * by subclasses.
+     * Decodes the object from a state, used in phetio.setState.  This can be overridden by subclasses, or types can
+     * use ObjectIO type directly to use this implementation.
      * @param {Object} o
      * @returns {Object}
      */
@@ -47,8 +48,8 @@ define( function( require ) {
     },
 
     /**
-     * Return the json that ObjectIO is wrapping.  Subclasses provide their own
-     * toStateObject implementation to provide structure-based representations.
+     * Return the json that ObjectIO is wrapping.  This can be overriden by subclasses, or types can use ObjectIO type
+     * directly to use this implementation.
      * @param {Object} o
      * @returns {Object}
      */
