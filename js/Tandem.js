@@ -246,8 +246,8 @@ define( function( require ) {
         return false;
       }
 
-      // A tandem is legal if it has been supplied or, if it hasn't been supplied, if it is optional.
-      return this.supplied || ( this.optional && !this.supplied );
+      // A tandem is legal if it has been supplied. Unsupplied tandems are not usable.
+      return this.supplied;
     }
   }, {
 
