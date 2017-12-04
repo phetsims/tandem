@@ -21,7 +21,7 @@ define( function( require ) {
   var packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
   var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
 
-  // Listeners that will be notified when items are registered/deregistered
+  // Listeners that will be notified when items are registered/deregistered. See doc in addInstanceListener
   var instanceListeners = [];
 
   // variables
