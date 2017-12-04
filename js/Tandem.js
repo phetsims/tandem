@@ -19,7 +19,7 @@ define( function( require ) {
 
   // constants
   var packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
-  var PHET_IO_ENABLED = !!(window.phet && window.phet.phetio);
+  var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
 
   // Listeners that will be notified when items are registered/deregistered
   var instanceListeners = [];
@@ -61,7 +61,7 @@ define( function( require ) {
     }, options );
 
     // @public (read-only)
-    this.id = (id !== undefined) ? id : '';
+    this.id = ( id !== undefined ) ? id : '';
 
     // @private
     this.required = this.options.required;
@@ -95,11 +95,11 @@ define( function( require ) {
 
         // Throw an error if the tandem is required but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
-          assert && assert( !(this.required && !this.supplied), 'Tandem was required but not supplied' );
+          assert && assert( !( this.required && !this.supplied ), 'Tandem was required but not supplied' );
         }
 
         // ValidateTandems is false and printMissingTandems flag is present for a tandem that is required but not supplied.
-        if ( phet.phetio.queryParameters.printMissingTandems && (this.required && !this.supplied) ) {
+        if ( phet.phetio.queryParameters.printMissingTandems && ( this.required && !this.supplied ) ) {
           console.log( 'Required Tandem not supplied.\n' +
                        'this.id = ' + this.id + '\n' +
                        'Stack trace: ' + new Error().stack );
@@ -169,7 +169,7 @@ define( function( require ) {
       // Make sure the id was provided
       assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
 
-      var string = (this.id.length > 0) ? (this.id + '.' + id) : id;
+      var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
 
       // Any child of something should be passed these inherited options.
       options = _.extend( {
@@ -246,7 +246,7 @@ define( function( require ) {
       }
 
       // A tandem is legal if it has been supplied or, if it hasn't been supplied, if it is optional.
-      return this.supplied || (this.optional && !this.supplied);
+      return this.supplied || ( this.optional && !this.supplied );
     }
   }, {
 
@@ -314,7 +314,7 @@ define( function( require ) {
         // Print stack trace if query parameter supplied
         if ( phet.phetio.queryParameters.printMissingTandems ) {
           var stackTrace = new Error().stack;
-          console.log( 'Uninstrumented Code! Tandem not supplied: ' + (uninstrumentedCodeIndex++) + '.\n' +
+          console.log( 'Uninstrumented Code! Tandem not supplied: ' + ( uninstrumentedCodeIndex++ ) + '.\n' +
                        'Stack trace: ' + stackTrace );
         }
 
@@ -390,7 +390,7 @@ define( function( require ) {
      * @public
      */
     createNextTandem: function() {
-      return new Tandem( this.id + '_' + (this.groupElementIndex++) );
+      return new Tandem( this.id + '_' + ( this.groupElementIndex++ ) );
     }
   } );
 
