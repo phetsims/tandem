@@ -1,7 +1,7 @@
 // Copyright 2017, University of Colorado Boulder
 
 /**
- * Base type for PhET instances, provides support for PhET-iO features when running with PhET-iO enabled.
+ * Base type for PhET types, provides support for PhET-iO features when running with PhET-iO enabled.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
