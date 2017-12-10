@@ -32,14 +32,14 @@ define( function( require ) {
 
     // @public - used to map model tandem names to view objects (by using tandem.tail)
     // TODO: rename to this.tandem after all other this.*tandems deleted
-    // TODO: do we need phetioID if we have phetObjectTandem?
-    this.phetObjectTandem = options.tandem;
+    // TODO: do we need phetioID if we have ioObjectTandem?
+    this.ioObjectTandem = options.tandem;
 
     // @private - the IO type associated with this instance
     this.phetioType = options.phetioType;
 
     // Register with the tandem registry
-    this.phetObjectTandem.addInstance( this, options );
+    this.ioObjectTandem.addInstance( this, options );
   }
 
   tandemNamespace.register( 'IOObject', IOObject );
@@ -55,7 +55,7 @@ define( function( require ) {
      * @returns {number}
      */
     startEvent: function( eventType, event, args ) {
-      return this.phetObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, this.phetObjectTandem.id, this.phetioType, event, args );
+      return this.ioObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, this.ioObjectTandem.id, this.phetioType, event, args );
     },
 
     /**
@@ -63,7 +63,7 @@ define( function( require ) {
      * @param {number} id
      */
     endEvent: function( id ) {
-      this.phetObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.ioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
     },
 
     /**
@@ -72,7 +72,7 @@ define( function( require ) {
     dispose: function() {
 
       // Tandem de-registration
-      this.phetObjectTandem.removeInstance( this );
+      this.ioObjectTandem.removeInstance( this );
     }
   } );
 } );
