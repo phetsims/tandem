@@ -55,7 +55,8 @@ define( function( require ) {
      * @returns {number}
      */
     startEvent: function( eventType, event, args ) {
-      return this.phetObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, this.phetObjectTandem.id, this.phetioType, event, args );
+      var id = this.phetObjectTandem.id;
+      return this.phetObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, id, this.phetioType, event, args );
     },
 
     /**
