@@ -53,6 +53,7 @@ define( function( require ) {
      * @param {string} event - the name of the event
      * @param {Object} [args] - arguments for the event
      * @returns {number}
+     * @public
      */
     startEvent: function( eventType, event, args ) {
       var id = this.phetObjectTandem.id;
@@ -62,6 +63,7 @@ define( function( require ) {
     /**
      * End an event on the nested PhET-iO event stream.
      * @param {number} id
+     * @public
      */
     endEvent: function( id ) {
       this.phetObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
@@ -69,6 +71,7 @@ define( function( require ) {
 
     /**
      * Unregisters from tandem when longer used.
+     * @public
      */
     dispose: function() {
 
