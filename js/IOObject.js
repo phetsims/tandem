@@ -49,6 +49,9 @@ define( function( require ) {
     if ( assert ) {
       this.ioobjectOptions = options; // for error checking during Node.mutate
     }
+
+    // @private - for assertion checking
+    this.eventInProgress = false;
   }
 
   tandemNamespace.register( 'IOObject', IOObject );
@@ -65,6 +68,8 @@ define( function( require ) {
      * @public
      */
     startEvent: function( eventType, event, args ) {
+      assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
+      this.eventInProgress = true;
       var id = this.phetObjectTandem.id;
       return this.phetObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, id, this.phetioType, event, args );
     },
@@ -75,7 +80,9 @@ define( function( require ) {
      * @public
      */
     endEvent: function( id ) {
+      assert && assert( this.eventInProgress, 'cannot end an event that hasn\'t started' );
       this.phetObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.eventInProgress = false;
     },
 
     /**
@@ -83,6 +90,7 @@ define( function( require ) {
      * @public
      */
     dispose: function() {
+      assert && assert( !this.eventInProgress, 'cannot dispose while event is in progress' );
 
       // Tandem de-registration
       this.phetObjectTandem.removeInstance( this );
