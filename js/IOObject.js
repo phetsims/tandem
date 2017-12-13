@@ -15,20 +15,25 @@ define( function( require ) {
   var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var Tandem = require( 'TANDEM/Tandem' );
 
+  var DEFAULTS = {
+    tandem: Tandem.optional,        // By default tandems are optional, but subtypes can specify this as
+                                    // `Tandem.tandemRequired` to enforce its presence
+    phetioType: ObjectIO,           // Supply the appropriate IO type
+    phetioState: true,              // When true, includes the instance in the PhET-iO state
+    phetioEvents: true,             // When true, includes events in the PhET-iO events stream
+    phetioReadOnly: false,          // When true, you can only get values from the instance; no setting allowed.
+    phetioInstanceDocumentation: '' // Useful notes about an instrumented instance, shown in instance-proxies
+  };
+
+  var OPTIONS_KEYS = _.keys( DEFAULTS );
+
   /**
    * @param {Object} [options]
    * @constructor
    */
   function IOObject( options ) {
-    options = _.extend( {
-      tandem: Tandem.optional,        // By default tandems are optional, but subtypes can specify this as
-                                      // `Tandem.tandemRequired` to enforce its presence
-      phetioType: ObjectIO,           // Supply the appropriate IO type
-      phetioState: true,              // When true, includes the instance in the PhET-iO state
-      phetioEvents: true,             // When true, includes events in the PhET-iO events stream
-      phetioReadOnly: false,          // When true, you can only get values from the instance; no setting allowed.
-      phetioInstanceDocumentation: '' // Useful notes about an instrumented instance, shown in instance-proxies
-    }, options );
+
+    options = _.extend( {}, DEFAULTS, options );
 
     // @public - used to map model tandem names to view objects (by using tandem.tail)
     // TODO: rename to this.tandem after all other this.*tandems deleted
@@ -40,6 +45,10 @@ define( function( require ) {
 
     // Register with the tandem registry
     this.phetObjectTandem.addInstance( this, options );
+
+    if ( assert ) {
+      this.ioobjectOptions = options; // for error checking during Node.mutate
+    }
   }
 
   tandemNamespace.register( 'IOObject', IOObject );
@@ -77,6 +86,37 @@ define( function( require ) {
 
       // Tandem de-registration
       this.phetObjectTandem.removeInstance( this );
+    },
+
+    /**
+     * A debugging method that helps us ensure we didn't miss any PhET-iO metadata while transitioning to the Node extends
+     * IOObject pattern.  Only called when assertions are enabled.
+     * @param {Object} options
+     * @protected
+     */
+    checkOptions: function( options ) {
+
+      if ( !options ) {
+
+        // cannot be inconsistent if not provided
+        return;
+      }
+      var self = this;
+
+      // Make sure that if any phet-io options are provided, they match the options provided in the constructor
+      _.keys( DEFAULTS ).forEach( function( key ) {
+        if ( options.hasOwnProperty( key ) ) {
+          assert && assert( self.ioobjectOptions, 'options should have been provided' );
+          assert && assert( options[ key ] === self.ioobjectOptions[ key ], 'mismatched option: ' + key );
+        }
+      } );
+    }
+  }, {
+
+    OPTIONS_KEYS: OPTIONS_KEYS,
+
+    getOptions: function( options ) {
+      return _.pick( options, OPTIONS_KEYS );
     }
   } );
 } );
