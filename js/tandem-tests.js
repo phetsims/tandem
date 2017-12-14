@@ -9,7 +9,7 @@ define( function( require ) {
   'use strict';
 
   // modules
-  require( 'TANDEM/IOObjectTests' );
+  require( 'TANDEM/PhetioObjectTests' );
 
   // Since our tests are loaded asynchronously, we must direct QUnit to begin the tests
   QUnit.start();

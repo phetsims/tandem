@@ -31,7 +31,7 @@ define( function( require ) {
    * @param {Object} [options]
    * @constructor
    */
-  function IOObject( options ) {
+  function PhetioObject( options ) {
 
     // @private - for assertion checking
     this.eventInProgress = false;
@@ -40,27 +40,27 @@ define( function( require ) {
     this.initialized = false;
 
     if ( options ) {
-      this.initializeIOObject( {}, options );
+      this.initializePhetioObject( {}, options );
     }
   }
 
-  tandemNamespace.register( 'IOObject', IOObject );
+  tandemNamespace.register( 'PhetioObject', PhetioObject );
 
-  return inherit( Object, IOObject, {
+  return inherit( Object, PhetioObject, {
 
     /**
      * @param {Object} baseOptions - only applied if options keys intersect OPTIONS_KEYS
      * @param {Object} options
      * @protected
      */
-    initializeIOObject: function( baseOptions, options ) {
+    initializePhetioObject: function( baseOptions, options ) {
 
       // TODO: garbage-free implementation
       var intersection = _.intersection( _.keys( options ), OPTIONS_KEYS );
       if ( intersection.length === 0 ) {
-        return; // no IOObject keys provided, perhaps they will be provided in a subsequent mutate call.
+        return; // no PhetioObject keys provided, perhaps they will be provided in a subsequent mutate call.
       }
-      assert && assert( options, 'initializeIOObject must be called with options' );
+      assert && assert( options, 'initializePhetioObject must be called with options' );
       assert && assert( !this.initialized, 'cannot initialize twice' );
       this.initialized = true;
 
