@@ -40,7 +40,7 @@ define( function( require ) {
     this.initialized = false;
 
     if ( options ) {
-      this.initializeIOObject( options );
+      this.initializeIOObject( {}, options );
     }
   }
 
@@ -49,10 +49,11 @@ define( function( require ) {
   return inherit( Object, IOObject, {
 
     /**
-     * @param {Object} [options]
+     * @param {Object} baseOptions - only applied if options keys intersect OPTIONS_KEYS
+     * @param {Object} options
      * @protected
      */
-    initializeIOObject: function( options ) {
+    initializeIOObject: function( baseOptions, options ) {
 
       // TODO: garbage-free implementation
       var intersection = _.intersection( _.keys( options ), OPTIONS_KEYS );
@@ -63,7 +64,7 @@ define( function( require ) {
       assert && assert( !this.initialized, 'cannot initialize twice' );
       this.initialized = true;
 
-      options = _.extend( {}, DEFAULTS, options );
+      options = _.extend( {}, DEFAULTS, baseOptions, options );
 
       // @public - used to map model tandem names to view objects (by using tandem.tail)
       // TODO: rename to this.tandem after all other this.*tandems deleted
