@@ -54,6 +54,7 @@ define( function( require ) {
      */
     initializeIOObject: function( options ) {
 
+      // TODO: garbage-free implementation
       var intersection = _.intersection( _.keys( options ), OPTIONS_KEYS );
       if ( intersection.length === 0 ) {
         return; // no IOObject keys provided, perhaps they will be provided in a subsequent mutate call.
