@@ -68,14 +68,14 @@ define( function( require ) {
 
       // @private - used to map model tandem names to view objects (by using tandem.tail)
       // TODO: rename to this.tandem after all other this.*tandems deleted
-      // TODO: do we need phetioID if we have ioObjectTandem?
-      this.ioObjectTandem = options.tandem;
+      // TODO: do we need phetioID if we have phetioObjectTandem?
+      this.phetioObjectTandem = options.tandem;
 
       // @private - the IO type associated with this instance
       this.phetioType = options.phetioType;
 
       // Register with the tandem registry
-      this.ioObjectTandem.addInstance( this, options );
+      this.phetioObjectTandem.addInstance( this, options );
     },
 
     /**
@@ -90,8 +90,8 @@ define( function( require ) {
     startEvent: function( eventType, event, args ) {
       assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
       this.eventInProgress = true;
-      var id = this.ioObjectTandem.id;
-      return this.ioObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, id, this.phetioType, event, args );
+      var id = this.phetioObjectTandem.id;
+      return this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, id, this.phetioType, event, args );
     },
 
     /**
@@ -101,7 +101,7 @@ define( function( require ) {
      */
     endEvent: function( id ) {
       assert && assert( this.eventInProgress, 'cannot end an event that hasn\'t started' );
-      this.ioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
       this.eventInProgress = false;
     },
 
@@ -116,7 +116,7 @@ define( function( require ) {
       if ( this.initialized ) {
 
         // Tandem de-registration
-        this.ioObjectTandem.removeInstance( this );
+        this.phetioObjectTandem.removeInstance( this );
       }
     }
   } );
