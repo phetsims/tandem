@@ -84,7 +84,7 @@ define( function( require ) {
      * @param {string} eventType - 'model' | 'view'
      * @param {string} event - the name of the event
      * @param {Object} [args] - arguments for the event
-     * @returns {number}
+     * @returns {number|boolean}
      * @public
      */
     startEvent: function( eventType, event, args ) {
@@ -96,7 +96,7 @@ define( function( require ) {
 
     /**
      * End an event on the nested PhET-iO event stream.
-     * @param {number} id
+     * @param {number|boolean} id
      * @public
      */
     endEvent: function( id ) {
