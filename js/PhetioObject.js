@@ -66,7 +66,7 @@ define( function( require ) {
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
-      // @private - used to map model tandem names to view objects (by using tandem.tail)
+      // @public (read-only) - the unique tandem for this instance
       // TODO: rename to this.tandem after all other this.*tandems deleted
       // TODO: do we need phetioID if we have phetioObjectTandem?
       this.phetioObjectTandem = options.tandem;
