@@ -28,7 +28,7 @@ define( function( require ) {
   // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called
   // and buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
   var launched = false;
-  var bufferedInstances = [];
+  var bufferedElements = [];
 
   // increment names of uninstrumented common code tandems to avoid collisions for uninstrumented sims with
   // phetioValidateTandems=false
@@ -129,7 +129,7 @@ define( function( require ) {
         }
 
         if ( !launched ) {
-          bufferedInstances.push( { tandem: this, instance: instance, options: options } );
+          bufferedElements.push( { tandem: this, instance: instance, options: options } );
         }
         else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
@@ -276,9 +276,9 @@ define( function( require ) {
     launch: function() {
       assert && assert( !launched, 'Tandem was launched twice' );
       launched = true;
-      while ( bufferedInstances.length > 0 ) {
-        var tandem = bufferedInstances.shift();
-        tandem.tandem.addInstance( tandem.instance, tandem.options );
+      while ( bufferedElements.length > 0 ) {
+        var element = bufferedElements.shift();
+        element.tandem.addInstance( element.instance, element.options );
       }
     },
 
