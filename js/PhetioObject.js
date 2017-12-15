@@ -54,13 +54,13 @@ define( function( require ) {
      * @protected
      */
     initializePhetioObject: function( baseOptions, options ) {
+      assert && assert( options, 'initializePhetioObject must be called with options' );
 
       // TODO: garbage-free implementation
       var intersection = _.intersection( _.keys( options ), OPTIONS_KEYS );
       if ( intersection.length === 0 ) {
         return; // no PhetioObject keys provided, perhaps they will be provided in a subsequent mutate call.
       }
-      assert && assert( options, 'initializePhetioObject must be called with options' );
       assert && assert( !this.initialized, 'cannot initialize twice' );
       this.initialized = true;
 
