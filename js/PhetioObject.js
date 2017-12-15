@@ -99,7 +99,7 @@ define( function( require ) {
 
     /**
      * End an event on the nested PhET-iO event stream.
-     * @param {number|boolean} id
+     * @param {number|boolean} id - identifier that was returned by the corresponding startEvent
      * @public
      */
     endEvent: function( id ) {
