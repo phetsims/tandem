@@ -84,7 +84,10 @@ define( function( require ) {
      * @param {string} eventType - 'model' | 'view'
      * @param {string} event - the name of the event
      * @param {Object} [args] - arguments for the event
-     * @returns {number|boolean}
+     * @returns {number|boolean} -
+     *   If the tandem is not legal and usable, then returns false.
+     *   If the tandem is legal and usable, it returns a numeric identifier that is
+     *   used to cross-check the endEvent call (to make sure starts and ends match).
      * @public
      */
     startEvent: function( eventType, event, args ) {
