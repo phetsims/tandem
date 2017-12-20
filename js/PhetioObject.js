@@ -33,11 +33,18 @@ define( function( require ) {
    */
   function PhetioObject( options ) {
 
-    // @private - for assertion checking
+    // @protected {boolean} - true if an event is in progress
     this.eventInProgress = false;
 
     // @private
     this.initialized = false;
+
+    // @private {number|boolean|null} - tracks the index of the message to make sure ends match starts.
+    // If the tandem is not legal and usable, then returns false.
+    // If the tandem is legal and usable, it returns a numeric identifier that is
+    // used to cross-check the endEvent call (to make sure starts and ends match).
+    // Null if an event is not in progress
+    this.eventID = null;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -79,33 +86,30 @@ define( function( require ) {
     },
 
     /**
-     * Start an event for the nested PhET-iO event stream.
+     * Start an event for the nested PhET-iO event stream.  Does not support re-entrant events on the same instance.
      *
      * @param {string} eventType - 'model' | 'view'
      * @param {string} event - the name of the event
      * @param {Object} [args] - arguments for the event
-     * @returns {number|boolean} -
-     *   If the tandem is not legal and usable, then returns false.
-     *   If the tandem is legal and usable, it returns a numeric identifier that is
-     *   used to cross-check the endEvent call (to make sure starts and ends match).
      * @public
      */
     startEvent: function( eventType, event, args ) {
       assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
       this.eventInProgress = true;
       var id = this.phetioObjectTandem.id;
-      return this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, id, this.phetioType, event, args );
+      var index = this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, id, this.phetioType, event, args );
+      this.eventID = index;
     },
 
     /**
      * End an event on the nested PhET-iO event stream.
-     * @param {number|boolean} id - identifier that was returned by the corresponding startEvent
      * @public
      */
-    endEvent: function( id ) {
+    endEvent: function() {
       assert && assert( this.eventInProgress, 'cannot end an event that hasn\'t started' );
-      this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( id );
+      this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( this.eventID );
       this.eventInProgress = false;
+      this.eventID = null;
     },
 
     /**
@@ -114,7 +118,7 @@ define( function( require ) {
      */
     dispose: function() {
       //TODO enable this assertion when https://github.com/phetsims/equality-explorer/issues/25 is resolved
-      // assert && assert( !this.eventInProgress, 'cannot dispose while event is in progress' );
+      assert && assert( !this.eventInProgress, 'cannot dispose while event is in progress' );
 
       // OK to dispose something that was never initialized, this means it was an uninstrumented instance
       if ( this.initialized ) {
