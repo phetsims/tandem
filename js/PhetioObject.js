@@ -118,7 +118,7 @@ define( function( require ) {
      */
     dispose: function() {
       //TODO enable this assertion when https://github.com/phetsims/equality-explorer/issues/25 is resolved
-      assert && assert( !this.eventInProgress, 'cannot dispose while event is in progress' );
+      // assert && assert( !this.eventInProgress, 'cannot dispose while event is in progress' );
 
       // OK to dispose something that was never initialized, this means it was an uninstrumented instance
       if ( this.initialized ) {
