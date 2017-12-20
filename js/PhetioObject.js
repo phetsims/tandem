@@ -94,7 +94,7 @@ define( function( require ) {
      * @public
      */
     startEvent: function( eventType, event, args ) {
-      assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
+      // assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
       this.eventInProgress = true;
       var id = this.phetioObjectTandem.id;
       var index = this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.start( eventType, id, this.phetioType, event, args );
@@ -106,7 +106,7 @@ define( function( require ) {
      * @public
      */
     endEvent: function() {
-      assert && assert( this.eventInProgress, 'cannot end an event that hasn\'t started' );
+      // assert && assert( this.eventInProgress, 'cannot end an event that hasn\'t started' );
       this.phetioObjectTandem.isLegalAndUsable() && phetioEvents.end( this.eventID );
       this.eventInProgress = false;
       this.eventID = null;
