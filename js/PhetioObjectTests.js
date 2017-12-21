@@ -30,7 +30,7 @@ define( function( require ) {
     var obj = new PhetioObject( { tandem: Tandem.rootTandem } );
     var id = obj.startEvent( 'model', 'hello' );
     obj.endEvent( id );
-    assert.ok( typeof id === 'number' || typeof id === 'boolean', 'id should be numeric|boolean' );
+    assert.ok( id === undefined, 'id should be undefined' );
   } );
 
   QUnit.test( 'PhetioObject end without start', function( assert ) {
