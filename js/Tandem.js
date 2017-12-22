@@ -235,19 +235,12 @@ define( function( require ) {
     },
 
     /**
-     * Return true if this tandem is legal and can be used by the phet-io system.
+     * Return true if this tandem is supplied and the sim is running in PhET-iO mode.
      * @returns {boolean}
      * @public
      */
-    isLegalAndUsable: function() {
-
-      // If we are not in phet-io mode, then the tandem is not legal and usable.
-      if ( !PHET_IO_ENABLED ) {
-        return false;
-      }
-
-      // A tandem is legal if it has been supplied. Unsupplied tandems are not usable.
-      return this.supplied;
+    isSuppliedAndEnabled: function() {
+      return this.supplied && PHET_IO_ENABLED;
     }
   }, {
 
