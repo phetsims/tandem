@@ -33,11 +33,12 @@ define( function( require ) {
    */
   function PhetioObject( options ) {
 
-    // @protected {boolean} - true if an event is in progress
+    // @private {boolean} - true if an event is in progress
     this.eventInProgress = false;
 
-    // @private
-    this.initialized = false;
+    // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
+    // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
+    this.phetioObjectInitialized = false;
 
     // @private {number|boolean|null} - tracks the index of the message to make sure ends match starts.
     // If the tandem is not legal and usable, then returns false.
@@ -45,6 +46,9 @@ define( function( require ) {
     // used to cross-check the endEvent call (to make sure starts and ends match).
     // Null if an event is not in progress
     this.eventID = null;
+
+    // @private {boolean} - has the instance been disposed?
+    this.phetioObjectDipsosed = false;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -68,8 +72,8 @@ define( function( require ) {
       if ( intersection.length === 0 ) {
         return; // no PhetioObject keys provided, perhaps they will be provided in a subsequent mutate call.
       }
-      assert && assert( !this.initialized, 'cannot initialize twice' );
-      this.initialized = true;
+      assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
+      this.phetioObjectInitialized = true;
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
@@ -94,7 +98,7 @@ define( function( require ) {
      * @public
      */
     startEvent: function( eventType, event, args ) {
-      // assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
+      assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
       this.eventInProgress = true;
       var id = this.phetioObjectTandem.id;
       var index = this.phetioObjectTandem.isSuppliedAndEnabled() && phetioEvents.start( eventType, id, this.phetioType, event, args );
@@ -106,7 +110,16 @@ define( function( require ) {
      * @public
      */
     endEvent: function() {
-      // assert && assert( this.eventInProgress, 'cannot end an event that hasn\'t started' );
+      if ( this.phetioObjectDipsosed ) {
+
+        // if this instance was disposed earlier, then the end event was already called, and should not be called again.
+        // We must be able to call endEvent on disposed objects so that cases like this don't fail:
+        // startEvent()
+        // callbackListeners => a listener disposes the instance
+        // endEvent()
+        return;
+      }
+      assert && assert( this.eventInProgress, 'cannot end an event that hasn\'t started' );
       this.phetioObjectTandem.isSuppliedAndEnabled() && phetioEvents.end( this.eventID );
       this.eventInProgress = false;
       this.eventID = null;
@@ -117,15 +130,21 @@ define( function( require ) {
      * @public
      */
     dispose: function() {
-      //TODO enable this assertion when https://github.com/phetsims/equality-explorer/issues/25 is resolved
-      // assert && assert( !this.eventInProgress, 'cannot dispose while event is in progress' );
+      assert && assert( !this.phetioObjectDipsosed, 'PhetioObject can only be disposed once' );
 
-      // OK to dispose something that was never initialized, this means it was an uninstrumented instance
-      if ( this.initialized ) {
+      // Support disposal during callback processing.
+      if ( this.eventInProgress ) {
+        this.endEvent();
+      }
+
+      // OK to dispose something that was never phetioObjectInitialized, this means it was an uninstrumented instance
+      if ( this.phetioObjectInitialized ) {
 
         // Tandem de-registration
         this.phetioObjectTandem.removeInstance( this );
       }
+
+      this.phetioObjectDipsosed = true;
     }
   } );
 } );
