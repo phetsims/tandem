@@ -100,9 +100,7 @@ define( function( require ) {
     startEvent: function( eventType, event, args ) {
       assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
       this.eventInProgress = true;
-      var id = this.phetioObjectTandem.id;
-      var index = this.phetioObjectTandem.isSuppliedAndEnabled() && phetioEvents.start( eventType, id, this.phetioType, event, args );
-      this.eventID = index;
+      this.eventID = this.phetioObjectTandem.isSuppliedAndEnabled() && phetioEvents.start( eventType, this, event, args );
     },
 
     /**
