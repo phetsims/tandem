@@ -28,9 +28,8 @@ define( function( require ) {
     assert.ok( true, 'initial test' );
 
     var obj = new PhetioObject( { tandem: Tandem.rootTandem } );
-    var id = obj.startEvent( 'model', 'hello' );
-    obj.endEvent( id );
-    assert.ok( id === undefined, 'id should be undefined' );
+    obj.startEvent( 'model', 'hello' );
+    obj.endEvent();
   } );
 
   QUnit.test( 'PhetioObject end without start', function( assert ) {
