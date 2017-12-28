@@ -187,7 +187,7 @@ define( function( require ) {
      * sim.screen.model.electron_0
      * sim.screen.model.electron_1
      *
-     * In this case, 'sim.screen.model.electron' is the group tandem id.
+     * In this case, 'sim.screen.model.electron' is the string passed to createGroupTandem.
      *
      * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
      * have unique identifiers.
