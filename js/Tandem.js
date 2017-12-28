@@ -169,7 +169,7 @@ define( function( require ) {
       // Make sure the id was provided
       assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
 
-      var string = ( this.id.length > 0 ) ? ( this.id + '.' + id ) : id;
+      var string = ( this.id.length > 0 ) ? PhetioIDUtils.append( this.id, id ) : id;
 
       // Any child of something should be passed all inherited options. Make sure that this extend call includes all
       // that make sense from the constructor's extend call.
@@ -198,7 +198,7 @@ define( function( require ) {
     createGroupTandem: function( id ) {
 
       // Unfortunately we must resort to globals here since loading through the namespace would create a cycle
-      return new GroupTandem( this.id + '.' + id );
+      return new GroupTandem( PhetioIDUtils.append( this.id, id ) );
     },
 
     /**
@@ -207,13 +207,8 @@ define( function( require ) {
      * @returns {string} the tail of the tandem
      * @public
      */
-    get tail() {
-      assert && assert( this.id.indexOf( '.' ) >= 0, 'tandem ID does not have a tail' );
-
-      var lastIndexOfDot = this.id.lastIndexOf( '.' );
-      var tail = this.id.substring( lastIndexOfDot + 1 );
-      assert && assert( tail.length > 0, 'tandem ID did not have a tail' );
-      return tail;
+    get tail() { // TODO: rename to getComponentName()
+      return PhetioIDUtils.getComponentName( this.id );
     },
 
     /**
@@ -222,10 +217,7 @@ define( function( require ) {
      * @public
      */
     get parentTandem() {
-      assert && assert( this.id.indexOf( '.' ) >= 0, 'tandem ID does not have a tail' );
-
-      var lastIndexOfDot = this.id.lastIndexOf( '.' );
-      var headID = this.id.substring( 0, lastIndexOfDot );
+      var headID = PhetioIDUtils.getParentID( this.id );
 
       return new Tandem( headID, {
         required: this.required,
@@ -311,7 +303,6 @@ define( function( require ) {
           console.log( 'Uninstrumented Code! Tandem not supplied: ' + ( uninstrumentedCodeIndex++ ) + '.\n' +
                        'Stack trace: ' + stackTrace );
         }
-
       }
     },
 
