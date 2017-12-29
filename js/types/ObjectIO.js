@@ -1,7 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * ObjectIO is the root of the IO Type hierarchy.  All wrapper types extend from ObjectIO.  This type can be subtyped or
+ * ObjectIO is the root of the IO Type hierarchy.  All IO types extend from ObjectIO.  This type can be subtyped or
  * used directly for types that only need toStateObject/fromStateObject.
  *
  * @author Sam Reid (PhET Interactive Simulations)
@@ -15,7 +15,7 @@ define( function( require ) {
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
 
   /**
-   * Main constructor for ObjectIO base wrapper type.
+   * Main constructor for ObjectIO base IO type.
    * @param {Object} instance
    * @param {string} phetioID
    * @constructor

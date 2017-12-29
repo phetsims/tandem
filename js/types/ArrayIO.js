@@ -1,7 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * PhET-iO wrapper type for JS's built-in Array type.
+ * IO type for JS's built-in Array type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -15,8 +15,8 @@ define( function( require ) {
   var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
-   * Parametric wrapper type constructor.  Given an element type, this function returns an appropriate array wrapper type.
-   * @param {ObjectIO} elementType - wrapper type of the individual elements in the array. If loaded by phet (not phet-io)
+   * Parametric IO type constructor.  Given an element type, this function returns an appropriate array IO type.
+   * @param {ObjectIO} elementType - IO type of the individual elements in the array. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */

@@ -1,7 +1,7 @@
 // Copyright 2016, University of Colorado Boulder
 
 /**
- * PhET-iO wrapper type for JS's built-in function type.
+ * IO type for JS's built-in function type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -15,7 +15,7 @@ define( function( require ) {
   var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
-   * Parametric wrapper type constructor--given return type and parameter types, this function returns a type wrapper for
+   * Parametric IO type constructor--given return type and parameter types, this function returns a type wrapper for
    * that class of functions.
    * @param {function} returnType - wrapper IO Type of the return type of the wrapped function
    * @param {function[]} parameterTypes - wrapper IO Types for the individual arguments of the wrapped function
