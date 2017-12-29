@@ -38,11 +38,11 @@ define( function( require ) {
    * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
    * a tandem must be created from scratch.
    *
-   * @param {string} id - id as a string (or '' for a root id)
+   * @param {string} phetioID - unique identifier as a string ('' for a root id)
    * @param {Object} [options]
    * @constructor
    */
-  function Tandem( id, options ) {
+  function Tandem( phetioID, options ) {
 
     // options (even subtype options) must be stored on the instance so they can be passed through to children
     // Note: Make sure that added options here are also added to options for inheritance and/or
@@ -61,7 +61,7 @@ define( function( require ) {
     }, options );
 
     // @public (read-only)
-    this.id = ( id !== undefined ) ? id : '';
+    this.phetioID = ( phetioID !== undefined ) ? phetioID : '';
 
     // @private
     this.required = options.required;
@@ -101,13 +101,13 @@ define( function( require ) {
         // ValidateTandems is false and printMissingTandems flag is present for a tandem that is required but not supplied.
         if ( phet.phetio.queryParameters.printMissingTandems && ( this.required && !this.supplied ) ) {
           console.log( 'Required Tandem not supplied.\n' +
-                       'this.id = ' + this.id + '\n' +
+                       'this.phetioID = ' + this.phetioID + '\n' +
                        'Stack trace: ' + new Error().stack );
         }
 
         // ifphetio returns a no-op function, so to test whether a valid "T" wrapper type was passed, we search for the typeName
         if ( this.supplied ) {
-          assert && assert( type && type.typeName, 'type must be specified and have a typeName for ' + this.id );
+          assert && assert( type && type.typeName, 'type must be specified and have a typeName for ' + this.phetioID );
         }
 
         // If tandem is optional, then don't add the instance
@@ -118,7 +118,7 @@ define( function( require ) {
             // Generally Font is not desired because there are so many untandemized instances.
             if ( stackTrace.indexOf( 'PhetFont' ) === -1 ) {
               console.log( 'Optional Tandem not supplied.\n' +
-                           'this.id = ' + this.id + '\n' +
+                           'this.phetioID = ' + this.phetioID + '\n' +
                            'Stack trace: ' + stackTrace );
             }
           }
@@ -133,7 +133,7 @@ define( function( require ) {
         }
         else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
-            instanceListeners[ i ].addInstance( this.id, instance, type, options );
+            instanceListeners[ i ].addInstance( this.phetioID, instance, type, options );
           }
         }
       }
@@ -152,7 +152,7 @@ define( function( require ) {
       // Only active when running as phet-io
       if ( PHET_IO_ENABLED && this.enabled ) {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
-          instanceListeners[ i ].removeInstance( this.id, instance );
+          instanceListeners[ i ].removeInstance( this.phetioID, instance );
         }
       }
     },
@@ -169,7 +169,7 @@ define( function( require ) {
       // Make sure the id was provided
       assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
 
-      var string = ( this.id.length > 0 ) ? PhetioIDUtils.append( this.id, id ) : id;
+      var string = ( this.phetioID.length > 0 ) ? PhetioIDUtils.append( this.phetioID, id ) : id;
 
       // Any child of something should be passed all inherited options. Make sure that this extend call includes all
       // that make sense from the constructor's extend call.
@@ -198,7 +198,7 @@ define( function( require ) {
     createGroupTandem: function( id ) {
 
       // Unfortunately we must resort to globals here since loading through the namespace would create a cycle
-      return new GroupTandem( PhetioIDUtils.append( this.id, id ) );
+      return new GroupTandem( PhetioIDUtils.append( this.phetioID, id ) );
     },
 
     /**
@@ -208,7 +208,7 @@ define( function( require ) {
      * @public
      */
     get tail() { // TODO: rename to getComponentName()
-      return PhetioIDUtils.getComponentName( this.id );
+      return PhetioIDUtils.getComponentName( this.phetioID );
     },
 
     /**
@@ -217,7 +217,7 @@ define( function( require ) {
      * @public
      */
     get parentTandem() {
-      var headID = PhetioIDUtils.getParentID( this.id );
+      var headID = PhetioIDUtils.getParentID( this.phetioID );
 
       return new Tandem( headID, {
         required: this.required,
@@ -375,7 +375,7 @@ define( function( require ) {
      * @public
      */
     createNextTandem: function() {
-      return new Tandem( this.id + '_' + ( this.groupElementIndex++ ) );
+      return new Tandem( this.phetioID + '_' + ( this.groupElementIndex++ ) );
     }
   } );
 
