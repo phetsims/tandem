@@ -105,7 +105,7 @@ define( function( require ) {
                        'Stack trace: ' + new Error().stack );
         }
 
-        // ifphetio returns a no-op function, so to test whether a valid "T" wrapper type was passed, we search for the typeName
+        // ifphetio returns a no-op function, so to test whether a valid IO type was passed, we search for the typeName
         if ( this.supplied ) {
           assert && assert( type && type.typeName, 'type must be specified and have a typeName for ' + this.phetioID );
         }
