@@ -15,8 +15,8 @@ define( function( require ) {
 
   /**
    *
-   * @param instance
-   * @param phetioID
+   * @param {SimIFrameAPI} instance
+   * @param {string} phetioID
    * @constructor
    */
   function SimIFrameAPIIO( instance, phetioID ) {
