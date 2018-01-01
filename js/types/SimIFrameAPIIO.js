@@ -14,7 +14,6 @@ define( function( require ) {
   var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
-   *
    * @param {SimIFrameAPI} instance
    * @param {string} phetioID
    * @constructor
