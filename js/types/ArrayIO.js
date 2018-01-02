@@ -25,7 +25,7 @@ define( function( require ) {
     /**
      * This type constructor is parameterized based on the elementType.
      * @param {Object[]} array - the array to be wrapped
-     * @param {string} phetioID - the full unique tandem name for the instance
+     * @param {string} phetioID
      * @constructor
      */
     var ArrayIOImpl = function ArrayIOImpl( array, phetioID ) {
@@ -56,7 +56,7 @@ define( function( require ) {
        */
       toStateObject: function( array ) {
         assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
-        assert && assert( elementType.toStateObject, elementType.typeName + ' does not have a toStateObject method.');
+        assert && assert( elementType.toStateObject, elementType.typeName + ' does not have a toStateObject method.' );
 
         var json = [];
         for ( var i = 0; i < array.length; i++ ) {
