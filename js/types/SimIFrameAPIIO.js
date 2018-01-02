@@ -1,17 +1,17 @@
 // Copyright 2017, University of Colorado Boulder
 
 /**
+ * IO type for SimIframeAPI
  *
  * @author - Michael Kauzmann (PhET Interactive Simulations)
  */
 define( function( require ) {
   'use strict';
 
-
   // modules
+  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
   var phetioInherit = require( 'PHET_IO/phetioInherit' );
   var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
 
   /**
    * @param {SimIFrameAPI} instance
@@ -19,6 +19,7 @@ define( function( require ) {
    * @constructor
    */
   function SimIFrameAPIIO( instance, phetioID ) {
+    // assert && assertInstanceOf( instance, phet.phetIo.SimIFrameAPI ); // TODO: enable this line
     ObjectIO.call( this, instance, phetioID );
   }
 
