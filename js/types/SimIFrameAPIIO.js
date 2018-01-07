@@ -3,7 +3,7 @@
 /**
  * IO type for SimIframeAPI
  *
- * @author - Michael Kauzmann (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 define( function( require ) {
   'use strict';
