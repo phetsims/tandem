@@ -11,13 +11,26 @@ define( function( require ) {
   // modules
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
+  require( 'ifphetio!PHET_IO/phetio' );
 
   QUnit.module( 'PhetioObject' );
+
+  // TODO: should we use phetioInherit?
+  var MockTypeIO = function( instance, phetioID ) {};
+  MockTypeIO.typeName = 'MockTypeIO';
+  MockTypeIO.events = [ 'hello' ];
+  MockTypeIO.documentation = 'mock type';
+  MockTypeIO.methods = {};
+  MockTypeIO.supertype = window.Object;
+  MockTypeIO.allEvents = [ 'hello' ];
 
   QUnit.test( 'PhetioObject start/start', function( assert ) {
     assert.ok( true, 'initial test' );
 
-    var obj = new PhetioObject( { tandem: Tandem.rootTandem } );
+    var obj = new PhetioObject( {
+      tandem: Tandem.rootTandem,
+      phetioType: MockTypeIO
+    } );
     obj.startEvent( 'model', 'hello' );
     window.assert && assert.throws( function() {
       obj.startEvent( 'model', 'hello' );
@@ -27,7 +40,10 @@ define( function( require ) {
   QUnit.test( 'PhetioObject start/end', function( assert ) {
     assert.ok( true, 'initial test' );
 
-    var obj = new PhetioObject( { tandem: Tandem.rootTandem } );
+    var obj = new PhetioObject( {
+      tandem: Tandem.rootTandem.createTandem( 'test1' ),
+      phetioType: MockTypeIO
+    } );
     obj.startEvent( 'model', 'hello' );
     obj.endEvent();
   } );
@@ -35,7 +51,10 @@ define( function( require ) {
   QUnit.test( 'PhetioObject end without start', function( assert ) {
     assert.ok( true, 'initial test' );
 
-    var obj = new PhetioObject( { tandem: Tandem.rootTandem } );
+    var obj = new PhetioObject( {
+      tandem: Tandem.rootTandem.createTandem( 'test2' ),
+      phetioType: MockTypeIO
+    } );
     window.assert && assert.throws( function() {
       obj.endEvent( 'model', 'hello' );
     }, 'Should throw an assertion error when Ending an unstarted event' );
