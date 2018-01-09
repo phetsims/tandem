@@ -65,10 +65,10 @@ define( function( require ) {
         return json;
       },
 
-      setValue: function( array, elements ) {
+      setValue: function( array, fromStateObject ) {
         assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
         array.length = 0;
-        array.push.apply( array, elements );
+        array.push.apply( array, fromStateObject );
       }
     } );
   }
