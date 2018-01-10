@@ -25,16 +25,6 @@ define( function( require ) {
     documentation: 'Wrapper for the built-in JS boolean type (true/false)',
 
     /**
-     * Decode a boolean from a state, which is already a boolean.
-     * @param {Object} stateObject
-     * @returns {Object}
-     */
-    fromStateObject: function( stateObject ) {
-      assert && assert( typeof stateObject === 'boolean', 'value should be boolean' );
-      return stateObject;
-    },
-
-    /**
      * Encodes a boolean to a state (which also happens to be a boolean).
      * @param {Object} value
      * @returns {Object}
@@ -42,6 +32,16 @@ define( function( require ) {
     toStateObject: function( value ) {
       assert && assert( typeof value === 'boolean', 'value should be boolean' );
       return value;
+    },
+
+    /**
+     * Decode a boolean from a state, which is already a boolean.
+     * @param {Object} stateObject
+     * @returns {Object}
+     */
+    fromStateObject: function( stateObject ) {
+      assert && assert( typeof stateObject === 'boolean', 'value should be boolean' );
+      return stateObject;
     }
   } );
 

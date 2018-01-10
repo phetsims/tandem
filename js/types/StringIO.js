@@ -25,6 +25,16 @@ define( function( require ) {
     documentation: 'Wrapper for the built-in JS string type',
 
     /**
+     * Encodes a string to a state (which also happens to be a string).
+     * @param {Object} value
+     * @returns {Object}
+     */
+    toStateObject: function( value ) {
+      assert && assert( typeof value === 'string', 'value should be string, but it was ' + ( typeof value ) );
+      return value;
+    },
+
+    /**
      * Decode a string from a state, which is already a string.
      * @param {Object} stateObject
      * @returns {Object}
@@ -32,16 +42,6 @@ define( function( require ) {
     fromStateObject: function( stateObject ) {
       assert && assert( typeof stateObject === 'string', 'value should be string' );
       return stateObject;
-    },
-
-    /**
-     * Encodes a string to a state (which also happens to be a string).
-     * @param {Object} value
-     * @returns {Object}
-     */
-    toStateObject: function( value ) {
-      assert && assert( typeof value === 'string', 'value should be string, but it was ' + (typeof value) );
-      return value;
     }
   } );
 

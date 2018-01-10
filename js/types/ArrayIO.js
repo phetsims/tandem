@@ -37,19 +37,6 @@ define( function( require ) {
       elementType: elementType,
 
       /**
-       * Deserialize from a serialized state.
-       * @param {Object} stateObject - from toStateObject
-       * @returns {Object[]}
-       */
-      fromStateObject: function( stateObject ) {
-        var array = [];
-        for ( var i = 0; i < stateObject.length; i++ ) {
-          array.push( elementType.fromStateObject( stateObject[ i ] ) );
-        }
-        return array;
-      },
-
-      /**
        * Serialize an array by serializing each element
        * @param {Object[]} array
        * @returns {Array}
@@ -63,6 +50,19 @@ define( function( require ) {
           json.push( elementType.toStateObject( array[ i ] ) );
         }
         return json;
+      },
+
+      /**
+       * Deserialize from a serialized state.
+       * @param {Object} stateObject - from toStateObject
+       * @returns {Object[]}
+       */
+      fromStateObject: function( stateObject ) {
+        var array = [];
+        for ( var i = 0; i < stateObject.length; i++ ) {
+          array.push( elementType.fromStateObject( stateObject[ i ] ) );
+        }
+        return array;
       },
 
       setValue: function( array, fromStateObject ) {
