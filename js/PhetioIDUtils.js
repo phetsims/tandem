@@ -36,6 +36,7 @@
      * @returns {string}
      */
     getComponentName: function( phetioID ) {
+      // TODO: Use PhetioIDUtils for this.
       assert && assert( phetioID.length > 0 );
       var indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
       if ( indexOfLastSeparator === -1 ) {
