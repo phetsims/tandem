@@ -340,7 +340,7 @@ define( function( require ) {
   } );
 
   /**
-   * Some common code (such as CheckBox or RadioButton) must always be instrumented and hence requires a tandem to be
+   * Some common code (such as Checkbox or RadioButton) must always be instrumented and hence requires a tandem to be
    * passed in.
    * @public
    * @static
