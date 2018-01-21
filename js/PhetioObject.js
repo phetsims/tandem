@@ -25,6 +25,8 @@ define( function( require ) {
     phetioInstanceDocumentation: '' // Useful notes about an instrumented instance, shown in instance-proxies
   };
 
+  var DEFAULT_EVENT_OPTIONS = { highFrequencyEvent: false };
+
   var OPTIONS_KEYS = _.keys( DEFAULTS );
 
   /**
@@ -95,9 +97,16 @@ define( function( require ) {
      * @param {string} eventType - 'model' | 'view'
      * @param {string} event - the name of the event
      * @param {Object} [args] - arguments for the event
+     * @param {Object} [options] - options for firing the event
      * @public
      */
-    startEvent: function( eventType, event, args ) {
+    startEvent: function( eventType, event, args, options ) {
+
+      // Poor-man's options for maximum performance
+      options = options || DEFAULT_EVENT_OPTIONS;
+      if ( window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
+        return;
+      }
       assert && assert( !this.eventInProgress, 'cannot start event while event is in progress' );
       this.eventInProgress = true;
       this.eventID = this.phetioObjectTandem.isSuppliedAndEnabled() && phetioEvents.start( eventType, this, event, args );
@@ -105,9 +114,16 @@ define( function( require ) {
 
     /**
      * End an event on the nested PhET-iO event stream.
+     * @param {Object} [options]
      * @public
      */
-    endEvent: function() {
+    endEvent: function( options ) {
+
+      // Poor-man's options for maximum performance
+      options = options || DEFAULT_EVENT_OPTIONS;
+      if ( window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
+        return;
+      }
       if ( this.phetioObjectDipsosed ) {
 
         // if this instance was disposed earlier, then the end event was already called, and should not be called again.
