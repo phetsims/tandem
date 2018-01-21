@@ -20,7 +20,6 @@ define( function( require ) {
                                     // `Tandem.tandemRequired` to enforce its presence
     phetioType: ObjectIO,           // Supply the appropriate IO type
     phetioState: true,              // When true, includes the instance in the PhET-iO state
-    phetioEvents: true,             // When true, includes events in the PhET-iO events stream
     phetioReadOnly: false,          // When true, you can only get values from the instance; no setting allowed.
     phetioInstanceDocumentation: '' // Useful notes about an instrumented instance, shown in instance-proxies
   };
