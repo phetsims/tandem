@@ -1,7 +1,7 @@
-// Copyright 2017, University of Colorado Boulder
+// Copyright 2017-2018, University of Colorado Boulder
 
 /**
- * Base type for instrumented PhET-io instances, provides support for PhET-iO features when running with PhET-iO enabled.
+ * Base type for instrumented PhET-iO instances, provides support for PhET-iO features when running with PhET-iO enabled.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
