@@ -99,7 +99,7 @@ define( function( require ) {
 
       // Poor-man's options for maximum performance
       options = options || DEFAULT_EVENT_OPTIONS;
-      if ( window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
+      if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
         return;
       }
 
