@@ -38,15 +38,12 @@ define( function( require ) {
     // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
     this.phetioObjectInitialized = false;
 
-    // @private {number|boolean|null} - tracks the index of the message to make sure ends match starts.
-    // If the tandem is not legal and usable, then returns false.
-    // If the tandem is legal and usable, it returns a numeric identifier that is used to cross-check the endEvent call
-    //    (to make sure starts and ends match).
-    // Null if an event is not in progress
+    // @private {number|null} - tracks the index of the message to make sure ends match starts.
+    // If phetioEvents.start has been called, eventID is a number. Otherwise it is null.
     this.eventID = null;
 
     // @private {boolean} - has the instance been disposed?
-    this.phetioObjectDipsosed = false;
+    this.phetioObjectDisposed = false;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -98,52 +95,40 @@ define( function( require ) {
      */
     startEvent: function( eventType, event, args, options ) {
 
+      assert && assert( this.eventID === null, 'cannot start event while event is in progress' );
+
       // Poor-man's options for maximum performance
       options = options || DEFAULT_EVENT_OPTIONS;
       if ( window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
         return;
       }
-      assert && assert( !this.isEventInProgress(), 'cannot start event while event is in progress' );
-      this.eventID = this.phetioObjectTandem.isSuppliedAndEnabled() && phetioEvents.start( eventType, this, event, args );
-    },
 
-    /**
-     * Returns true if an event is in progress.  Since the first eventID is 0 and an invoked but guarded event is false,
-     * we cannot use truthiness to determine if an event is underway.
-     * @returns {boolean}
-     * @private
-     */
-    isEventInProgress: function() {
-
-      // If eventID is numeric, it is being processed by phetioEvents.  If eventID is false, it was invoked from
-      // PhetioObject, but short circuited because phetioObjectTandem wasn't supplied or enabled.
-      return typeof this.eventID === 'number' || this.eventID === false;
+      if ( this.phetioObjectTandem.isSuppliedAndEnabled() ) {
+        this.eventID = phetioEvents.start( eventType, this, event, args );
+      }
     },
 
     /**
      * End an event on the nested PhET-iO event stream.
-     * @param {Object} [options]
+     * It this object was disposed or phetioEvents.start was not called, this is a no-op.
      * @public
      */
-    endEvent: function( options ) {
+    endEvent: function() {
 
-      // Poor-man's options for maximum performance
-      options = options || DEFAULT_EVENT_OPTIONS;
-      if ( window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
+      // if this instance was disposed earlier, then the end event was already called, and should not be called again.
+      // We must be able to call endEvent on disposed objects so that cases like this don't fail:
+      // startEvent()
+      // callbackListeners => a listener disposes the instance
+      // endEvent()
+      if ( this.phetioObjectDisposed ) {
         return;
       }
-      if ( this.phetioObjectDipsosed ) {
 
-        // if this instance was disposed earlier, then the end event was already called, and should not be called again.
-        // We must be able to call endEvent on disposed objects so that cases like this don't fail:
-        // startEvent()
-        // callbackListeners => a listener disposes the instance
-        // endEvent()
-        return;
+      if ( this.phetioObjectTandem.isSuppliedAndEnabled() ) {
+        assert && assert( this.eventID !== null, 'cannot end an event that hasn\'t started' );
+        phetioEvents.end( this.eventID );
+        this.eventID = null;
       }
-      assert && assert( this.isEventInProgress(), 'cannot end an event that hasn\'t started' );
-      this.phetioObjectTandem.isSuppliedAndEnabled() && phetioEvents.end( this.eventID );
-      this.eventID = null;
     },
 
     /**
@@ -151,10 +136,10 @@ define( function( require ) {
      * @public
      */
     dispose: function() {
-      assert && assert( !this.phetioObjectDipsosed, 'PhetioObject can only be disposed once' );
+      assert && assert( !this.phetioObjectDisposed, 'PhetioObject can only be disposed once' );
 
       // Support disposal during callback processing.
-      if ( this.isEventInProgress() ) {
+      if ( this.eventID !== null ) {
         this.endEvent();
       }
 
@@ -165,7 +150,7 @@ define( function( require ) {
         this.phetioObjectTandem.removeInstance( this );
       }
 
-      this.phetioObjectDipsosed = true;
+      this.phetioObjectDisposed = true;
     }
   } );
 } );
