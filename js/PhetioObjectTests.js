@@ -56,7 +56,7 @@ define( function( require ) {
       phetioType: MockTypeIO
     } );
     window.assert && assert.throws( function() {
-      obj.endEvent( 'model', 'hello' );
+      obj.endEvent();
     }, 'Should throw an assertion error when Ending an unstarted event' );
   } );
 } );
