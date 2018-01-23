@@ -39,8 +39,8 @@ define( function( require ) {
     this.phetioObjectInitialized = false;
 
     // @private {number|null} - tracks the index of the message to make sure ends match starts.
-    // If phetioEvents.start has been called, eventID is a number. Otherwise it is null.
-    this.eventID = null;
+    // If phetioEvents.start has been called, phetioMessageIndex is a number. Otherwise it is null.
+    this.phetioMessageIndex = null;
 
     // @private {boolean} - has the instance been disposed?
     this.phetioObjectDisposed = false;
@@ -95,7 +95,7 @@ define( function( require ) {
      */
     startEvent: function( eventType, event, args, options ) {
 
-      assert && assert( this.eventID === null, 'cannot start event while event is in progress' );
+      assert && assert( this.phetioMessageIndex === null, 'cannot start event while event is in progress' );
 
       // Poor-man's options for maximum performance
       options = options || DEFAULT_EVENT_OPTIONS;
@@ -104,7 +104,7 @@ define( function( require ) {
       }
 
       if ( this.phetioObjectTandem.isSuppliedAndEnabled() ) {
-        this.eventID = phetioEvents.start( eventType, this, event, args );
+        this.phetioMessageIndex = phetioEvents.start( eventType, this, event, args );
       }
     },
 
@@ -125,9 +125,9 @@ define( function( require ) {
       }
 
       if ( this.phetioObjectTandem.isSuppliedAndEnabled() ) {
-        assert && assert( this.eventID !== null, 'cannot end an event that hasn\'t started' );
-        phetioEvents.end( this.eventID );
-        this.eventID = null;
+        assert && assert( this.phetioMessageIndex !== null, 'cannot end an event that hasn\'t started' );
+        phetioEvents.end( this.phetioMessageIndex );
+        this.phetioMessageIndex = null;
       }
     },
 
@@ -139,7 +139,7 @@ define( function( require ) {
       assert && assert( !this.phetioObjectDisposed, 'PhetioObject can only be disposed once' );
 
       // Support disposal during callback processing.
-      if ( this.eventID !== null ) {
+      if ( this.phetioMessageIndex !== null ) {
         this.endEvent();
       }
 
