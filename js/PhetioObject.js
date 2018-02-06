@@ -94,7 +94,7 @@ define( function( require ) {
      * @public
      */
     startEvent: function( eventType, event, args, options ) {
-
+      assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
       assert && assert( this.phetioMessageIndex === null, 'cannot start event while event is in progress' );
 
       // Poor-man's options for maximum performance
