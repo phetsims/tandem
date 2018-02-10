@@ -84,14 +84,11 @@ define( function( require ) {
      *
      * This is used to register instances with PhET-iO.
      * @param {Object} instance - the instance to add
-     * @param {Object} options - tandem flags, see phetio.js, must include the phetioType (so technically is not optional)
      * @public
      */
-    addInstance: function( instance, options ) {
+    addInstance: function( instance ) {
 
       if ( PHET_IO_ENABLED && this.enabled ) {
-
-        var type = options.phetioType;
 
         // Throw an error if the tandem is required but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -103,11 +100,6 @@ define( function( require ) {
           console.log( 'Required Tandem not supplied.\n' +
                        'this.phetioID = ' + this.phetioID + '\n' +
                        'Stack trace: ' + new Error().stack );
-        }
-
-        // ifphetio returns a no-op function, so to test whether a valid IO type was passed, we search for the typeName
-        if ( this.supplied ) {
-          assert && assert( type && type.typeName, 'type must be specified and have a typeName for ' + this.phetioID );
         }
 
         // If tandem is optional, then don't add the instance
@@ -129,11 +121,11 @@ define( function( require ) {
         }
 
         if ( !launched ) {
-          bufferedElements.push( { tandem: this, instance: instance, options: options } );
+          bufferedElements.push( instance );
         }
         else {
           for ( var i = 0; i < instanceListeners.length; i++ ) {
-            instanceListeners[ i ].addInstance( this.phetioID, instance, type, options );
+            instanceListeners[ i ].addInstance( instance );
           }
         }
       }
@@ -263,7 +255,7 @@ define( function( require ) {
       launched = true;
       while ( bufferedElements.length > 0 ) {
         var element = bufferedElements.shift();
-        element.tandem.addInstance( element.instance, element.options );
+        element.phetioObjectTandem.addInstance( element );
       }
     },
 

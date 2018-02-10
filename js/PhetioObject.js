@@ -15,6 +15,9 @@ define( function( require ) {
   var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
   var Tandem = require( 'TANDEM/Tandem' );
 
+  // constants
+  var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
+
   var DEFAULTS = {
     tandem: Tandem.optional,        // By default tandems are optional, but subtypes can specify this as
                                     // `Tandem.tandemRequired` to enforce its presence
@@ -80,8 +83,45 @@ define( function( require ) {
       // @private - the IO type associated with this instance
       this.phetioType = options.phetioType;
 
+      assert && assert( this.phetioObjectTandem, 'Component was missing its tandem' );
+      assert && assert( this.phetioObjectTandem.phetioID, 'Component was missing its phetioID' );
+
+      if ( assert && this.phetioType && PHET_IO_ENABLED ) {
+        assert && assert( this.phetioType.documentation, 'There must be a documentation string for each IO Type.' );
+
+        for ( var methodName in this.phetioType.methods ) {
+          var method = this.phetioType.methods[ methodName ];
+
+          if ( typeof method === 'function' ) {
+
+            // This is a private function for internal phet-io mechanics, not for exporting over the API, so it doesn't
+            // need to be checked.
+          }
+          else {
+            var IOType = this.phetioType;
+
+            // If you get one of these assertion errors, go to the IOType definition file and check its methods
+            assert && assert( !!method.returnType, IOType.typeName + '.' + methodName + ' needs a returnType' );
+            assert && assert( !!method.implementation, IOType.typeName + '.' + methodName + ' needs an implementation function' );
+            assert && assert( !!method.parameterTypes, IOType.typeName + '.' + methodName + ' needs a parameterTypes array' );
+            assert && assert( !!method.documentation, IOType.typeName + '.' + methodName + ' needs a documentation string' );
+          }
+        }
+
+        assert && assert( this.phetioType !== undefined, this.phetioObjectTandem.phetioID + ' missing type from phetio.api' );
+        assert && assert( this.phetioType.typeName, 'no type name for ' + this.phetioObjectTandem.phetioID + '(may be missing type parameter)' );
+        assert && assert( this.phetioType.typeName, 'type must be specified and have a typeName for ' + this.phetioObjectTandem.phetioID );
+      }
+
+      // Only keep the options specified in defaults/extend
+      this.phetioObjectOptions = _.pick( options, _.keys( DEFAULTS ) );
+
+      if ( PHET_IO_ENABLED && this.phetioObjectTandem.enabled && this.phetioObjectTandem.supplied ) {
+        this.phetioWrapper = new this.phetioType( this, this.phetioObjectTandem.phetioID );
+      }
+
       // Register with the tandem registry
-      this.phetioObjectTandem.addInstance( this, options );
+      this.phetioObjectTandem.addInstance( this );
     },
 
     /**
