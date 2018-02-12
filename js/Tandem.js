@@ -150,7 +150,7 @@ define( function( require ) {
       // Only active when running as phet-io
       if ( PHET_IO_ENABLED && this.enabled ) {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
-          instanceListeners[ i ].removeInstance( this.phetioID, instance );
+          instanceListeners[ i ].removeInstance( instance );
         }
       }
     },
