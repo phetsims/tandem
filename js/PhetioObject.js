@@ -116,6 +116,7 @@ define( function( require ) {
       // Only keep the options specified in defaults/extend
       this.phetioObjectOptions = _.pick( options, _.keys( DEFAULTS ) );
 
+      // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.phetioObjectTandem.enabled && this.phetioObjectTandem.supplied ) {
         this.phetioWrapper = new this.phetioType( this, this.phetioObjectTandem.phetioID );
       }
