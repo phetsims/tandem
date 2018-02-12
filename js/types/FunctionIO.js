@@ -42,7 +42,7 @@ define( function( require ) {
       documentation: 'Wrapper for the built-in JS function type',
       returnType: returnType,
       parameterTypes: parameterTypes,
-      wrapForSimIFrameAPI: true
+      wrapForPhetioCommandProcessor: true
     } );
   }
 
