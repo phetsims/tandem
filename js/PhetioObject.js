@@ -37,6 +37,24 @@ define( function( require ) {
    */
   function PhetioObject( options ) {
 
+    // @public (read-only) {Tandem} - assigned in initializePhetioObject - the unique tandem for this instance
+    this.tandem = null;
+
+    // @public (read-only) {IOType} - assigned in initializePhetioObject - the IO type associated with this instance
+    this.phetioType = null;
+
+    // @public (read-only) {boolean} - assigned in initializePhetioObject - When true, included in the PhET-iO state
+    this.phetioState = null;
+
+    // @public (read-only) {boolean} - assigned in initializePhetioObject - When true, values can be get but not set
+    this.phetioReadOnly = null;
+
+    // @public (read-only) {string} - assigned in initializePhetioObject - Notes about an instance, shown in instance-proxies
+    this.phetioInstanceDocumentation = null;
+
+    // @public (read-only) {Object} - assigned in initializePhetioObject - The wrapper instance for PhET-iO interoperation
+    this.phetioWrapper = null;
+
     // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
     // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
     this.phetioObjectInitialized = false;
@@ -71,24 +89,15 @@ define( function( require ) {
         return; // no PhetioObject keys provided, perhaps they will be provided in a subsequent mutate call.
       }
       assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
-      this.phetioObjectInitialized = true;
 
-      options = _.extend( {}, DEFAULTS, baseOptions, options );
+      assert && assert( options.tandem, 'Component was missing its tandem' );
+      assert && assert( options.tandem.phetioID, 'Component was missing its phetioID' );
 
-      // @public (read-only) - the unique tandem for this instance
-      this.tandem = options.tandem;
+      if ( assert && options.phetioType && PHET_IO_ENABLED ) {
+        assert && assert( options.phetioType.documentation, 'There must be a documentation string for each IO Type.' );
 
-      // @private - the IO type associated with this instance
-      this.phetioType = options.phetioType;
-
-      assert && assert( this.tandem, 'Component was missing its tandem' );
-      assert && assert( this.tandem.phetioID, 'Component was missing its phetioID' );
-
-      if ( assert && this.phetioType && PHET_IO_ENABLED ) {
-        assert && assert( this.phetioType.documentation, 'There must be a documentation string for each IO Type.' );
-
-        for ( var methodName in this.phetioType.methods ) {
-          var method = this.phetioType.methods[ methodName ];
+        for ( var methodName in options.phetioType.methods ) {
+          var method = options.phetioType.methods[ methodName ];
 
           if ( typeof method === 'function' ) {
 
@@ -96,7 +105,7 @@ define( function( require ) {
             // need to be checked.
           }
           else {
-            var IOType = this.phetioType;
+            var IOType = options.phetioType;
 
             // If you get one of these assertion errors, go to the IOType definition file and check its methods
             assert && assert( !!method.returnType, IOType.typeName + '.' + methodName + ' needs a returnType' );
@@ -106,13 +115,19 @@ define( function( require ) {
           }
         }
 
-        assert && assert( this.phetioType !== undefined, this.tandem.phetioID + ' missing type from phetio.api' );
-        assert && assert( this.phetioType.typeName, 'no type name for ' + this.tandem.phetioID + '(may be missing type parameter)' );
-        assert && assert( this.phetioType.typeName, 'type must be specified and have a typeName for ' + this.tandem.phetioID );
+        assert && assert( options.phetioType !== undefined, options.tandem.phetioID + ' missing type from phetio.api' );
+        assert && assert( options.phetioType.typeName, 'no type name for ' + options.tandem.phetioID + '(may be missing type parameter)' );
+        assert && assert( options.phetioType.typeName, 'type must be specified and have a typeName for ' + options.tandem.phetioID );
       }
 
-      // Only keep the options specified in defaults/extend
-      this.phetioObjectOptions = _.pick( options, OPTIONS_KEYS );
+      options = _.extend( {}, DEFAULTS, baseOptions, options );
+
+      // Assign public values from options
+      this.tandem = options.tandem;
+      this.phetioType = options.phetioType;
+      this.phetioState = options.phetioState;
+      this.phetioReadOnly = options.phetioReadOnly;
+      this.phetioInstanceDocumentation = options.phetioInstanceDocumentation;
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.tandem.enabled && this.tandem.supplied ) {
@@ -121,6 +136,8 @@ define( function( require ) {
 
       // Register with the tandem registry
       this.tandem.addInstance( this );
+
+      this.phetioObjectInitialized = true;
     },
 
     /**
