@@ -83,10 +83,16 @@ define( function( require ) {
      * enforces one entry per ID in phetio.addInstance
      *
      * This is used to register instances with PhET-iO.
-     * @param {Object} instance - the instance to add
+     * @param {PhetioObject} instance - the instance to add
      * @public
      */
     addInstance: function( instance ) {
+
+      assert && assert( arguments.length === 1, 'Tandem.addInstance takes one argument' );
+
+      // Check that the instrumented instance is an instance of PhetioObject, cannot use typical require statement for
+      // PhetioObject because it creates a module loading loop
+      assert && assert( instance instanceof phet.tandem.PhetioObject, 'Instance should be of type PhetioObject' );
 
       if ( PHET_IO_ENABLED && this.enabled ) {
 
