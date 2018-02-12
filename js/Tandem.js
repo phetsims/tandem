@@ -139,7 +139,7 @@ define( function( require ) {
 
     /**
      * Removes an instance from the registry
-     * @param {Object} instance - the instance to remove
+     * @param {PhetioObject} instance - the instance to remove
      * @public
      */
     removeInstance: function( instance ) {
