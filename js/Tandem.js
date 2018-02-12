@@ -261,7 +261,7 @@ define( function( require ) {
       launched = true;
       while ( bufferedElements.length > 0 ) {
         var element = bufferedElements.shift();
-        element.phetioObjectTandem.addInstance( element );
+        element.tandem.addInstance( element );
       }
     },
 

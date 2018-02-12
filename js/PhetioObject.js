@@ -76,15 +76,13 @@ define( function( require ) {
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
       // @public (read-only) - the unique tandem for this instance
-      // TODO: rename to this.tandem after all other this.*tandems deleted
-      // TODO: do we need phetioID if we have phetioObjectTandem?
-      this.phetioObjectTandem = options.tandem;
+      this.tandem = options.tandem;
 
       // @private - the IO type associated with this instance
       this.phetioType = options.phetioType;
 
-      assert && assert( this.phetioObjectTandem, 'Component was missing its tandem' );
-      assert && assert( this.phetioObjectTandem.phetioID, 'Component was missing its phetioID' );
+      assert && assert( this.tandem, 'Component was missing its tandem' );
+      assert && assert( this.tandem.phetioID, 'Component was missing its phetioID' );
 
       if ( assert && this.phetioType && PHET_IO_ENABLED ) {
         assert && assert( this.phetioType.documentation, 'There must be a documentation string for each IO Type.' );
@@ -108,21 +106,21 @@ define( function( require ) {
           }
         }
 
-        assert && assert( this.phetioType !== undefined, this.phetioObjectTandem.phetioID + ' missing type from phetio.api' );
-        assert && assert( this.phetioType.typeName, 'no type name for ' + this.phetioObjectTandem.phetioID + '(may be missing type parameter)' );
-        assert && assert( this.phetioType.typeName, 'type must be specified and have a typeName for ' + this.phetioObjectTandem.phetioID );
+        assert && assert( this.phetioType !== undefined, this.tandem.phetioID + ' missing type from phetio.api' );
+        assert && assert( this.phetioType.typeName, 'no type name for ' + this.tandem.phetioID + '(may be missing type parameter)' );
+        assert && assert( this.phetioType.typeName, 'type must be specified and have a typeName for ' + this.tandem.phetioID );
       }
 
       // Only keep the options specified in defaults/extend
-      this.phetioObjectOptions = _.pick( options, _.keys( DEFAULTS ) );
+      this.phetioObjectOptions = _.pick( options, OPTIONS_KEYS );
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
-      if ( PHET_IO_ENABLED && this.phetioObjectTandem.enabled && this.phetioObjectTandem.supplied ) {
-        this.phetioWrapper = new this.phetioType( this, this.phetioObjectTandem.phetioID );
+      if ( PHET_IO_ENABLED && this.tandem.enabled && this.tandem.supplied ) {
+        this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
       }
 
       // Register with the tandem registry
-      this.phetioObjectTandem.addInstance( this );
+      this.tandem.addInstance( this );
     },
 
     /**
@@ -144,7 +142,7 @@ define( function( require ) {
         return;
       }
 
-      if ( this.phetioObjectTandem.isSuppliedAndEnabled() ) {
+      if ( this.tandem.isSuppliedAndEnabled() ) {
         this.phetioMessageIndex = phetioEvents.start( eventType, this, event, args );
       }
     },
@@ -165,7 +163,7 @@ define( function( require ) {
         return;
       }
 
-      if ( this.phetioObjectTandem.isSuppliedAndEnabled() ) {
+      if ( this.tandem.isSuppliedAndEnabled() ) {
         assert && assert( this.phetioMessageIndex !== null, 'cannot end an event that hasn\'t started' );
         phetioEvents.end( this.phetioMessageIndex );
         this.phetioMessageIndex = null;
@@ -188,7 +186,7 @@ define( function( require ) {
       if ( this.phetioObjectInitialized ) {
 
         // Tandem de-registration
-        this.phetioObjectTandem.removeInstance( this );
+        this.tandem.removeInstance( this );
       }
 
       this.phetioObjectDisposed = true;
