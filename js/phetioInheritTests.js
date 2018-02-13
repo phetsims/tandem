@@ -9,12 +9,12 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var phetioCommandProcessorIO = require( 'PHET_IO/types/phetioCommandProcessorIO' );
+  var PhetioCommandProcessorIO = require( 'PHET_IO/PhetioCommandProcessorIO' );
 
   QUnit.module( 'phetioInherit' );
 
   // These tests run in brand=phet-io
   QUnit.test( 'IO types', function( assert ) {
-    assert.ok( !!phetioCommandProcessorIO.toStateObject, 'IO types should inherit static properties' );
+    assert.ok( !!PhetioCommandProcessorIO.toStateObject, 'IO types should inherit static properties' );
   } );
 } );
