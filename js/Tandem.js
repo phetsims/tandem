@@ -92,7 +92,7 @@ define( function( require ) {
 
       // Check that the instrumented instance is an instance of PhetioObject, cannot use typical require statement for
       // PhetioObject because it creates a module loading loop
-      assert && assert( instance instanceof phet.tandem.PhetioObject, 'Instance should be of type PhetioObject' );
+      assert && assert( instance instanceof tandemNamespace.PhetioObject, 'Instance should be of type PhetioObject' );
 
       if ( PHET_IO_ENABLED && this.enabled ) {
 
