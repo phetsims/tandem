@@ -122,7 +122,7 @@ define( function( require ) {
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
-      // Assign public values from options
+      // Unpack options to instance properties
       this.tandem = options.tandem;
       this.phetioType = options.phetioType;
       this.phetioState = options.phetioState;
