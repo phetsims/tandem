@@ -18,6 +18,9 @@ define( function( require ) {
   // constants
   var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
 
+  // Flag that indicates a high frequency message was skipped.
+  var SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
+
   var DEFAULTS = {
     tandem: Tandem.optional,        // By default tandems are optional, but subtypes can specify this as
                                     // `Tandem.tandemRequired` to enforce its presence
@@ -156,6 +159,7 @@ define( function( require ) {
       // Poor-man's options for maximum performance
       options = options || DEFAULT_EVENT_OPTIONS;
       if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
+        this.phetioMessageIndex = SKIPPING_HIGH_FREQUENCY_MESSAGE;
         return;
       }
 
@@ -177,6 +181,12 @@ define( function( require ) {
       // callbackListeners => a listener disposes the instance
       // endEvent()
       if ( this.phetioObjectDisposed ) {
+        return;
+      }
+
+      // The message was started as a high frequency event to be skipped, so the end is a no-op
+      if ( this.phetioMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
+        this.phetioMessageIndex = null;
         return;
       }
 
