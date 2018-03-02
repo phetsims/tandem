@@ -29,7 +29,7 @@ define( function( require ) {
     phetioType: ObjectIO,           // Supply the appropriate IO type
     phetioState: true,              // When true, includes the instance in the PhET-iO state
     phetioReadOnly: false,          // When true, you can only get values from the instance; no setting allowed.
-    phetioInstanceDocumentation: '' // Useful notes about an instrumented instance, shown in instance-proxies
+    phetioInstanceDocumentation: '' // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
   };
 
   var DEFAULT_EVENT_OPTIONS = { highFrequencyEvent: false };
@@ -54,7 +54,7 @@ define( function( require ) {
     // @public (read-only) {boolean} - assigned in initializePhetioObject - When true, values can be get but not set
     this.phetioReadOnly = null;
 
-    // @public (read-only) {string} - assigned in initializePhetioObject - Notes about an instance, shown in instance-proxies
+    // @public (read-only) {string} - assigned in initializePhetioObject - Notes about an instance, shown in the PhET-iO Studio Wrapper
     this.phetioInstanceDocumentation = null;
 
     // @public (read-only) {Object} - assigned in initializePhetioObject - The wrapper instance for PhET-iO interoperation
