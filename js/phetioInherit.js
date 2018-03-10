@@ -30,7 +30,7 @@ define( function( require ) {
     staticProperties = staticProperties || {};
 
     if ( staticProperties.parameterTypes ) {
-      assert && assert( Array.isArray(staticProperties.parameterTypes), 'parameterTypes expected to be array' );
+      assert && assert( Array.isArray( staticProperties.parameterTypes ), 'parameterTypes expected to be array' );
 
       // Add the parameter types to the FunctionIO's type name.
       typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameter ) { return parameter.typeName;} )
