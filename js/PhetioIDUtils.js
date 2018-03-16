@@ -58,6 +58,12 @@
       var indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
       assert && assert( indexOfLastSeparator !== -1, 'phetioID does not have a parent component: ' + phetioID );
       return phetioID.substring( 0, indexOfLastSeparator );
-    }
+    },
+
+    /**
+     * The separator used to piece together a phet-io id.
+     * {{String}}
+     */
+    SEPARATOR: SEPARATOR
   };
 } )();
