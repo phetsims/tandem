@@ -33,6 +33,7 @@ define( function( require ) {
       ObjectIO.call( this, array, phetioID );
     };
     return phetioInherit( ObjectIO, 'ArrayIO', ArrayIOImpl, {}, {
+      parameterTypes: [ elementType ],
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
       elementType: elementType,
 
