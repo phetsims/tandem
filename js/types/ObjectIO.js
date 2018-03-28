@@ -35,7 +35,7 @@ define( function( require ) {
   // ObjectIO inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
   // However, when serialized, the ObjectIO supertype is reported as null (not sent in the JSON).
   phetioInherit( window.Object, 'ObjectIO', ObjectIO, {}, {
-    documentation: 'The root of the wrapper object hierarchy',
+    documentation: 'The root of the wrapper object hierarchy.',
 
     /**
      * Return the json that ObjectIO is wrapping.  This can be overriden by subclasses, or types can use ObjectIO type
