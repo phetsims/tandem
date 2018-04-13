@@ -41,7 +41,7 @@ define( function( require ) {
       // Signify parameterTypes to phetioInherit
       parameterTypes: [ ioType ],
 
-      // Signify documentation, used in documentation wrappers
+      // Signify documentation, used in documentation wrappers like PhET-iO Studio.
       documentation: 'A wrapper to wrap another IOType, adding support for null.',
 
       /**
