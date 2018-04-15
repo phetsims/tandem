@@ -37,6 +37,12 @@ define( function( require ) {
         .join( ', ' ) + '>';
     }
 
+    // The method order is used to determine the ordering of the documentation for a type's methods, see Studio for usage.
+    subtype.methodOrder = staticProperties.methodOrder || [];
+    subtype.methodOrder.forEach( function( methodName ) {
+      assert && assert( methods[ methodName ], 'methodName not in prototype methods: ' + methodName );
+    } );
+
     subtype.typeName = typeName;
     subtype.methods = methods;
     subtype.supertype = supertype;
