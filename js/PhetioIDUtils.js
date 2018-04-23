@@ -13,12 +13,17 @@
   // constants
   var SEPARATOR = '.';
 
+  /**
+   * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
+   * structure of the phetioID. Available in the main PhET-iO js import.
+   * @namespace
+   */
   window.PhetioIDUtils = {
 
     /**
      * Appends a component to an existing phetioID to create a new unique phetioID for the component.
      * Example: append( 'myScreen.myControlPanel', 'myComboBox' ) -> 'myScreen.myControlPanel.myComboBox'
-     *
+     * @public
      * @param {string} phetioID
      * @param {string} componentName
      * @returns {string}
@@ -29,10 +34,10 @@
     },
 
     /**
-     * Given a phetioID for a component, get the part of that id that pertains to the component.
+     * Given a phetioID for a component (instance), get the part of that id that pertains to the component.
      * Example: 'myScreen.myControlPanel.myComboBox' -> 'myComboBox'
-     *
-     * @param phetioID
+     * @public
+     * @param {string} phetioID
      * @returns {string}
      */
     getComponentName: function( phetioID ) {
@@ -50,7 +55,7 @@
     /**
      * Given a phetioID for a component, get the phetioID of the parent component.
      * Example: 'myScreen.myControlPanel.myComboBox' -> 'myScreen.myControlPanel'
-     *
+     * @public
      * @param {string} phetioID
      * @returns {string}
      */
@@ -62,7 +67,9 @@
 
     /**
      * The separator used to piece together a phet-io id.
-     * {{String}}
+     * @type {String}
+     * @constant
+     * @public
      */
     SEPARATOR: SEPARATOR
   };
