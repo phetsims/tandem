@@ -167,7 +167,7 @@ define( function( require ) {
       // Make sure the id was provided
       assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
 
-      var string = ( this.phetioID.length > 0 ) ? PhetioIDUtils.append( this.phetioID, id ) : id;
+      var string = ( this.phetioID.length > 0 ) ? phet.PhetioIDUtils.append( this.phetioID, id ) : id;
 
       // Any child of something should be passed all inherited options. Make sure that this extend call includes all
       // that make sense from the constructor's extend call.
@@ -196,7 +196,7 @@ define( function( require ) {
     createGroupTandem: function( id ) {
 
       // Unfortunately we must resort to globals here since loading through the namespace would create a cycle
-      return new GroupTandem( PhetioIDUtils.append( this.phetioID, id ) );
+      return new GroupTandem( phet.PhetioIDUtils.append( this.phetioID, id ) );
     },
 
     /**
@@ -206,7 +206,7 @@ define( function( require ) {
      * @public
      */
     get tail() { // TODO: rename to getComponentName()
-      return PhetioIDUtils.getComponentName( this.phetioID );
+      return phet.PhetioIDUtils.getComponentName( this.phetioID );
     },
 
     /**
@@ -215,7 +215,7 @@ define( function( require ) {
      * @public
      */
     get parentTandem() {
-      var headID = PhetioIDUtils.getParentID( this.phetioID );
+      var headID = phet.PhetioIDUtils.getParentID( this.phetioID );
 
       return new Tandem( headID, {
         required: this.required,

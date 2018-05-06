@@ -18,7 +18,7 @@
    * structure of the phetioID. Available in the main PhET-iO js import.
    * @namespace
    */
-  window.PhetioIDUtils = {
+  var PhetioIDUtils = {
 
     /**
      * Appends a component to an existing phetioID to create a new unique phetioID for the component.
@@ -73,4 +73,7 @@
      */
     SEPARATOR: SEPARATOR
   };
+
+  window.phet = window.phet || {};
+  window.phet.PhetioIDUtils = PhetioIDUtils;
 } )();
