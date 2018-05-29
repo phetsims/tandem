@@ -10,6 +10,9 @@
 ( function() {
   'use strict';
 
+  // define the phet global
+  window.phet = window.phet || {};
+
   // constants
   var SEPARATOR = '.';
 
@@ -18,7 +21,7 @@
    * structure of the phetioID. Available in the main PhET-iO js import.
    * @namespace
    */
-  var PhetioIDUtils = {
+  window.phet.PhetioIDUtils = {
 
     /**
      * Appends a component to an existing phetioID to create a new unique phetioID for the component.
@@ -73,7 +76,4 @@
      */
     SEPARATOR: SEPARATOR
   };
-
-  window.phet = window.phet || {};
-  window.phet.PhetioIDUtils = PhetioIDUtils;
 } )();
