@@ -220,6 +220,7 @@ define( function( require ) {
 
         // Tandem de-registration
         this.tandem.removeInstance( this );
+        this.phetioWrapper && this.phetioWrapper.dispose && this.phetioWrapper.dispose();
       }
 
       this.phetioObjectDisposed = true;
