@@ -38,7 +38,7 @@ define( function( require ) {
     documentation: 'The root of the wrapper object hierarchy.',
 
     /**
-     * Return the json that ObjectIO is wrapping.  This can be overriden by subclasses, or types can use ObjectIO type
+     * Return the json that ObjectIO is wrapping.  This can be overridden by subclasses, or types can use ObjectIO type
      * directly to use this implementation.
      * @param {Object} o
      * @returns {Object}
