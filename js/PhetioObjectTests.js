@@ -11,8 +11,8 @@ define( function( require ) {
   // modules
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
-  
-  // phet-io modules
+
+  // ifphetio
   require( 'ifphetio!PHET_IO/phetio' );
 
   QUnit.module( 'PhetioObject' );

@@ -13,7 +13,7 @@ define( function( require ) {
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Tandem = require( 'TANDEM/Tandem' );
 
-  // phet-io modules
+  // ifphetio
   var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
   var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
 
