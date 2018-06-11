@@ -64,9 +64,8 @@ define( function( require ) {
     // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
     this.phetioObjectInitialized = false;
 
-    // @private {number|null} - tracks the index of the message to make sure ends match starts.
-    // If phetioEvents.start has been called, phetioMessageIndex is a number. Otherwise it is null.
-    this.phetioMessageIndex = null;
+    // @private {number|null} - tracks the indices of started messages so that phetioEvents can check that ends match starts
+    this.phetioMessageStack = [];
 
     // @private {boolean} - has the instance been disposed?
     this.phetioObjectDisposed = false;
@@ -150,7 +149,7 @@ define( function( require ) {
     },
 
     /**
-     * Start an event for the nested PhET-iO event stream.  Does not support re-entrant events on the same instance.
+     * Start an event for the nested PhET-iO event stream.
      *
      * @param {string} eventType - 'model' | 'view'
      * @param {string} event - the name of the event
@@ -160,17 +159,18 @@ define( function( require ) {
      */
     startEvent: function( eventType, event, args, options ) {
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
-      assert && assert( this.phetioMessageIndex === null, 'cannot start event while event is in progress' );
 
       // Poor-man's options for maximum performance
       options = options || DEFAULT_EVENT_OPTIONS;
+
+      // Opt out of high-frequency events
       if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
-        this.phetioMessageIndex = SKIPPING_HIGH_FREQUENCY_MESSAGE;
+        this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
         return;
       }
 
       if ( this.tandem.isSuppliedAndEnabled() ) {
-        this.phetioMessageIndex = phetioEvents.start( eventType, this, event, args );
+        this.phetioMessageStack.push( phetioEvents.start( eventType, this, event, args ) );
       }
     },
 
@@ -190,16 +190,15 @@ define( function( require ) {
         return;
       }
 
+      var topMessageIndex = this.phetioMessageStack.pop();
+
       // The message was started as a high frequency event to be skipped, so the end is a no-op
-      if ( this.phetioMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
-        this.phetioMessageIndex = null;
+      if ( topMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
         return;
       }
 
       if ( this.tandem.isSuppliedAndEnabled() ) {
-        assert && assert( this.phetioMessageIndex !== null, 'cannot end an event that hasn\'t started' );
-        phetioEvents.end( this.phetioMessageIndex );
-        this.phetioMessageIndex = null;
+        phetioEvents.end( topMessageIndex );
       }
     },
 
@@ -211,7 +210,7 @@ define( function( require ) {
       assert && assert( !this.phetioObjectDisposed, 'PhetioObject can only be disposed once' );
 
       // Support disposal during callback processing.
-      if ( this.phetioMessageIndex !== null ) {
+      while ( this.phetioMessageStack.length > 0 ) {
         this.endEvent();
       }
 
