@@ -186,6 +186,7 @@ define( function( require ) {
       // startEvent()
       // callbackListeners => a listener disposes the instance
       // endEvent()
+      // see https://github.com/phetsims/equality-explorer/issues/25 and https://github.com/phetsims/tandem/issues/48
       if ( this.phetioObjectDisposed ) {
         return;
       }
