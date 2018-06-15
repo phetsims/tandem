@@ -125,7 +125,7 @@ define( function( require ) {
       }
 
       if ( options.phetioInstanceDocumentation && options.phetioInstanceDocumentation.length > 0 ) {
-        assert && assert( _.endsWith( options.phetioInstanceDocumentation, '.' ), 'phetioInstanceDocumentation should end with a \'.\': ' + options.phetioInstanceDocumentation );
+        // assert && assert( _.endsWith( options.phetioInstanceDocumentation, '.' ), 'phetioInstanceDocumentation should end with a \'.\': ' + options.phetioInstanceDocumentation );
       }
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
