@@ -36,11 +36,6 @@ define( function( require ) {
       phetioType: MockTypeIO
     } );
     obj.startEvent( 'model', 'hello' );
-    if ( PHET_IO_ENABLED ) {
-      window.assert && assert.throws( function() {
-        obj.startEvent( 'model', 'hello' );
-      }, 'Should throw an assertion error when starting event twice' );
-    }
   } );
 
   QUnit.test( 'PhetioObject start/end', function( assert ) {
