@@ -182,16 +182,6 @@ define( function( require ) {
      */
     endEvent: function() {
 
-      // if this instance was disposed earlier, then the end event was already called, and should not be called again.
-      // We must be able to call endEvent on disposed objects so that cases like this don't fail:
-      // startEvent()
-      // callbackListeners => a listener disposes the instance
-      // endEvent()
-      // see https://github.com/phetsims/equality-explorer/issues/25 and https://github.com/phetsims/tandem/issues/48
-      if ( this.phetioObjectDisposed ) {
-        return;
-      }
-
       var topMessageIndex = this.phetioMessageStack.pop();
 
       // The message was started as a high frequency event to be skipped, so the end is a no-op
@@ -209,12 +199,17 @@ define( function( require ) {
      * @public
      */
     dispose: function() {
+      var self = this;
       assert && assert( !this.phetioObjectDisposed, 'PhetioObject can only be disposed once' );
 
-      // Support disposal during callback processing.
-      while ( this.phetioMessageStack.length > 0 ) {
-        this.endEvent();
-      }
+      // In order to support the structured data stream, PhetioObjects must end the messages in the correct
+      // sequence, without being interrupted by dispose() calls.  Therefore, we do not clear out any of the state
+      // related to the endEvent.  Note this means it is acceptable (and expected) for endEvent() to be called on disposed PhetioObjects.
+      //
+      // The phetioEvent stack should resolve by the next clock tick, so that's when we check it.
+      assert && setTimeout( function() {
+        assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
+      }, 0 );
 
       // OK to dispose something that was never phetioObjectInitialized, this means it was an uninstrumented instance
       if ( this.phetioObjectInitialized ) {
