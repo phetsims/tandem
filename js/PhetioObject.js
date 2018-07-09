@@ -24,12 +24,12 @@ define( function( require ) {
   var SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
 
   var DEFAULTS = {
-    tandem: Tandem.optional,        // By default tandems are optional, but subtypes can specify this as
-                                    // `Tandem.tandemRequired` to enforce its presence
-    phetioType: ObjectIO,           // Supply the appropriate IO type
-    phetioState: true,              // When true, includes the instance in the PhET-iO state
-    phetioReadOnly: false,          // When true, you can only get values from the instance; no setting allowed.
-    phetioInstanceDocumentation: '' // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
+                                      // `Tandem.tandemRequired` to enforce its presence
+    phetioType: ObjectIO,             // Supply the appropriate IO type
+    phetioState: true,                // When true, includes the instance in the PhET-iO state
+    phetioReadOnly: false,            // When true, you can only get values from the instance; no setting allowed.
+    phetioInstanceDocumentation: null // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
   };
 
   var DEFAULT_EVENT_OPTIONS = { highFrequencyEvent: false };
