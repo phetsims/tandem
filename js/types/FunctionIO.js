@@ -38,8 +38,16 @@ define( function( require ) {
       ObjectIO.call( instance, phetioID );
     };
 
+    // gather a list of argument names for the documentation string
+    var argsString = parameterTypes.map( function( parameterType ) { return parameterType.typeName; } ).join( ', ' );
+    if ( argsString === '' ) {
+      argsString = 'VoidIO';
+    }
+
     return phetioInherit( ObjectIO, 'FunctionIO', FunctionIOImpl, {}, {
-      documentation: 'Wrapper for the built-in JS function type',
+      documentation: 'Wrapper for the built-in JS function type.<br>' +
+                     '<strong>Arguments:</strong> ' + argsString + '<br>' +
+                     '<strong>Return Type:</strong> ' + returnType.typeName,
       returnType: returnType,
       parameterTypes: parameterTypes,
       wrapForPhetioCommandProcessor: true
