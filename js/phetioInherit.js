@@ -33,7 +33,7 @@ define( function( require ) {
       assert && assert( Array.isArray( staticProperties.parameterTypes ), 'parameterTypes expected to be array' );
 
       // Add the parameter types to the FunctionIO's type name.
-      typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameter ) { return parameter.typeName;} )
+      typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameterType ) { return parameterType.typeName;} )
         .join( ', ' ) + '>';
     }
 
