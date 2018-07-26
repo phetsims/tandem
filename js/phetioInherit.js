@@ -64,7 +64,12 @@ define( function( require ) {
 
     // Combine the subtype's with events from all parents into a single array, see https://github.com/phetsims/phet-io/issues/1069
     var supertypeEvents = supertype.allEvents || [];
-    subtype.allEvents = supertypeEvents.concat( subtype.events || [] );
+    var subtypeEvents = subtype.events || [];
+    assert && subtypeEvents.forEach( function( event ) {
+      assert( supertypeEvents.indexOf( event ) < 0, 'subtype should not declare event that parent also has.' );
+    } );
+
+    subtype.allEvents = supertypeEvents.concat( subtypeEvents );
     subtype.allMethods = _.extend( {}, supertype.allMethods, methods );
 
     // Copy supertype's static methods to subtype, see https://github.com/phetsims/phet-io/issues/1273
@@ -72,7 +77,9 @@ define( function( require ) {
       if ( supertype.hasOwnProperty( staticProperty ) ) {
 
         // If the subtype already provides the property, keep the subtype version.  If not, take the supertype property.
-        if ( !subtype.hasOwnProperty( staticProperty ) ) {
+        // Don't do this for "events" because we don't want confusion as to what type in the hierarchy the type is
+        // coming from, see https://github.com/phetsims/phet-io/issues/1341
+        if ( !subtype.hasOwnProperty( staticProperty ) && staticProperty !== 'events' ) {
           subtype[ staticProperty ] = supertype[ staticProperty ];
         }
       }
