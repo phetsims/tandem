@@ -11,7 +11,7 @@
   'use strict';
 
   // define the phet global
-  window.phet = window.phet || {};
+  window.phetio = window.phetio || {};
 
   // constants
   var SEPARATOR = '.';
@@ -21,7 +21,7 @@
    * structure of the phetioID. Available in the main PhET-iO js import.
    * @namespace
    */
-  window.phet.PhetioIDUtils = {
+  window.phetio.PhetioIDUtils = {
 
     /**
      * Appends a component to an existing phetioID to create a new unique phetioID for the component.
