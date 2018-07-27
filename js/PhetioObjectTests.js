@@ -35,7 +35,7 @@ define( function( require ) {
       tandem: Tandem.rootTandem,
       phetioType: MockTypeIO
     } );
-    obj.startEvent( 'model', 'hello' );
+    obj.phetioStartEvent( 'model', 'hello' );
   } );
 
   QUnit.test( 'PhetioObject start/end', function( assert ) {
@@ -45,8 +45,8 @@ define( function( require ) {
       tandem: Tandem.rootTandem.createTandem( 'test1' ),
       phetioType: MockTypeIO
     } );
-    obj.startEvent( 'model', 'hello' );
-    obj.endEvent();
+    obj.phetioStartEvent( 'model', 'hello' );
+    obj.phetioEndEvent();
   } );
 
   QUnit.test( 'PhetioObject end without start', function( assert ) {
@@ -59,7 +59,7 @@ define( function( require ) {
 
     if ( PHET_IO_ENABLED ) {
       window.assert && assert.throws( function() {
-        obj.endEvent();
+        obj.phetioEndEvent();
       }, 'Should throw an assertion error when Ending an unstarted event' );
     }
   } );

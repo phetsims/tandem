@@ -153,7 +153,7 @@ define( function( require ) {
      * @param {Object} [options] - options for firing the event
      * @public
      */
-    startEvent: function( eventType, event, args, options ) {
+    phetioStartEvent: function( eventType, event, args, options ) {
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
 
       // Poor-man's options for maximum performance
@@ -175,7 +175,7 @@ define( function( require ) {
      * It this object was disposed or phetioEvents.start was not called, this is a no-op.
      * @public
      */
-    endEvent: function() {
+    phetioEndEvent: function() {
 
       var topMessageIndex = this.phetioMessageStack.pop();
 
