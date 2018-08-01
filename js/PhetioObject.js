@@ -216,5 +216,7 @@ define( function( require ) {
 
       this.phetioObjectDisposed = true;
     }
+  }, {
+    DEFAULT_OPTIONS: DEFAULTS // the default options for the phet-io object
   } );
 } );
