@@ -177,7 +177,6 @@ define( function( require ) {
       }
 
       if ( this.tandem.isSuppliedAndEnabled() ) {
-        debugger;
         this.phetioMessageStack.push( phetioEvents.start( eventType, this, event, args ) );
       }
     },
