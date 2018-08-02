@@ -24,15 +24,18 @@ define( function( require ) {
   var SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
 
   var DEFAULTS = {
-    tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
-                                      // `Tandem.tandemRequired` to enforce its presence
-    phetioType: ObjectIO,             // Supply the appropriate IO type
-    phetioState: true,                // When true, includes the instance in the PhET-iO state
-    phetioReadOnly: false,            // When true, you can only get values from the instance; no setting allowed.
-    phetioInstanceDocumentation: null // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    tandem: Tandem.optional,           // By default tandems are optional, but subtypes can specify this as
+                                       // `Tandem.tandemRequired` to enforce its presence
+    phetioType: ObjectIO,              // Supply the appropriate IO type
+    phetioState: true,                 // When true, includes the instance in the PhET-iO state
+    phetioReadOnly: false,             // When true, you can only get values from the instance; no setting allowed.
+    phetioInstanceDocumentation: null, // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    phetioEventType: 'model'           // Default event type for this instance, can be overriden in phetioStartEvent options
   };
 
-  var DEFAULT_EVENT_OPTIONS = { highFrequencyEvent: false };
+  var DEFAULT_EVENT_OPTIONS = {
+    highFrequencyEvent: false
+  };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
 
@@ -69,6 +72,9 @@ define( function( require ) {
 
     // @private {boolean} - has the instance been disposed?
     this.phetioObjectDisposed = false;
+
+    // @private {string} - 'model' | 'user'
+    this.phetioEventType = null;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -131,6 +137,7 @@ define( function( require ) {
       this.phetioType = options.phetioType;
       this.phetioState = options.phetioState;
       this.phetioReadOnly = options.phetioReadOnly;
+      this.phetioEventType = options.phetioEventType;
       this.phetioInstanceDocumentation = options.phetioInstanceDocumentation;
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
@@ -153,11 +160,15 @@ define( function( require ) {
      * @param {Object} [options] - options for firing the event
      * @public
      */
-    phetioStartEvent: function( eventType, event, args, options ) {
+    phetioStartEvent: function( event, args, options ) {
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
 
       // Poor-man's options for maximum performance
       options = options || DEFAULT_EVENT_OPTIONS;
+      var eventType = options.phetioEventType || this.phetioEventType;
+      if ( options.phetioEventType ) {
+        delete options.phetioEventType;
+      }
 
       // Opt out of high-frequency events
       if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
@@ -166,6 +177,7 @@ define( function( require ) {
       }
 
       if ( this.tandem.isSuppliedAndEnabled() ) {
+        debugger;
         this.phetioMessageStack.push( phetioEvents.start( eventType, this, event, args ) );
       }
     },

@@ -35,7 +35,7 @@ define( function( require ) {
       tandem: Tandem.rootTandem,
       phetioType: MockTypeIO
     } );
-    obj.phetioStartEvent( 'model', 'hello' );
+    obj.phetioStartEvent( 'hello' );
   } );
 
   QUnit.test( 'PhetioObject start/end', function( assert ) {
@@ -45,7 +45,7 @@ define( function( require ) {
       tandem: Tandem.rootTandem.createTandem( 'test1' ),
       phetioType: MockTypeIO
     } );
-    obj.phetioStartEvent( 'model', 'hello' );
+    obj.phetioStartEvent( 'hello' );
     obj.phetioEndEvent();
   } );
 
