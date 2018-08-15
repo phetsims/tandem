@@ -156,7 +156,6 @@ define( function( require ) {
     /**
      * Start an event for the nested PhET-iO event stream.
      *
-     * @param {string} eventType - 'model' | 'view'
      * @param {string} event - the name of the event
      * @param {Object} [args] - arguments for the event
      * @param {Object} [options] - options for firing the event
