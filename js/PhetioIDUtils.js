@@ -25,7 +25,9 @@
 
     /**
      * Appends a component to an existing phetioID to create a new unique phetioID for the component.
-     * Example: append( 'myScreen.myControlPanel', 'myComboBox' ) -> 'myScreen.myControlPanel.myComboBox'
+     * @example
+     * append( 'myScreen.myControlPanel', 'myComboBox' )
+     * -->  'myScreen.myControlPanel.myComboBox'
      * @public
      * @param {string} phetioID
      * @param {string} componentName
@@ -38,7 +40,9 @@
 
     /**
      * Given a phetioID for a component (instance), get the part of that id that pertains to the component.
-     * Example: 'myScreen.myControlPanel.myComboBox' -> 'myComboBox'
+     * @example
+     * getComponentName( 'myScreen.myControlPanel.myComboBox' )
+     * -->  'myComboBox'
      * @public
      * @param {string} phetioID
      * @returns {string}
@@ -57,7 +61,9 @@
 
     /**
      * Given a phetioID for a component, get the phetioID of the parent component.
-     * Example: 'myScreen.myControlPanel.myComboBox' -> 'myScreen.myControlPanel'
+     * @example
+     * getParentID( 'myScreen.myControlPanel.myComboBox' )
+     * -->  'myScreen.myControlPanel'
      * @public
      * @param {string} phetioID
      * @returns {string}
