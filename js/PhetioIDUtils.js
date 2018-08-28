@@ -75,6 +75,16 @@
     },
 
     /**
+     * Given a phetioID for a instrumented object, get a string that can be used to assign an ID to a DOM element
+     * @param {string} phetioID
+     * @returns {string}
+     * @public
+     */
+    getDOMElementID: function( phetioID ) {
+      return 'phetioID:' + phetioID;
+    },
+
+    /**
      * The separator used to piece together a phet-io id.
      * @type {String}
      * @constant
