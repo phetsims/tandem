@@ -28,7 +28,11 @@ define( function( require ) {
 
     // Static methods
     {
-      documentation: 'Type for which there is no instance, usually to mark functions without a return value'
+      documentation: 'Type for which there is no instance, usually to mark functions without a return value',
+
+      toStateObject: function() {
+        return undefined;
+      }
     }
   );
 
