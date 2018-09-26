@@ -312,6 +312,16 @@ define( function( require ) {
      */
     validationEnabled: function() {
       return PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
+    },
+
+    /**
+     * Returns true if the bufferedElements contain the given phetioID.
+     * @param {string} phetioID
+     * @returns {boolean}
+     * @public
+     */
+    containsBufferedID: function( phetioID ) {
+      return bufferedElements.map( function( instance ) {return instance.tandem.phetioID;} ).indexOf( phetioID ) >= 0;
     }
   } );
 
