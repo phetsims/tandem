@@ -355,7 +355,7 @@ define( function( require ) {
    * @type {Tandem}
    */
   Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
-    required: true,
+    required: PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems,
     supplied: false
   } );
 
