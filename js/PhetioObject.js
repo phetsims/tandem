@@ -141,7 +141,7 @@ define( function( require ) {
       this.phetioInstanceDocumentation = options.phetioInstanceDocumentation;
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
-      if ( PHET_IO_ENABLED && this.tandem.enabled && this.tandem.supplied ) {
+      if ( PHET_IO_ENABLED && this.tandem.supplied ) {
         // this assertion should be enabled for new phet-io sim publications
         // assert && assert( this.phetioInstanceDocumentation, 'Instance documentation is required for: ' + this.tandem.phetioID );
         this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );

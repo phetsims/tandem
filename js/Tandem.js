@@ -49,10 +49,6 @@ define( function( require ) {
     // for composition (createTandem/parentTandem) as they make sense.
     options = _.extend( {
 
-      // Enabled tandems notify listeners when they are added. Disabled tandems do not notify listeners,
-      // but children of a disabled tandem may be enabled.
-      enabled: true,
-
       // if the tandem is not supplied and required, an error will be thrown.
       supplied: true,
 
@@ -68,9 +64,6 @@ define( function( require ) {
 
     // @private
     this.supplied = options.supplied;
-
-    // @private
-    this.enabled = options.enabled;
   }
 
   tandemNamespace.register( 'Tandem', Tandem );
@@ -94,7 +87,7 @@ define( function( require ) {
       // PhetioObject because it creates a module loading loop
       assert && assert( instance instanceof tandemNamespace.PhetioObject, 'Instance should be of type PhetioObject' );
 
-      if ( PHET_IO_ENABLED && this.enabled ) {
+      if ( PHET_IO_ENABLED ) {
 
         // Throw an error if the tandem is required but not supplied
         if ( phet.phetio.queryParameters.phetioValidateTandems ) {
@@ -148,7 +141,7 @@ define( function( require ) {
       }
 
       // Only active when running as phet-io
-      if ( PHET_IO_ENABLED && this.enabled ) {
+      if ( PHET_IO_ENABLED ) {
         for ( var i = 0; i < instanceListeners.length; i++ ) {
           instanceListeners[ i ].removeInstance( instance );
         }
@@ -172,7 +165,6 @@ define( function( require ) {
       // Any child of something should be passed all inherited options. Make sure that this extend call includes all
       // that make sense from the constructor's extend call.
       options = _.extend( {
-        enabled: this.enabled,
         supplied: this.supplied,
         required: this.required
       }, options );
@@ -219,8 +211,7 @@ define( function( require ) {
 
       return new Tandem( headID, {
         required: this.required,
-        supplied: this.supplied,
-        enabled: this.enabled
+        supplied: this.supplied
       } );
     },
 
