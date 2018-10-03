@@ -157,12 +157,14 @@ define( function( require ) {
      * Start an event for the nested PhET-iO event stream.
      *
      * @param {string} event - the name of the event
-     * @param {Object} [args] - arguments for the event
+     * @param {Object|function} [args] - arguments for the event, either an object, or a function that returns an object
      * @param {Object} [options] - options for firing the event
      * @public
      */
     phetioStartEvent: function( event, args, options ) {
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
+      assert && assert( typeof event === 'string' );
+      assert && args && assert( typeof args === 'object' || typeof args === 'function' );
 
       // Poor-man's options for maximum performance
       options = options || DEFAULT_EVENT_OPTIONS;
@@ -178,6 +180,11 @@ define( function( require ) {
       }
 
       if ( this.tandem.isSuppliedAndEnabled() ) {
+
+        // Only get the args if we are actually going to send the event.
+        if ( typeof args === 'function' ) {
+          args = args();
+        }
         this.phetioMessageStack.push( phetioEvents.start( eventType, this, event, args ) );
       }
     },
