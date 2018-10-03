@@ -213,15 +213,6 @@ define( function( require ) {
         required: this.required,
         supplied: this.supplied
       } );
-    },
-
-    /**
-     * Return true if this tandem is supplied and the sim is running in PhET-iO mode.
-     * @returns {boolean}
-     * @public
-     */
-    isSuppliedAndEnabled: function() {
-      return this.supplied && PHET_IO_ENABLED;
     }
   }, {
 

@@ -179,7 +179,7 @@ define( function( require ) {
         return;
       }
 
-      if ( this.tandem.isSuppliedAndEnabled() ) {
+      if ( this.isPhetioInstrumented() ) {
 
         // Only get the args if we are actually going to send the event.
         if ( typeof args === 'function' ) {
@@ -203,9 +203,21 @@ define( function( require ) {
         return;
       }
 
-      if ( this.tandem.isSuppliedAndEnabled() ) {
+      if ( this.isPhetioInstrumented() ) {
         phetioEvents.end( topMessageIndex );
       }
+    },
+
+    /**
+     * Just because a tandem is passed to an instance doesn't mean that it is instrumented. An instance will only be
+     * instrumented if:
+     * (1) Running in PhET-iO mode
+     * (2) The tandem that was passed in was "supplied". See Tandem.supplied for more info
+     * @returns {boolean}
+     * @public
+     */
+    isPhetioInstrumented: function() {
+      return this.tandem && this.tandem.supplied && PHET_IO_ENABLED;
     },
 
     /**
