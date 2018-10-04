@@ -29,7 +29,7 @@ define( function( require ) {
     phetioType: ObjectIO,              // Supply the appropriate IO type
     phetioState: true,                 // When true, includes the instance in the PhET-iO state
     phetioReadOnly: false,             // When true, you can only get values from the instance; no setting allowed.
-    phetioInstanceDocumentation: null, // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    phetioDocumentation: null, // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
     phetioEventType: 'model'           // Default event type for this instance, can be overriden in phetioStartEvent options
   };
 
@@ -58,7 +58,7 @@ define( function( require ) {
     this.phetioReadOnly = null;
 
     // @public (read-only) {string} - assigned in initializePhetioObject - Notes about an instance, shown in the PhET-iO Studio Wrapper
-    this.phetioInstanceDocumentation = null;
+    this.phetioDocumentation = null;
 
     // @public (read-only) {Object} - assigned in initializePhetioObject - The wrapper instance for PhET-iO interoperation
     this.phetioWrapper = null;
@@ -138,12 +138,12 @@ define( function( require ) {
       this.phetioState = options.phetioState;
       this.phetioReadOnly = options.phetioReadOnly;
       this.phetioEventType = options.phetioEventType;
-      this.phetioInstanceDocumentation = options.phetioInstanceDocumentation;
+      this.phetioDocumentation = options.phetioDocumentation;
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.tandem.supplied ) {
         // this assertion should be enabled for new phet-io sim publications
-        // assert && assert( this.phetioInstanceDocumentation, 'Instance documentation is required for: ' + this.tandem.phetioID );
+        // assert && assert( this.phetioDocumentation, 'Instance documentation is required for: ' + this.tandem.phetioID );
         this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
       }
 
