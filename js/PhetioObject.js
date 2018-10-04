@@ -154,7 +154,7 @@ define( function( require ) {
     },
 
     /**
-     * Start an event for the nested PhET-iO event stream.
+     * Start an event for the nested PhET-iO data stream.
      *
      * @param {string} event - the name of the event
      * @param {Object|function} [args] - arguments for the event, either an object, or a function that returns an object
@@ -190,7 +190,7 @@ define( function( require ) {
     },
 
     /**
-     * End an event on the nested PhET-iO event stream.
+     * End an event on the nested PhET-iO data stream.
      * It this object was disposed or phetioEvents.start was not called, this is a no-op.
      * @public
      */
