@@ -51,6 +51,7 @@ define( function( require ) {
        * @returns {Object|null}
        * @public
        * @static
+       * @override
        */
       toStateObject: function( instance ) {
         if ( instance === null ) {
@@ -68,6 +69,7 @@ define( function( require ) {
        * @returns {Object|null}
        * @public
        * @static
+       * @override
        */
       fromStateObject: function( stateObject ) {
         if ( stateObject === null ) {
