@@ -28,6 +28,7 @@ define( function( require ) {
      * Encodes a boolean to a state (which also happens to be a boolean).
      * @param {Object} value
      * @returns {Object}
+     * @override
      */
     toStateObject: function( value ) {
       assert && assert( typeof value === 'boolean', 'value should be boolean' );
@@ -38,6 +39,7 @@ define( function( require ) {
      * Decode a boolean from a state, which is already a boolean.
      * @param {Object} stateObject
      * @returns {Object}
+     * @override
      */
     fromStateObject: function( stateObject ) {
       assert && assert( typeof stateObject === 'boolean', 'value should be boolean' );
