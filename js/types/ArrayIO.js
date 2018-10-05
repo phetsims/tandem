@@ -41,6 +41,7 @@ define( function( require ) {
        * Serialize an array by serializing each element
        * @param {Object[]} array
        * @returns {Array}
+       * @override
        */
       toStateObject: function( array ) {
         assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
@@ -57,6 +58,7 @@ define( function( require ) {
        * Deserialize from a serialized state.
        * @param {Object} stateObject - from toStateObject
        * @returns {Object[]}
+       * @override
        */
       fromStateObject: function( stateObject ) {
         var array = [];
