@@ -24,13 +24,13 @@ define( function( require ) {
   var SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
 
   var DEFAULTS = {
-    tandem: Tandem.optional,           // By default tandems are optional, but subtypes can specify this as
-                                       // `Tandem.tandemRequired` to enforce its presence
-    phetioType: ObjectIO,              // Supply the appropriate IO type
-    phetioState: true,                 // When true, includes the instance in the PhET-iO state
-    phetioReadOnly: false,             // When true, you can only get values from the instance; no setting allowed.
-    phetioDocumentation: null, // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
-    phetioEventType: 'model'           // Default event type for this instance, can be overriden in phetioStartEvent options
+    tandem: Tandem.optional,     // By default tandems are optional, but subtypes can specify this as
+                                 // `Tandem.tandemRequired` to enforce its presence
+    phetioType: ObjectIO,        // Supply the appropriate IO type
+    phetioState: true,           // When true, includes the instance in the PhET-iO state
+    phetioReadOnly: false,       // When true, you can only get values from the instance; no setting allowed.
+    phetioDocumentation: null,   // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    phetioEventType: 'model'     // Default event type for this instance, can be overriden in phetioStartEvent options
   };
 
   var DEFAULT_EVENT_OPTIONS = {
