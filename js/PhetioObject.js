@@ -174,7 +174,7 @@ define( function( require ) {
       }
 
       // Opt out of high-frequency events
-      if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.highFrequency ) {
+      if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.phetioHighFrequency ) {
         this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
         return;
       }
