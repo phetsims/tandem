@@ -30,11 +30,8 @@ define( function( require ) {
     phetioState: true,           // When true, includes the instance in the PhET-iO state
     phetioReadOnly: false,       // When true, you can only get values from the instance; no setting allowed.
     phetioDocumentation: null,   // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
-    phetioEventType: 'model'     // Default event type for this instance, can be overriden in phetioStartEvent options
-  };
-
-  var DEFAULT_EVENT_OPTIONS = {
-    highFrequencyEvent: false
+    phetioEventType: 'model',    // Default event type for this instance, can be overriden in phetioStartEvent options
+    phetioHighFrequency: false   // High frequency events such as mouse moves or stepSimulation can be omitted from data stream
   };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
@@ -75,6 +72,9 @@ define( function( require ) {
 
     // @private {string} - 'model' | 'user'
     this.phetioEventType = null;
+
+    // @private {boolean} - If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
+    this.phetioHighFrequency = null;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -139,6 +139,7 @@ define( function( require ) {
       this.phetioReadOnly = options.phetioReadOnly;
       this.phetioEventType = options.phetioEventType;
       this.phetioDocumentation = options.phetioDocumentation;
+      this.phetioHighFrequency = options.phetioHighFrequency;
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.tandem.supplied ) {
@@ -158,23 +159,16 @@ define( function( require ) {
      *
      * @param {string} event - the name of the event
      * @param {Object|function} [args] - arguments for the event, either an object, or a function that returns an object
-     * @param {Object} [options] - options for firing the event
      * @public
      */
-    phetioStartEvent: function( event, args, options ) {
+    phetioStartEvent: function( event, args ) {
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
       assert && assert( typeof event === 'string' );
       assert && args && assert( typeof args === 'object' || typeof args === 'function' );
-
-      // Poor-man's options for maximum performance
-      options = options || DEFAULT_EVENT_OPTIONS;
-      var eventType = options.phetioEventType || this.phetioEventType;
-      if ( options.phetioEventType ) {
-        delete options.phetioEventType;
-      }
+      assert && assert( arguments.length !== 3, 'Prevent usage of incorrect signature' );
 
       // Opt out of high-frequency events
-      if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && options.phetioHighFrequency ) {
+      if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency ) {
         this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
         return;
       }
@@ -185,7 +179,7 @@ define( function( require ) {
         if ( typeof args === 'function' ) {
           args = args();
         }
-        this.phetioMessageStack.push( phetioEvents.start( eventType, this, event, args ) );
+        this.phetioMessageStack.push( phetioEvents.start( this.phetioEventType, this, event, args ) );
       }
     },
 
