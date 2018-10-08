@@ -25,16 +25,21 @@ define( function( require ) {
     assert && assert( instance, 'instance should be truthy' );
     assert && assert( phetioID, 'phetioID should be truthy' );
 
-    // @public
+    // @public (read-only)
     this.instance = instance;
 
-    // @public
+    // @public (read-only)
     this.phetioID = phetioID;
   }
 
   // ObjectIO inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
   // However, when serialized, the ObjectIO supertype is reported as null (not sent in the JSON).
   phetioInherit( window.Object, 'ObjectIO', ObjectIO, {}, {
+
+    /**
+     * Documentation that appears in PhET-iO Studio, supports HTML markup.
+     * @public
+     */
     documentation: 'The root of the wrapper object hierarchy.',
 
     /**
@@ -42,6 +47,7 @@ define( function( require ) {
      * directly to use this implementation.
      * @param {Object} o
      * @returns {Object}
+     * @public
      */
     toStateObject: function( o ) {
       return o;
@@ -52,6 +58,7 @@ define( function( require ) {
      * use ObjectIO type directly to use this implementation.
      * @param {Object} o
      * @returns {Object}
+     * @public
      */
     fromStateObject: function( o ) {
       return o;
