@@ -175,10 +175,10 @@ define( function( require ) {
       assert && args && assert( typeof args === 'object' || typeof args === 'function' );
       assert && assert( arguments.length !== 3, 'Prevent usage of incorrect signature' );
 
-      // Opt out of high-frequency events
+      // Opt out of certain events if queryParameter override is provided
       if ( window.phet && window.phet.phetio ) {
         var omit = !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency;
-        var omit2 = !window.phet.phetio.queryParameters.phetioEmitInputEvents && this.phetioInputEvent;
+        var omit2 = !window.phet.phetio.queryParameters.phetioEmitPlaybackEvents && this.phetioInputEvent;
         if ( omit || omit2 ) {
           this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
           return;
