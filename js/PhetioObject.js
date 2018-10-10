@@ -27,11 +27,13 @@ define( function( require ) {
     tandem: Tandem.optional,     // By default tandems are optional, but subtypes can specify this as
                                  // `Tandem.tandemRequired` to enforce its presence
     phetioType: ObjectIO,        // Supply the appropriate IO type
+    phetioDocumentation: null,   // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+
     phetioState: true,           // When true, includes the instance in the PhET-iO state
     phetioReadOnly: false,       // When true, you can only get values from the instance; no setting allowed.
-    phetioDocumentation: null,   // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
     phetioEventType: 'model',    // Default event type for this instance, can be overriden in phetioStartEvent options
-    phetioHighFrequency: false   // High frequency events such as mouse moves or stepSimulation can be omitted from data stream
+    phetioHighFrequency: false,   // High frequency events such as mouse moves or stepSimulation can be omitted from data stream
+    phetioInputEvent: false
   };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
@@ -75,6 +77,11 @@ define( function( require ) {
 
     // @private {boolean} - If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
     this.phetioHighFrequency = null;
+
+    // @private {boolean} - TODO: rename to phetioPlaybackEvent.  This indicates a (usually high-frequency) event that is required for
+    // visual playbacks, but can be otherwise overwhelming.  For instance, frameEndedEmitter emits dt's that are critical to playbacks
+    // but not helpful when reading console: colorized.
+    this.phetioInputEvent = null;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -140,6 +147,7 @@ define( function( require ) {
       this.phetioEventType = options.phetioEventType;
       this.phetioDocumentation = options.phetioDocumentation;
       this.phetioHighFrequency = options.phetioHighFrequency;
+      this.phetioInputEvent = options.phetioInputEvent;
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.tandem.supplied ) {
@@ -168,9 +176,13 @@ define( function( require ) {
       assert && assert( arguments.length !== 3, 'Prevent usage of incorrect signature' );
 
       // Opt out of high-frequency events
-      if ( window.phet && window.phet.phetio && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency ) {
-        this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
-        return;
+      if ( window.phet && window.phet.phetio ) {
+        var omit = !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency;
+        var omit2 = !window.phet.phetio.queryParameters.phetioEmitInputEvents && this.phetioInputEvent;
+        if ( omit || omit2 ) {
+          this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
+          return;
+        }
       }
 
       if ( this.isPhetioInstrumented() ) {
