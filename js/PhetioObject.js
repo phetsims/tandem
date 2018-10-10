@@ -227,6 +227,23 @@ define( function( require ) {
     },
 
     /**
+     * JSONifiable metadata that describes the nature of the PhetioObject.
+     * @returns {Object}
+     * @public
+     */
+    getMetadata: function() {
+      return {
+        phetioTypeName: this.phetioType.typeName,
+        phetioState: this.phetioState,
+        phetioReadOnly: this.phetioReadOnly,
+        phetioDocumentation: this.phetioDocumentation,
+        phetioEventType: this.phetioEventType,
+        phetioHighFrequency: this.phetioHighFrequency,
+        phetioInputEvent: this.phetioInputEvent
+      };
+    },
+
+    /**
      * Unregisters from tandem when longer used.
      * @public
      */
