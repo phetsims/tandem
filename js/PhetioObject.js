@@ -33,7 +33,8 @@ define( function( require ) {
     phetioReadOnly: false,       // When true, you can only get values from the instance; no setting allowed.
     phetioEventType: 'model',    // Default event type for this instance, can be overriden in phetioStartEvent options
     phetioHighFrequency: false,  // High frequency events such as mouse moves or stepSimulation can be omitted from data stream
-    phetioPlayback: false        // This instance emits events that are only needed for data streams intended for playback, and otherwise can be suppressed.
+    phetioPlayback: false        // This instance emits events that are only needed for data streams intended for playback,
+                                 // and otherwise can be suppressed.
   };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
