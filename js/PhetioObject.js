@@ -24,17 +24,18 @@ define( function( require ) {
   var SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
 
   var DEFAULTS = {
-    tandem: Tandem.optional,     // By default tandems are optional, but subtypes can specify this as
-                                 // `Tandem.tandemRequired` to enforce its presence
-    phetioType: ObjectIO,        // Supply the appropriate IO type
-    phetioDocumentation: null,   // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    tandem: Tandem.optional,      // By default tandems are optional, but subtypes can specify this as
+                                  // `Tandem.tandemRequired` to enforce its presence
+    phetioType: ObjectIO,         // Supply the appropriate IO type
+    phetioDocumentation: null,    // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
 
-    phetioState: true,           // When true, includes the instance in the PhET-iO state
-    phetioReadOnly: false,       // When true, you can only get values from the instance; no setting allowed.
-    phetioEventType: 'model',    // Default event type for this instance, can be overriden in phetioStartEvent options
-    phetioHighFrequency: false,  // High frequency events such as mouse moves or stepSimulation can be omitted from data stream
-    phetioPlayback: false        // This instance emits events that are only needed for data streams intended for playback,
-                                 // and otherwise can be suppressed.
+    phetioState: true,            // When true, includes the instance in the PhET-iO state
+    phetioReadOnly: false,        // When true, you can only get values from the instance; no setting allowed.
+    phetioEventType: 'model',     // Default event type for this instance, can be overridden in phetioStartEvent options
+    phetioHighFrequency: false,   // This instance emits events that are high frequency events such as mouse moves or
+                                  // stepSimulation can be omitted from data stream
+    phetioPlayback: false         // This instance emits events that are only needed for data streams intended for playback,
+                                  // and otherwise can be suppressed.
   };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
