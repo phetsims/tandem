@@ -77,7 +77,7 @@ define( function( require ) {
     // @private {string} - 'model' | 'user'
     this.phetioEventType = null;
 
-    // @private {boolean} - If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
+    // @private {boolean} - If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false, also see option in Client.launchSim()
     this.phetioHighFrequency = null;
 
     // @private {boolean} - This indicates a (usually high-frequency) event that is required for
