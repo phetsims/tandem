@@ -32,8 +32,8 @@ define( function( require ) {
     phetioState: true,           // When true, includes the instance in the PhET-iO state
     phetioReadOnly: false,       // When true, you can only get values from the instance; no setting allowed.
     phetioEventType: 'model',    // Default event type for this instance, can be overriden in phetioStartEvent options
-    phetioHighFrequency: false,   // High frequency events such as mouse moves or stepSimulation can be omitted from data stream
-    phetioInputEvent: false
+    phetioHighFrequency: false,  // High frequency events such as mouse moves or stepSimulation can be omitted from data stream
+    phetioPlayback: false        // This instance emits events that are only needed for data streams intended for playback, and otherwise can be suppressed.
   };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
@@ -78,10 +78,10 @@ define( function( require ) {
     // @private {boolean} - If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false
     this.phetioHighFrequency = null;
 
-    // @private {boolean} - TODO: rename to phetioPlaybackEvent.  This indicates a (usually high-frequency) event that is required for
+    // @private {boolean} - This indicates a (usually high-frequency) event that is required for
     // visual playbacks, but can be otherwise overwhelming.  For instance, frameEndedEmitter emits dt's that are critical to playbacks
     // but not helpful when reading console: colorized.
-    this.phetioInputEvent = null;
+    this.phetioPlayback = null;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -147,7 +147,7 @@ define( function( require ) {
       this.phetioEventType = options.phetioEventType;
       this.phetioDocumentation = options.phetioDocumentation;
       this.phetioHighFrequency = options.phetioHighFrequency;
-      this.phetioInputEvent = options.phetioInputEvent;
+      this.phetioPlayback = options.phetioPlayback;
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.tandem.supplied ) {
@@ -178,7 +178,7 @@ define( function( require ) {
       // Opt out of certain events if queryParameter override is provided
       if ( window.phet && window.phet.phetio ) {
         var omit = !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency;
-        var omit2 = !window.phet.phetio.queryParameters.phetioEmitPlaybackEvents && this.phetioInputEvent;
+        var omit2 = !window.phet.phetio.queryParameters.phetioEmitPlaybackEvents && this.phetioPlayback;
         if ( omit || omit2 ) {
           this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
           return;
@@ -239,7 +239,7 @@ define( function( require ) {
         phetioDocumentation: this.phetioDocumentation,
         phetioEventType: this.phetioEventType,
         phetioHighFrequency: this.phetioHighFrequency,
-        phetioInputEvent: this.phetioInputEvent
+        phetioPlayback: this.phetioPlayback
       };
     },
 
