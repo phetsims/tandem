@@ -15,7 +15,7 @@ define( function( require ) {
 
   // ifphetio
   var ObjectIO = require( 'ifphetio!PHET_IO/types/ObjectIO' );
-  var phetioEvents = require( 'ifphetio!PHET_IO/phetioEvents' );
+  var dataStream = require( 'ifphetio!PHET_IO/dataStream' );
 
   // constants
   var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
@@ -66,7 +66,7 @@ define( function( require ) {
     // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
     this.phetioObjectInitialized = false;
 
-    // @private {number|null} - tracks the indices of started messages so that phetioEvents can check that ends match starts
+    // @private {number|null} - tracks the indices of started messages so that dataStream can check that ends match starts
     this.phetioMessageStack = [];
 
     // @private {boolean} - has the instance been disposed?
@@ -191,13 +191,13 @@ define( function( require ) {
         if ( typeof args === 'function' ) {
           args = args();
         }
-        this.phetioMessageStack.push( phetioEvents.start( this.phetioEventType, this, event, args ) );
+        this.phetioMessageStack.push( dataStream.start( this.phetioEventType, this, event, args ) );
       }
     },
 
     /**
      * End an event on the nested PhET-iO data stream.
-     * It this object was disposed or phetioEvents.start was not called, this is a no-op.
+     * It this object was disposed or dataStream.start was not called, this is a no-op.
      * @public
      */
     phetioEndEvent: function() {
@@ -210,7 +210,7 @@ define( function( require ) {
       }
 
       if ( this.isPhetioInstrumented() ) {
-        phetioEvents.end( topMessageIndex );
+        dataStream.end( topMessageIndex );
       }
     },
 
