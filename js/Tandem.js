@@ -273,7 +273,7 @@ define( function( require ) {
       if ( PHET_IO_ENABLED ) {
 
         // Assert if validating tandems
-        if ( phet.phetio.queryParameters.phetioValidateTandems ) {
+        if ( this.validationEnabled() ) {
           assert && assert( false, 'Uninstrumented code detected' );
         }
 
