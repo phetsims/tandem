@@ -26,8 +26,8 @@ define( function( require ) {
 
     /**
      * Encodes a boolean to a state (which also happens to be a boolean).
-     * @param {Object} value
-     * @returns {Object}
+     * @param {boolean} value
+     * @returns {boolean}
      * @override
      */
     toStateObject: function( value ) {
@@ -37,8 +37,8 @@ define( function( require ) {
 
     /**
      * Decode a boolean from a state, which is already a boolean.
-     * @param {Object} stateObject
-     * @returns {Object}
+     * @param {boolean} stateObject
+     * @returns {boolean}
      * @override
      */
     fromStateObject: function( stateObject ) {
