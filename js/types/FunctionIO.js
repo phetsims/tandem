@@ -10,9 +10,9 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
+  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
 
   /**
    * Parametric IO type constructor--given return type and parameter types, this function returns a type wrapper for
@@ -54,7 +54,7 @@ define( function( require ) {
     } );
   }
 
-  phetioNamespace.register( 'FunctionIO', FunctionIO );
+  tandemNamespace.register( 'FunctionIO', FunctionIO );
 
   return FunctionIO;
 } );

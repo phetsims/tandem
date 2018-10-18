@@ -10,9 +10,9 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var phetioInherit = require( 'PHET_IO/phetioInherit' );
-  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
-  var ObjectIO = require( 'PHET_IO/types/ObjectIO' );
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
+  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
 
   /**
    * @constructor
@@ -47,7 +47,7 @@ define( function( require ) {
     }
   } );
 
-  phetioNamespace.register( 'BooleanIO', BooleanIO );
+  tandemNamespace.register( 'BooleanIO', BooleanIO );
 
   return BooleanIO;
 } );
