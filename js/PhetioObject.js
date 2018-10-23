@@ -10,11 +10,11 @@ define( function( require ) {
 
   // modules
   var inherit = require( 'PHET_CORE/inherit' );
+  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var Tandem = require( 'TANDEM/Tandem' );
 
   // ifphetio
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var dataStream = require( 'ifphetio!PHET_IO/dataStream' );
 
   // constants
