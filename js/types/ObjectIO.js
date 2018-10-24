@@ -11,8 +11,10 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+
+  // ifphetio
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
 
   /**
    * Main constructor for ObjectIO base IO type.

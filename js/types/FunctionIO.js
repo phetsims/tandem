@@ -10,9 +10,11 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
+
+  // ifphetio
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
 
   /**
    * Parametric IO type constructor--given return type and parameter types, this function returns a type wrapper for

@@ -19,9 +19,11 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
+
+  // ifphetio
+  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
 
   /**
    * Parametric type constructor function, do not use `new`
