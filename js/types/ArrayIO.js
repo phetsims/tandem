@@ -12,9 +12,7 @@ define( function( require ) {
   // modules
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-
-  // ifphetio
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
+  var phetioInherit = require( 'TANDEM/phetioInherit' );
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an appropriate array IO type.

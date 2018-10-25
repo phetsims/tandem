@@ -1,20 +1,21 @@
-// Copyright 2017, University of Colorado Boulder
+// Copyright 2017-2018, University of Colorado Boulder
 
 /**
  * phetioInherit tests
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 define( function( require ) {
   'use strict';
 
-  // modules
-  var PhetioCommandProcessorIO = require( 'PHET_IO/PhetioCommandProcessorIO' );
+  // ifphetio modules
+  var NodeIO = require( 'SCENERY/nodes/NodeIO' );
 
   QUnit.module( 'phetioInherit' );
 
-  // These tests run in brand=phet-io
+  // These tests run in brand=phet-io and brand=phet
   QUnit.test( 'IO types', function( assert ) {
-    assert.ok( !!PhetioCommandProcessorIO.toStateObject, 'IO types should inherit static properties' );
+    assert.ok( !!NodeIO.toStateObject, 'IO types should inherit static properties' );
   } );
 } );

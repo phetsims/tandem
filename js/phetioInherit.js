@@ -11,7 +11,7 @@ define( function( require ) {
 
   // modules
   var inherit = require( 'PHET_CORE/inherit' );
-  var phetioNamespace = require( 'PHET_IO/phetioNamespace' );
+  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   /**
    * @param {function} supertype Constructor for the supertype.
@@ -88,7 +88,7 @@ define( function( require ) {
     return subtype; // pass back the subtype so it can be returned immediately as a module export
   };
 
-  phetioNamespace.register( 'phetioInherit', phetioInherit );
+  tandemNamespace.register( 'phetioInherit', phetioInherit );
 
   return phetioInherit;
 } );

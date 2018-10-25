@@ -12,9 +12,7 @@ define( function( require ) {
 
   // modules
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
-
-  // ifphetio
-  var phetioInherit = require( 'ifphetio!PHET_IO/phetioInherit' );
+  var phetioInherit = require( 'TANDEM/phetioInherit' );
 
   /**
    * Main constructor for ObjectIO base IO type.
