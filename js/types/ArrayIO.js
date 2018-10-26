@@ -38,6 +38,14 @@ define( function( require ) {
       elementType: elementType,
 
       /**
+       * @override
+       * @public
+       * @param {*} instance
+       * @returns {boolean}
+       */
+      isInstance: function( instance ) { return Array.isArray( instance ); },
+
+      /**
        * Serialize an array by serializing each element
        * @param {Object[]} array
        * @returns {Array}

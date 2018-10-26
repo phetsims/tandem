@@ -27,6 +27,14 @@ define( function( require ) {
     documentation: 'Wrapper for the built-in JS number type (floating point, but also represents integers)',
 
     /**
+     * @override
+     * @public
+     * @param {*} instance
+     * @returns {boolean}
+     */
+    isInstance: function( instance ) { return typeof instance === 'number'; },
+
+    /**
      * Encodes a number to a state (which also happens to be a number).
      * @param {Object} value
      * @returns {Object}

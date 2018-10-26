@@ -48,6 +48,15 @@ define( function( require ) {
       documentation: 'Wrapper for the built-in JS function type.<br>' +
                      '<strong>Arguments:</strong> ' + argsString + '<br>' +
                      '<strong>Return Type:</strong> ' + returnType.typeName,
+
+      /**
+       * @override
+       * @public
+       * @param {*} instance
+       * @returns {boolean}
+       */
+      isInstance: function( instance ) { return typeof instance === 'function';},
+
       returnType: returnType,
       parameterTypes: parameterTypes,
       wrapForPhetioCommandProcessor: true

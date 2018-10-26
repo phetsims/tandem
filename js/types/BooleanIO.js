@@ -25,6 +25,14 @@ define( function( require ) {
     documentation: 'Wrapper for the built-in JS boolean type (true/false)',
 
     /**
+     * @override
+     * @public
+     * @param {*} instance
+     * @returns {boolean}
+     */
+    isInstance: function( instance ) { return typeof instance === 'boolean';},
+
+    /**
      * Encodes a boolean to a state (which also happens to be a boolean).
      * @param {boolean} value
      * @returns {boolean}

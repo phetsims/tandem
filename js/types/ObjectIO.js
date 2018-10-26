@@ -43,6 +43,14 @@ define( function( require ) {
     documentation: 'The root of the wrapper object hierarchy.',
 
     /**
+     * A predicate function that will return whether the argument is an instance of this IOType's coreType
+     * @public
+     * @param {*} instance
+     * @returns {boolean} - whether or not the passed in arg is of type Object
+     */
+    isInstance: function( instance ) { return instance instanceof Object;},
+
+    /**
      * Return the json that ObjectIO is wrapping.  This can be overridden by subclasses, or types can use ObjectIO type
      * directly to use this implementation.
      * @param {Object} o

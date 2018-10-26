@@ -30,6 +30,14 @@ define( function( require ) {
     {
       documentation: 'Type for which there is no instance, usually to mark functions without a return value',
 
+      /**
+       * @override
+       * @public
+       * @param {*} instance
+       * @returns {boolean}
+       */
+      isInstance: function( instance ) { return instance === undefined; },
+
       toStateObject: function() {
         return undefined;
       }

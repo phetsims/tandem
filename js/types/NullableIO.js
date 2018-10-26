@@ -45,6 +45,14 @@ define( function( require ) {
       documentation: 'A wrapper to wrap another IOType, adding support for null.',
 
       /**
+       * @override
+       * @public
+       * @param {*} instance
+       * @returns {boolean}
+       */
+      isInstance: function( instance ) { return instance === null || ioType.isInstance( instance ); },
+
+      /**
        * If the argument is null, returns null.
        * Otherwise converts the instance to a state object for serialization.
        * @param {Object|null} instance - of type {ioType|null}

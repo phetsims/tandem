@@ -25,6 +25,14 @@ define( function( require ) {
     documentation: 'Wrapper for the built-in JS string type',
 
     /**
+     * @override
+     * @public
+     * @param {*} instance
+     * @returns {boolean}
+     */
+    isInstance: function( instance ) { return typeof instance === 'string'; },
+
+    /**
      * Encodes a string to a state (which also happens to be a string).
      * @param {Object} value
      * @returns {Object}
