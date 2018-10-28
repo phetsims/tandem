@@ -21,6 +21,13 @@ define( function( require ) {
   var packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
   var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
 
+  // used to keep track of missing tandems, see phet.phetio.queryParameters.printMissingTandems
+  var missingTandems = {
+    required: [],
+    optional: [],
+    uninstrumented: []
+  };
+
   // Listeners that will be notified when items are registered/deregistered. See doc in addInstanceListener
   var instanceListeners = [];
 
@@ -29,10 +36,6 @@ define( function( require ) {
   // and buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
   var launched = false;
   var bufferedElements = [];
-
-  // increment names of uninstrumented common code tandems to avoid collisions for uninstrumented sims with
-  // phetioValidateTandems=false
-  var uninstrumentedCodeIndex = 0;
 
   /**
    * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
@@ -90,15 +93,13 @@ define( function( require ) {
       if ( PHET_IO_ENABLED ) {
 
         // Throw an error if the tandem is required but not supplied
-        if ( phet.phetio.queryParameters.phetioValidateTandems ) {
+        if ( Tandem.validationEnabled() ) {
           assert && assert( !( this.required && !this.supplied ), 'Tandem was required but not supplied' );
         }
 
-        // ValidateTandems is false and printMissingTandems flag is present for a tandem that is required but not supplied.
+        // printMissingTandems flag is present for a tandem that is required but not supplied.
         if ( phet.phetio.queryParameters.printMissingTandems && ( this.required && !this.supplied ) ) {
-          console.log( 'Required Tandem not supplied.\n' +
-                       'this.phetioID = ' + this.phetioID + '\n' +
-                       'Stack trace: ' + new Error().stack );
+          missingTandems.required.push( { phetioID: this.phetioID, stack: new Error().stack } );
         }
 
         // If tandem is optional, then don't add the instance
@@ -108,9 +109,7 @@ define( function( require ) {
 
             // Generally Font is not desired because there are so many untandemized instances.
             if ( stackTrace.indexOf( 'PhetFont' ) === -1 ) {
-              console.log( 'Optional Tandem not supplied.\n' +
-                           'this.phetioID = ' + this.phetioID + '\n' +
-                           'Stack trace: ' + stackTrace );
+              missingTandems.optional.push( { phetioID: this.phetioID, stack: stackTrace } );
             }
           }
 
@@ -279,9 +278,7 @@ define( function( require ) {
 
         // Print stack trace if query parameter supplied
         if ( phet.phetio.queryParameters.printMissingTandems ) {
-          var stackTrace = new Error().stack;
-          console.log( 'Uninstrumented Code! Tandem not supplied: ' + ( uninstrumentedCodeIndex++ ) + '.\n' +
-                       'Stack trace: ' + stackTrace );
+          missingTandems.uninstrumented.push( { stack: new Error().stack } );
         }
       }
     },
@@ -293,7 +290,7 @@ define( function( require ) {
      * @static
      */
     validationEnabled: function() {
-      return PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
+      return PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems && !phet.phetio.queryParameters.printMissingTandems;
     },
 
     /**
@@ -337,9 +334,18 @@ define( function( require ) {
    * @type {Tandem}
    */
   Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
-    required: PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems,
+
+    // let printMissingTandems bypass this
+    required: PHET_IO_ENABLED && ( phet.phetio.queryParameters.phetioValidateTandems || phet.phetio.queryParameters.printMissingTandems ),
     supplied: false
   } );
+
+  /**
+   * Expose collected missing tandems only populated from specific query parameter, see printMissingTandems for more
+   * @public (phet-io internal)
+   * @type {Object}
+   */
+  Tandem.missingTandems = missingTandems;
 
   /**
    * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
