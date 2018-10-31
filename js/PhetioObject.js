@@ -179,9 +179,7 @@ define( function( require ) {
 
       // Opt out of certain events if queryParameter override is provided
       if ( window.phet && window.phet.phetio ) {
-        var omit = !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency;
-        var omit2 = !window.phet.phetio.queryParameters.phetioEmitPlaybackEvents && this.phetioPlayback;
-        if ( omit || omit2 ) {
+        if ( !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency ) {
           this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
           return;
         }
