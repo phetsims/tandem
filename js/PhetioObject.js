@@ -34,8 +34,10 @@ define( function( require ) {
     phetioEventType: 'model',     // Default event type for this instance, can be overridden in phetioStartEvent options
     phetioHighFrequency: false,   // This instance emits events that are high frequency events such as mouse moves or
                                   // stepSimulation can be omitted from data stream
-    phetioPlayback: false         // This instance emits events that are only needed for data streams intended for playback,
+    phetioPlayback: false,        // This instance emits events that are only needed for data streams intended for playback,
                                   // and otherwise can be suppressed.
+    phetioStudioControl: true     // By default, Studio creates controls for many types of instances.  This option
+                                  // can be set to false to direct Studio to omit the control for the instance.
   };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
@@ -84,6 +86,10 @@ define( function( require ) {
     // visual playbacks, but can be otherwise overwhelming.  For instance, stepSimulationEmitter emits dt's that are critical to playbacks
     // but not helpful when reading console: colorized.
     this.phetioPlayback = null;
+
+    // @private {boolean} By default, Studio creates controls for many types of instances.  This option can be set to
+    // false to direct Studio to omit the control for the instance.
+    this.phetioStudioControl = null;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -150,6 +156,7 @@ define( function( require ) {
       this.phetioDocumentation = options.phetioDocumentation;
       this.phetioHighFrequency = options.phetioHighFrequency;
       this.phetioPlayback = options.phetioPlayback;
+      this.phetioStudioControl = options.phetioStudioControl;
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.tandem.supplied ) {
@@ -239,7 +246,8 @@ define( function( require ) {
         phetioDocumentation: this.phetioDocumentation,
         phetioEventType: this.phetioEventType,
         phetioHighFrequency: this.phetioHighFrequency,
-        phetioPlayback: this.phetioPlayback
+        phetioPlayback: this.phetioPlayback,
+        phetioStudioControl: this.phetioStudioControl
       };
     },
 
