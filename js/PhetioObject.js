@@ -36,8 +36,9 @@ define( function( require ) {
                                   // stepSimulation can be omitted from data stream
     phetioPlayback: false,        // This instance emits events that are only needed for data streams intended for playback,
                                   // and otherwise can be suppressed.
-    phetioStudioControl: true     // By default, Studio creates controls for many types of instances.  This option
-                                  // can be set to false to direct Studio to omit the control for the instance.
+    phetioStudioControl: true,     // By default, Studio creates controls for many types of instances.  This option
+                                   // can be set to false to direct Studio to omit the control for the instance.
+    phetioComponentOptions: null          //
   };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
@@ -90,6 +91,9 @@ define( function( require ) {
     // @private {boolean} By default, Studio creates controls for many types of instances.  This option can be set to
     // false to direct Studio to omit the control for the instance.
     this.phetioStudioControl = null;
+
+    // @public {Object} options to pass through to direct child subcomponents, see NodeIO
+    this.phetioComponentOptions = null;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
@@ -157,6 +161,7 @@ define( function( require ) {
       this.phetioHighFrequency = options.phetioHighFrequency;
       this.phetioPlayback = options.phetioPlayback;
       this.phetioStudioControl = options.phetioStudioControl;
+      this.phetioComponentOptions = options.phetioComponentOptions || {};
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.tandem.supplied ) {
