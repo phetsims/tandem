@@ -10,9 +10,9 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
+  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   /**
    * @constructor
