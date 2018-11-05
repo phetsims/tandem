@@ -36,9 +36,9 @@ define( function( require ) {
                                   // stepSimulation can be omitted from data stream
     phetioPlayback: false,        // This instance emits events that are only needed for data streams intended for playback,
                                   // and otherwise can be suppressed.
-    phetioStudioControl: true,     // By default, Studio creates controls for many types of instances.  This option
-                                   // can be set to false to direct Studio to omit the control for the instance.
-    phetioComponentOptions: null          //
+    phetioStudioControl: true,    // By default, Studio creates controls for many types of instances.  This option
+                                  // can be set to false to direct Studio to omit the control for the instance.
+    phetioComponentOptions: null  // For propagating phetio options to sub-components
   };
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
