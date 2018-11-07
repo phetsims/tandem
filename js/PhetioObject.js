@@ -38,8 +38,17 @@ define( function( require ) {
                                   // and otherwise can be suppressed.
     phetioStudioControl: true,    // By default, Studio creates controls for many types of instances.  This option
                                   // can be set to false to direct Studio to omit the control for the instance.
-    phetioComponentOptions: null  // For propagating phetio options to sub-components
+    phetioComponentOptions: null  // For propagating phetio options to sub-components, see SUPPORTED_PHETIO_COMPONENT_OPTIONS
   };
+
+  var SUPPORTED_PHETIO_COMPONENT_OPTIONS = [
+
+    // NodeIO
+    'visibleProperty', 'pickableProperty', 'opacityProperty',
+
+    // TextIO
+    'textProperty'
+  ];
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
 
@@ -162,6 +171,11 @@ define( function( require ) {
       this.phetioPlayback = options.phetioPlayback;
       this.phetioStudioControl = options.phetioStudioControl;
       this.phetioComponentOptions = options.phetioComponentOptions || {};
+
+      // validate phetioComponentOptions
+      assert && _.keys( this.phetioComponentOptions ).forEach( option => {
+        assert && assert( SUPPORTED_PHETIO_COMPONENT_OPTIONS.indexOf( option ) >= 0, 'Unsupported phetioComponentOptions: ' + option );
+      } );
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.tandem.supplied ) {
