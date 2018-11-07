@@ -34,8 +34,8 @@ define( function( require ) {
     phetioEventType: 'model',     // Default event type for this instance, can be overridden in phetioStartEvent options
     phetioHighFrequency: false,   // This instance emits events that are high frequency events such as mouse moves or
                                   // stepSimulation can be omitted from data stream
-    phetioPlayback: false,        // This instance emits events that are only needed for data streams intended for playback,
-                                  // and otherwise can be suppressed.
+    phetioPlayback: false,        // This instance emits events that are needed for data streams intended for playback.
+                                  // See `handlePlaybackEvent.js` for wrapper-side event playback usage.
     phetioStudioControl: true,    // By default, Studio creates controls for many types of instances.  This option
                                   // can be set to false to direct Studio to omit the control for the instance.
     phetioComponentOptions: null  // For propagating phetio options to sub-components, see SUPPORTED_PHETIO_COMPONENT_OPTIONS
