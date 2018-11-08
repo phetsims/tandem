@@ -194,14 +194,15 @@ define( function( require ) {
      * Start an event for the nested PhET-iO data stream.
      *
      * @param {string} event - the name of the event
-     * @param {Object|function} [args] - arguments for the event, either an object, or a function that returns an object
+     * @param {Object|function|null} [data] - data for the event, either an object, or a function that returns an object
+     * @param {Object|function|null} [metadata] - metadata for the event, either an object, or a function that returns an object
      * @public
      */
-    phetioStartEvent: function( event, args ) {
+    phetioStartEvent: function( event, data, metadata ) {
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
       assert && assert( typeof event === 'string' );
-      assert && args && assert( typeof args === 'object' || typeof args === 'function' );
-      assert && assert( arguments.length !== 3, 'Prevent usage of incorrect signature' );
+      assert && data && assert( typeof data === 'object' || typeof data === 'function' );
+      assert && assert( arguments.length === 1 || arguments.length === 2 || arguments.length === 3, 'Prevent usage of incorrect signature' );
 
       // Opt out of certain events if queryParameter override is provided
       if ( window.phet && window.phet.phetio ) {
@@ -214,10 +215,14 @@ define( function( require ) {
       if ( this.isPhetioInstrumented() ) {
 
         // Only get the args if we are actually going to send the event.
-        if ( typeof args === 'function' ) {
-          args = args();
+        if ( typeof data === 'function' ) {
+          data = data();
         }
-        this.phetioMessageStack.push( dataStream.start( this.phetioEventType, this, event, args ) );
+        if ( typeof metadata === 'function' ) {
+          metadata = metadata();
+        }
+
+        this.phetioMessageStack.push( dataStream.start( this.phetioEventType, this, event, data, metadata ) );
       }
     },
 
