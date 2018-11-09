@@ -23,6 +23,9 @@ define( function( require ) {
   // Flag that indicates a high frequency message was skipped.
   var SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
 
+  // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
+  var EMPTY_OBJECT = {};
+
   var DEFAULTS = {
     tandem: Tandem.optional,      // By default tandems are optional, but subtypes can specify this as
                                   // `Tandem.tandemRequired` to enforce its presence
@@ -170,7 +173,7 @@ define( function( require ) {
       this.phetioHighFrequency = options.phetioHighFrequency;
       this.phetioPlayback = options.phetioPlayback;
       this.phetioStudioControl = options.phetioStudioControl;
-      this.phetioComponentOptions = options.phetioComponentOptions || {};
+      this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
 
       // validate phetioComponentOptions
       assert && _.keys( this.phetioComponentOptions ).forEach( option => {
