@@ -227,7 +227,10 @@ define( function( require ) {
           if ( !metadata ) {
             metadata = {};
           }
-          assert && assert( !metadata.playback, 'phetioObject sets playback metadata' );
+
+          // TODO: this doesn't work because Emitter passes in the same reference object each event. We aren't cloning
+          // TODO: this object before giving it to `datastream.js`, see https://github.com/phetsims/phet-io/issues/1411
+          // assert && assert( !metadata.playback, 'phetioObject sets playback metadata' );
           metadata.playback = this.phetioPlayback;
         }
 
