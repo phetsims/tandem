@@ -1,8 +1,8 @@
 tandem
 =====
 
-Tandem provides supporting material for simulations using phetio.js.  This library is licensed
-so that it can be used in published simulations (as opposed to phetio.js which is licensed separately).
+Tandem provides supporting material for simulations using phetioEngine.js.  This library is licensed
+so that it can be used in published simulations (as opposed to phetioEngine.js which is licensed separately).
 
 By PhET Interactive Simulations
 http://phet.colorado.edu/

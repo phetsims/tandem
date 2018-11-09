@@ -13,7 +13,7 @@ define( function( require ) {
   var Tandem = require( 'TANDEM/Tandem' );
 
   // ifphetio
-  require( 'ifphetio!PHET_IO/phetio' );
+  require( 'ifphetio!PHET_IO/phetioEngine' );
 
   QUnit.module( 'PhetioObject' );
 
