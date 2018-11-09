@@ -38,10 +38,10 @@ define( function( require ) {
                                   // See `handlePlaybackEvent.js` for wrapper-side event playback usage.
     phetioStudioControl: true,    // By default, Studio creates controls for many types of instances.  This option
                                   // can be set to false to direct Studio to omit the control for the instance.
-    phetioComponentOptions: null  // For propagating phetio options to sub-components, see SUPPORTED_PHETIO_COMPONENT_OPTIONS
+    phetioComponentOptions: null  // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
   };
 
-  var SUPPORTED_PHETIO_COMPONENT_OPTIONS = [
+  var SUPPORTED_PHET_IO_COMPONENT_OPTIONS = [
 
     // NodeIO
     'visibleProperty', 'pickableProperty', 'opacityProperty',
@@ -174,7 +174,7 @@ define( function( require ) {
 
       // validate phetioComponentOptions
       assert && _.keys( this.phetioComponentOptions ).forEach( option => {
-        assert && assert( SUPPORTED_PHETIO_COMPONENT_OPTIONS.indexOf( option ) >= 0, 'Unsupported phetioComponentOptions: ' + option );
+        assert && assert( SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( option ) >= 0, 'Unsupported phetioComponentOptions: ' + option );
       } );
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
