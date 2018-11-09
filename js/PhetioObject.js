@@ -222,6 +222,15 @@ define( function( require ) {
           metadata = metadata();
         }
 
+        // playback is a metadata parameter added to the event
+        if ( this.phetioPlayback ) {
+          if ( !metadata ) {
+            metadata = {};
+          }
+          assert && assert( !metadata.playback, 'phetioObject sets playback metadata' );
+          metadata.playback = this.phetioPlayback;
+        }
+
         this.phetioMessageStack.push( dataStream.start( this.phetioEventType, this, event, data, metadata ) );
       }
     },
