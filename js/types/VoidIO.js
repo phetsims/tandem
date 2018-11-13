@@ -31,12 +31,16 @@ define( function( require ) {
       documentation: 'Type for which there is no instance, usually to mark functions without a return value',
 
       /**
+       * We sometimes use VoidIO as a workaround to indicate that an argument is passed in the simulation side, but
+       * that it shouldn't be leaked to the PhET-iO client.
+       * TODO: Have this reviewed by @zepumph
+       *
        * @override
        * @public
        * @param {*} instance
        * @returns {boolean}
        */
-      isInstance: function( instance ) { return instance === undefined; },
+      isInstance: function( instance ) { return true; },
 
       toStateObject: function() {
         return undefined;
