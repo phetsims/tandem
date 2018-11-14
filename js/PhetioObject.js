@@ -88,7 +88,7 @@ define( function( require ) {
     // @private {number|null} - tracks the indices of started messages so that dataStream can check that ends match starts
     this.phetioMessageStack = [];
 
-    // @private {boolean} - has the instance been disposed?
+    // @protected {boolean} - has the instance been disposed?
     this.phetioObjectDisposed = false;
 
     // @private {string} - 'model' | 'user'
