@@ -9,6 +9,7 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var escapeHTML = require( 'PHET_CORE/escapeHTML' );
   var inherit = require( 'PHET_CORE/inherit' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var Tandem = require( 'TANDEM/Tandem' );
@@ -27,21 +28,22 @@ define( function( require ) {
   var EMPTY_OBJECT = {};
 
   var DEFAULTS = {
-    tandem: Tandem.optional,      // By default tandems are optional, but subtypes can specify this as
-                                  // `Tandem.tandemRequired` to enforce its presence
-    phetioType: ObjectIO,         // Supply the appropriate IO type
-    phetioDocumentation: null,    // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
-
-    phetioState: true,            // When true, includes the instance in the PhET-iO state
-    phetioReadOnly: false,        // When true, you can only get values from the instance; no setting allowed.
-    phetioEventType: 'model',     // Default event type for this instance, can be overridden in phetioStartEvent options
-    phetioHighFrequency: false,   // This instance emits events that are high frequency events such as mouse moves or
-                                  // stepSimulation can be omitted from data stream
-    phetioPlayback: false,        // This instance emits events that are needed for data streams intended for playback.
-                                  // See `handlePlaybackEvent.js` for wrapper-side event playback usage.
-    phetioStudioControl: true,    // By default, Studio creates controls for many types of instances.  This option
-                                  // can be set to false to direct Studio to omit the control for the instance.
-    phetioComponentOptions: null  // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
+    tandem: Tandem.optional,        // By default tandems are optional, but subtypes can specify this as
+                                    // `Tandem.tandemRequired` to enforce its presence
+    phetioType: ObjectIO,           // Supply the appropriate IO type
+    phetioDocumentation: null,      // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    phetioState: true,              // When true, includes the instance in the PhET-iO state
+    phetioReadOnly: false,          // When true, you can only get values from the instance; no setting allowed.
+    phetioEventType: 'model',       // Default event type for this instance, can be overridden in phetioStartEvent options
+    phetioHighFrequency: false,     // This instance emits events that are high frequency events such as mouse moves or
+                                    // stepSimulation can be omitted from data stream
+    phetioPlayback: false,          // This instance emits events that are needed for data streams intended for playback.
+                                    // See `handlePlaybackEvent.js` for wrapper-side event playback usage.
+    phetioStudioControl: true,      // By default, Studio creates controls for many types of instances.  This option
+                                    // can be set to false to direct Studio to omit the control for the instance.
+    phetioComponentOptions: null,   // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
+    phetioControlledProperty: null  // A common pattern for a UI component is to control a Property. This option makes
+                                    // sure both are instrumented and augments the component documentation accordingly.
   };
 
   var SUPPORTED_PHET_IO_COMPONENT_OPTIONS = [
@@ -174,6 +176,19 @@ define( function( require ) {
       this.phetioPlayback = options.phetioPlayback;
       this.phetioStudioControl = options.phetioStudioControl;
       this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
+
+      if ( options.phetioControlledProperty ) {
+
+        // If either one is instrumented, then the other must be too.
+        assert && Tandem.validationEnabled() && assert( this.isPhetioInstrumented() === options.phetioControlledProperty.isPhetioInstrumented(),
+          'Property must be instrumented if controlling component is.' );
+
+        // (phet-io) document the instrumented Property that this Checkbox manipulates
+        this.phetioDocumentation +=
+          ` Controls the ${escapeHTML( options.phetioControlledProperty.phetioType.typeName )}: 
+        <a href="#${phetio.PhetioIDUtils.getDOMElementID( options.phetioControlledProperty.tandem.phetioID )}">
+        ${options.phetioControlledProperty.tandem.phetioID}</a>`.trim(); // eliminate preceding whitespace, if any.
+      }
 
       // validate phetioComponentOptions
       assert && _.keys( this.phetioComponentOptions ).forEach( option => {
