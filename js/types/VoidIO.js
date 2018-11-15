@@ -33,7 +33,6 @@ define( function( require ) {
       /**
        * We sometimes use VoidIO as a workaround to indicate that an argument is passed in the simulation side, but
        * that it shouldn't be leaked to the PhET-iO client.
-       * TODO: Have this reviewed by @zepumph
        *
        * @override
        * @public
