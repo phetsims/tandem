@@ -42,8 +42,9 @@ define( function( require ) {
     phetioStudioControl: true,      // By default, Studio creates controls for many types of instances.  This option
                                     // can be set to false to direct Studio to omit the control for the instance.
     phetioComponentOptions: null,   // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
-    phetioControlledProperty: null  // A common pattern for a UI component is to control a Property. This option makes
+    phetioControlledProperty: null, // A common pattern for a UI component is to control a Property. This option makes
                                     // sure both are instrumented and augments the component documentation accordingly.
+    phetioFeatured: false           // True if this is an important instance to be "featured" in the PhET-iO API
   };
 
   var SUPPORTED_PHET_IO_COMPONENT_OPTIONS = [
@@ -105,6 +106,9 @@ define( function( require ) {
     // @private {boolean} By default, Studio creates controls for many types of instances.  This option can be set to
     // false to direct Studio to omit the control for the instance.
     this.phetioStudioControl = null;
+
+    // @private {boolean} - See docs above
+    this.phetioFeatured = false;
 
     // @public {Object} options to pass through to direct child subcomponents, see NodeIO
     this.phetioComponentOptions = null;
@@ -176,6 +180,7 @@ define( function( require ) {
       this.phetioPlayback = options.phetioPlayback;
       this.phetioStudioControl = options.phetioStudioControl;
       this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
+      this.phetioFeatured = options.phetioFeatured;
 
       if ( options.phetioControlledProperty ) {
 
@@ -301,7 +306,8 @@ define( function( require ) {
         phetioEventType: this.phetioEventType,
         phetioHighFrequency: this.phetioHighFrequency,
         phetioPlayback: this.phetioPlayback,
-        phetioStudioControl: this.phetioStudioControl
+        phetioStudioControl: this.phetioStudioControl,
+        phetioFeatured: this.phetioFeatured
       };
     },
 
