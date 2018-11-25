@@ -290,7 +290,12 @@ define( function( require ) {
      * @static
      */
     validationEnabled: function() {
-      return PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems && !phet.phetio.queryParameters.printMissingTandems;
+      return PHET_IO_ENABLED &&
+             phet.phetio.queryParameters.phetioValidateTandems &&
+
+             // If we are printing the missing tandems, then validation must be disabled because the intention is to
+             // run with partial tandem coverage and see which are missing.
+             !phet.phetio.queryParameters.printMissingTandems;
     },
 
     /**
