@@ -87,11 +87,12 @@
     /**
      * The root tandem has a nested "general" tandem which contains several simulation-level components.  This
      * method can be used for convenience in accessing its children.
+     * @param {Client} Client - the Client type, not a Client instance
      * @param {string} componentName
      * @returns {string}
      */
-    getGeneralID: function( componentName ) {
-      const general = phetio.PhetioIDUtils.append( phetio.Client.CAMEL_CASE_SIMULATION_NAME, 'general' );
+    getGeneralID: function( Client, componentName ) {
+      const general = phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, 'general' );
       return phetio.PhetioIDUtils.append( general, componentName );
     },
 
