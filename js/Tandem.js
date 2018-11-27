@@ -320,6 +320,14 @@ define( function( require ) {
   Tandem.rootTandem = new Tandem( toCamelCase( packageJSON.name ) );
 
   /**
+   * Many simulation elements are nested under "general".
+   * @public
+   * @static
+   * @type {Tandem}
+   */
+  Tandem.generalTandem = Tandem.rootTandem.createTandem( 'general' );
+
+  /**
    * Used to indicate a common code component that supports tandem, but doesn't not require it.
    * If a tandem is not passed through to this instance, then it will not be instrumented.
    * @public

@@ -85,6 +85,17 @@
     },
 
     /**
+     * The root tandem has a nested "general" tandem which contains several simulation-level components.  This
+     * method can be used for convenience in accessing its children.
+     * @param {string} componentName
+     * @returns {string}
+     */
+    getGeneralID: function( componentName ) {
+      const general = phetio.PhetioIDUtils.append( phetio.Client.CAMEL_CASE_SIMULATION_NAME, 'general' );
+      return phetio.PhetioIDUtils.append( general, componentName );
+    },
+
+    /**
      * The separator used to piece together a phet-io id.
      * @type {String}
      * @constant
