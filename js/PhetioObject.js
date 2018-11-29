@@ -116,6 +116,18 @@ define( function( require ) {
     if ( options ) {
       this.initializePhetioObject( {}, options );
     }
+
+    if ( assert ) {
+
+      // Wrap the prototype dispose method with a check. NOTE: We will not catch devious cases where the dispose() is
+      // overridden after the Node constructor (which may happen).
+      var protoDispose = this.dispose;
+      this.dispose = function() {
+        assert && assert( !this.isDisposed, 'This Node has already been disposed, and cannot be disposed again' );
+        protoDispose.call( this );
+        assert && assert( this.isDisposed, 'Node.dispose() call is missing from an overridden dispose method' );
+      };
+    }
   }
 
   tandemNamespace.register( 'PhetioObject', PhetioObject );
