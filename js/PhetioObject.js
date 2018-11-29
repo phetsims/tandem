@@ -123,9 +123,9 @@ define( function( require ) {
       // overridden after the Node constructor (which may happen).
       var protoDispose = this.dispose;
       this.dispose = function() {
-        assert && assert( !this.isDisposed, 'This Node has already been disposed, and cannot be disposed again' );
+        assert && assert( !this.isDisposed, 'This PhetioObject has already been disposed, and cannot be disposed again' );
         protoDispose.call( this );
-        assert && assert( this.isDisposed, 'Node.dispose() call is missing from an overridden dispose method' );
+        assert && assert( this.isDisposed, 'PhetioObject.dispose() call is missing from an overridden dispose method' );
       };
     }
   }
