@@ -90,7 +90,7 @@ define( function( require ) {
     this.phetioMessageStack = [];
 
     // @protected {boolean} - has the instance been disposed?
-    this.phetioObjectDisposed = false;
+    this.isDisposed = false;
 
     // @private {string} - 'model' | 'user'
     this.phetioEventType = null;
@@ -317,7 +317,7 @@ define( function( require ) {
      */
     dispose: function() {
       var self = this;
-      assert && assert( !this.phetioObjectDisposed, 'PhetioObject can only be disposed once' );
+      assert && assert( !this.isDisposed, 'PhetioObject can only be disposed once' );
 
       // In order to support the structured data stream, PhetioObjects must end the messages in the correct
       // sequence, without being interrupted by dispose() calls.  Therefore, we do not clear out any of the state
@@ -336,7 +336,7 @@ define( function( require ) {
         this.phetioWrapper && this.phetioWrapper.dispose && this.phetioWrapper.dispose();
       }
 
-      this.phetioObjectDisposed = true;
+      this.isDisposed = true;
     }
   }, {
     DEFAULT_OPTIONS: DEFAULTS // the default options for the phet-io object
