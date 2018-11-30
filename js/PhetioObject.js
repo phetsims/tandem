@@ -353,6 +353,7 @@ define( function( require ) {
       this.linkedElements.forEach( function( linkedElement ) {
         linkedElement.dispose();
       } );
+      this.linkedElements.length = 0;
 
       this.isDisposed = true;
     }
