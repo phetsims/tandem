@@ -9,8 +9,8 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var escapeHTML = require( 'PHET_CORE/escapeHTML' );
   var inherit = require( 'PHET_CORE/inherit' );
+  var LinkedElementIO = require( 'TANDEM/LinkedElementIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var Tandem = require( 'TANDEM/Tandem' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
@@ -42,8 +42,6 @@ define( function( require ) {
     phetioStudioControl: true,      // By default, Studio creates controls for many types of instances.  This option
                                     // can be set to false to direct Studio to omit the control for the instance.
     phetioComponentOptions: null,   // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
-    phetioControlledProperty: null, // A common pattern for a UI component is to control a Property. This option makes
-                                    // sure both are instrumented and augments the component documentation accordingly.
     phetioFeatured: false           // True if this is an important instance to be "featured" in the PhET-iO API
   };
 
@@ -113,6 +111,9 @@ define( function( require ) {
     // @public {Object} options to pass through to direct child subcomponents, see NodeIO
     this.phetioComponentOptions = null;
 
+    // @private {LinkedElement[]} - keep track of LinkedElements for disposal
+    this.linkedElements = [];
+
     if ( options ) {
       this.initializePhetioObject( {}, options );
     }
@@ -132,7 +133,7 @@ define( function( require ) {
 
   tandemNamespace.register( 'PhetioObject', PhetioObject );
 
-  return inherit( Object, PhetioObject, {
+  inherit( Object, PhetioObject, {
 
     /**
      * @param {Object} baseOptions - only applied if options keys intersect OPTIONS_KEYS
@@ -193,19 +194,6 @@ define( function( require ) {
       this.phetioStudioControl = options.phetioStudioControl;
       this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
       this.phetioFeatured = options.phetioFeatured;
-
-      if ( options.phetioControlledProperty ) {
-
-        // If either one is instrumented, then the other must be too.
-        assert && Tandem.validationEnabled() && assert( this.isPhetioInstrumented() === options.phetioControlledProperty.isPhetioInstrumented(),
-          'Property must be instrumented if controlling component is.' );
-
-        // (phet-io) document the instrumented Property that this Checkbox manipulates
-        this.phetioDocumentation +=
-          ` Controls the ${escapeHTML( options.phetioControlledProperty.phetioType.typeName )}: 
-        <a href="#${phetio.PhetioIDUtils.getDOMElementID( options.phetioControlledProperty.tandem.phetioID )}">
-        ${options.phetioControlledProperty.tandem.phetioID}</a>`.trim(); // eliminate preceding whitespace, if any.
-      }
 
       // validate phetioComponentOptions
       assert && _.keys( this.phetioComponentOptions ).forEach( option => {
@@ -324,6 +312,19 @@ define( function( require ) {
     },
 
     /**
+     * This creates a one-way association between this PhetioObject and the specified element, which is rendered in
+     * Studio as a "symbolic" link or hyperlink.
+     * @param {PhetioObject} element - the target element.
+     * @param {Object} [options]
+     */
+    addLinkedElement: function( element, options ) {
+      assert && assert( element instanceof PhetioObject, 'element must be of type PhetioObject' );
+
+      // Load from namespace to avoid cyclic module dependency
+      this.linkedElements.push( new LinkedElement( element, options ) );
+    },
+
+    /**
      * Unregisters from tandem when longer used.
      * @public
      */
@@ -348,9 +349,43 @@ define( function( require ) {
         this.phetioWrapper && this.phetioWrapper.dispose && this.phetioWrapper.dispose();
       }
 
+      // Dispose LinkedElements
+      this.linkedElements.forEach( function( linkedElement ) {
+        linkedElement.dispose();
+      } );
+
       this.isDisposed = true;
     }
   }, {
     DEFAULT_OPTIONS: DEFAULTS // the default options for the phet-io object
   } );
+
+  /**
+   * Internal class to avoid cyclic dependencies.
+   * @private
+   */
+  class LinkedElement extends PhetioObject {
+
+    /**
+     * @param {Object} element
+     * @param {Object} [options]
+     */
+    constructor( element, options ) {
+      assert && assert( !!element, 'element should be defined' );
+      assert && assert( element instanceof PhetioObject, 'element should be PhetioObject' );
+      assert && assert( element.tandem, 'element should have a tandem' );
+
+      super( _.extend( {
+        phetioType: LinkedElementIO,
+        phetioFeatured: element.phetioFeatured, // The link should be featured if the element itself is featured
+        phetioReadOnly: true // References cannot be changed
+      }, options ) );
+
+      // @public (read-only)
+      this.element = element;
+    }
+  }
+
+  tandemNamespace.register( 'PhetioObject.LinkedElement', LinkedElement );
+  return PhetioObject;
 } );
