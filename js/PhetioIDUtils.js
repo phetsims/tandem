@@ -92,7 +92,7 @@
      * @returns {string}
      */
     getGeneralID: function( Client, componentName ) {
-      const general = phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, 'general' );
+      var general = phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, 'general' );
       return phetio.PhetioIDUtils.append( general, componentName );
     },
 
