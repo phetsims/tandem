@@ -182,8 +182,11 @@ define( function( require ) {
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
-      assert && assert( options.phetioDocumentation === null || typeof options.phetioDocumentation === 'string',
-             'invalid phetioDocumentation: ' + options.phetioDocumentation );
+      assert && assert(
+        options.phetioDocumentation === null ||
+        ( typeof options.phetioDocumentation === 'string' && options.phetioDocumentation !== '' ),
+        'invalid phetioDocumentation: ' + options.phetioDocumentation
+      );
 
       // Unpack options to instance properties
       this.tandem = options.tandem;
