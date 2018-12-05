@@ -21,7 +21,7 @@ define( function( require ) {
   var packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
   var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
 
-  // used to keep track of missing tandems, see phet.phetio.queryParameters.printMissingTandems
+  // used to keep track of missing tandems, see phet.phetio.queryParameters.phetioPrintMissingTandems
   var missingTandems = {
     required: [],
     optional: [],
@@ -97,14 +97,14 @@ define( function( require ) {
           assert && assert( !( this.required && !this.supplied ), 'Tandem was required but not supplied' );
         }
 
-        // printMissingTandems flag is present for a tandem that is required but not supplied.
-        if ( phet.phetio.queryParameters.printMissingTandems && ( this.required && !this.supplied ) ) {
+        // phetioPrintMissingTandems flag is present for a tandem that is required but not supplied.
+        if ( phet.phetio.queryParameters.phetioPrintMissingTandems && ( this.required && !this.supplied ) ) {
           missingTandems.required.push( { phetioID: this.phetioID, stack: new Error().stack } );
         }
 
         // If tandem is optional, then don't add the instance
         if ( !this.required && !this.supplied ) {
-          if ( phet.phetio.queryParameters.printMissingTandems ) {
+          if ( phet.phetio.queryParameters.phetioPrintMissingTandems ) {
             var stackTrace = new Error().stack;
 
             // Generally Font is not desired because there are so many untandemized instances.
@@ -277,7 +277,7 @@ define( function( require ) {
         }
 
         // Print stack trace if query parameter supplied
-        if ( phet.phetio.queryParameters.printMissingTandems ) {
+        if ( phet.phetio.queryParameters.phetioPrintMissingTandems ) {
           missingTandems.uninstrumented.push( { stack: new Error().stack } );
         }
       }
@@ -295,7 +295,7 @@ define( function( require ) {
 
              // If we are printing the missing tandems, then validation must be disabled because the intention is to
              // run with partial tandem coverage and see which are missing.
-             !phet.phetio.queryParameters.printMissingTandems;
+             !phet.phetio.queryParameters.phetioPrintMissingTandems;
     },
 
     /**
@@ -348,13 +348,13 @@ define( function( require ) {
    */
   Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
 
-    // let printMissingTandems bypass this
-    required: PHET_IO_ENABLED && ( phet.phetio.queryParameters.phetioValidateTandems || phet.phetio.queryParameters.printMissingTandems ),
+    // let phetioPrintMissingTandems bypass this
+    required: PHET_IO_ENABLED && ( phet.phetio.queryParameters.phetioValidateTandems || phet.phetio.queryParameters.phetioPrintMissingTandems ),
     supplied: false
   } );
 
   /**
-   * Expose collected missing tandems only populated from specific query parameter, see printMissingTandems for more
+   * Expose collected missing tandems only populated from specific query parameter, see phetioPrintMissingTandems for more
    * @public (phet-io internal)
    * @type {Object}
    */
