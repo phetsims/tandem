@@ -42,7 +42,8 @@ define( function( require ) {
     phetioStudioControl: true,      // By default, Studio creates controls for many types of instances.  This option
                                     // can be set to false to direct Studio to omit the control for the instance.
     phetioComponentOptions: null,   // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
-    phetioFeatured: false           // True if this is an important instance to be "featured" in the PhET-iO API
+    phetioFeatured: false,          // True if this is an important instance to be "featured" in the PhET-iO API
+    phetioEventMetadata: null       // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
   };
 
   var SUPPORTED_PHET_IO_COMPONENT_OPTIONS = [
@@ -107,6 +108,9 @@ define( function( require ) {
 
     // @private {boolean} - See docs above
     this.phetioFeatured = false;
+
+    // @private {Object|null}
+    this.phetioEventMetadata = null;
 
     // @public {Object} options to pass through to direct child subcomponents, see NodeIO
     this.phetioComponentOptions = null;
@@ -200,6 +204,14 @@ define( function( require ) {
       this.phetioStudioControl = options.phetioStudioControl;
       this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
       this.phetioFeatured = options.phetioFeatured;
+      this.phetioEventMetadata = options.phetioEventMetadata;
+
+      // Make sure playback shows in the phetioEventMetadata
+      if ( this.phetioPlayback ) {
+        this.phetioEventMetadata = this.phetioEventMetadata || {};
+        assert && assert( !this.phetioEventMetadata.hasOwnProperty( 'playback' ), 'phetioEventMetadata.playback should not already exist' );
+        this.phetioEventMetadata.playback = true;
+      }
 
       // validate phetioComponentOptions
       assert && _.keys( this.phetioComponentOptions ).forEach( option => {
@@ -224,14 +236,13 @@ define( function( require ) {
      *
      * @param {string} event - the name of the event
      * @param {Object|function|null} [data] - data for the event, either an object, or a function that returns an object
-     * @param {Object|function|null} [metadata] - metadata for the event, either an object, or a function that returns an object
      * @public
      */
-    phetioStartEvent: function( event, data, metadata ) {
+    phetioStartEvent: function( event, data ) {
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
       assert && assert( typeof event === 'string' );
       assert && data && assert( typeof data === 'object' || typeof data === 'function' );
-      assert && assert( arguments.length === 1 || arguments.length === 2 || arguments.length === 3, 'Prevent usage of incorrect signature' );
+      assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
 
       // Opt out of certain events if queryParameter override is provided
       if ( window.phet && window.phet.phetio ) {
@@ -247,23 +258,8 @@ define( function( require ) {
         if ( typeof data === 'function' ) {
           data = data();
         }
-        if ( typeof metadata === 'function' ) {
-          metadata = metadata();
-        }
 
-        // playback is a metadata parameter added to the event
-        if ( this.phetioPlayback ) {
-          if ( !metadata ) {
-            metadata = {};
-          }
-
-          // TODO: this doesn't work because Emitter passes in the same reference object each event. We aren't cloning
-          // TODO: this object before giving it to `datastream.js`, see https://github.com/phetsims/phet-io/issues/1411
-          // assert && assert( !metadata.playback, 'phetioObject sets playback metadata' );
-          metadata.playback = this.phetioPlayback;
-        }
-
-        this.phetioMessageStack.push( dataStream.start( this.phetioEventType, this, event, data, metadata ) );
+        this.phetioMessageStack.push( dataStream.start( this.phetioEventType, this, event, data, this.phetioEventMetadata ) );
       }
     },
 
