@@ -43,7 +43,20 @@ define( function( require ) {
        * @param {*} instance
        * @returns {boolean}
        */
-      isInstance: function( instance ) { return Array.isArray( instance ); },
+      isInstance: function( instance ) {
+        if ( !Array.isArray( instance ) ) {
+          return false;
+        }
+
+        // default to true until something isn't correct
+        var isCorrectType = true;
+        instance.forEach( function( element ) {
+          if ( !elementType.isInstance( element ) ) {
+            isCorrectType = false;
+          }
+        } );
+        return isCorrectType;
+      },
 
       /**
        * Serialize an array by serializing each element
