@@ -302,9 +302,9 @@ define( function( require ) {
     getMetadata: function() {
       return {
         phetioTypeName: this.phetioType.typeName,
+        phetioDocumentation: this.phetioDocumentation,
         phetioState: this.phetioState,
         phetioReadOnly: this.phetioReadOnly,
-        phetioDocumentation: this.phetioDocumentation,
         phetioEventType: this.phetioEventType,
         phetioHighFrequency: this.phetioHighFrequency,
         phetioPlayback: this.phetioPlayback,
