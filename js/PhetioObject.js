@@ -357,6 +357,9 @@ define( function( require ) {
       } );
       this.linkedElements.length = 0;
 
+      this.tandem = null;
+      this.phetioType = null;
+
       this.isDisposed = true;
     }
   }, {
