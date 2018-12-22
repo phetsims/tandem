@@ -37,11 +37,6 @@ define( function( require ) {
         .join( ', ' ) + '>';
     }
 
-    // attach "isPredicate" property to the function, see assertValueType.js for a usage.
-    if ( staticProperties.isInstance ) {
-      staticProperties.isInstance.isPredicate = true;
-    }
-
     // The method order is used to determine the ordering of the documentation for a type's methods, see Studio for usage.
     subtype.methodOrder = staticProperties.methodOrder || [];
     subtype.methodOrder.forEach( function( methodName ) {
