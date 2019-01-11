@@ -322,7 +322,6 @@ define( function( require ) {
     addLinkedElement: function( element, options ) {
       assert && assert( element instanceof PhetioObject, 'element must be of type PhetioObject' );
 
-      // Load from namespace to avoid cyclic module dependency
       this.linkedElements.push( new LinkedElement( element, options ) );
     },
 
