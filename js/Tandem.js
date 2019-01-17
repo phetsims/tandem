@@ -47,6 +47,8 @@ define( function( require ) {
    */
   function Tandem( phetioID, options ) {
 
+    assert && assert( phetioID.indexOf( ' ' ) === -1, 'phetioID cannot contain whitespace: ' + phetioID );
+
     // options (even subtype options) must be stored on the instance so they can be passed through to children
     // Note: Make sure that added options here are also added to options for inheritance and/or
     // for composition (createTandem/parentTandem) as they make sense.
