@@ -160,6 +160,8 @@ define( function( require ) {
 
       // Make sure the id was provided
       assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
+      assert && assert( id.indexOf( '.' ) === -1, 'createTandem cannot accept dots: ' + id );
+      assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
 
       var string = ( this.phetioID.length > 0 ) ? phetio.PhetioIDUtils.append( this.phetioID, id ) : id;
 
@@ -187,6 +189,9 @@ define( function( require ) {
      * @public
      */
     createGroupTandem: function( id ) {
+
+      assert && assert( id.indexOf( '.' ) === -1, 'createTandem cannot accept dots: ' + id );
+      assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
 
       // Unfortunately we must resort to globals here since loading through the namespace would create a cycle
       return new GroupTandem( phetio.PhetioIDUtils.append( this.phetioID, id ) );
