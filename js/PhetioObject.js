@@ -9,6 +9,8 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var Enumeration = require( 'PHET_CORE/Enumeration' );
+  var EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
   var inherit = require( 'PHET_CORE/inherit' );
   var LinkedElementIO = require( 'TANDEM/LinkedElementIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
@@ -20,6 +22,7 @@ define( function( require ) {
 
   // constants
   var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
+  var EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ] );
 
   // Flag that indicates a high frequency message was skipped.
   var SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
@@ -28,22 +31,22 @@ define( function( require ) {
   var EMPTY_OBJECT = {};
 
   var DEFAULTS = {
-    tandem: Tandem.optional,        // By default tandems are optional, but subtypes can specify this as
-                                    // `Tandem.tandemRequired` to enforce its presence
-    phetioType: ObjectIO,           // Supply the appropriate IO type
-    phetioDocumentation: null,      // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
-    phetioState: true,              // When true, includes the instance in the PhET-iO state
-    phetioReadOnly: false,          // When true, you can only get values from the instance; no setting allowed.
-    phetioEventType: 'model',       // Default event type for this instance, can be overridden in phetioStartEvent options
-    phetioHighFrequency: false,     // This instance emits events that are high frequency events such as mouse moves or
-                                    // stepSimulation can be omitted from data stream
-    phetioPlayback: false,          // This instance emits events that are needed for data streams intended for playback.
-                                    // See `handlePlaybackEvent.js` for wrapper-side event playback usage.
-    phetioStudioControl: true,      // By default, Studio creates controls for many types of instances.  This option
-                                    // can be set to false to direct Studio to omit the control for the instance.
-    phetioComponentOptions: null,   // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
-    phetioFeatured: false,          // True if this is an important instance to be "featured" in the PhET-iO API
-    phetioEventMetadata: null       // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
+    tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
+                                      // `Tandem.tandemRequired` to enforce its presence
+    phetioType: ObjectIO,             // Supply the appropriate IO type
+    phetioDocumentation: null,        // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    phetioState: true,                // When true, includes the instance in the PhET-iO state
+    phetioReadOnly: false,            // When true, you can only get values from the instance; no setting allowed.
+    phetioEventType: EventType.MODEL, // Default event type for this instance, can be overridden in phetioStartEvent options
+    phetioHighFrequency: false,       // This instance emits events that are high frequency events such as mouse moves or
+                                      // stepSimulation can be omitted from data stream
+    phetioPlayback: false,            // This instance emits events that are needed for data streams intended for playback.
+                                      // See `handlePlaybackEvent.js` for wrapper-side event playback usage.
+    phetioStudioControl: true,        // By default, Studio creates controls for many types of instances.  This option
+                                      // can be set to false to direct Studio to omit the control for the instance.
+    phetioComponentOptions: null,     // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
+    phetioFeatured: false,            // True if this is an important instance to be "featured" in the PhET-iO API
+    phetioEventMetadata: null         // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
   };
 
   var SUPPORTED_PHET_IO_COMPONENT_OPTIONS = [
@@ -91,7 +94,7 @@ define( function( require ) {
     // @public (read-only) {boolean} - has the instance been disposed?
     this.isDisposed = false;
 
-    // @private {string} - 'model' | 'user'
+    // @private {EventType}
     this.phetioEventType = null;
 
     // @private {boolean} - If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false, also see option in Client.launchSim()
@@ -305,7 +308,7 @@ define( function( require ) {
         phetioDocumentation: this.phetioDocumentation,
         phetioState: this.phetioState,
         phetioReadOnly: this.phetioReadOnly,
-        phetioEventType: this.phetioEventType,
+        phetioEventType: EnumerationIO( EventType ).toStateObject( this.phetioEventType ).toLowerCase(), //TODO: https://github.com/phetsims/phet-io/issues/1427
         phetioHighFrequency: this.phetioHighFrequency,
         phetioPlayback: this.phetioPlayback,
         phetioStudioControl: this.phetioStudioControl,
@@ -359,7 +362,8 @@ define( function( require ) {
       this.isDisposed = true;
     }
   }, {
-    DEFAULT_OPTIONS: DEFAULTS // the default options for the phet-io object
+    DEFAULT_OPTIONS: DEFAULTS, // the default options for the phet-io object
+    EventType: EventType // enum for phetio event types
   } );
 
   /**
