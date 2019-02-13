@@ -229,10 +229,20 @@ define( function( require ) {
         this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
       }
 
-      // Register with the tandem registry
-      this.tandem.addInstance( this );
+      this.register();
 
       this.phetioObjectInitialized = true;
+    },
+
+    /**
+     * Register with the tandem registry
+     * @public
+     */
+    register() {
+      if ( PHET_IO_ENABLED && this.tandem.supplied ) {
+        assert && assert( this.phetioWrapper, 'Can only be registered after initialization' );
+      }
+      this.tandem.addPhetioObject( this );
     },
 
     /**

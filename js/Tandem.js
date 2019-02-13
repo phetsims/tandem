@@ -1,7 +1,7 @@
-// Copyright 2015, University of Colorado Boulder
+// Copyright 2015-2019, University of Colorado Boulder
 
 /**
- * Tandem is used to assign unique identifiers to instances in PhET simulations and register/unregister them in a
+ * Tandem is used to assign unique identifiers to PhetioObjects in PhET simulations and register/unregister them in a
  * registry. It is used to support PhET-iO.
  *
  * @author Sam Reid (PhET Interactive Simulations)
@@ -28,14 +28,14 @@ define( function( require ) {
     uninstrumented: []
   };
 
-  // Listeners that will be notified when items are registered/deregistered. See doc in addInstanceListener
-  var instanceListeners = [];
+  // Listeners that will be notified when items are registered/deregistered. See doc in addPhetioObjectListener
+  var phetioObjectListeners = [];
 
   // variables
   // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called
   // and buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
   var launched = false;
-  var bufferedElements = [];
+  var bufferedPhetioObjects = [];
 
   /**
    * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
@@ -76,21 +76,19 @@ define( function( require ) {
   inherit( Object, Tandem, {
 
     /**
-     * Adds an instance of any type.  For example, it could be an axon Property, scenery Node or Sun button.  Each
-     * item should only be added to the registry once, but that is not enforced here in Tandem.  For PhET-iO, phetioEngine.js
-     * enforces one entry per ID in phetio.addInstance
+     * Adds a PhetioObject.  For example, it could be an axon Property, scenery Node or Sun button.  Each item should
+     * only be added to the registry once, but that is not enforced here in Tandem.  For PhET-iO, phetioEngine.js
+     * enforces one entry per ID in phetio.phetioObjectAdded
      *
-     * This is used to register instances with PhET-iO.
-     * @param {PhetioObject} instance - the instance to add
+     * This is used to register PhetioObjects with PhET-iO.
+     * @param {PhetioObject} phetioObject
      * @public
      */
-    addInstance: function( instance ) {
+    addPhetioObject: function( phetioObject ) {
+      assert && assert( arguments.length === 1, 'Tandem.addPhetioObject takes one argument' );
 
-      assert && assert( arguments.length === 1, 'Tandem.addInstance takes one argument' );
-
-      // Check that the instrumented instance is an instance of PhetioObject, cannot use typical require statement for
-      // PhetioObject because it creates a module loading loop
-      assert && assert( instance instanceof tandemNamespace.PhetioObject, 'Instance should be of type PhetioObject' );
+      // Cannot use typical require statement for PhetioObject because it creates a module loading loop
+      assert && assert( phetioObject instanceof tandemNamespace.PhetioObject, 'argument should be of type PhetioObject' );
 
       if ( PHET_IO_ENABLED ) {
 
@@ -104,12 +102,12 @@ define( function( require ) {
           missingTandems.required.push( { phetioID: this.phetioID, stack: new Error().stack } );
         }
 
-        // If tandem is optional, then don't add the instance
+        // If tandem is optional, then don't add it
         if ( !this.required && !this.supplied ) {
           if ( phet.phetio.queryParameters.phetioPrintMissingTandems ) {
             var stackTrace = new Error().stack;
 
-            // Generally Font is not desired because there are so many untandemized instances.
+            // Generally Font is not desired because there are so many untandemized Fonts.
             if ( stackTrace.indexOf( 'PhetFont' ) === -1 ) {
               missingTandems.optional.push( { phetioID: this.phetioID, stack: stackTrace } );
             }
@@ -121,11 +119,11 @@ define( function( require ) {
         }
 
         if ( !launched ) {
-          bufferedElements.push( instance );
+          bufferedPhetioObjects.push( phetioObject );
         }
         else {
-          for ( var i = 0; i < instanceListeners.length; i++ ) {
-            instanceListeners[ i ].addInstance( instance );
+          for ( var i = 0; i < phetioObjectListeners.length; i++ ) {
+            phetioObjectListeners[ i ].addPhetioObject( phetioObject );
           }
         }
       }
@@ -133,18 +131,18 @@ define( function( require ) {
 
     /**
      * Removes an instance from the registry
-     * @param {PhetioObject} instance - the instance to remove
+     * @param {PhetioObject} phetioObject - the instance to remove
      * @public
      */
-    removeInstance: function( instance ) {
+    removeInstance: function( phetioObject ) {
       if ( !this.required && !this.supplied ) {
         return;
       }
 
       // Only active when running as phet-io
       if ( PHET_IO_ENABLED ) {
-        for ( var i = 0; i < instanceListeners.length; i++ ) {
-          instanceListeners[ i ].removeInstance( instance );
+        for ( var i = 0; i < phetioObjectListeners.length; i++ ) {
+          phetioObjectListeners[ i ].removePhetioObject( phetioObject );
         }
       }
     },
@@ -226,30 +224,30 @@ define( function( require ) {
      * Adds a listener that will be notified when items are registered/deregistered
      * Listeners have the form
      * {
-     *   addInstance(id,instance),
-     *   removeInstance(id,instance)
+     *   addPhetioObject(id,phetioObject),
+     *   removePhetioObject(id,phetioObject)
      * }
-     * where id is of type {string} and instance is of type {Object}
+     * where id is of type {string} and phetioObject is of type {PhetioObject}
      *
-     * @param {Object} instanceListener - described above
+     * @param {Object} phetioObjectListener - described above
      * @public
      * @static
      */
-    addInstanceListener: function( instanceListener ) {
-      instanceListeners.push( instanceListener );
+    addPhetioObjectListener: function( phetioObjectListener ) {
+      phetioObjectListeners.push( phetioObjectListener );
     },
 
     /**
-     * When all listeners are listening, all buffered instances are registered.
+     * When all listeners are listening, all buffered PhetioObjects are registered.
      * @public
      * @static
      */
     launch: function() {
       assert && assert( !launched, 'Tandem was launched twice' );
       launched = true;
-      while ( bufferedElements.length > 0 ) {
-        var element = bufferedElements.shift();
-        element.tandem.addInstance( element );
+      while ( bufferedPhetioObjects.length > 0 ) {
+        var phetioObject = bufferedPhetioObjects.shift();
+        phetioObject.register();
       }
     },
 
@@ -306,13 +304,13 @@ define( function( require ) {
     },
 
     /**
-     * Returns true if the bufferedElements contain the given phetioID.
+     * Returns true if the buffered P contain the given phetioID.
      * @param {string} phetioID
      * @returns {boolean}
      * @public
      */
     containsBufferedID: function( phetioID ) {
-      return bufferedElements.map( function( instance ) {return instance.tandem.phetioID;} ).indexOf( phetioID ) >= 0;
+      return bufferedPhetioObjects.map( phetioObject => phetioObject.tandem.phetioID ).indexOf( phetioID ) >= 0;
     }
   } );
 
