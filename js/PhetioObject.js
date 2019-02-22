@@ -278,8 +278,8 @@ define( function( require ) {
     },
 
     /**
-     * End an event on the nested PhET-iO data stream.
-     * It this object was disposed or dataStream.start was not called, this is a no-op.
+     * End an event on the nested PhET-iO data stream. It this object was disposed or dataStream.start was not called,
+     * this is a no-op.
      * @public
      */
     phetioEndEvent: function() {
