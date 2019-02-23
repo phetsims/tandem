@@ -52,10 +52,8 @@ define( function( require ) {
       /**
        * @override
        * @public
-       * @param {*} instance
-       * @returns {boolean}
        */
-      isInstance: function( instance ) { return typeof instance === 'function';},
+      validator: { valueType: 'function' },
 
       returnType: returnType,
       parameterTypes: parameterTypes,

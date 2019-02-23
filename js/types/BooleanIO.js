@@ -27,10 +27,8 @@ define( function( require ) {
     /**
      * @override
      * @public
-     * @param {*} instance
-     * @returns {boolean}
      */
-    isInstance: function( instance ) { return typeof instance === 'boolean';},
+    validator: { valueType: 'boolean' },
 
     /**
      * Encodes a boolean to a state (which also happens to be a boolean).

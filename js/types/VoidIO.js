@@ -36,10 +36,8 @@ define( function( require ) {
        *
        * @override
        * @public
-       * @param {*} instance
-       * @returns {boolean}
        */
-      isInstance: function( instance ) { return true; },
+      validator: { isValidValue: () => true },
 
       toStateObject: function() {
         return undefined;

@@ -40,23 +40,9 @@ define( function( require ) {
       /**
        * @override
        * @public
-       * @param {*} instance
-       * @returns {boolean}
+       * TODO: assert correct valueTypes of elements, see https://github.com/phetsims/axon/issues/204
        */
-      isInstance: function( instance ) {
-        if ( !Array.isArray( instance ) ) {
-          return false;
-        }
-
-        // default to true until something isn't correct
-        var isCorrectType = true;
-        instance.forEach( function( element ) {
-          if ( !elementType.isInstance( element ) ) {
-            isCorrectType = false;
-          }
-        } );
-        return isCorrectType;
-      },
+      validator: { valueType: Array },
 
       /**
        * Serialize an array by serializing each element

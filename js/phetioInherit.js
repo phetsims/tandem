@@ -10,6 +10,7 @@ define( function( require ) {
   'use strict';
 
   // modules
+  var ValidatorDef = require( 'AXON/ValidatorDef' );
   var inherit = require( 'PHET_CORE/inherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
@@ -35,6 +36,11 @@ define( function( require ) {
       // Add the parameter types to the FunctionIO's type name.
       typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameterType ) { return parameterType.typeName;} )
         .join( ', ' ) + '>';
+    }
+
+    // TODO: isn't this field required? see https://github.com/phetsims/axon/issues/204
+    if( staticProperties.validator){
+      ValidatorDef.validateValidator( staticProperties.validator);
     }
 
     // The method order is used to determine the ordering of the documentation for a type's methods, see Studio for usage.

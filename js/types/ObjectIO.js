@@ -43,12 +43,12 @@ define( function( require ) {
     documentation: 'The root of the wrapper object hierarchy.',
 
     /**
-     * A predicate function that will return whether the argument is an instance of this IOType's coreType
+     * A validator object to be used to validate the core types that IOTypes wrap.
+     * @type {ValidatorDef}
      * @public
-     * @param {*} instance
-     * @returns {boolean} - whether or not the passed in arg is of type Object
+     * @override
      */
-    isInstance: function( instance ) { return instance instanceof Object;},
+    validator: { isValidValue: instance => instance !== null && typeof instance === 'object' },
 
     /**
      * Return the json that ObjectIO is wrapping.  This can be overridden by subclasses, or types can use ObjectIO type

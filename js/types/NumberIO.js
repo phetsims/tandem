@@ -29,10 +29,8 @@ define( function( require ) {
     /**
      * @override
      * @public
-     * @param {*} instance
-     * @returns {boolean}
      */
-    isInstance: function( instance ) { return typeof instance === 'number'; },
+    validator: { valueType: 'number' },
 
     /**
      * Encodes a number to a state (which also happens to be a number).

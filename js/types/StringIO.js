@@ -27,10 +27,8 @@ define( function( require ) {
     /**
      * @override
      * @public
-     * @param {*} instance
-     * @returns {boolean}
      */
-    isInstance: function( instance ) { return typeof instance === 'string'; },
+    validator: { valueType: 'string' },
 
     /**
      * Encodes a string to a state (which also happens to be a string).
