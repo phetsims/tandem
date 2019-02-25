@@ -301,16 +301,6 @@ define( function( require ) {
              // If we are printing the missing tandems, then validation must be disabled because the intention is to
              // run with partial tandem coverage and see which are missing.
              !phet.phetio.queryParameters.phetioPrintMissingTandems;
-    },
-
-    /**
-     * Returns true if the buffered P contain the given phetioID.
-     * @param {string} phetioID
-     * @returns {boolean}
-     * @public
-     */
-    containsBufferedID: function( phetioID ) {
-      return bufferedPhetioObjects.map( phetioObject => phetioObject.tandem.phetioID ).indexOf( phetioID ) >= 0;
     }
   } );
 
