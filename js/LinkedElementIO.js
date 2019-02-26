@@ -24,6 +24,7 @@ define( function( require ) {
 
   phetioInherit( ObjectIO, 'LinkedElementIO', LinkedElementIO, {}, {
     documentation: 'A LinkedElement',
+    validator: { isValidValue: () => true },
 
     /**
      * @param {LinkedElement} linkedElement

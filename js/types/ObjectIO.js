@@ -13,6 +13,7 @@ define( function( require ) {
   // modules
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  var validate = require( 'AXON/validate' );
 
   /**
    * Main constructor for ObjectIO base IO type.
@@ -30,6 +31,9 @@ define( function( require ) {
 
     // @public (read-only)
     this.phetioID = phetioID;
+
+    // Use the validator defined on the constructor to make sure the instance is valid
+    assert && validate( instance, this.constructor.validator );
   }
 
   // ObjectIO inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase

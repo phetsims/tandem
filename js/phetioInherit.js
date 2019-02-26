@@ -28,7 +28,9 @@ define( function( require ) {
 
     inherit( supertype, subtype, methods, staticProperties );
 
-    staticProperties = staticProperties || {};
+    assert && assert( staticProperties, 'static properties must be defined' );
+    assert && assert( staticProperties.validator, 'validator must be provided' );
+    ValidatorDef.validateValidator( staticProperties.validator );
 
     if ( staticProperties.parameterTypes ) {
       assert && assert( Array.isArray( staticProperties.parameterTypes ), 'parameterTypes expected to be array' );
@@ -36,11 +38,6 @@ define( function( require ) {
       // Add the parameter types to the FunctionIO's type name.
       typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameterType ) { return parameterType.typeName;} )
         .join( ', ' ) + '>';
-    }
-
-    // TODO: isn't this field required? see https://github.com/phetsims/axon/issues/204
-    if( staticProperties.validator){
-      ValidatorDef.validateValidator( staticProperties.validator);
     }
 
     // The method order is used to determine the ordering of the documentation for a type's methods, see Studio for usage.
