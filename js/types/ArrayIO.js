@@ -10,6 +10,7 @@ define( function( require ) {
   'use strict';
 
   // modules
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
@@ -40,9 +41,13 @@ define( function( require ) {
       /**
        * @override
        * @public
-       * TODO: assert correct valueTypes of elements, see https://github.com/phetsims/axon/issues/204
        */
-      validator: { valueType: Array },
+      validator: {
+        valueType: Array,
+        isValidValue: array => {
+          return _.every( array, element => ValidatorDef.isValueValid( element, { valueType: elementType } ) );
+        }
+      },
 
       /**
        * Serialize an array by serializing each element
