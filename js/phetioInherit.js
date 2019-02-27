@@ -30,7 +30,7 @@ define( function( require ) {
 
     assert && assert( staticProperties, 'static properties must be defined' );
     assert && assert( staticProperties.validator, 'validator must be provided' );
-    ValidatorDef.validateValidator( staticProperties.validator );
+    assert && ValidatorDef.validateValidator( staticProperties.validator );
 
     if ( staticProperties.parameterTypes ) {
       assert && assert( Array.isArray( staticProperties.parameterTypes ), 'parameterTypes expected to be array' );

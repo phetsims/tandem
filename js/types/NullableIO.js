@@ -19,7 +19,7 @@ define( function( require ) {
   'use strict';
 
   // modules
-  const validate = require( 'AXON/validate' );
+  var ValidatorDef = require( 'AXON/ValidatorDef' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var phetioInherit = require( 'TANDEM/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
@@ -50,23 +50,7 @@ define( function( require ) {
        * @public
        */
       validator: {
-
-        // TODO: this is really gross, it stems from the fact that validate is only based on assertions, instead of a
-        //  predicate. See https://github.com/phetsims/axon/issues/204
-        isValidValue: function( instance ) {
-          if ( instance === null ) {
-            return true;
-          }
-          try {
-
-            // this will throw an error if of incorrect, but only if assertions are enabled
-            validate( instance, ioType.validator );
-            return true;
-          }
-          catch( e ) {
-            return false;
-          }
-        }
+        isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, ioType.validator )
       },
 
       /**
