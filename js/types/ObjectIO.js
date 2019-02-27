@@ -33,7 +33,7 @@ define( function( require ) {
     this.phetioID = phetioID;
 
     // Use the validator defined on the constructor to make sure the instance is valid
-    assert && validate( instance, this.constructor.validator );
+    validate( instance, this.constructor.validator );
   }
 
   // ObjectIO inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
