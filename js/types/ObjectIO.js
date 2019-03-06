@@ -66,7 +66,7 @@ define( function( require ) {
     },
 
     /**
-     * Decodes the object from a state, used in phetio.setState.  This can be overridden by subclasses, or types can
+     * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
      * use ObjectIO type directly to use this implementation.
      * @param {Object} o
      * @returns {Object}
