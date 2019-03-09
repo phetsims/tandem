@@ -52,7 +52,7 @@ define( function( require ) {
      * @public
      * @override
      */
-    validator: { isValidValue: instance => instance !== null && typeof instance === 'object' },
+    validator: { valueType: Object },
 
     /**
      * Return the json that ObjectIO is wrapping.  This can be overridden by subclasses, or types can use ObjectIO type
