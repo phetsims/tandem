@@ -190,6 +190,30 @@ define( function( require ) {
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
+      if ( PHET_IO_ENABLED && options.tandem.supplied ) {
+
+        // check loaded metadata:
+        // We originally tried nesting phetioElementMetadata under window.phet.phetio, but the order of creation
+        // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
+        // just using a different namespace.
+        if ( window.phetioElementMetadata ) {
+          const metadata = window.phetioElementMetadata[ options.tandem.phetioID ];
+
+          if ( metadata ) {
+
+            // assert && assert( metadata.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
+            // delete metadata.phetioTypeName;
+            delete metadata.phetioEventType; // TODO: map string => Enum
+            options = _.extend( {}, options, metadata );
+          }
+          else {
+
+            // TODO: see https://github.com/phetsims/phet-io/issues/1336
+            console.log( 'where are you ' + options.tandem.phetioID );
+          }
+        }
+      }
+
       assert && assert(
         options.phetioDocumentation === null ||
         ( typeof options.phetioDocumentation === 'string' && options.phetioDocumentation !== '' ),
