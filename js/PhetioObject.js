@@ -237,11 +237,11 @@ define( function( require ) {
       if ( PHET_IO_ENABLED && options.tandem.supplied && phet.phetio.queryParameters.phetioExperimental ) {
 
         // check loaded metadata:
-        // We originally tried nesting phetioElementMetadata under window.phet.phetio, but the order of creation
+        // We originally tried nesting phetioElementsAPI under window.phet.phetio, but the order of creation
         // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
         // just using a different namespace.
-        if ( window.phetioElementMetadata ) {
-          const metadata = window.phetioElementMetadata[ options.tandem.phetioID ];
+        if ( window.phet.phetio.phetioElementsAPI ) {
+          const metadata = window.phet.phetio.phetioElementsAPI[ options.tandem.phetioID ];
 
           if ( metadata ) {
             if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsAPI ) {
