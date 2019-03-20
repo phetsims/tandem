@@ -231,9 +231,6 @@ define( function( require ) {
 
       this.register();
 
-
-      // TODO: this is an experimental feature! This is not meant for production code yet.
-      // TODO: don't forget to remove this query parameter from the puppeteer script too. See https://github.com/phetsims/phet-io/issues/1440
       if ( PHET_IO_ENABLED && options.tandem.supplied && phet.phetio.queryParameters.phetioExperimental ) {
 
         // check loaded metadata:
