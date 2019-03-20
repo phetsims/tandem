@@ -242,19 +242,12 @@ define( function( require ) {
         // just using a different namespace.
         if ( window.phet.phetio.phetioElementsAPI ) {
           const metadata = window.phet.phetio.phetioElementsAPI[ options.tandem.phetioID ];
-
-          if ( metadata ) {
-            if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsAPI ) {
-
-              assert && assert( metadata.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
-              assert && assert( _.isEqual( metadata, this.getMetadata() ),
-                'api mismatch: \nexpected api: \n' + JSON.stringify( metadata, null, 2 ) + '\n actual:\n' + JSON.stringify( this.getMetadata(), null, 2 ) );
-            }
-          }
-          else {
-
-            // TODO: for phetioEngine missing see https://github.com/phetsims/phet-io/issues/1336
-            console.log( 'where are you ' + options.tandem.phetioID );
+          if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsAPI ) {
+            assert && assert( metadata, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
+            assert && assert( metadata.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
+            assert && assert( _.isEqual( metadata, this.getMetadata() ),
+              'API mismatch: \nexpected api: \n' + JSON.stringify( metadata, null, 2 ) + '\n actual:\n' +
+              JSON.stringify( this.getMetadata(), null, 2 ) );
           }
         }
         else {
