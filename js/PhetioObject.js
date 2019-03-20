@@ -248,7 +248,7 @@ define( function( require ) {
 
               assert && assert( metadata.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
               assert && assert( _.isEqual( metadata, this.getMetadata() ),
-                'api mismatch: \nexpected api: \n', metadata, '\n actual:\n', this.getMetadata() );
+                'api mismatch: \nexpected api: \n' + JSON.stringify( metadata, null, 2 ) + '\n actual:\n' + JSON.stringify( this.getMetadata(), null, 2 ) );
             }
           }
           else {
