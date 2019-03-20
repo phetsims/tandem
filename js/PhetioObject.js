@@ -190,30 +190,6 @@ define( function( require ) {
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
-      if ( PHET_IO_ENABLED && options.tandem.supplied ) {
-
-        // check loaded metadata:
-        // We originally tried nesting phetioElementMetadata under window.phet.phetio, but the order of creation
-        // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
-        // just using a different namespace.
-        if ( window.phetioElementMetadata ) {
-          const metadata = window.phetioElementMetadata[ options.tandem.phetioID ];
-
-          if ( metadata ) {
-
-            // assert && assert( metadata.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
-            // delete metadata.phetioTypeName;
-            delete metadata.phetioEventType; // TODO: map string => Enum
-            options = _.extend( {}, options, metadata );
-          }
-          else {
-
-            // TODO: see https://github.com/phetsims/phet-io/issues/1336
-            console.log( 'where are you ' + options.tandem.phetioID );
-          }
-        }
-      }
-
       assert && assert(
         options.phetioDocumentation === null ||
         ( typeof options.phetioDocumentation === 'string' && options.phetioDocumentation !== '' ),
@@ -254,6 +230,39 @@ define( function( require ) {
       }
 
       this.register();
+
+
+      // TODO: this is an experimental feature! This is not meant for production code yet.
+      // TODO: don't forget to remove this query parameter from the puppeteer script too. See https://github.com/phetsims/phet-io/issues/1440
+      if ( PHET_IO_ENABLED && options.tandem.supplied && phet.phetio.queryParameters.phetioExperimental ) {
+
+        // check loaded metadata:
+        // We originally tried nesting phetioElementMetadata under window.phet.phetio, but the order of creation
+        // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
+        // just using a different namespace.
+        if ( window.phetioElementMetadata ) {
+          const metadata = window.phetioElementMetadata[ options.tandem.phetioID ];
+
+          if ( metadata ) {
+            if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsAPI ) {
+
+              assert && assert( metadata.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
+              assert && assert( _.isEqual( metadata, this.getMetadata() ),
+                'api mismatch: \nexpected api: \n', metadata, '\n actual:\n', this.getMetadata() );
+            }
+          }
+          else {
+
+            // TODO: for phetioEngine missing see https://github.com/phetsims/phet-io/issues/1336
+            console.log( 'where are you ' + options.tandem.phetioID );
+          }
+        }
+        else {
+
+          // TODO: should this be an assertion at some point? https://github.com/phetsims/phet-io/issues/1440
+          console.log( 'no phet-io api file found' );
+        }
+      }
 
       this.phetioObjectInitialized = true;
     },
