@@ -160,6 +160,7 @@ define( function( require ) {
       assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
       assert && assert( id.indexOf( '.' ) === -1, 'createTandem cannot accept dots: ' + id );
       assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
+      assert && assert( id.indexOf( '-' ) === -1, 'createTandem cannot accept dash: ' + id );
 
       var string = ( this.phetioID.length > 0 ) ? phetio.PhetioIDUtils.append( this.phetioID, id ) : id;
 
