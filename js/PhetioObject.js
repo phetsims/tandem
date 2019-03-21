@@ -238,13 +238,26 @@ define( function( require ) {
         // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
         // just using a different namespace.
         if ( window.phet.phetio.phetioElementsAPI ) {
-          const metadata = window.phet.phetio.phetioElementsAPI[ options.tandem.phetioID ];
+
+          // Dynamic elements should compare to their "concrete" counterparts.
+          const concretePhetioID = phetio.PhetioIDUtils.getConcretePhetioID( options.tandem.phetioID );
+          const metadata = window.phet.phetio.phetioElementsAPI[ concretePhetioID ];
+
           if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsAPI ) {
             assert && assert( metadata, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
             assert && assert( metadata.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
             assert && assert( _.isEqual( metadata, this.getMetadata() ),
-              'API mismatch: \nexpected api: \n' + JSON.stringify( metadata, null, 2 ) + '\n actual:\n' +
-              JSON.stringify( this.getMetadata(), null, 2 ) );
+              `API mismatch for ${options.tandem.phetioID}:
+expected api:
+${JSON.stringify( metadata, null, 2 )}
+actual api:
+${JSON.stringify( this.getMetadata(), null, 2 )}` );
+          }
+
+          // Instances should generally be created on startup.  The only instances that it's OK to create after startup
+          // are "dynamic instances" which have underscores (at the moment).
+          if ( phet.phetio.simulationConstructionComplete ) {
+            assert && assert( phetio.PhetioIDUtils.isDynamicElement( options.tandem.phetioID ), 'Only dynamic instances can be created after startup' );
           }
         }
         else {

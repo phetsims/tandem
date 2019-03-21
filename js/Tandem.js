@@ -182,17 +182,18 @@ define( function( require ) {
      *
      * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
      * have unique identifiers.
-     * @param id
+     * @param {string} id
+     * @param {string} [elementPrefix]
      * @returns {GroupTandem}
      * @public
      */
-    createGroupTandem: function( id ) {
+    createGroupTandem: function( id, elementPrefix ) {
 
       assert && assert( id.indexOf( '.' ) === -1, 'createTandem cannot accept dots: ' + id );
       assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
 
       // Unfortunately we must resort to globals here since loading through the namespace would create a cycle
-      return new GroupTandem( phetio.PhetioIDUtils.append( this.phetioID, id ) );
+      return new GroupTandem( phetio.PhetioIDUtils.append( this.phetioID, id ), elementPrefix );
     },
 
     /**
@@ -361,12 +362,15 @@ define( function( require ) {
    * @constructor
    * @private create with Tandem.createGroupTandem
    */
-  function GroupTandem( id ) {
+  function GroupTandem( id, prefix ) {
 
     Tandem.call( this, id );
 
     // @private for generating indices from a pool
     this.groupElementIndex = 0;
+
+    // @private
+    this.prefix = prefix || 'element';
   }
 
   tandemNamespace.register( 'Tandem.GroupTandem', GroupTandem );
@@ -379,7 +383,17 @@ define( function( require ) {
      * @public
      */
     createNextTandem: function() {
-      return new Tandem( this.phetioID + '_' + ( this.groupElementIndex++ ) );
+      return this.createTandem( this.prefix + '_' + ( this.groupElementIndex++ ) );
+    },
+
+    /**
+     * Groups contain a prototype instance which demonstrates the PhET-iO API for that subtree.
+     * This method creates the standard prototype Tandem name.
+     * @returns {Tandem}
+     * @public
+     */
+    createPrototypeTandem: function() {
+      return this.createTandem( 'prototype' );
     }
   } );
 
