@@ -261,8 +261,6 @@ ${JSON.stringify( this.getMetadata(), null, 2 )}` );
           }
         }
         else {
-
-          // TODO: should this be an assertion at some point? https://github.com/phetsims/phet-io/issues/1440
           console.log( 'no phet-io api file found' );
         }
       }
