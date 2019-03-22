@@ -113,6 +113,9 @@ define( function( require ) {
     // @private {boolean} - See docs above
     this.phetioFeatured = false;
 
+    // @private {boolean} - ignoring overrides, whether the element is featured.  Used by LinkedElement
+    this.phetioFeaturedBaseline = false;
+
     // @private {Object|null}
     this.phetioEventMetadata = null;
 
@@ -190,11 +193,54 @@ define( function( require ) {
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
+      // Store the baseline value for using in LinkedElement
+      this.phetioFeaturedBaseline = options.phetioFeatured;
+
       assert && assert(
         options.phetioDocumentation === null ||
         ( typeof options.phetioDocumentation === 'string' && options.phetioDocumentation !== '' ),
         'invalid phetioDocumentation: ' + options.phetioDocumentation
       );
+
+      if ( PHET_IO_ENABLED && options.tandem.supplied && phet.phetio.queryParameters.phetioExperimental ) {
+
+        // check loaded metadata:
+        // We originally tried nesting phetioElementsBaseline under window.phet.phetio, but the order of creation
+        // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
+        // just using a different namespace.
+        if ( window.phet.phetio.phetioElementsBaseline ) {
+
+          // Dynamic elements should compare to their "concrete" counterparts.
+          const concretePhetioID = phetio.PhetioIDUtils.getConcretePhetioID( options.tandem.phetioID );
+          const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
+
+          if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
+            assert && assert( baseline, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
+            assert && assert( baseline.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
+            assert && assert( _.isEqual( baseline, this.getMetadata( options ) ),
+              `API mismatch for ${options.tandem.phetioID}:
+expected api:
+${JSON.stringify( baseline, null, 2 )}
+actual api:
+${JSON.stringify( this.getMetadata( options ), null, 2 )}` );
+
+            // Patch in the desired values from overrides, if any
+            const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
+            if ( overrides ) {
+              options = _.extend( {}, options, overrides );
+            }
+          }
+
+          // Instances should generally be created on startup.  The only instances that it's OK to create after startup
+          // are "dynamic instances" which have underscores (at the moment).
+          if ( phet.phetio.simulationConstructionComplete ) {
+            assert && assert( phetio.PhetioIDUtils.isDynamicElement( options.tandem.phetioID ), 'Only dynamic instances can be created after startup' );
+          }
+        }
+        else {
+          console.log( 'no phet-io api file found' );
+        }
+      }
 
       // Unpack options to instance properties
       this.tandem = options.tandem;
@@ -230,40 +276,6 @@ define( function( require ) {
       }
 
       this.register();
-
-      if ( PHET_IO_ENABLED && options.tandem.supplied && phet.phetio.queryParameters.phetioExperimental ) {
-
-        // check loaded metadata:
-        // We originally tried nesting phetioElementsAPI under window.phet.phetio, but the order of creation
-        // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
-        // just using a different namespace.
-        if ( window.phet.phetio.phetioElementsAPI ) {
-
-          // Dynamic elements should compare to their "concrete" counterparts.
-          const concretePhetioID = phetio.PhetioIDUtils.getConcretePhetioID( options.tandem.phetioID );
-          const metadata = window.phet.phetio.phetioElementsAPI[ concretePhetioID ];
-
-          if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsAPI ) {
-            assert && assert( metadata, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
-            assert && assert( metadata.phetioTypeName === options.phetioType.typeName, 'type names mismatched' );
-            assert && assert( _.isEqual( metadata, this.getMetadata() ),
-              `API mismatch for ${options.tandem.phetioID}:
-expected api:
-${JSON.stringify( metadata, null, 2 )}
-actual api:
-${JSON.stringify( this.getMetadata(), null, 2 )}` );
-          }
-
-          // Instances should generally be created on startup.  The only instances that it's OK to create after startup
-          // are "dynamic instances" which have underscores (at the moment).
-          if ( phet.phetio.simulationConstructionComplete ) {
-            assert && assert( phetio.PhetioIDUtils.isDynamicElement( options.tandem.phetioID ), 'Only dynamic instances can be created after startup' );
-          }
-        }
-        else {
-          console.log( 'no phet-io api file found' );
-        }
-      }
 
       this.phetioObjectInitialized = true;
     },
@@ -345,21 +357,25 @@ ${JSON.stringify( this.getMetadata(), null, 2 )}` );
     },
 
     /**
-     * JSONifiable metadata that describes the nature of the PhetioObject.
+     * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
+     * for baseline (before object fully constructed we use options) and after fully constructed
+     * which includes overrides.
+     * @param {Object} [options] - if specified, reads from the options.  Otherwise reads from the PhetioObject
      * @returns {Object}
      * @public
      */
-    getMetadata: function() {
+    getMetadata: function( options ) {
+      options = options || this;
       return {
-        phetioTypeName: this.phetioType.typeName,
-        phetioDocumentation: this.phetioDocumentation,
-        phetioState: this.phetioState,
-        phetioReadOnly: this.phetioReadOnly,
-        phetioEventType: EnumerationIO( EventType ).toStateObject( this.phetioEventType ).toLowerCase(), //TODO: https://github.com/phetsims/phet-io/issues/1427
-        phetioHighFrequency: this.phetioHighFrequency,
-        phetioPlayback: this.phetioPlayback,
-        phetioStudioControl: this.phetioStudioControl,
-        phetioFeatured: this.phetioFeatured
+        phetioTypeName: options.phetioType.typeName,
+        phetioDocumentation: options.phetioDocumentation,
+        phetioState: options.phetioState,
+        phetioReadOnly: options.phetioReadOnly,
+        phetioEventType: EnumerationIO( EventType ).toStateObject( options.phetioEventType ).toLowerCase(), //TODO: https://github.com/phetsims/phet-io/issues/1427
+        phetioHighFrequency: options.phetioHighFrequency,
+        phetioPlayback: options.phetioPlayback,
+        phetioStudioControl: options.phetioStudioControl,
+        phetioFeatured: options.phetioFeatured
       };
     },
 
@@ -430,7 +446,13 @@ ${JSON.stringify( this.getMetadata(), null, 2 )}` );
 
       super( _.extend( {
         phetioType: LinkedElementIO,
-        phetioFeatured: element.phetioFeatured, // The link should be featured if the element itself is featured
+
+        // The link should be featured if the element itself is featured.  Use the baseline value to solve this problem:
+        // if (!phetioPrintPhetioElementsBaseline) then the metadata of instance A is overriden
+        // but LinkedElement borrows the metadata from its linked PhetioObject, so it is different depending on whether
+        // phetioPrintPhetioElementsBaseline or not
+        // Hence we must store the baseline value and use it so the runtime value will match the baseline value.
+        phetioFeatured: element.phetioFeaturedBaseline,
         phetioReadOnly: true // References cannot be changed
       }, options ) );
 
