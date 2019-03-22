@@ -35,7 +35,7 @@ define( function( require ) {
     tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
                                       // `Tandem.tandemRequired` to enforce its presence
     phetioType: ObjectIO,             // Supply the appropriate IO type
-    phetioDocumentation: null,        // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    phetioDocumentation: '',        // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
     phetioState: true,                // When true, includes the instance in the PhET-iO state
     phetioReadOnly: false,            // When true, you can only get values from the instance; no setting allowed.
     phetioEventType: EventType.MODEL, // Default event type for this instance, can be overridden in phetioStartEvent options
@@ -191,14 +191,14 @@ define( function( require ) {
         assert && assert( options.phetioType.typeName, 'type must be specified and have a typeName for ' + options.tandem.phetioID );
       }
 
+      // TODO: Store "baseline" and "overrides" on the PhetioObject so that assertions during the instantiation of the
+      // instance don't need to be as fragile/order dependent, see https://github.com/phetsims/phet-io/issues/1440
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
       // Store the baseline value for using in LinkedElement
       this.phetioFeaturedBaseline = options.phetioFeatured;
 
-      assert && assert(
-        options.phetioDocumentation === null ||
-        ( typeof options.phetioDocumentation === 'string' && options.phetioDocumentation !== '' ),
+      assert && assert( typeof options.phetioDocumentation === 'string',
         'invalid phetioDocumentation: ' + options.phetioDocumentation
       );
 
