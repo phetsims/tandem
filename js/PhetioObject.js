@@ -35,7 +35,7 @@ define( function( require ) {
     tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
                                       // `Tandem.tandemRequired` to enforce its presence
     phetioType: ObjectIO,             // Supply the appropriate IO type
-    phetioDocumentation: '',        // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
+    phetioDocumentation: '',          // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
     phetioState: true,                // When true, includes the instance in the PhET-iO state
     phetioReadOnly: false,            // When true, you can only get values from the instance; no setting allowed.
     phetioEventType: EventType.MODEL, // Default event type for this instance, can be overridden in phetioStartEvent options
@@ -198,9 +198,9 @@ define( function( require ) {
       // Store the baseline value for using in LinkedElement
       this.phetioFeaturedBaseline = options.phetioFeatured;
 
-      // assert && assert( typeof options.phetioDocumentation === 'string',
-      //   'invalid phetioDocumentation: ' + options.phetioDocumentation
-      // );
+      assert && assert( typeof options.phetioDocumentation === 'string',
+        'invalid phetioDocumentation: ' + options.phetioDocumentation
+      );
 
       if ( PHET_IO_ENABLED && options.tandem.supplied && phet.phetio.queryParameters.phetioExperimental ) {
 
