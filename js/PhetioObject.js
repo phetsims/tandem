@@ -198,9 +198,9 @@ define( function( require ) {
       // Store the baseline value for using in LinkedElement
       this.phetioFeaturedBaseline = options.phetioFeatured;
 
-      assert && assert( typeof options.phetioDocumentation === 'string',
-        'invalid phetioDocumentation: ' + options.phetioDocumentation
-      );
+      // assert && assert( typeof options.phetioDocumentation === 'string',
+      //   'invalid phetioDocumentation: ' + options.phetioDocumentation
+      // );
 
       if ( PHET_IO_ENABLED && options.tandem.supplied && phet.phetio.queryParameters.phetioExperimental ) {
 
