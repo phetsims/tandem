@@ -67,7 +67,7 @@ define( function( require ) {
     // @private
     this.required = options.required;
 
-    // @private
+    // @public (read-only)
     this.supplied = options.supplied;
   }
 
