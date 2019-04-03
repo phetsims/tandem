@@ -2,6 +2,7 @@
 
 /**
  * A tandem that stores the name of the prototype that defines its schema
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -11,7 +12,7 @@ define( require => {
 
   // modules
   const Tandem = require( 'TANDEM/Tandem' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   class GroupMemberTandem extends Tandem {
 
