@@ -220,13 +220,16 @@ define( function( require ) {
             assert && assert( baseline, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
 
             // if simulation metadata is not equal to baseline before overrides applied
-            !_.isEqual( baseline, this.getMetadata( options ) ) && phet.phetio.apiMismatches.push( {
-              phetioID: concretePhetioID,
-              stack: new Error().stack,
-              message: 'code metadata does not match baseline elements file',
-              baselineMetadata: baseline,
-              computedMetadata: this.getMetadata( options )
-            } );
+            const computedMetadata = this.getMetadata( options );
+            if ( !_.isEqual( baseline, computedMetadata ) ) {
+              phet.phetio.apiMismatches.push( {
+                phetioID: concretePhetioID,
+                stack: new Error().stack,
+                message: 'code metadata does not match baseline elements file',
+                baselineMetadata: baseline,
+                computedMetadata: computedMetadata
+              } );
+            }
 
             // Patch in the desired values from overrides, if any
             const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
