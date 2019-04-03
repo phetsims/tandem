@@ -57,8 +57,12 @@ define( require => {
      */
     createNextTandem( prototypeName, options ) {
       assert && assert( this.prototypeNames.indexOf( prototypeName ) >= 0, `unexpected prototypeName: ${prototypeName}` );
-      const stringAndOptions = this.tandem.getStringAndOptions( this.prefix + '_' + ( this.groupElementIndex++ ), options );
-      return new GroupMemberTandem( stringAndOptions.string, prototypeName, stringAndOptions.options );
+      return new GroupMemberTandem(
+        this.tandem,
+        this.prefix + '_' + ( this.groupElementIndex++ ),
+        prototypeName,
+        this.tandem.getExtendedOptions( options )
+      );
     }
   }
 

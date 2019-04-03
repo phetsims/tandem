@@ -41,13 +41,19 @@ define( function( require ) {
    * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
    * a tandem must be created from scratch.
    *
-   * @param {string} phetioID - unique identifier as a string ('' for a root id)
+   * @param {Tandem|null} parentTandem - parent for a child tandem, or null for a root tandem
+   * @param {string} name - component name for this level
    * @param {Object} [options]
    * @constructor
    */
-  function Tandem( phetioID, options, parent ) {
+  function Tandem( parentTandem, name, options ) {
 
-    assert && assert( phetioID.indexOf( ' ' ) === -1, 'phetioID cannot contain whitespace: ' + phetioID );
+    assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
+
+    assert && assert( typeof name === 'string' && name.length > 0, 'name must be defined' );
+    assert && assert( name.indexOf( phetio.PhetioIDUtils.SEPARATOR ) === -1, 'createTandem cannot accept dots: ' + name );
+    assert && assert( name.indexOf( '-' ) === -1, 'createTandem cannot accept dash: ' + name );
+    assert && assert( name.indexOf( ' ' ) === -1, 'name cannot contain whitespace: ' + name );
 
     // options (even subtype options) must be stored on the instance so they can be passed through to children
     // Note: Make sure that added options here are also added to options for inheritance and/or
@@ -61,11 +67,14 @@ define( function( require ) {
       required: true
     }, options );
 
-    // #done
-    this.parentTandem = parent;
+    // @public (read-only)
+    this.parentTandem = parentTandem;
 
     // @public (read-only)
-    this.phetioID = ( phetioID !== undefined ) ? phetioID : '';
+    this.name = name;
+
+    // @public (read-only)
+    this.phetioID = this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name ) : this.name;
 
     // @private
     this.required = options.required;
@@ -151,33 +160,18 @@ define( function( require ) {
     },
 
     /**
-     * TODO
-     * @param id
-     * @param options
-     * @returns {{string: {string}, options: {Object}}}
+     * @param {Object} [options]
+     * @returns {Object} -extended options
      * @protected
      */
-    getStringAndOptions: function( id, options ) {
-
-      // Make sure the id was provided
-      assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
-      assert && assert( id.indexOf( phetio.PhetioIDUtils.SEPARATOR ) === -1, 'createTandem cannot accept dots: ' + id );
-      assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
-      assert && assert( id.indexOf( '-' ) === -1, 'createTandem cannot accept dash: ' + id );
-
-      var string = ( this.phetioID.length > 0 ) ? phetio.PhetioIDUtils.append( this.phetioID, id ) : id;
+    getExtendedOptions: function( options ) {
 
       // Any child of something should be passed all inherited options. Make sure that this extend call includes all
       // that make sense from the constructor's extend call.
-      options = _.extend( {
+      return _.extend( {
         supplied: this.supplied,
         required: this.required
       }, options );
-
-      return {
-        string: string,
-        options: options
-      };
     },
     /**
      * Create a new Tandem by appending the given id
@@ -187,14 +181,13 @@ define( function( require ) {
      * @public
      */
     createTandem: function( id, options ) {
-      const stringAndOptions = this.getStringAndOptions( id, options );
-      return new Tandem( stringAndOptions.string, stringAndOptions.options, this );
+      return new Tandem( this, id, this.getExtendedOptions( options ) );
     },
 
     /**
-     * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7'
+     * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
      * which corresponds to the prototype "quark" ....
-     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypes.quark'
+     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypes.quark.visibleProperty'
      *
      * NOTE: This function makes a lot of assumptions about the look of phetioIDs that are made in Group.js, don't change
      * one without consulting the other.
@@ -202,27 +195,26 @@ define( function( require ) {
      * @returns {string}
      * @public
      */
-    /**
-     * @override
-     * @returns {*}
-     */
     getConcretePhetioID() {
+      if ( this.parentTandem ) {
+        const parentID = this.parentTandem.getConcretePhetioID();
 
-      const terms = this.phetioID.split( phetio.PhetioIDUtils.SEPARATOR );
-      const concreteTerms = terms.map( term => {
-        if ( term.match( /[a-zA-Z]+_[0-9]+/ ) ) {
+        // TODO: better use of subtyping to accomplish this
+        if ( this.prototypeName ) {
 
-          // create "parent" phetioID that looks like blarg.stuff_number
-          // use phetioEngine to get the parent phetioOBject of a dynamic instance
-          // use phetioOBject to get its GroupMemberTandem
-          // use that to get prototypeName
-          return `prototypes${phetio.PhetioIDUtils.SEPARATOR}${this.prototypeName}`;
+          // TODO: varargs for append
+          const prototypes = phetio.PhetioIDUtils.append( parentID, 'prototypes' );
+          return phetio.PhetioIDUtils.append( prototypes, this.prototypeName );
         }
         else {
-          return term;
+          return phetio.PhetioIDUtils.append( parentID, this.name );
         }
-      } );
-      return concreteTerms.join( phetio.PhetioIDUtils.SEPARATOR );
+      }
+      else {
+
+        // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
+        return this.phetioID;
+      }
     },
 
     /**
@@ -245,7 +237,7 @@ define( function( require ) {
       assert && assert( id.indexOf( '.' ) === -1, 'createTandem cannot accept dots: ' + id );
       assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
 
-      return new GroupTandem( phetio.PhetioIDUtils.append( this.phetioID, id ), elementPrefix );
+      return new GroupTandem( this, id, elementPrefix );
     },
 
     /**
@@ -352,7 +344,7 @@ define( function( require ) {
    * @static
    * @type {Tandem}
    */
-  Tandem.rootTandem = new Tandem( toCamelCase( packageJSON.name ) );
+  Tandem.rootTandem = new Tandem( null, toCamelCase( packageJSON.name ) );
 
   /**
    * Many simulation elements are nested under "general".
@@ -403,9 +395,9 @@ define( function( require ) {
    * @deprecated - see Group.js for the way of the future
    * @private create with Tandem.createGroupTandem
    */
-  function GroupTandem( id, prefix ) {
+  function GroupTandem( parentTandem, id, prefix ) {
 
-    Tandem.call( this, id );
+    Tandem.call( this, parentTandem, id );
 
     // @private for generating indices from a pool
     this.groupElementIndex = 0;

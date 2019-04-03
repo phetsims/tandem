@@ -16,15 +16,16 @@ define( require => {
   class GroupMemberTandem extends Tandem {
 
     /**
-     * @param {Tandem} id - id as a string (or '' for a root id)
-     * @param {string} prototypeName
+     * @param {Tandem|null} parentTandem - or null for root tandem
+     * @param {string} name
+     * @param {string} prototypeName - describes which prototype this matches
      * @param {Object} [options]
      */
-    constructor( id, prototypeName, options ) {
+    constructor( parentTandem, name, prototypeName, options ) {
 
-      super( id, options );
+      super( parentTandem, name, options );
 
-      // @private
+      // @public (read-only)
       this.prototypeName = prototypeName;
     }
   }
