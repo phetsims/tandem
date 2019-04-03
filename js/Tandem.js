@@ -42,7 +42,7 @@ define( function( require ) {
    * a tandem must be created from scratch.
    *
    * @param {Tandem|null} parentTandem - parent for a child tandem, or null for a root tandem
-   * @param {string} name - component name for this level
+   * @param {string} name - component name for this level, like 'resetAllButton'
    * @param {Object} [options]
    * @constructor
    */
@@ -160,6 +160,7 @@ define( function( require ) {
     },
 
     /**
+     * Used for creating new tandems, extends this Tandem's options with the passed-in options.
      * @param {Object} [options]
      * @returns {Object} -extended options
      * @protected
