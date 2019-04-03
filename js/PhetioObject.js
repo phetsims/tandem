@@ -211,7 +211,8 @@ define( function( require ) {
         if ( window.phet.phetio.phetioElementsBaseline ) {
 
           // Dynamic elements should compare to their "concrete" counterparts.
-          const concretePhetioID = phetio.PhetioIDUtils.getConcretePhetioID( options.tandem.phetioID );
+          const concretePhetioID = options.tandem.getConcretePhetioID( options.tandem );
+
           const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
 
           // don't compare/api check if we are printing out a new baseline file

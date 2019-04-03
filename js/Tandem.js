@@ -45,7 +45,7 @@ define( function( require ) {
    * @param {Object} [options]
    * @constructor
    */
-  function Tandem( phetioID, options ) {
+  function Tandem( phetioID, options, parent ) {
 
     assert && assert( phetioID.indexOf( ' ' ) === -1, 'phetioID cannot contain whitespace: ' + phetioID );
 
@@ -60,6 +60,9 @@ define( function( require ) {
       // required === false means it is an optional tandem
       required: true
     }, options );
+
+    // #done
+    this.parentTandem = parent;
 
     // @public (read-only)
     this.phetioID = ( phetioID !== undefined ) ? phetioID : '';
@@ -148,17 +151,17 @@ define( function( require ) {
     },
 
     /**
-     * Create a new Tandem by appending the given id
-     * @param {string} id
-     * @param {Object} [options]
-     * @returns {Tandem}
-     * @public
+     * TODO
+     * @param id
+     * @param options
+     * @returns {{string: {string}, options: {Object}}}
+     * @protected
      */
-    createTandem: function( id, options ) {
+    getStringAndOptions: function( id, options ) {
 
       // Make sure the id was provided
       assert && assert( typeof id === 'string' && id.length > 0, 'id must be defined' );
-      assert && assert( id.indexOf( '.' ) === -1, 'createTandem cannot accept dots: ' + id );
+      assert && assert( id.indexOf( phetio.PhetioIDUtils.SEPARATOR ) === -1, 'createTandem cannot accept dots: ' + id );
       assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
       assert && assert( id.indexOf( '-' ) === -1, 'createTandem cannot accept dash: ' + id );
 
@@ -171,7 +174,55 @@ define( function( require ) {
         required: this.required
       }, options );
 
-      return new Tandem( string, options );
+      return {
+        string: string,
+        options: options
+      };
+    },
+    /**
+     * Create a new Tandem by appending the given id
+     * @param {string} id
+     * @param {Object} [options]
+     * @returns {Tandem}
+     * @public
+     */
+    createTandem: function( id, options ) {
+      const stringAndOptions = this.getStringAndOptions( id, options );
+      return new Tandem( stringAndOptions.string, stringAndOptions.options, this );
+    },
+
+    /**
+     * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7'
+     * which corresponds to the prototype "quark" ....
+     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypes.quark'
+     *
+     * NOTE: This function makes a lot of assumptions about the look of phetioIDs that are made in Group.js, don't change
+     * one without consulting the other.
+     * @param {GroupMemberTandem} tandem
+     * @returns {string}
+     * @public
+     */
+    /**
+     * @override
+     * @returns {*}
+     */
+    getConcretePhetioID() {
+
+      const terms = this.phetioID.split( phetio.PhetioIDUtils.SEPARATOR );
+      const concreteTerms = terms.map( term => {
+        if ( term.match( /[a-zA-Z]+_[0-9]+/ ) ) {
+
+          // create "parent" phetioID that looks like blarg.stuff_number
+          // use phetioEngine to get the parent phetioOBject of a dynamic instance
+          // use phetioOBject to get its GroupMemberTandem
+          // use that to get prototypeName
+          return `prototypes${phetio.PhetioIDUtils.SEPARATOR}${this.prototypeName}`;
+        }
+        else {
+          return term;
+        }
+      } );
+      return concreteTerms.join( phetio.PhetioIDUtils.SEPARATOR );
     },
 
     /**
@@ -186,6 +237,7 @@ define( function( require ) {
      * @param {string} id
      * @param {string} [elementPrefix]
      * @returns {GroupTandem}
+     * @deprecated
      * @public
      */
     createGroupTandem: function( id, elementPrefix ) {
@@ -193,7 +245,6 @@ define( function( require ) {
       assert && assert( id.indexOf( '.' ) === -1, 'createTandem cannot accept dots: ' + id );
       assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
 
-      // Unfortunately we must resort to globals here since loading through the namespace would create a cycle
       return new GroupTandem( phetio.PhetioIDUtils.append( this.phetioID, id ), elementPrefix );
     },
 
@@ -205,21 +256,8 @@ define( function( require ) {
      */
     get tail() { // TODO: rename to getComponentName()
       return phetio.PhetioIDUtils.getComponentName( this.phetioID );
-    },
-
-    /**
-     * Returns a Tandem for everything except the tail.
-     * @returns {Tandem}
-     * @public
-     */
-    get parentTandem() {
-      var headID = phetio.PhetioIDUtils.getParentID( this.phetioID );
-
-      return new Tandem( headID, {
-        required: this.required,
-        supplied: this.supplied
-      } );
     }
+
   }, {
 
     /**
@@ -360,7 +398,9 @@ define( function( require ) {
   /**
    * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
    * @param {string} id - id as a string (or '' for a root id)
+   * @param {string} prefix
    * @constructor
+   * @deprecated - see Group.js for the way of the future
    * @private create with Tandem.createGroupTandem
    */
   function GroupTandem( id, prefix ) {
@@ -385,16 +425,6 @@ define( function( require ) {
      */
     createNextTandem: function() {
       return this.createTandem( this.prefix + '_' + ( this.groupElementIndex++ ) );
-    },
-
-    /**
-     * Groups contain a prototype instance which demonstrates the PhET-iO API for that subtree.
-     * This method creates the standard prototype Tandem name.
-     * @returns {Tandem}
-     * @public
-     */
-    createPrototypeTandem: function() {
-      return this.createTandem( 'prototype' );
     }
   } );
 

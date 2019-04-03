@@ -95,26 +95,6 @@
       return phetio.PhetioIDUtils.append( general, componentName );
     },
 
-    /**
-     * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7'
-     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototype'
-     * @param {string} phetioID
-     * @returns {string}
-     * @public
-     */
-    getConcretePhetioID: function( phetioID ) {
-      const terms = phetioID.split( SEPARATOR );
-      const concreteTerms = terms.map( term => {
-
-        if ( term.match( /[a-zA-Z]+_[0-9]+/ ) ) {
-          return 'prototype';
-        }
-        else {
-          return term;
-        }
-      } );
-      return concreteTerms.join( SEPARATOR );
-    },
 
     /**
      * See getConcretePhetioID
