@@ -186,36 +186,29 @@ define( function( require ) {
     },
 
     /**
+     * Tacks on this Tandem's suffix to the given parentPhetioID, used to look up concrete phetioIDs
+     * @param {string} parentPhetioID
+     * @returns {string}
+     * @protected
+     */
+    appendConcreteSuffix( parentPhetioID ) {
+      return phetio.PhetioIDUtils.append( parentPhetioID, this.name );
+    },
+
+    /**
      * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
      * which corresponds to the prototype "quark" ....
      * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypes.quark.visibleProperty'
      *
      * NOTE: This function makes a lot of assumptions about the look of phetioIDs that are made in Group.js, don't change
      * one without consulting the other.
-     * @param {GroupMemberTandem} tandem
      * @returns {string}
      * @public
      */
     getConcretePhetioID() {
-      if ( this.parentTandem ) {
-        const parentID = this.parentTandem.getConcretePhetioID();
 
-        // TODO: better use of subtyping to accomplish this
-        if ( this.prototypeName ) {
-
-          // TODO: varargs for append
-          const prototypes = phetio.PhetioIDUtils.append( parentID, 'prototypes' );
-          return phetio.PhetioIDUtils.append( prototypes, this.prototypeName );
-        }
-        else {
-          return phetio.PhetioIDUtils.append( parentID, this.name );
-        }
-      }
-      else {
-
-        // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
-        return this.phetioID;
-      }
+      // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
+      return this.parentTandem ? this.appendConcreteSuffix( this.parentTandem.getConcretePhetioID() ) : this.phetioID;
     },
 
     /**

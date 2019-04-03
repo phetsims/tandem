@@ -29,6 +29,18 @@ define( require => {
       // @public (read-only)
       this.prototypeName = prototypeName;
     }
+
+    /**
+     * Tacks on this Tandem's suffix to the given parentPhetioID, used to look up concrete phetioIDs
+     * @param {string} parentPhetioID
+     * @returns {string}
+     * @protected
+     * @override
+     */
+    appendConcreteSuffix( parentPhetioID ) {
+      const prototypes = phetio.PhetioIDUtils.append( parentPhetioID, 'prototypes' );
+      return phetio.PhetioIDUtils.append( prototypes, this.prototypeName );
+    }
   }
 
   return tandemNamespace.register( 'GroupMemberTandem', GroupMemberTandem );
