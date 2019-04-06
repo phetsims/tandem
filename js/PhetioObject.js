@@ -236,6 +236,11 @@ define( function( require ) {
             if ( overrides ) {
               options = _.extend( {}, options, overrides );
             }
+
+            // if it is a linked element, adopt the same phetioFeatured as the target
+            if ( options.linkedElement ) {
+              options.phetioFeatured = options.linkedElement.phetioFeatured;
+            }
           }
 
           // Instances should generally be created on startup.  The only instances that it's OK to create after startup
@@ -454,12 +459,12 @@ define( function( require ) {
       super( _.extend( {
         phetioType: LinkedElementIO,
 
-        // The link should be featured if the element itself is featured.  Use the baseline value to solve this problem:
-        // if (!phetioPrintPhetioElementsBaseline) then the metadata of instance A is overriden
-        // but LinkedElement borrows the metadata from its linked PhetioObject, so it is different depending on whether
-        // phetioPrintPhetioElementsBaseline or not
-        // Hence we must store the baseline value and use it so the runtime value will match the baseline value.
+        // The baseline value for phetioFeatured matches the target element
         phetioFeatured: element.phetioFeaturedBaseline,
+
+        // But the override for the target element applies to the LinkedElement
+        linkedElement: element,
+
         phetioReadOnly: true // References cannot be changed
       }, options ) );
 
