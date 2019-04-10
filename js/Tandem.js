@@ -228,8 +228,8 @@ define( function( require ) {
      */
     createGroupTandem: function( id, elementPrefix ) {
 
-      assert && assert( id.indexOf( '.' ) === -1, 'createTandem cannot accept dots: ' + id );
-      assert && assert( id.indexOf( ' ' ) === -1, 'createTandem cannot accept whitespace: ' + id );
+      assert && assert( id.indexOf( '.' ) === -1, 'createGroupTandem cannot accept dots: ' + id );
+      assert && assert( id.indexOf( ' ' ) === -1, 'createGroupTandem cannot accept whitespace: ' + id );
 
       return new GroupTandem( this, id, elementPrefix );
     },
