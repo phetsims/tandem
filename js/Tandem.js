@@ -6,86 +6,81 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var inherit = require( 'PHET_CORE/inherit' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  var toCamelCase = require( 'PHET_CORE/toCamelCase' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const toCamelCase = require( 'PHET_CORE/toCamelCase' );
 
   // text
-  var packageString = require( 'text!REPOSITORY/package.json' );
+  const packageString = require( 'text!REPOSITORY/package.json' );
 
   // constants
-  var packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
-  var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
+  const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
+  const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
 
   // used to keep track of missing tandems, see phet.phetio.queryParameters.phetioPrintMissingTandems
-  var missingTandems = {
+  const missingTandems = {
     required: [],
     optional: [],
     uninstrumented: []
   };
 
   // Listeners that will be notified when items are registered/deregistered. See doc in addPhetioObjectListener
-  var phetioObjectListeners = [];
+  const phetioObjectListeners = [];
 
   // variables
   // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called
   // and buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
-  var launched = false;
-  var bufferedPhetioObjects = [];
+  let launched = false;
+  const bufferedPhetioObjects = [];
 
-  /**
-   * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
-   * a tandem must be created from scratch.
-   *
-   * @param {Tandem|null} parentTandem - parent for a child tandem, or null for a root tandem
-   * @param {string} name - component name for this level, like 'resetAllButton'
-   * @param {Object} [options]
-   * @constructor
-   */
-  function Tandem( parentTandem, name, options ) {
+  class Tandem {
 
-    assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
+    /**
+     * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
+     * a tandem must be created from scratch.
+     *
+     * @param {Tandem|null} parentTandem - parent for a child tandem, or null for a root tandem
+     * @param {string} name - component name for this level, like 'resetAllButton'
+     * @param {Object} [options]
+     */
+    constructor( parentTandem, name, options ) {
+      assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
 
-    assert && assert( typeof name === 'string' && name.length > 0, 'name must be defined' );
-    assert && assert( name.indexOf( phetio.PhetioIDUtils.SEPARATOR ) === -1, 'createTandem cannot accept dots: ' + name );
-    assert && assert( name.indexOf( '-' ) === -1, 'createTandem cannot accept dash: ' + name );
-    assert && assert( name.indexOf( ' ' ) === -1, 'name cannot contain whitespace: ' + name );
+      assert && assert( typeof name === 'string' && name.length > 0, 'name must be defined' );
+      assert && assert( name.indexOf( phetio.PhetioIDUtils.SEPARATOR ) === -1, 'createTandem cannot accept dots: ' + name );
+      assert && assert( name.indexOf( '-' ) === -1, 'createTandem cannot accept dash: ' + name );
+      assert && assert( name.indexOf( ' ' ) === -1, 'name cannot contain whitespace: ' + name );
 
-    // options (even subtype options) must be stored on the instance so they can be passed through to children
-    // Note: Make sure that added options here are also added to options for inheritance and/or
-    // for composition (createTandem/parentTandem) as they make sense.
-    options = _.extend( {
+      // options (even subtype options) must be stored on the instance so they can be passed through to children
+      // Note: Make sure that added options here are also added to options for inheritance and/or
+      // for composition (createTandem/parentTandem) as they make sense.
+      options = _.extend( {
 
-      // if the tandem is not supplied and required, an error will be thrown.
-      supplied: true,
+        // if the tandem is not supplied and required, an error will be thrown.
+        supplied: true,
 
-      // required === false means it is an optional tandem
-      required: true
-    }, options );
+        // required === false means it is an optional tandem
+        required: true
+      }, options );
 
-    // @public (read-only)
-    this.parentTandem = parentTandem;
+      // @public (read-only)
+      this.parentTandem = parentTandem;
 
-    // @public (read-only)
-    this.name = name;
+      // @public (read-only)
+      this.name = name;
 
-    // @public (read-only)
-    this.phetioID = this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name ) : this.name;
+      // @public (read-only)
+      this.phetioID = this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name ) : this.name;
 
-    // @private
-    this.required = options.required;
+      // @private
+      this.required = options.required;
 
-    // @public (read-only)
-    this.supplied = options.supplied;
-  }
-
-  tandemNamespace.register( 'Tandem', Tandem );
-
-  inherit( Object, Tandem, {
+      // @public (read-only)
+      this.supplied = options.supplied;
+    }
 
     /**
      * Adds a PhetioObject.  For example, it could be an axon Property, scenery Node or Sun button.  Each item should
@@ -96,7 +91,7 @@ define( function( require ) {
      * @param {PhetioObject} phetioObject
      * @public
      */
-    addPhetioObject: function( phetioObject ) {
+    addPhetioObject( phetioObject ) {
       assert && assert( arguments.length === 1, 'Tandem.addPhetioObject takes one argument' );
 
       // Cannot use typical require statement for PhetioObject because it creates a module loading loop
@@ -117,7 +112,7 @@ define( function( require ) {
         // If tandem is optional, then don't add it
         if ( !this.required && !this.supplied ) {
           if ( phet.phetio.queryParameters.phetioPrintMissingTandems ) {
-            var stackTrace = new Error().stack;
+            const stackTrace = new Error().stack;
 
             // Generally Font is not desired because there are so many untandemized Fonts.
             if ( stackTrace.indexOf( 'PhetFont' ) === -1 ) {
@@ -134,30 +129,30 @@ define( function( require ) {
           bufferedPhetioObjects.push( phetioObject );
         }
         else {
-          for ( var i = 0; i < phetioObjectListeners.length; i++ ) {
+          for ( let i = 0; i < phetioObjectListeners.length; i++ ) {
             phetioObjectListeners[ i ].addPhetioObject( phetioObject );
           }
         }
       }
-    },
+    }
 
     /**
      * Removes an instance from the registry
      * @param {PhetioObject} phetioObject - the instance to remove
      * @public
      */
-    removeInstance: function( phetioObject ) {
+    removeInstance( phetioObject ) {
       if ( !this.required && !this.supplied ) {
         return;
       }
 
       // Only active when running as phet-io
       if ( PHET_IO_ENABLED ) {
-        for ( var i = 0; i < phetioObjectListeners.length; i++ ) {
+        for ( let i = 0; i < phetioObjectListeners.length; i++ ) {
           phetioObjectListeners[ i ].removePhetioObject( phetioObject );
         }
       }
-    },
+    }
 
     /**
      * Used for creating new tandems, extends this Tandem's options with the passed-in options.
@@ -165,7 +160,7 @@ define( function( require ) {
      * @returns {Object} -extended options
      * @protected
      */
-    getExtendedOptions: function( options ) {
+    getExtendedOptions( options ) {
 
       // Any child of something should be passed all inherited options. Make sure that this extend call includes all
       // that make sense from the constructor's extend call.
@@ -173,7 +168,8 @@ define( function( require ) {
         supplied: this.supplied,
         required: this.required
       }, options );
-    },
+    }
+
     /**
      * Create a new Tandem by appending the given id
      * @param {string} id
@@ -181,9 +177,9 @@ define( function( require ) {
      * @returns {Tandem}
      * @public
      */
-    createTandem: function( id, options ) {
+    createTandem( id, options ) {
       return new Tandem( this, id, this.getExtendedOptions( options ) );
-    },
+    }
 
     /**
      * Tacks on this Tandem's suffix to the given parentPhetioID, used to look up concrete phetioIDs
@@ -193,7 +189,7 @@ define( function( require ) {
      */
     appendConcreteSuffix( parentPhetioID ) {
       return phetio.PhetioIDUtils.append( parentPhetioID, this.name );
-    },
+    }
 
     /**
      * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
@@ -209,7 +205,7 @@ define( function( require ) {
 
       // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
       return this.parentTandem ? this.appendConcreteSuffix( this.parentTandem.getConcretePhetioID() ) : this.phetioID;
-    },
+    }
 
     /**
      * Creates a group tandem for creating multiple indexed child tandems, such as:
@@ -226,13 +222,13 @@ define( function( require ) {
      * @deprecated
      * @public
      */
-    createGroupTandem: function( id, elementPrefix ) {
+    createGroupTandem( id, elementPrefix ) {
 
       assert && assert( id.indexOf( '.' ) === -1, 'createGroupTandem cannot accept dots: ' + id );
       assert && assert( id.indexOf( ' ' ) === -1, 'createGroupTandem cannot accept whitespace: ' + id );
 
       return new GroupTandem( this, id, elementPrefix );
-    },
+    }
 
     /**
      * Get the last part of the tandem (after the last .), used in Joist for creating button names dynamically based
@@ -243,8 +239,6 @@ define( function( require ) {
     get tail() { // TODO: rename to getComponentName()
       return phetio.PhetioIDUtils.getComponentName( this.phetioID );
     }
-
-  }, {
 
     /**
      * Adds a listener that will be notified when items are registered/deregistered
@@ -259,23 +253,23 @@ define( function( require ) {
      * @public
      * @static
      */
-    addPhetioObjectListener: function( phetioObjectListener ) {
+    static addPhetioObjectListener( phetioObjectListener ) {
       phetioObjectListeners.push( phetioObjectListener );
-    },
+    }
 
     /**
      * When all listeners are listening, all buffered PhetioObjects are registered.
      * @public
      * @static
      */
-    launch: function() {
+    static launch() {
       assert && assert( !launched, 'Tandem was launched twice' );
       launched = true;
       while ( bufferedPhetioObjects.length > 0 ) {
-        var phetioObject = bufferedPhetioObjects.shift();
+        const phetioObject = bufferedPhetioObjects.shift();
         phetioObject.register();
       }
-    },
+    }
 
     /**
      * Catch cases where tandem is being supplied to a class that doesn't support tandem.
@@ -283,12 +277,11 @@ define( function( require ) {
      * @public
      * @static
      */
-    disallowTandem: function( options ) {
-
+    static disallowTandem( options ) {
       if ( Tandem.validationEnabled() ) {
         assert && assert( !options.tandem, 'tandem is not allowed' );
       }
-    },
+    }
 
     /**
      * When running in PhET-iO brand, some code (such as user interface components) must be instrumented for PhET-iO.
@@ -297,7 +290,7 @@ define( function( require ) {
      * @public
      * @static
      */
-    indicateUninstrumentedCode: function() {
+    static indicateUninstrumentedCode() {
 
       // Guard against undefined errors
       if ( PHET_IO_ENABLED ) {
@@ -312,7 +305,7 @@ define( function( require ) {
           missingTandems.uninstrumented.push( { stack: new Error().stack } );
         }
       }
-    },
+    }
 
     /**
      * Determine whether or not tandem validation is turned on for the sim.
@@ -320,7 +313,7 @@ define( function( require ) {
      * @public
      * @static
      */
-    validationEnabled: function() {
+    static validationEnabled() {
       return PHET_IO_ENABLED &&
              phet.phetio.queryParameters.phetioValidateTandems &&
 
@@ -328,7 +321,7 @@ define( function( require ) {
              // run with partial tandem coverage and see which are missing.
              !phet.phetio.queryParameters.phetioPrintMissingTandems;
     }
-  } );
+  }
 
   // The next few statics are created outside the static block because they instantiate Tandem instances.
 
@@ -381,38 +374,37 @@ define( function( require ) {
    */
   Tandem.missingTandems = missingTandems;
 
-  /**
-   * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
-   * @param {string} id - id as a string (or '' for a root id)
-   * @param {string} prefix
-   * @constructor
-   * @deprecated - see Group.js for the way of the future
-   * @private create with Tandem.createGroupTandem
-   */
-  function GroupTandem( parentTandem, id, prefix ) {
+  class GroupTandem extends Tandem {
 
-    Tandem.call( this, parentTandem, id );
+    /**
+     * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
+     * @param {Tandem} parentTandem
+     * @param {string} id - id as a string (or '' for a root id)
+     * @param {string} prefix
+     * @constructor
+     * @deprecated - see Group.js for the way of the future
+     * @private create with Tandem.createGroupTandem
+     */
+    constructor( parentTandem, id, prefix ) {
 
-    // @private for generating indices from a pool
-    this.groupElementIndex = 0;
+      super( parentTandem, id );
 
-    // @private
-    this.prefix = prefix || 'element';
-  }
+      // @private for generating indices from a pool
+      this.groupElementIndex = 0;
 
-  tandemNamespace.register( 'Tandem.GroupTandem', GroupTandem );
-
-  inherit( Tandem, GroupTandem, {
+      // @private
+      this.prefix = prefix || 'element';
+    }
 
     /**
      * Creates the next tandem in the group.
      * @returns {Tandem}
      * @public
      */
-    createNextTandem: function() {
+    createNextTandem() {
       return this.createTandem( this.prefix + '_' + ( this.groupElementIndex++ ) );
     }
-  } );
+  }
 
-  return Tandem;
+  return tandemNamespace.register( 'Tandem', Tandem );
 } );
