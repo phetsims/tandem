@@ -12,13 +12,15 @@ define( require => {
   'use strict';
 
   // modules
-  const Emitter = require( 'AXON/Emitter' );
   const GroupIO = require( 'TANDEM/types/GroupIO' );
   const GroupMemberTandem = require( 'TANDEM/GroupMemberTandem' );
-  const PhetioObject = require( 'TANDEM/PhetioObject' );
+  const ObservableArray = require( 'AXON/ObservableArray' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  class Group extends PhetioObject {
+  // constants
+  const GROUP_SEPARATOR_TOKEN = '_';
+
+  class Group extends ObservableArray {
 
     /**
      * @param {string} prefix
@@ -28,7 +30,8 @@ define( require => {
     constructor( prefix, prototypeSchema, options ) {
 
       options = _.extend( {
-        phetioType: GroupIO
+        phetioType: GroupIO,
+        phetioState: false
       }, options );
 
       super( options );
@@ -42,10 +45,6 @@ define( require => {
       this.prototypesTandem = this.tandem.createTandem( 'prototypes' );
       this.prototypeNames = Object.keys( prototypeSchema );
       this.groupOptions = options;
-      this.groupMembers = [];
-
-      // TODO: how is Group any different from ObservableArray?
-      this.groupMemberAddedEmitter = new Emitter( { validators: [ { valueType: Object } ] } );// TODO: use prototypes to type check
 
       for ( let i = 0; i < this.prototypeNames.length; i++ ) {
         const prototypeName = this.prototypeNames[ i ];
@@ -67,21 +66,25 @@ define( require => {
       assert && assert( this.prototypeNames.indexOf( prototypeName ) >= 0, `unexpected prototypeName: ${prototypeName}` );
       return new GroupMemberTandem(
         this.tandem,
-        this.prefix + '_' + ( this.groupElementIndex++ ),
+        this.prefix + GROUP_SEPARATOR_TOKEN + ( this.groupElementIndex++ ),
         prototypeName,
         this.tandem.getExtendedOptions( options )
       );
     }
 
+    isGroupMemberID( componentName ) {
+      return componentName.indexOf( this.prefix + GROUP_SEPARATOR_TOKEN ) === 0;
+    }
+
     clearGroup() {
 
       // TODO: add a method that clears one at a time
-      this.groupMembers.forEach( groupMember => groupMember.dispose() );
-      this.groupMembers.length = 0;
+      this.forEach( groupMember => groupMember.dispose() );
+      this.clear();
     }
 
     createNextGroupMember( prototypeName ) {
-      return this.createGroupMember( this.prefix + '_' + ( this.groupElementIndex++ ), prototypeName );
+      return this.createGroupMember( this.prefix + GROUP_SEPARATOR_TOKEN + ( this.groupElementIndex++ ), prototypeName );
     }
 
     createGroupMember( componentName, prototypeName ) {
@@ -99,8 +102,7 @@ define( require => {
         this.tandem.getExtendedOptions( this.groupOptions )
       ) );
 
-      this.groupMembers.push( groupMember );
-      this.groupMemberAddedEmitter.emit( groupMember );
+      this.push( groupMember );
 
       return groupMember;
     }
