@@ -97,6 +97,7 @@
 
 
     /**
+     * TODO: Should this be reimplemented to compare to concrete phetioID?
      * See getConcretePhetioID
      * @param {string} phetioID
      * @returns {boolean}

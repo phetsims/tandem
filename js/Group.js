@@ -12,10 +12,11 @@ define( require => {
   'use strict';
 
   // modules
-  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const Emitter = require( 'AXON/Emitter' );
+  const GroupIO = require( 'TANDEM/types/GroupIO' );
   const GroupMemberTandem = require( 'TANDEM/GroupMemberTandem' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
-  const GroupIO = require( 'TANDEM/types/GroupIO' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   class Group extends PhetioObject {
 
@@ -32,18 +33,25 @@ define( require => {
 
       super( options );
 
-      // @private for generating indices from a pool
+      // @private - for generating indices from a pool
       this.groupElementIndex = 0;
 
       // @private
       this.prefix = prefix || 'element';
-
-      const prototypesTandem = this.tandem.createTandem( 'prototypes' );
+      this.prototypeSchema = prototypeSchema;
+      this.prototypesTandem = this.tandem.createTandem( 'prototypes' );
       this.prototypeNames = Object.keys( prototypeSchema );
+      this.groupOptions = options;
+      this.groupMembers = [];
+
+      // TODO: how is Group any different from ObservableArray?
+      this.groupMemberAddedEmitter = new Emitter( { validators: [ { valueType: Object } ] } );// TODO: use prototypes to type check
 
       for ( let i = 0; i < this.prototypeNames.length; i++ ) {
         const prototypeName = this.prototypeNames[ i ];
-        prototypeSchema[ prototypeName ]( prototypesTandem.createTandem( prototypeName ) );
+
+        // create with any default state and nested substructure
+        this.prototypeSchema[ prototypeName ]( this.prototypesTandem.createTandem( prototypeName ) );
       }
     }
 
@@ -63,6 +71,38 @@ define( require => {
         prototypeName,
         this.tandem.getExtendedOptions( options )
       );
+    }
+
+    clearGroup() {
+
+      // TODO: add a method that clears one at a time
+      this.groupMembers.forEach( groupMember => groupMember.dispose() );
+      this.groupMembers.length = 0;
+    }
+
+    createNextGroupMember( prototypeName ) {
+      return this.createGroupMember( this.prefix + '_' + ( this.groupElementIndex++ ), prototypeName );
+    }
+
+    createGroupMember( componentName, prototypeName ) {
+
+      // TODO: how to get prototype name from setState? Will we need to save the prototypeName in the state?
+      if ( prototypeName === undefined ) {
+        prototypeName = Object.keys( this.prototypeSchema )[ 0 ];
+      }
+
+      // create with default state and substructure, details will need to be set by setter methods.
+      const groupMember = this.prototypeSchema[ prototypeName ]( new GroupMemberTandem(
+        this.tandem,
+        componentName,
+        prototypeName,
+        this.tandem.getExtendedOptions( this.groupOptions )
+      ) );
+
+      this.groupMembers.push( groupMember );
+      this.groupMemberAddedEmitter.emit( groupMember );
+
+      return groupMember;
     }
   }
 

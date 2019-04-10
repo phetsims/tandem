@@ -26,7 +26,7 @@ define( require => {
 
       super( parentTandem, name, options );
 
-      // @public (read-only)
+      // @private (read-only)
       this.prototypeName = prototypeName;
     }
 
