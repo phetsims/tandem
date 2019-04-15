@@ -473,6 +473,5 @@ define( function( require ) {
     }
   }
 
-  tandemNamespace.register( 'PhetioObject.LinkedElement', LinkedElement );
   return PhetioObject;
 } );
