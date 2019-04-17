@@ -192,7 +192,7 @@ define( function( require ) {
       }
 
       // TODO: Store "baseline" and "overrides" on the PhetioObject so that assertions during the instantiation of the
-      // instance don't need to be as fragile/order dependent, see https://github.com/phetsims/phet-io/issues/1440
+      // TODO: instance don't need to be as fragile/order dependent, see https://github.com/phetsims/phet-io/issues/1443
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
       // Store the baseline value for using in LinkedElement
