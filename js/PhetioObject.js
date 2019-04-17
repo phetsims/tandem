@@ -202,55 +202,39 @@ define( function( require ) {
         'invalid phetioDocumentation: ' + options.phetioDocumentation
       );
 
-      if ( PHET_IO_ENABLED && options.tandem.supplied && phet.phetio.queryParameters.phetioExperimental ) {
+      if ( PHET_IO_ENABLED && options.tandem.supplied ) {
 
         // check loaded metadata:
         // We originally tried nesting phetioElementsBaseline under window.phet.phetio, but the order of creation
         // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
         // just using a different namespace.
-        if ( window.phet.phetio.phetioElementsBaseline ) {
+        assert && assert( window.phet.phetio.phetioElementsBaseline, 'no phet-io baseline elements api file found' );
 
-          // Dynamic elements should compare to their "concrete" counterparts.
-          const concretePhetioID = options.tandem.getConcretePhetioID();
+        // Dynamic elements should compare to their "concrete" counterparts.
+        const concretePhetioID = options.tandem.getConcretePhetioID();
 
-          const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
+        // don't compare/api check if we are printing out a new baseline file
+        if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
-          // don't compare/api check if we are printing out a new baseline file
-          if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
-            assert && assert( baseline, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
+          // validate code metadata against overrides file
+          this.validateElementAPI( options );
 
-            // if simulation metadata is not equal to baseline before overrides applied
-            const computedMetadata = this.getMetadata( options );
-            if ( !_.isEqual( baseline, computedMetadata ) ) {
-              phet.phetio.apiMismatches.push( {
-                phetioID: concretePhetioID,
-                stack: new Error().stack,
-                message: 'code metadata does not match baseline elements file',
-                baselineMetadata: baseline,
-                computedMetadata: computedMetadata
-              } );
-            }
-
-            // Patch in the desired values from overrides, if any
-            const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
-            if ( overrides ) {
-              options = _.extend( {}, options, overrides );
-            }
-
-            // if it is a linked element, adopt the same phetioFeatured as the target
-            if ( options.linkedElement ) {
-              options.phetioFeatured = options.linkedElement.phetioFeatured;
-            }
+          // Patch in the desired values from overrides, if any
+          const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
+          if ( overrides ) {
+            options = _.extend( {}, options, overrides );
           }
 
-          // Instances should generally be created on startup.  The only instances that it's OK to create after startup
-          // are "dynamic instances" which have underscores (at the moment).
-          if ( phet.phetio.simulationConstructionComplete ) {
-            assert && assert( phetio.PhetioIDUtils.isDynamicElement( options.tandem.phetioID ), 'Only dynamic instances can be created after startup' );
+          // if it is a linked element, adopt the same phetioFeatured as the target
+          if ( options.linkedElement ) {
+            options.phetioFeatured = options.linkedElement.phetioFeatured;
           }
         }
-        else {
-          console.log( 'no phet-io api file found' );
+
+        // Instances should generally be created on startup.  The only instances that it's OK to create after startup
+        // are "dynamic instances" which have underscores (at the moment).
+        if ( phet.phetio.simulationConstructionComplete ) {
+          assert && assert( phetio.PhetioIDUtils.isDynamicElement( options.tandem.phetioID ), 'Only dynamic instances can be created after startup' );
         }
       }
 
@@ -401,6 +385,31 @@ define( function( require ) {
       assert && assert( element instanceof PhetioObject, 'element must be of type PhetioObject' );
 
       this.linkedElements.push( new LinkedElement( element, options ) );
+    },
+
+    /**
+     * Validates the baseline file metadata against the code metadata for the phet-io element that this PhetioObject
+     * will become on the wrapper side
+     *
+     * @param {Object} options
+     */
+    validateElementAPI: function( options ) {
+      const concretePhetioID = options.tandem.getConcretePhetioID();
+      const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
+
+      assert && assert( baseline, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
+
+      // if simulation metadata is not equal to baseline before overrides applied
+      const computedMetadata = this.getMetadata( options );
+      if ( !_.isEqual( baseline, computedMetadata ) ) {
+        phet.phetio.apiMismatches.push( {
+          phetioID: concretePhetioID,
+          stack: new Error().stack,
+          message: 'code metadata does not match baseline elements file',
+          baselineMetadata: baseline,
+          computedMetadata: computedMetadata
+        } );
+      }
     },
 
     /**
