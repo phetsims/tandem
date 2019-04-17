@@ -203,7 +203,8 @@ define( function( require ) {
       );
 
       // check loaded metadata
-      if ( PHET_IO_ENABLED && options.tandem.supplied ) {
+      // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
+      if ( PHET_IO_ENABLED && options.tandem.supplied && options.tandem.phetioID.indexOf( '~' ) === -1 ) {
 
         // don't compare/api check if we are printing out a new baseline file
         if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
@@ -213,6 +214,9 @@ define( function( require ) {
 
           // Dynamic elements should compare to their "concrete" counterparts.
           const concretePhetioID = options.tandem.getConcretePhetioID();
+
+          // check for an overrides file
+          assert && assert( window.phet.phetio.phetioElementsOverrides, 'phetioElementsOverrides not found' );
 
           // Patch in the desired values from overrides, if any
           const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];

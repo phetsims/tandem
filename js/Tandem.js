@@ -374,6 +374,7 @@ define( require => {
    */
   Tandem.missingTandems = missingTandems;
 
+  // TODO: Replace GroupTandem usages with GroupMemberTandem, see https://github.com/phetsims/tandem/issues/87
   class GroupTandem extends Tandem {
 
     /**
@@ -402,7 +403,7 @@ define( require => {
      * @public
      */
     createNextTandem() {
-      return this.createTandem( this.prefix + '_' + ( this.groupElementIndex++ ) );
+      return this.createTandem( this.prefix + '~' + ( this.groupElementIndex++ ) );
     }
   }
 
