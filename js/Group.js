@@ -18,7 +18,7 @@ define( require => {
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   // constants
-  const GROUP_SEPARATOR_TOKEN = '_';
+  const GROUP_SEPARATOR_TOKEN = phetio.PhetioIDUtils.GROUP_SEPARATOR_TOKEN;
 
   class Group extends ObservableArray {
 

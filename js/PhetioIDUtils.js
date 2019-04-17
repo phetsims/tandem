@@ -15,6 +15,7 @@
 
   // constants
   var SEPARATOR = '.';
+  var GROUP_SEPARATOR_TOKEN = '_';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -97,14 +98,14 @@
 
 
     /**
-     * TODO: Should this be reimplemented to compare to concrete phetioID?
+     * TODO: Should this be reimplemented to compare to concrete phetioID? github.com/phetsims/phet-io/issues/1442
      * See getConcretePhetioID
      * @param {string} phetioID
      * @returns {boolean}
      * @public
      */
     isDynamicElement: function( phetioID ) {
-      return phetioID.indexOf( '_' ) >= 0;
+      return phetioID.indexOf( GROUP_SEPARATOR_TOKEN ) >= 0;
     },
 
     /**
@@ -113,6 +114,14 @@
      * @constant
      * @public
      */
-    SEPARATOR: SEPARATOR
+    SEPARATOR: SEPARATOR,
+
+    /**
+     * The separator used to specify the count of a member in a group.
+     * @type {String}
+     * @constant
+     * @public
+     */
+    GROUP_SEPARATOR_TOKEN: GROUP_SEPARATOR_TOKEN
   };
 } )();
