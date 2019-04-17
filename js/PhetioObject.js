@@ -162,7 +162,9 @@ define( function( require ) {
       assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
       assert && assert( options.tandem, 'Component was missing its tandem' );
-      assert && assert( options.tandem.phetioID, 'Component was missing its phetioID' );
+
+      const phetioID = options.tandem.phetioID;
+      assert && assert( phetioID, 'Component was missing its phetioID' );
 
       if ( assert && options.phetioType && PHET_IO_ENABLED ) {
         assert && assert( options.phetioType.documentation, 'There must be a documentation string for each IO Type.' );
@@ -186,9 +188,9 @@ define( function( require ) {
           }
         }
 
-        assert && assert( options.phetioType !== undefined, options.tandem.phetioID + ' missing type from phetio.api' );
-        assert && assert( options.phetioType.typeName, 'no type name for ' + options.tandem.phetioID + '(may be missing type parameter)' );
-        assert && assert( options.phetioType.typeName, 'type must be specified and have a typeName for ' + options.tandem.phetioID );
+        assert && assert( options.phetioType !== undefined, phetioID + ' missing type from phetio.api' );
+        assert && assert( options.phetioType.typeName, 'no type name for ' + phetioID + '(may be missing type parameter)' );
+        assert && assert( options.phetioType.typeName, 'type must be specified and have a typeName for ' + phetioID );
       }
 
       // TODO: Store "baseline" and "overrides" on the PhetioObject so that assertions during the instantiation of the
@@ -205,7 +207,7 @@ define( function( require ) {
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
       // overrides API file.
       // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
-      if ( PHET_IO_ENABLED && options.tandem.supplied && options.tandem.phetioID.indexOf( '~' ) === -1 ) {
+      if ( PHET_IO_ENABLED && options.tandem.supplied && phetioID.indexOf( '~' ) === -1 ) {
 
         // don't compare/api check if we are printing out a new baseline file
         if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
@@ -235,7 +237,7 @@ define( function( require ) {
         // Instances should generally be created on startup.  The only instances that it's OK to create after startup
         // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
         if ( assert && phet.phetio.simulationConstructionComplete && phet.phetio.queryParameters.phetioValidateAPI ) {
-          assert( phetio.PhetioIDUtils.isDynamicElement( options.tandem.phetioID ), 'Only dynamic instances can be created after startup' );
+          assert( phetio.PhetioIDUtils.isDynamicElement( phetioID ), 'Only dynamic instances can be created after startup' );
         }
       }
 

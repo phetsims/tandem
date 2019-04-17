@@ -19,6 +19,7 @@ define( require => {
   // constants
   const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
   const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
+  const GROUP_SEPARATOR_TOKEN = phetio.PhetioIDUtils.GROUP_SEPARATOR_TOKEN;
 
   // used to keep track of missing tandems, see phet.phetio.queryParameters.phetioPrintMissingTandems
   const missingTandems = {
@@ -178,6 +179,11 @@ define( require => {
      * @public
      */
     createTandem( id, options ) {
+
+      // This assertion isn't in the constructor because a subtype of Tandem allows this character.
+      assert && assert( id.indexOf( GROUP_SEPARATOR_TOKEN ) === -1,
+        `invalid character in non-group tandem: ${GROUP_SEPARATOR_TOKEN}` );
+
       return new Tandem( this, id, this.getExtendedOptions( options ) );
     }
 
