@@ -202,22 +202,17 @@ define( function( require ) {
         'invalid phetioDocumentation: ' + options.phetioDocumentation
       );
 
+      // check loaded metadata
       if ( PHET_IO_ENABLED && options.tandem.supplied ) {
-
-        // check loaded metadata:
-        // We originally tried nesting phetioElementsBaseline under window.phet.phetio, but the order of creation
-        // of objects was unreliable and we ended up needing to _.extend() from both spots, which seemed worse than
-        // just using a different namespace.
-        assert && assert( window.phet.phetio.phetioElementsBaseline, 'no phet-io baseline elements api file found' );
-
-        // Dynamic elements should compare to their "concrete" counterparts.
-        const concretePhetioID = options.tandem.getConcretePhetioID();
 
         // don't compare/api check if we are printing out a new baseline file
         if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
           // validate code metadata against overrides file
           this.validateElementAPI( options );
+
+          // Dynamic elements should compare to their "concrete" counterparts.
+          const concretePhetioID = options.tandem.getConcretePhetioID();
 
           // Patch in the desired values from overrides, if any
           const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
@@ -394,6 +389,8 @@ define( function( require ) {
      * @param {Object} options
      */
     validateElementAPI: function( options ) {
+      assert && assert( window.phet.phetio.phetioElementsBaseline, 'no phet-io baseline elements api file found' );
+
       const concretePhetioID = options.tandem.getConcretePhetioID();
       const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
 
