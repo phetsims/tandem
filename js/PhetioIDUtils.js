@@ -24,6 +24,7 @@
    */
   window.phetio.PhetioIDUtils = {
 
+    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Appends a component to an existing phetioID to create a new unique phetioID for the component.
      * @example
@@ -39,6 +40,7 @@
       return phetioID + SEPARATOR + componentName;
     },
 
+    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Given a phetioID for a component (instance), get the part of that id that pertains to the component.
      * @example
@@ -59,6 +61,7 @@
       }
     },
 
+    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Given a phetioID for a component, get the phetioID of the parent component.
      * @example
@@ -74,6 +77,7 @@
       return phetioID.substring( 0, indexOfLastSeparator );
     },
 
+    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Given a phetioID for a instrumented object, get a string that can be used to assign an ID to a DOM element
      * @param {string} phetioID
@@ -84,22 +88,24 @@
       return 'phetioID:' + phetioID;
     },
 
+    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
-     * The root tandem has a nested "general" tandem which contains several simulation-level components.  This
+     * The root sim id has a nested "general" id which contains several simulation-level components.  This
      * method can be used for convenience in accessing its children.
      * @param {Client} Client - the Client type, not a Client instance
      * @param {string} componentName
      * @returns {string}
+     * @public
      */
     getGeneralID: function( Client, componentName ) {
       var general = phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, 'general' );
       return phetio.PhetioIDUtils.append( general, componentName );
     },
 
-
+    // TODO: Should this be reimplemented to compare to concrete phetioID? github.com/phetsims/phet-io/issues/1442
+    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely. See Tandem.getConcretePhetioID().
     /**
-     * TODO: Should this be reimplemented to compare to concrete phetioID? github.com/phetsims/phet-io/issues/1442
-     * See getConcretePhetioID
+     * If the PhET-iO element was created dynamically, after the sim was constructed.
      * @param {string} phetioID
      * @returns {boolean}
      * @public
@@ -108,6 +114,7 @@
       return phetioID.indexOf( GROUP_SEPARATOR_TOKEN ) >= 0;
     },
 
+    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The separator used to piece together a phet-io id.
      * @type {String}
@@ -116,6 +123,7 @@
      */
     SEPARATOR: SEPARATOR,
 
+    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The separator used to specify the count of a member in a group.
      * @type {String}
