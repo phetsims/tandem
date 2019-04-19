@@ -197,8 +197,6 @@ define( function( require ) {
         assert && assert( options.phetioType.typeName, 'type must be specified and have a typeName for ' + phetioID );
       }
 
-      // TODO: Store "baseline" and "overrides" on the PhetioObject so that assertions during the instantiation of the
-      // TODO: instance don't need to be as fragile/order dependent, see https://github.com/phetsims/phet-io/issues/1443
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
       // Store the baseline value for using in LinkedElement
@@ -216,9 +214,9 @@ define( function( require ) {
         // don't compare/api check if we are printing out a new baseline file
         if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
-          // validate code metadata against overrides file
-          // guard behind assert for performance
-          assert && this.validateElementAPI( options );
+          // validate code metadata against overrides file, guard behind assert for performance.
+          // Should be called before setting overrides
+          assert && this.validateBaselineElementAPI( options );
 
           // Dynamic elements should compare to their "concrete" counterparts.
           const concretePhetioID = options.tandem.getConcretePhetioID();
@@ -360,29 +358,6 @@ define( function( require ) {
     },
 
     /**
-     * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
-     * for baseline (before object fully constructed we use options) and after fully constructed
-     * which includes overrides.
-     * @param {Object} [options] - if specified, reads from the options.  Otherwise reads from the PhetioObject
-     * @returns {Object}
-     * @public
-     */
-    getMetadata: function( options ) {
-      options = options || this;
-      return {
-        phetioTypeName: options.phetioType.typeName,
-        phetioDocumentation: options.phetioDocumentation,
-        phetioState: options.phetioState,
-        phetioReadOnly: options.phetioReadOnly,
-        phetioEventType: EnumerationIO( EventType ).toStateObject( options.phetioEventType ).toLowerCase(), //TODO: https://github.com/phetsims/phet-io/issues/1427
-        phetioHighFrequency: options.phetioHighFrequency,
-        phetioPlayback: options.phetioPlayback,
-        phetioStudioControl: options.phetioStudioControl,
-        phetioFeatured: options.phetioFeatured
-      };
-    },
-
-    /**
      * This creates a one-way association between this PhetioObject and the specified element, which is rendered in
      * Studio as a "symbolic" link or hyperlink.
      * @param {PhetioObject} element - the target element.
@@ -400,7 +375,7 @@ define( function( require ) {
      *
      * @param {Object} options
      */
-    validateElementAPI: function( options ) {
+    validateBaselineElementAPI: function( options ) {
 
       // only enter this if we are validating the api
       if ( phet.phetio.queryParameters.phetioValidateAPI ) {
@@ -413,7 +388,7 @@ define( function( require ) {
         assert && assert( baseline, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
 
         // if simulation metadata is not equal to baseline before overrides applied
-        const computedMetadata = this.getMetadata( options );
+        const computedMetadata = PhetioObject.getMetadata( options );
         if ( !_.isEqual( baseline, computedMetadata ) ) {
           phet.phetio.apiMismatches.push( {
             phetioID: concretePhetioID,
@@ -460,6 +435,29 @@ define( function( require ) {
       this.isDisposed = true;
     }
   }, {
+
+    /**
+     * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
+     * for baseline (before object fully constructed we use object) and after fully constructed
+     * which includes overrides.
+     * @param {Object} object - used to get metadata keys
+     * @returns {Object}
+     * @public
+     */
+    getMetadata: function( object ) {
+      return {
+        phetioTypeName: object.phetioType.typeName,
+        phetioDocumentation: object.phetioDocumentation,
+        phetioState: object.phetioState,
+        phetioReadOnly: object.phetioReadOnly,
+        phetioEventType: EnumerationIO( EventType ).toStateObject( object.phetioEventType ).toLowerCase(), //TODO: https://github.com/phetsims/phet-io/issues/1427
+        phetioHighFrequency: object.phetioHighFrequency,
+        phetioPlayback: object.phetioPlayback,
+        phetioStudioControl: object.phetioStudioControl,
+        phetioFeatured: object.phetioFeatured
+      };
+    },
+
     DEFAULT_OPTIONS: DEFAULTS, // the default options for the phet-io object
     EventType: EventType // enum for phetio event types
   } );
