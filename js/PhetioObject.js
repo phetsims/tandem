@@ -50,14 +50,18 @@ define( function( require ) {
     phetioEventMetadata: null         // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
   };
 
-  var SUPPORTED_PHET_IO_COMPONENT_OPTIONS = [
+  // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
+  // DEFAULTS to apply to all subcomponents
+  var SUPPORTED_PHET_IO_COMPONENT_OPTIONS = _.keys( DEFAULTS ).concat( [
 
     // NodeIO
     'visibleProperty', 'pickableProperty', 'opacityProperty',
 
     // TextIO
     'textProperty'
-  ];
+
+    // PhetioButtonIO defines a nested pickableProperty, but it does not support phetioComponentOptions
+  ] );
 
   var OPTIONS_KEYS = _.keys( DEFAULTS );
 
