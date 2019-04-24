@@ -15,6 +15,7 @@ define( function( require ) {
   var inherit = require( 'PHET_CORE/inherit' );
   var LinkedElementIO = require( 'TANDEM/LinkedElementIO' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  var phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   var Tandem = require( 'TANDEM/Tandem' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
@@ -214,15 +215,12 @@ define( function( require ) {
         // don't compare/api check if we are printing out a new baseline file
         if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
-          // validate code metadata against overrides file, guard behind assert for performance.
+          // Validate code baseline metadata against baseline elements schema, guard behind assert for performance.
           // Should be called before setting overrides
-          assert && this.validateBaselineElementAPI( options );
+          assert && phetioAPIValidation.onPhetioObjectPreOverrides( options.tandem, PhetioObject.getMetadata( options ) );
 
           // Dynamic elements should compare to their "concrete" counterparts.
           const concretePhetioID = options.tandem.getConcretePhetioID();
-
-          // check for an overrides file
-          assert && assert( window.phet.phetio.phetioElementsOverrides, 'phetioElementsOverrides not found' );
 
           // Patch in the desired values from overrides, if any
           const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
@@ -367,38 +365,6 @@ define( function( require ) {
       assert && assert( element instanceof PhetioObject, 'element must be of type PhetioObject' );
 
       this.linkedElements.push( new LinkedElement( element, options ) );
-    },
-
-    /**
-     * Validates the baseline file metadata against the code metadata for the phet-io element that this PhetioObject
-     * will become on the wrapper side
-     *
-     * @param {Object} options
-     */
-    validateBaselineElementAPI: function( options ) {
-
-      // only enter this if we are validating the api
-      if ( phet.phetio.queryParameters.phetioValidateAPI ) {
-
-        assert && assert( window.phet.phetio.phetioElementsBaseline, 'no phet-io baseline elements api file found' );
-
-        const concretePhetioID = options.tandem.getConcretePhetioID();
-        const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
-
-        assert && assert( baseline, `API mismatch: metadata not found for ${options.tandem.phetioID}` );
-
-        // if simulation metadata is not equal to baseline before overrides applied
-        const computedMetadata = PhetioObject.getMetadata( options );
-        if ( !_.isEqual( baseline, computedMetadata ) ) {
-          phet.phetio.apiMismatches.push( {
-            phetioID: concretePhetioID,
-            stack: new Error().stack,
-            message: 'code metadata does not match baseline elements file',
-            baselineMetadata: baseline,
-            computedMetadata: computedMetadata
-          } );
-        }
-      }
     },
 
     /**
