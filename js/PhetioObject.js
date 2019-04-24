@@ -212,12 +212,12 @@ define( function( require ) {
       // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
       if ( PHET_IO_ENABLED && options.tandem.supplied && phetioID.indexOf( '~' ) === -1 ) {
 
+        // Validate code baseline metadata against baseline elements schema, guard behind assert for performance.
+        // Should be called before setting overrides
+        assert && phetioAPIValidation.onPhetioObjectPreOverrides( options.tandem, PhetioObject.getMetadata( options ) );
+
         // don't compare/api check if we are printing out a new baseline file
         if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
-
-          // Validate code baseline metadata against baseline elements schema, guard behind assert for performance.
-          // Should be called before setting overrides
-          assert && phetioAPIValidation.onPhetioObjectPreOverrides( options.tandem, PhetioObject.getMetadata( options ) );
 
           // Dynamic elements should compare to their "concrete" counterparts.
           const concretePhetioID = options.tandem.getConcretePhetioID();
@@ -232,12 +232,6 @@ define( function( require ) {
           if ( options.linkedElement ) {
             options.phetioFeatured = options.linkedElement.phetioFeatured;
           }
-        }
-
-        // Instances should generally be created on startup.  The only instances that it's OK to create after startup
-        // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
-        if ( assert && phet.phetio.simulationConstructionComplete && phet.phetio.queryParameters.phetioValidateAPI ) {
-          assert( phetio.PhetioIDUtils.isDynamicElement( phetioID ), 'Only dynamic instances can be created after startup' );
         }
       }
 

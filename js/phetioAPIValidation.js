@@ -31,10 +31,6 @@ define( require => {
   // modules
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  // constants
-  const VALIDATING = phet && phet.phetio && phet.phetio.phetioQueryParameter &&
-                     phet.phetio.queryParameters.phetioValidateAPI && !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline;
-
   class PhetioAPIValidation {
 
     constructor() {
@@ -43,12 +39,17 @@ define( require => {
        * {Object[]} - Each object holds a single "api mismatch" with the following keys:
        *                phetioID: {string}
        *                stack: {string} - for a stack trace
-       *                message: {string} - specific problem
+       *                ruleInViolation: {string} - one of the numbered list in the header doc.
+       *                [message]: {string} - specific problem
        *
        * Feel free to add any other JSONifyable keys to this to make the error more clear! All mismatches are printed
        * at once for clarity, see PhetioEngine.
+       * @private
        */
       this.apiMismatches = [];
+
+      // @private - keep track of when the sim has started.
+      this.simHasStarted = false;
     }
 
 
@@ -62,37 +63,49 @@ define( require => {
      */
     onPhetioObjectPreOverrides( tandem, phetioObjectBaselineMetadata ) {
 
-      // only enter this if we are validating the api
-      if ( VALIDATING ) {
+      if ( phet.phetio.queryParameters.phetioValidateAPI ) {
 
-        // check for existence of preloaded api schemas
-        // Testing rule: "1. A full schema is required"
-        assert && assert( window.phet.phetio.phetioElementsBaseline, 'no baseline schema found, a full schema is required.' );
-        assert && assert( window.phet.phetio.phetioElementsOverrides, 'no overrides schema found, a full schema is required' );
+        if ( !this.simHasStarted && !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
-        const concretePhetioID = tandem.getConcretePhetioID();
-        const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
+          // check for existence of preloaded api schemas
+          // Testing rule: "1. A full schema is required"
+          assert && assert( window.phet.phetio.phetioElementsBaseline, 'no baseline schema found, a full schema is required.' );
+          assert && assert( window.phet.phetio.phetioElementsOverrides, 'no overrides schema found, a full schema is required' );
 
-        if ( !baseline ) {
-          this.apiMismatches.push( {
-            phetioID: tandem.phetioID,
-            stack: new Error().stack,
-            ruleInViolation: '3. Any registered PhetioObject must be included in the schema',
-            message: 'no baseline schema found for phetioID',
-            concretePhetioID: concretePhetioID
-          } );
-          return;
+          const concretePhetioID = tandem.getConcretePhetioID();
+          const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
+
+          if ( !baseline ) {
+            this.addError( {
+              phetioID: tandem.phetioID,
+              stack: new Error().stack,
+              ruleInViolation: '3. Any registered PhetioObject must be included in the schema',
+              message: 'no baseline schema found for phetioID',
+              concretePhetioID: concretePhetioID
+            } );
+            return;
+          }
+
+          // if simulation metadata is not equal to baseline before overrides applied
+          if ( !_.isEqual( baseline, phetioObjectBaselineMetadata ) ) {
+            this.addError( {
+              phetioID: concretePhetioID,
+              stack: new Error().stack,
+              ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
+              message: 'baseline schema does not match PhetioObject computed baseline metadata',
+              baselineSchema: baseline,
+              phetioObjectBaselineMetadata: phetioObjectBaselineMetadata
+            } );
+          }
         }
 
-        // if simulation metadata is not equal to baseline before overrides applied
-        if ( !_.isEqual( baseline, phetioObjectBaselineMetadata ) ) {
-          this.apiMismatches.push( {
-            phetioID: concretePhetioID,
+        // Instances should generally be created on startup.  The only instances that it's OK to create after startup
+        // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
+        if ( this.simHasStarted && !phetio.PhetioIDUtils.isDynamicElement( tandem.phetioID ) ) {
+          this.addError( {
+            phetioID: tandem.phetioID,
             stack: new Error().stack,
-            ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
-            message: 'baseline schema does not match PhetioObject computed baseline metadata',
-            baselineSchema: baseline,
-            phetioObjectBaselineMetadata: phetioObjectBaselineMetadata
+            ruleInViolation: '4. After startup, only dynamic instances can be registered.'
           } );
         }
       }
@@ -104,16 +117,17 @@ define( require => {
      * @public
      */
     onSimStarted( phetioObjectMap ) {
+      this.simHasStarted = true;
 
-      // only enter this if we are validating the api
-      if ( VALIDATING ) {
+      // only enter this if we are validating the api and not printing the elements baseline
+      if ( phet.phetio.queryParameters.phetioValidateAPI && !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
         // check to make sure all phetioElementAPI entries were used.  If an entry wasn't used, throw an assertion
         // error because the sim is missing something it is supposed to have.
         // Don't check for this when generating the API file from the code.
         for ( const phetioID in window.phet.phetio.phetioElementsBaseline ) {
           if ( window.phet.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) && !phetioObjectMap[ phetioID ] ) {
-            this.apiMismatches.push( {
+            this.addError( {
               phetioID: phetioID,
               stack: new Error().stack,
               ruleInViolation: '5. When the sim is finished starting up, all schema entries must be registered.',
@@ -122,14 +136,36 @@ define( require => {
           }
         }
 
+        this.assertOutIfErrorsPresent();
+      }
+    }
 
-        // if there are any api mismatches
-        if ( assert && this.apiMismatches.length > 0 ) {
-          console.log( 'mismatches:', this.apiMismatches );
-          assert( false, 'api mismatches present:\n' + this.apiMismatches.map(
-            mismatchData => `\n${mismatchData.phetioID}:  ${mismatchData.message}`
-          ) );
-        }
+    /**
+     * If there are errors, then assert out and log them.
+     * @private
+     */
+    assertOutIfErrorsPresent() {
+
+      // if there are any api mismatches
+      if ( assert && this.apiMismatches.length > 0 ) {
+        console.log( 'mismatches:', this.apiMismatches );
+        assert( false, 'api mismatches present:\n' + this.apiMismatches.map(
+          mismatchData => `\n${mismatchData.phetioID}:  ${mismatchData.ruleInViolation}`
+        ) );
+      }
+    }
+
+    /**
+     * Add an api error to the list to be flushed on sim completion, or immediately if the sim has already started.
+     * @param {Object} apiErrorObject - see doc for this.apiMismatches
+     * @private
+     */
+    addError( apiErrorObject ) {
+      this.apiMismatches.push( apiErrorObject );
+
+      // if the sim has already started, then immediately error out
+      if ( this.simHasStarted ) {
+        this.assertOutIfErrorsPresent();
       }
     }
   }
