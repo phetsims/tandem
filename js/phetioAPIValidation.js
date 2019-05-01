@@ -117,7 +117,6 @@ define( require => {
      * @public
      */
     onSimStarted( phetioObjectMap ) {
-      this.simHasStarted = true;
 
       // (a) When screens are specified, there will be many things in the baseline file but not in the sim.  Those will
       // not be validated.
@@ -143,6 +142,7 @@ define( require => {
 
         this.assertOutIfErrorsPresent();
       }
+      this.simHasStarted = true;
     }
 
     /**
