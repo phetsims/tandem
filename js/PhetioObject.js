@@ -107,7 +107,7 @@ define( function( require ) {
     this.phetioHighFrequency = null;
 
     // @private {boolean} - This indicates a (usually high-frequency) event that is required for
-    // visual playbacks, but can be otherwise overwhelming.  For instance, stepSimulationEmitter emits dt's that are critical to playbacks
+    // visual playbacks, but can be otherwise overwhelming.  For instance, stepSimulationAction emits dt's that are critical to playbacks
     // but not helpful when reading console: colorized.
     this.phetioPlayback = null;
 
