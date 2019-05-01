@@ -145,7 +145,11 @@ define( require => {
       const phetioID = phetioObject.tandem.phetioID;
 
       // if it isn't dynamic, then it shouldn't be removed during the lifetime of the sim.
-      if ( !phetioObject.tandem.isGroupMemberOrDescendant() ) {
+      if ( !phetioObject.tandem.isGroupMemberOrDescendant() &&
+
+           // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
+           phetioID.indexOf( '~' ) === -1
+      ) {
         this.addError( {
           phetioID: phetioID,
           ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.'
