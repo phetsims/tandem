@@ -119,8 +119,13 @@ define( require => {
     onSimStarted( phetioObjectMap ) {
       this.simHasStarted = true;
 
-      // only enter this if we are validating the api and not printing the elements baseline
-      if ( phet.phetio.queryParameters.phetioValidateAPI && !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
+      // (a) When screens are specified, there will be many things in the baseline file but not in the sim.  Those will
+      // not be validated.
+      // (b) Allow developers to opt-out of checking
+      // (c) When printing a new baseline file, we do not compare against the prior stale baseline file.
+      if ( phet.chipper.queryParameters.screens === null &&
+           phet.phetio.queryParameters.phetioValidateAPI &&
+           !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
         // check to make sure all phetioElementAPI entries were used.  If an entry wasn't used, throw an assertion
         // error because the sim is missing something it is supposed to have.
