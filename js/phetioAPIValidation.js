@@ -148,7 +148,7 @@ define( require => {
       if ( !phetioObject.tandem.isGroupMemberOrDescendant() ) {
         this.addError( {
           phetioID: phetioID,
-          ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.',
+          ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.'
         } );
       }
     }
