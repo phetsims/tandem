@@ -78,7 +78,6 @@ define( require => {
           if ( !baseline ) {
             this.addError( {
               phetioID: tandem.phetioID,
-              stack: new Error().stack,
               ruleInViolation: '3. Any registered PhetioObject must be included in the schema',
               message: 'no baseline schema found for phetioID',
               concretePhetioID: concretePhetioID
@@ -90,7 +89,6 @@ define( require => {
           if ( !_.isEqual( baseline, phetioObjectBaselineMetadata ) ) {
             this.addError( {
               phetioID: concretePhetioID,
-              stack: new Error().stack,
               ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
               message: 'baseline schema does not match PhetioObject computed baseline metadata',
               baselineSchema: baseline,
@@ -104,7 +102,6 @@ define( require => {
         if ( this.simHasStarted && !phetio.PhetioIDUtils.isDynamicElement( tandem.phetioID ) ) {
           this.addError( {
             phetioID: tandem.phetioID,
-            stack: new Error().stack,
             ruleInViolation: '4. After startup, only dynamic instances can be registered.'
           } );
         }
@@ -133,7 +130,6 @@ define( require => {
           if ( window.phet.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) && !phetioObjectMap[ phetioID ] ) {
             this.addError( {
               phetioID: phetioID,
-              stack: new Error().stack,
               ruleInViolation: '5. When the sim is finished starting up, all schema entries must be registered.',
               message: 'phetioID expected but does not exist'
             } );
@@ -143,6 +139,18 @@ define( require => {
         this.assertOutIfErrorsPresent();
       }
       this.simHasStarted = true;
+    }
+
+    onPhetioObjectRemoved( phetioObject ) {
+      const phetioID = phetioObject.tandem.phetioID;
+
+      // if it isn't dynamic, then it shouldn't be removed during the lifetime of the sim.
+      if ( !phetioObject.tandem.isGroupMemberOrDescendant() ) {
+        this.addError( {
+          phetioID: phetioID,
+          ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.',
+        } );
+      }
     }
 
     /**
@@ -166,6 +174,8 @@ define( require => {
      * @private
      */
     addError( apiErrorObject ) {
+      apiErrorObject.stack = new Error().stack;
+
       this.apiMismatches.push( apiErrorObject );
 
       // if the sim has already started, then immediately error out

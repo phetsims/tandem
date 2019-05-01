@@ -41,6 +41,15 @@ define( require => {
       const prototypes = phetio.PhetioIDUtils.append( parentPhetioID, 'prototypes' );
       return phetio.PhetioIDUtils.append( prototypes, this.prototypeName );
     }
+
+    /**
+     * @override
+     * @returns {boolean}
+     * @protected
+     */
+    isGroupMember() {
+      return true;
+    }
   }
 
   return tandemNamespace.register( 'GroupMemberTandem', GroupMemberTandem );

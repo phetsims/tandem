@@ -67,7 +67,7 @@ define( require => {
         required: true
       }, options );
 
-      // @public (read-only)
+      // @public (read-only) {Tandem|null}
       this.parentTandem = parentTandem;
 
       // @public (read-only)
@@ -244,6 +244,26 @@ define( require => {
      */
     get tail() { // TODO: rename to getComponentName()
       return phetio.PhetioIDUtils.getComponentName( this.phetioID );
+    }
+
+    /**
+     * The Tandem base class is not a GroupMemberTandem, but GroupMemberTandem overrides this function to specify
+     * that it is dynamic. If effect this function is a replacement for checking `x instanceof GroupMemberTandem` in
+     * the Tandem base class.
+     * @returns {boolean}
+     * @protected
+     */
+    isGroupMember() {
+      return false;
+    }
+
+    /**
+     * Whether this tandem is a GroupMemberTandem or if any parents are. If this is the case, then this tandem is dynamic.
+     * @returns {boolean}
+     * @public
+     */
+    isGroupMemberOrDescendant() {
+      return this.isGroupMember() || ( !!this.parentTandem && this.parentTandem.isGroupMember() );
     }
 
     /**
