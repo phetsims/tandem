@@ -4,7 +4,7 @@
  * This singleton is responsible for ensuring that the phet-io api is correct through the lifetime of the simulation.
  * The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453 and is as follows:
  *
- * 1. A full schema is required
+ * 1. A full schema is required - any sim without these will have a 404, but this isn't tested in this file.
  * 2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
  * 3. Any registered PhetioObject must be included in the schema.
  * 4. After startup, only dynamic instances can be registered.
@@ -50,6 +50,11 @@ define( require => {
 
       // @private - keep track of when the sim has started.
       this.simHasStarted = false;
+
+      // @public (read-only) - whether or not validation is enabled.
+      this.enabled = phet.phetio.queryParameters.phetioValidateAPI &&
+                     window.phet.phetio.phetioElementsOverrides &&
+                     window.phet.phetio.phetioElementsBaseline;
     }
 
 
@@ -62,49 +67,44 @@ define( require => {
      * @public
      */
     onPhetioObjectPreOverrides( tandem, phetioObjectBaselineMetadata ) {
+      if ( !this.enabled ) {
+        return;
+      }
 
-      if ( phet.phetio.queryParameters.phetioValidateAPI ) {
+      if ( !this.simHasStarted && !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
-        if ( !this.simHasStarted && !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
+        const concretePhetioID = tandem.getConcretePhetioID();
+        const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
 
-          // check for existence of preloaded api schemas
-          // Testing rule: "1. A full schema is required"
-          assert && assert( window.phet.phetio.phetioElementsBaseline, 'no baseline schema found, a full schema is required.' );
-          assert && assert( window.phet.phetio.phetioElementsOverrides, 'no overrides schema found, a full schema is required' );
-
-          const concretePhetioID = tandem.getConcretePhetioID();
-          const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
-
-          if ( !baseline ) {
-            this.addError( {
-              phetioID: tandem.phetioID,
-              ruleInViolation: '3. Any registered PhetioObject must be included in the schema',
-              message: 'no baseline schema found for phetioID',
-              concretePhetioID: concretePhetioID
-            } );
-            return;
-          }
-
-          // if simulation metadata is not equal to baseline before overrides applied
-          if ( !_.isEqual( baseline, phetioObjectBaselineMetadata ) ) {
-            this.addError( {
-              phetioID: concretePhetioID,
-              ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
-              message: 'baseline schema does not match PhetioObject computed baseline metadata',
-              baselineSchema: baseline,
-              phetioObjectBaselineMetadata: phetioObjectBaselineMetadata
-            } );
-          }
-        }
-
-        // Instances should generally be created on startup.  The only instances that it's OK to create after startup
-        // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
-        if ( this.simHasStarted && !phetio.PhetioIDUtils.isDynamicElement( tandem.phetioID ) ) {
+        if ( !baseline ) {
           this.addError( {
             phetioID: tandem.phetioID,
-            ruleInViolation: '4. After startup, only dynamic instances can be registered.'
+            ruleInViolation: '3. Any registered PhetioObject must be included in the schema',
+            message: 'no baseline schema found for phetioID',
+            concretePhetioID: concretePhetioID
+          } );
+          return;
+        }
+
+        // if simulation metadata is not equal to baseline before overrides applied
+        if ( !_.isEqual( baseline, phetioObjectBaselineMetadata ) ) {
+          this.addError( {
+            phetioID: concretePhetioID,
+            ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
+            message: 'baseline schema does not match PhetioObject computed baseline metadata',
+            baselineSchema: baseline,
+            phetioObjectBaselineMetadata: phetioObjectBaselineMetadata
           } );
         }
+      }
+
+      // Instances should generally be created on startup.  The only instances that it's OK to create after startup
+      // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
+      if ( this.simHasStarted && !phetio.PhetioIDUtils.isDynamicElement( tandem.phetioID ) ) {
+        this.addError( {
+          phetioID: tandem.phetioID,
+          ruleInViolation: '4. After startup, only dynamic instances can be registered.'
+        } );
       }
     }
 
@@ -114,13 +114,14 @@ define( require => {
      * @public
      */
     onSimStarted( phetioObjectMap ) {
+      if ( !this.enabled ) {
+        return;
+      }
 
       // (a) When screens are specified, there will be many things in the baseline file but not in the sim.  Those will
       // not be validated.
-      // (b) Allow developers to opt-out of checking
-      // (c) When printing a new baseline file, we do not compare against the prior stale baseline file.
+      // (b) When printing a new baseline file, we do not compare against the prior stale baseline file.
       if ( phet.chipper.queryParameters.screens === null &&
-           phet.phetio.queryParameters.phetioValidateAPI &&
            !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
 
         // check to make sure all phetioElementAPI entries were used.  If an entry wasn't used, throw an assertion
@@ -141,7 +142,16 @@ define( require => {
       this.simHasStarted = true;
     }
 
+    /**
+     * Checks if a removed phetioObject is part of a Group
+     * @param {PhetioObject} phetioObject
+     * @public
+     */
     onPhetioObjectRemoved( phetioObject ) {
+      if ( !this.enabled ) {
+        return;
+      }
+
       const phetioID = phetioObject.tandem.phetioID;
 
       // if it isn't dynamic, then it shouldn't be removed during the lifetime of the sim.
