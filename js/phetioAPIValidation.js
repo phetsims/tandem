@@ -2,14 +2,20 @@
 
 /**
  * This singleton is responsible for ensuring that the phet-io api is correct through the lifetime of the simulation.
- * The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453 and is as follows:
+ * The phet-io api is defined through multiple preloaded files. The "elements baseline" file holds an exact match of
+ * what PhetioObject instances/metadata the sim should create on startup, where the "elements overrides" file is a
+ * sparse list that can overwrite metadata without changing the code. See `grunt generate-phet-io-elements-files` for
+ * more information. The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453 and
+ * is as follows:
  *
- * 1. A full schema is required - any sim without these will have a 404, but this isn't tested in this file.
+ * 1. A full schema is required - any phet-io brand sim without these will have a 404, but this rule isn't tested in this file.
  * 2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
  * 3. Any registered PhetioObject must be included in the schema.
  * 4. After startup, only dynamic instances can be registered.
  * 5. When the sim is finished starting up, all schema entries must be registered.
  * 6. Any static, registered PhetioObject can never be deregistered.
+ * 7. Any schema entries in the overrides file must exist in the baseline file
+ * 8. Any schema entries in the overrides file must be different from its baseline counterpart
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
@@ -55,8 +61,9 @@ define( require => {
       this.enabled = window.phet && window.phet.phetio && window.phet.phetio.queryParameters.phetioValidateAPI &&
                      window.phet.phetio.phetioElementsOverrides &&
                      window.phet.phetio.phetioElementsBaseline;
-    }
 
+      this.validateOverridesFile(); // these preloads can be validated immediately
+    }
 
     /**
      * This callback should be called before the overrides have been mixed into the PhetioObject metadata to ensure that
@@ -164,6 +171,55 @@ define( require => {
           phetioID: phetioID,
           ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.'
         } );
+      }
+    }
+
+    /**
+     * @private
+     */
+    validateOverridesFile() {
+      if ( !this.enabled ) {
+        return;
+      }
+
+      for ( const phetioID in window.phet.phetio.phetioElementsOverrides ) {
+        if ( !window.phet.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) ) {
+          this.addError( {
+            phetioID: phetioID,
+            ruleInViolation: '7. Any schema entries in the overrides file must exist in the baseline file.',
+            message: 'phetioID expected in the baseline file but does not exist'
+          } );
+        }
+
+        const override = window.phet.phetio.phetioElementsOverrides[ phetioID ];
+        const baseline = window.phet.phetio.phetioElementsBaseline[ phetioID ];
+
+        if ( Object.keys( override ).length === 0 ) {
+          this.addError( {
+            phetioID: phetioID,
+            ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+            message: 'no metadata keys found for this override.'
+          } );
+        }
+
+        for ( const metadataKey in override ) {
+          if ( !baseline.hasOwnProperty( metadataKey ) ) {
+            this.addError( {
+              phetioID: phetioID,
+              ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+              message: `phetioID metadata key not found in the baseline: ${metadataKey}`
+            } );
+          }
+          if ( override[ metadataKey ] === baseline[ metadataKey ] ) {
+            this.addError( {
+              phetioID: phetioID,
+              ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+              message: 'phetioID metadata override value is the same as the corresponding metadata value in the baseline.'
+            } );
+          }
+        }
+
+        this.assertOutIfErrorsPresent();
       }
     }
 
