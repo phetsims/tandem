@@ -52,7 +52,7 @@ define( require => {
       this.simHasStarted = false;
 
       // @public (read-only) - whether or not validation is enabled.
-      this.enabled = phet.phetio.queryParameters.phetioValidateAPI &&
+      this.enabled = window.phet && window.phet.phetio && window.phet.phetio.queryParameters.phetioValidateAPI &&
                      window.phet.phetio.phetioElementsOverrides &&
                      window.phet.phetio.phetioElementsBaseline;
     }
