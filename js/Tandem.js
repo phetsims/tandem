@@ -347,6 +347,26 @@ define( require => {
              // run with partial tandem coverage and see which are missing.
              !phet.phetio.queryParameters.phetioPrintMissingTandems;
     }
+
+    /**
+     * Given a phetioID, recursively create the Tandem structure needed to return a {Tandem} with the given phetioID.
+     * This method is mosly to support a deprecated way of handling groups and state, please see @zepumph or @samreid
+     * before using.
+     * @deprecated
+     * @param {string} phetioID
+     * @returns {Tandem}
+     * @public
+     */
+    static createFromPhetioID( phetioID ) {
+      return phetioID.split( '.' ).reduce( ( tandem, nextComponent ) => {
+
+        // first call case where tandem starts as the first string in the list
+        if ( typeof tandem === 'string' ) {
+          tandem = new Tandem( null, tandem );
+        }
+        return tandem.createTandem( nextComponent );
+      } );
+    }
   }
 
   // The next few statics are created outside the static block because they instantiate Tandem instances.
@@ -407,20 +427,16 @@ define( require => {
      * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
      * @param {Tandem} parentTandem
      * @param {string} id - id as a string (or '' for a root id)
-     * @param {string} prefix
      * @constructor
      * @deprecated - see Group.js for the way of the future
      * @private create with Tandem.createGroupTandem
      */
-    constructor( parentTandem, id, prefix ) {
+    constructor( parentTandem, id ) {
 
       super( parentTandem, id );
 
       // @private for generating indices from a pool
       this.groupElementIndex = 0;
-
-      // @private
-      this.prefix = prefix || 'element';
     }
 
     /**
@@ -429,7 +445,7 @@ define( require => {
      * @public
      */
     createNextTandem() {
-      return this.createTandem( this.prefix + '~' + ( this.groupElementIndex++ ) );
+      return Tandem.createFromPhetioID( this.phetioID + '~' + ( this.groupElementIndex++ ) );
     }
   }
 
