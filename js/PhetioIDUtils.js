@@ -32,12 +32,15 @@
      * -->  'myScreen.myControlPanel.myComboBox'
      * @public
      * @param {string} phetioID
-     * @param {string} componentName
+     * @param {string|string[]} componentNames
      * @returns {string}
      */
-    append: function( phetioID, componentName ) {
-      assert && assert( componentName.indexOf( SEPARATOR ) === -1, 'separator appears in componentName: ' + componentName );
-      return phetioID + SEPARATOR + componentName;
+    append: function( phetioID, ...componentNames ) {
+      componentNames.forEach( componentName => {
+        assert && assert( componentName.indexOf( SEPARATOR ) === -1, 'separator appears in componentName: ' + componentName );
+        phetioID += SEPARATOR + componentName;
+      } );
+      return phetioID;
     },
 
     // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
@@ -93,13 +96,12 @@
      * The root sim id has a nested "general" id which contains several simulation-level components.  This
      * method can be used for convenience in accessing its children.
      * @param {Client} Client - the Client type, not a Client instance
-     * @param {string} componentName
+     * @param {string|string[]} componentNames
      * @returns {string}
      * @public
      */
-    getGeneralID: function( Client, componentName ) {
-      var general = phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, 'general' );
-      return phetio.PhetioIDUtils.append( general, componentName );
+    getGeneralID: function( Client, ...componentNames ) {
+      return phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, ...[ 'general', ...componentNames ] );
     },
 
     // TODO: Should this be reimplemented to compare to concrete phetioID? github.com/phetsims/phet-io/issues/1442

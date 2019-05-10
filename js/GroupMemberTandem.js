@@ -38,8 +38,7 @@ define( require => {
      * @override
      */
     appendConcreteSuffix( parentPhetioID ) {
-      const prototypes = phetio.PhetioIDUtils.append( parentPhetioID, 'prototypes' );
-      return phetio.PhetioIDUtils.append( prototypes, this.prototypeName );
+      return phetio.PhetioIDUtils.append( parentPhetioID, 'prototypes', this.prototypeName );
     }
 
     /**
