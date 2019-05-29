@@ -396,6 +396,22 @@ define( function( require ) {
     }
   }, {
 
+
+    /**
+     * @public
+     * @param {Object} defaults
+     * @param {Object} options - mutated to included merged phetioComponentOptions
+     */
+    mergePhetioComponentOptions: function( defaults, options ) {
+      if ( assert && options.phetioComponentOptions ) {
+        assert( options.phetioComponentOptions instanceof Object );
+        assert( !options.phetioComponentOptions.tandem, 'tandem not supported in phetioComponentOptions' );
+        assert( !options.phetioComponentOptions.phetioType, 'phetioType not supported in phetioComponentOptions' );
+        assert( !options.phetioComponentOptions.phetioEventType, 'phetioEventType not supported in phetioComponentOptions' );
+      }
+      options.phetioComponentOptions = _.merge( defaults, options.phetioComponentOptions );
+    },
+
     /**
      * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
      * for baseline (before object fully constructed we use object) and after fully constructed
