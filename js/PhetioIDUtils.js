@@ -1,8 +1,11 @@
-// Copyright 2017, University of Colorado Boulder
+// Copyright 2017-2019, University of Colorado Boulder
 
 /**
  * Utilities for creating and manipulating the unique identifiers assigned to instrumented PhET-iO instances, aka
  * phetioIDs.
+ *
+ * Many of these functions' jsdoc is rendered and visible publicly to PhET-iO client. Those sections should be
+ * marked, see top level comment in Client.js about private vs public documentation
  *
  * @author Chris Malley (PixelZoom, Inc.)
  * @author Sam Reid (PhET Interactive Simulations)
@@ -24,7 +27,7 @@
    */
   window.phetio.PhetioIDUtils = {
 
-    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Appends a component to an existing phetioID to create a new unique phetioID for the component.
      * @example
@@ -43,7 +46,7 @@
       return phetioID;
     },
 
-    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Given a phetioID for a component (instance), get the part of that id that pertains to the component.
      * @example
@@ -64,7 +67,7 @@
       }
     },
 
-    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Given a phetioID for a component, get the phetioID of the parent component.
      * @example
@@ -80,7 +83,7 @@
       return phetioID.substring( 0, indexOfLastSeparator );
     },
 
-    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Given a phetioID for a instrumented object, get a string that can be used to assign an ID to a DOM element
      * @param {string} phetioID
@@ -91,7 +94,7 @@
       return 'phetioID:' + phetioID;
     },
 
-    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The root sim id has a nested "general" id which contains several simulation-level components.  This
      * method can be used for convenience in accessing its children.
@@ -105,7 +108,7 @@
     },
 
     // TODO: Should this be reimplemented to compare to concrete phetioID? github.com/phetsims/phet-io/issues/1442
-    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely. See Tandem.getConcretePhetioID().
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely. See Tandem.getConcretePhetioID().
     /**
      * If the PhET-iO element was created dynamically, after the sim was constructed.
      * @param {string} phetioID
@@ -116,7 +119,7 @@
       return phetioID.indexOf( GROUP_SEPARATOR_TOKEN ) >= 0;
     },
 
-    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The separator used to piece together a phet-io id.
      * @type {String}
@@ -125,7 +128,7 @@
      */
     SEPARATOR: SEPARATOR,
 
-    // Private doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The separator used to specify the count of a member in a group.
      * @type {String}
