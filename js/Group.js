@@ -18,7 +18,7 @@ define( require => {
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   // constants
-  const GROUP_SEPARATOR_TOKEN = phetio.PhetioIDUtils.GROUP_SEPARATOR_TOKEN;
+  const GROUP_SEPARATOR = phetio.PhetioIDUtils.GROUP_SEPARATOR;
 
   class Group extends ObservableArray {
 
@@ -66,14 +66,14 @@ define( require => {
       assert && assert( this.prototypeNames.indexOf( prototypeName ) >= 0, `unexpected prototypeName: ${prototypeName}` );
       return new GroupMemberTandem(
         this.tandem,
-        this.prefix + GROUP_SEPARATOR_TOKEN + ( this.groupElementIndex++ ),
+        this.prefix + GROUP_SEPARATOR + ( this.groupElementIndex++ ),
         prototypeName,
         this.tandem.getExtendedOptions( options )
       );
     }
 
     isGroupMemberID( componentName ) {
-      return componentName.indexOf( this.prefix + GROUP_SEPARATOR_TOKEN ) === 0;
+      return componentName.indexOf( this.prefix + GROUP_SEPARATOR ) === 0;
     }
 
     clearGroup() {
@@ -84,7 +84,7 @@ define( require => {
     }
 
     createNextGroupMember( prototypeName ) {
-      return this.createGroupMember( this.prefix + GROUP_SEPARATOR_TOKEN + ( this.groupElementIndex++ ), prototypeName );
+      return this.createGroupMember( this.prefix + GROUP_SEPARATOR + ( this.groupElementIndex++ ), prototypeName );
     }
 
     createGroupMember( componentName, prototypeName ) {

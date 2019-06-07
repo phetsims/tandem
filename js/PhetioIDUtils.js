@@ -18,7 +18,7 @@
 
   // constants
   var SEPARATOR = '.';
-  var GROUP_SEPARATOR_TOKEN = '_';
+  var GROUP_SEPARATOR = '_';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -116,7 +116,7 @@
      * @public
      */
     isDynamicElement: function( phetioID ) {
-      return phetioID.indexOf( GROUP_SEPARATOR_TOKEN ) >= 0;
+      return phetioID.indexOf( GROUP_SEPARATOR ) >= 0;
     },
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
@@ -135,6 +135,6 @@
      * @constant
      * @public
      */
-    GROUP_SEPARATOR_TOKEN: GROUP_SEPARATOR_TOKEN
+    GROUP_SEPARATOR: GROUP_SEPARATOR
   };
 } )();
