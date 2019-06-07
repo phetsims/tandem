@@ -34,9 +34,9 @@
      * append( 'myScreen.myControlPanel', 'myComboBox' )
      * -->  'myScreen.myControlPanel.myComboBox'
      * @public
-     * @param {string} phetioID
-     * @param {string|string[]} componentNames
-     * @returns {string}
+     * @param {string} phetioID - the ID of the PhET-iO element
+     * @param {string|string[]} componentNames - the name or list of names to append to the ID
+     * @returns {string} - the appended phetioID
      */
     append: function( phetioID, ...componentNames ) {
       componentNames.forEach( componentName => {
@@ -48,13 +48,14 @@
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
-     * Given a phetioID for a component (instance), get the part of that id that pertains to the component.
+     * Given a phetioID for a PhET-iO element, get the part of that ID that pertains to the component (basically the
+     * tail piece).
      * @example
      * getComponentName( 'myScreen.myControlPanel.myComboBox' )
      * -->  'myComboBox'
      * @public
-     * @param {string} phetioID
-     * @returns {string}
+     * @param {string} phetioID - the ID of the PhET-iO element
+     * @returns {string} - the component name
      */
     getComponentName: function( phetioID ) {
       assert && assert( phetioID.length > 0 );
@@ -69,13 +70,13 @@
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
-     * Given a phetioID for a component, get the phetioID of the parent component.
+     * Given a phetioID for a PhET-iO element, get the phetioID of the parent component.
      * @example
      * getParentID( 'myScreen.myControlPanel.myComboBox' )
      * -->  'myScreen.myControlPanel'
      * @public
-     * @param {string} phetioID
-     * @returns {string}
+     * @param {string} phetioID - the ID of the PhET-iO element
+     * @returns {string} - the phetioID of the parent
      */
     getParentID: function( phetioID ) {
       var indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
@@ -86,7 +87,7 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Given a phetioID for a instrumented object, get a string that can be used to assign an ID to a DOM element
-     * @param {string} phetioID
+     * @param {string} phetioID - the ID of the PhET-iO element
      * @returns {string}
      * @public
      */
@@ -96,11 +97,17 @@
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
-     * The root sim id has a nested "general" id which contains several simulation-level components.  This
-     * method can be used for convenience in accessing its children.
+     * The root sim ID has a nested "general" ID which contains several simulation-level components.  This
+     * method can be used for convenience in accessing its child elements.
      * @param {Client} Client - the Client type, not a Client instance
-     * @param {string|string[]} componentNames
+     * @param {string|string[]} componentNames - to append to the general ID stub
      * @returns {string}
+     * @example
+     * getGeneralID( phetio.Client, 'activeProperty' );
+     * -->  'faradaysLaw.general.activeProperty'
+     *
+     * getGeneralID( phetio.Client, [ 'mySubComponent', 'activeProperty' ] );
+     * -->  'faradaysLaw.general.mySubComponent.activeProperty'
      * @public
      */
     getGeneralID: function( Client, ...componentNames ) {
@@ -111,7 +118,7 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely. See Tandem.getConcretePhetioID().
     /**
      * If the PhET-iO element was created dynamically, after the sim was constructed.
-     * @param {string} phetioID
+     * @param {string} phetioID - the ID of the PhET-iO element
      * @returns {boolean}
      * @public
      */
@@ -121,7 +128,7 @@
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
-     * The separator used to piece together a phet-io id.
+     * The separator used to piece together a phet-io ID.
      * @type {String}
      * @constant
      * @public
