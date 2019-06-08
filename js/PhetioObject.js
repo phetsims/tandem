@@ -5,34 +5,35 @@
  * as a "PhET-iO Element".
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var Enumeration = require( 'PHET_CORE/Enumeration' );
-  var EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
-  var inherit = require( 'PHET_CORE/inherit' );
-  var LinkedElementIO = require( 'TANDEM/LinkedElementIO' );
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
-  var Tandem = require( 'TANDEM/Tandem' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const Enumeration = require( 'PHET_CORE/Enumeration' );
+  const EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
+  const inherit = require( 'PHET_CORE/inherit' );
+  const LinkedElementIO = require( 'TANDEM/LinkedElementIO' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
+  const Tandem = require( 'TANDEM/Tandem' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   // ifphetio
-  var dataStream = require( 'ifphetio!PHET_IO/dataStream' );
+  const dataStream = require( 'ifphetio!PHET_IO/dataStream' );
 
   // constants
-  var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
-  var EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ] );
+  const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
+  const EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ] );
 
   // Flag that indicates a high frequency message was skipped.
-  var SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
+  const SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
 
   // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
-  var EMPTY_OBJECT = {};
+  const EMPTY_OBJECT = {};
 
-  var DEFAULTS = {
+  const DEFAULTS = {
     tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
                                       // `Tandem.tandemRequired` to enforce its presence
     phetioType: ObjectIO,             // Supply the appropriate IO type
@@ -53,7 +54,7 @@ define( function( require ) {
 
   // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
   // DEFAULTS to apply to all subcomponents
-  var SUPPORTED_PHET_IO_COMPONENT_OPTIONS = _.keys( DEFAULTS ).concat( [
+  const SUPPORTED_PHET_IO_COMPONENT_OPTIONS = _.keys( DEFAULTS ).concat( [
 
     // NodeIO
     'visibleProperty', 'pickableProperty', 'opacityProperty',
@@ -64,7 +65,7 @@ define( function( require ) {
     // PhetioButtonIO defines a nested pickableProperty, but it does not support phetioComponentOptions
   ] );
 
-  var OPTIONS_KEYS = _.keys( DEFAULTS );
+  const OPTIONS_KEYS = _.keys( DEFAULTS );
 
   /**
    * @param {Object} [options]
@@ -138,8 +139,8 @@ define( function( require ) {
 
       // Wrap the prototype dispose method with a check. NOTE: We will not catch devious cases where the dispose() is
       // overridden after the Node constructor (which may happen).
-      var protoDispose = this.dispose;
-      this.dispose = function() {
+      const protoDispose = this.dispose;
+      this.dispose = () => {
         assert && assert( !this.isDisposed, 'This PhetioObject has already been disposed, and cannot be disposed again' );
         protoDispose.call( this );
         assert && assert( this.isDisposed, 'PhetioObject.dispose() call is missing from an overridden dispose method' );
@@ -149,6 +150,7 @@ define( function( require ) {
 
   tandemNamespace.register( 'PhetioObject', PhetioObject );
 
+  // Since PhetioObject is extended with inherit (e.g., SCENERY/Node), this cannot be an ES6 class
   inherit( Object, PhetioObject, {
 
     /**
@@ -160,7 +162,7 @@ define( function( require ) {
       assert && assert( options, 'initializePhetioObject must be called with options' );
 
       // TODO: garbage-free implementation
-      var intersection = _.intersection( _.keys( options ), OPTIONS_KEYS );
+      const intersection = _.intersection( _.keys( options ), OPTIONS_KEYS );
       if ( intersection.length === 0 ) {
         return; // no PhetioObject keys provided, perhaps they will be provided in a subsequent mutate call.
       }
@@ -174,8 +176,8 @@ define( function( require ) {
       if ( assert && options.phetioType && PHET_IO_ENABLED ) {
         assert && assert( options.phetioType.documentation, 'There must be a documentation string for each IO Type.' );
 
-        for ( var methodName in options.phetioType.methods ) {
-          var method = options.phetioType.methods[ methodName ];
+        for ( const methodName in options.phetioType.methods ) {
+          const method = options.phetioType.methods[ methodName ];
 
           if ( typeof method === 'function' ) {
 
@@ -183,7 +185,7 @@ define( function( require ) {
             // need to be checked.
           }
           else {
-            var IOType = options.phetioType;
+            const IOType = options.phetioType;
 
             // If you get one of these assertion errors, go to the IOType definition file and check its methods
             assert && assert( !!method.returnType, IOType.typeName + '.' + methodName + ' needs a returnType' );
@@ -325,7 +327,7 @@ define( function( require ) {
      */
     phetioEndEvent: function() {
 
-      var topMessageIndex = this.phetioMessageStack.pop();
+      const topMessageIndex = this.phetioMessageStack.pop();
 
       // The message was started as a high frequency event to be skipped, so the end is a no-op
       if ( topMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
@@ -366,7 +368,7 @@ define( function( require ) {
      * @public
      */
     dispose: function() {
-      var self = this;
+      const self = this;
       assert && assert( !this.isDisposed, 'PhetioObject can only be disposed once' );
 
       // In order to support the structured data stream, PhetioObjects must end the messages in the correct
@@ -374,7 +376,7 @@ define( function( require ) {
       // related to the endEvent.  Note this means it is acceptable (and expected) for endEvent() to be called on disposed PhetioObjects.
       //
       // The phetioEvent stack should resolve by the next clock tick, so that's when we check it.
-      assert && setTimeout( function() {
+      assert && setTimeout( () => {
         assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
       }, 0 );
 
@@ -387,9 +389,7 @@ define( function( require ) {
       }
 
       // Dispose LinkedElements
-      this.linkedElements.forEach( function( linkedElement ) {
-        linkedElement.dispose();
-      } );
+      this.linkedElements.forEach( linkedElement => linkedElement.dispose() );
       this.linkedElements.length = 0;
 
       this.isDisposed = true;
