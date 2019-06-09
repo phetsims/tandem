@@ -419,7 +419,6 @@ define( require => {
     }
   }, {
 
-
     /**
      * @public
      * @param {Object} defaults
