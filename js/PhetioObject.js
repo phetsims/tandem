@@ -2,7 +2,8 @@
 
 /**
  * Base type that provides PhET-iO features. An instrumented PhetioObject is referred to on the wrapper side/design side
- * as a "PhET-iO Element".
+ * as a "PhET-iO Element".  Note that sims may have hundreds or thousands of PhetioObjects, so performance and memory
+ * considerations are important.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -27,7 +28,7 @@ define( require => {
   const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
   const EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ] );
 
-  // Flag that indicates a high frequency message was skipped.
+  // Indicates a high frequency message was skipped.
   const SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
 
   // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
@@ -35,7 +36,7 @@ define( require => {
 
   const DEFAULTS = {
     tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
-                                      // `Tandem.tandemRequired` to enforce its presence
+                                      // `Tandem.tandemRequired` to enforce that an actual tandem is passed in.
     phetioType: ObjectIO,             // Supply the appropriate IO type
     phetioDocumentation: '',          // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
     phetioState: true,                // When true, includes the instance in the PhET-iO state
