@@ -159,7 +159,7 @@ define( require => {
    * @returns {boolean}
    */
   const specifiesPhetioObjectKey = options => {
-    for ( let key in options ) {
+    for ( const key in options ) {
       if ( options.hasOwnProperty( key ) ) {
         if ( OPTIONS_KEYS.indexOf( key ) >= 0 ) {
           return true;
@@ -183,7 +183,6 @@ define( require => {
       assert && assert( options, 'initializePhetioObject must be called with options' );
 
       const hasKey = specifiesPhetioObjectKey( options );
-      const intersection = _.intersection( _.keys( options ), OPTIONS_KEYS ).length > 0;
 
       if ( !hasKey ) {
         return; // no PhetioObject keys provided, perhaps they will be provided in a subsequent mutate call.
