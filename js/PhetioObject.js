@@ -159,7 +159,7 @@ define( require => {
    * @returns {boolean}
    */
   const specifiesPhetioObjectKey = options => {
-    for ( var key in options ) {
+    for ( let key in options ) {
       if ( options.hasOwnProperty( key ) ) {
         if ( OPTIONS_KEYS.indexOf( key ) >= 0 ) {
           return true;
