@@ -151,10 +151,30 @@ define( require => {
 
   tandemNamespace.register( 'PhetioObject', PhetioObject );
 
+  /**
+   * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to
+   * _.intersection( _.keys( options ), OPTIONS_KEYS ).length>0 but implemented imperatively to avoid memory or
+   * performance issues.
+   * @param {Object} options
+   * @returns {boolean}
+   */
+  const specifiesPhetioObjectKey = options => {
+    for ( var key in options ) {
+      if ( options.hasOwnProperty( key ) ) {
+        if ( OPTIONS_KEYS.indexOf( key ) >= 0 ) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
   // Since PhetioObject is extended with inherit (e.g., SCENERY/Node), this cannot be an ES6 class
   inherit( Object, PhetioObject, {
 
     /**
+     * Like SCENERY/Node, PhetioObject can be configured during construction or later with a mutate call.
+     *
      * @param {Object} baseOptions - only applied if options keys intersect OPTIONS_KEYS
      * @param {Object} options
      * @protected
@@ -162,13 +182,15 @@ define( require => {
     initializePhetioObject: function( baseOptions, options ) {
       assert && assert( options, 'initializePhetioObject must be called with options' );
 
-      // TODO: garbage-free implementation
-      const intersection = _.intersection( _.keys( options ), OPTIONS_KEYS );
-      if ( intersection.length === 0 ) {
+      const hasKey = specifiesPhetioObjectKey( options );
+      const intersection = _.intersection( _.keys( options ), OPTIONS_KEYS ).length > 0;
+
+      if ( !hasKey ) {
         return; // no PhetioObject keys provided, perhaps they will be provided in a subsequent mutate call.
       }
       assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
+      // TODO: Can/should this be moved to phetioAPIValidation?  If so, should it be guarded by phetioAPIValidation.enabled?
       assert && assert( options.tandem, 'Component was missing its tandem' );
 
       const phetioID = options.tandem.phetioID;
