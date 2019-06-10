@@ -5,6 +5,7 @@
  * registry. It is used to support PhET-iO.
  *
  * @author Sam Reid (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 define( require => {
   'use strict';
@@ -17,11 +18,12 @@ define( require => {
   const packageString = require( 'text!REPOSITORY/package.json' );
 
   // constants
-  const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so requiring packageJSON doesn't work
+  const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
   const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
   const GROUP_SEPARATOR = phetio.PhetioIDUtils.GROUP_SEPARATOR;
+  const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioPrintMissingTandems;
 
-  // used to keep track of missing tandems, see phet.phetio.queryParameters.phetioPrintMissingTandems
+  // used to keep track of missing tandems
   const missingTandems = {
     required: [],
     optional: [],
@@ -49,28 +51,28 @@ define( require => {
      */
     constructor( parentTandem, name, options ) {
       assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
-
       assert && assert( typeof name === 'string' && name.length > 0, 'name must be defined' );
-      assert && assert( name.indexOf( phetio.PhetioIDUtils.SEPARATOR ) === -1, 'createTandem cannot accept dots: ' + name );
-      assert && assert( name.indexOf( '-' ) === -1, 'createTandem cannot accept dash: ' + name );
-      assert && assert( name.indexOf( ' ' ) === -1, 'name cannot contain whitespace: ' + name );
+      assert && assert( name.indexOf( phetio.PhetioIDUtils.SEPARATOR ) === -1, 'SEPARATOR is reserved' );
+      assert && assert( name.indexOf( '-' ) === -1, 'dash is reserved' );
+      assert && assert( name.indexOf( ' ' ) === -1, 'whitespace is reserved' );
 
       // options (even subtype options) must be stored on the instance so they can be passed through to children
-      // Note: Make sure that added options here are also added to options for inheritance and/or
-      // for composition (createTandem/parentTandem) as they make sense.
+      // Note: Make sure that added options here are also added to options for inheritance and/or for composition
+      // (createTandem/parentTandem/getExtendedOptions) as appropriate.
       options = _.extend( {
 
-        // if the tandem is not supplied and required, an error will be thrown.
-        supplied: true,
-
         // required === false means it is an optional tandem
-        required: true
+        required: true,
+
+        // if the tandem is required but not supplied, an error will be thrown.
+        supplied: true
       }, options );
 
       // @public (read-only) {Tandem|null}
       this.parentTandem = parentTandem;
 
-      // @public (read-only)
+      // @public (read-only) - the last part of the tandem (after the last .), used e.g., in Joist for creating button
+      // names dynamically based on screen names
       this.name = name;
 
       // @public (read-only)
@@ -84,9 +86,9 @@ define( require => {
     }
 
     /**
-     * Adds a PhetioObject.  For example, it could be an axon Property, scenery Node or Sun button.  Each item should
-     * only be added to the registry once, but that is not enforced here in Tandem.  For PhET-iO, phetioEngine.js
-     * enforces one entry per ID in phetio.phetioObjectAdded
+     * Adds a PhetioObject.  For example, it could be an axon Property, SCENERY/Node or SUN/RoundPushButton.  Each item
+     * should only be added to the registry once, but that is not enforced here in Tandem since Tandem does not maintain
+     * the registry.  For PhET-iO, phetioEngine.js enforces one entry per ID in phetio.phetioObjectAdded.
      *
      * This is used to register PhetioObjects with PhET-iO.
      * @param {PhetioObject} phetioObject
@@ -106,17 +108,17 @@ define( require => {
         }
 
         // phetioPrintMissingTandems flag is present for a tandem that is required but not supplied.
-        if ( phet.phetio.queryParameters.phetioPrintMissingTandems && ( this.required && !this.supplied ) ) {
+        if ( PRINT_MISSING_TANDEMS && ( this.required && !this.supplied ) ) {
           missingTandems.required.push( { phetioID: this.phetioID, stack: new Error().stack } );
         }
 
         // If tandem is optional, then don't add it
         if ( !this.required && !this.supplied ) {
-          if ( phet.phetio.queryParameters.phetioPrintMissingTandems ) {
+          if ( PRINT_MISSING_TANDEMS ) {
             const stackTrace = new Error().stack;
 
-            // Generally Font is not desired because there are so many untandemized Fonts.
-            if ( stackTrace.indexOf( 'PhetFont' ) === -1 ) {
+            // Report tandems that are optional but not supplied, but not for Fonts because they are too numerous.
+            if ( stackTrace.indexOf( 'Font' ) === -1 ) {
               missingTandems.optional.push( { phetioID: this.phetioID, stack: stackTrace } );
             }
           }
@@ -143,6 +145,9 @@ define( require => {
      * @public
      */
     removeInstance( phetioObject ) {
+
+      // TODO: Should we add code to make it possible to remove elements from buffer?
+      assert && assert( launched, 'removing from buffer not yet supported.' );
       if ( !this.required && !this.supplied ) {
         return;
       }
@@ -181,8 +186,7 @@ define( require => {
     createTandem( id, options ) {
 
       // This assertion isn't in the constructor because a subtype of Tandem allows this character.
-      assert && assert( id.indexOf( GROUP_SEPARATOR ) === -1,
-        `invalid character in non-group tandem: ${GROUP_SEPARATOR}` );
+      assert && assert( id.indexOf( GROUP_SEPARATOR ) === -1, `invalid character in non-group tandem: ${GROUP_SEPARATOR}` );
 
       return new Tandem( this, id, this.getExtendedOptions( options ) );
     }
@@ -229,21 +233,7 @@ define( require => {
      * @public
      */
     createGroupTandem( id, elementPrefix ) {
-
-      assert && assert( id.indexOf( '.' ) === -1, 'createGroupTandem cannot accept dots: ' + id );
-      assert && assert( id.indexOf( ' ' ) === -1, 'createGroupTandem cannot accept whitespace: ' + id );
-
       return new GroupTandem( this, id, elementPrefix );
-    }
-
-    /**
-     * Get the last part of the tandem (after the last .), used in Joist for creating button names dynamically based
-     * on screen names
-     * @returns {string} the tail of the tandem
-     * @public
-     */
-    get tail() { // TODO: rename to getComponentName()
-      return phetio.PhetioIDUtils.getComponentName( this.phetioID );
     }
 
     /**
@@ -289,12 +279,13 @@ define( require => {
      * @static
      */
     static launch() {
-      assert && assert( !launched, 'Tandem was launched twice' );
+      assert && assert( !launched, 'Tandem cannot be launched twice' );
       launched = true;
       while ( bufferedPhetioObjects.length > 0 ) {
         const phetioObject = bufferedPhetioObjects.shift();
         phetioObject.register();
       }
+      assert && assert( bufferedPhetioObjects.length === 0, 'bufferedPhetioObjects should be empty' );
     }
 
     /**
@@ -315,6 +306,7 @@ define( require => {
      * missed.  See https://github.com/phetsims/phet-io/issues/668
      * @public
      * @static
+     * TODO: Can this be deleted?
      */
     static indicateUninstrumentedCode() {
 
@@ -327,7 +319,7 @@ define( require => {
         }
 
         // Print stack trace if query parameter supplied
-        if ( phet.phetio.queryParameters.phetioPrintMissingTandems ) {
+        if ( PRINT_MISSING_TANDEMS ) {
           missingTandems.uninstrumented.push( { stack: new Error().stack } );
         }
       }
@@ -335,7 +327,7 @@ define( require => {
 
     /**
      * Determine whether or not tandem validation is turned on for the sim.
-     * @returns {Boolean} If tandems are being validated or not.
+     * @returns {boolean} If tandems are being validated or not.
      * @public
      * @static
      */
@@ -345,7 +337,7 @@ define( require => {
 
              // If we are printing the missing tandems, then validation must be disabled because the intention is to
              // run with partial tandem coverage and see which are missing.
-             !phet.phetio.queryParameters.phetioPrintMissingTandems;
+             !PRINT_MISSING_TANDEMS;
     }
 
     /**
@@ -400,8 +392,7 @@ define( require => {
   } );
 
   /**
-   * Some common code (such as Checkbox or RadioButton) must always be instrumented and hence requires a tandem to be
-   * passed in.
+   * Some common code (such as Checkbox or RadioButton) must always be instrumented.
    * @public
    * @static
    * @type {Tandem}
@@ -409,22 +400,28 @@ define( require => {
   Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
 
     // let phetioPrintMissingTandems bypass this
-    required: PHET_IO_ENABLED && ( phet.phetio.queryParameters.phetioValidateTandems || phet.phetio.queryParameters.phetioPrintMissingTandems ),
+    required: PHET_IO_ENABLED && (
+      phet.phetio.queryParameters.phetioValidateTandems ||
+      PRINT_MISSING_TANDEMS
+    ),
     supplied: false
   } );
 
   /**
-   * Expose collected missing tandems only populated from specific query parameter, see phetioPrintMissingTandems for more
+   * Expose collected missing tandems only populated from specific query parameter, see phetioPrintMissingTandems
    * @public (phet-io internal)
    * @type {Object}
+   * @public
    */
   Tandem.missingTandems = missingTandems;
 
-  // TODO: Replace GroupTandem usages with GroupMemberTandem, see https://github.com/phetsims/tandem/issues/87
+  /**
+   * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
+   * TODO: Replace GroupTandem usages with GroupMemberTandem, see https://github.com/phetsims/tandem/issues/87
+   */
   class GroupTandem extends Tandem {
 
     /**
-     * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
      * @param {Tandem} parentTandem
      * @param {string} id - id as a string (or '' for a root id)
      * @constructor

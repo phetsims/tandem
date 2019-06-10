@@ -34,6 +34,7 @@ define( require => {
   // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
   const EMPTY_OBJECT = {};
 
+  // TODO: For the reviewer, should these be documented here or in the constructor?
   const DEFAULTS = {
     tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
                                       // `Tandem.tandemRequired` to enforce that an actual tandem is passed in.
@@ -306,6 +307,7 @@ define( require => {
         assert && assert( this.phetioWrapper, 'Can only be registered after initialization' );
       }
       this.tandem.addPhetioObject( this );
+      // TODO: prevent from happening twice
     },
 
     /**
@@ -419,6 +421,7 @@ define( require => {
   }, {
 
     /**
+     * TODO: Documentation
      * @public
      * @param {Object} defaults
      * @param {Object} options - mutated to included merged phetioComponentOptions
