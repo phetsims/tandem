@@ -1,8 +1,8 @@
 // Copyright 2015-2019, University of Colorado Boulder
 
 /**
- * Tandem is used to assign unique identifiers to PhetioObjects in PhET simulations and register/unregister them in a
- * registry. It is used to support PhET-iO.
+ * Tandem defines a set of trees that are used to assign unique identifiers to PhetioObjects in PhET simulations and
+ * register/unregister them in a registry. It is used to support PhET-iO.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -34,8 +34,8 @@ define( require => {
   const phetioObjectListeners = [];
 
   // variables
-  // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called
-  // and buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
+  // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called and
+  // buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
   let launched = false;
   const bufferedPhetioObjects = [];
 
@@ -56,6 +56,17 @@ define( require => {
       assert && assert( name.indexOf( '-' ) === -1, 'dash is reserved' );
       assert && assert( name.indexOf( ' ' ) === -1, 'whitespace is reserved' );
 
+      // @public (read-only) {Tandem|null}
+      this.parentTandem = parentTandem;
+
+      // @public (read-only) - the last part of the tandem (after the last .), used e.g., in Joist for creating button
+      // names dynamically based on screen names
+      this.name = name;
+
+      // @public (read-only)
+      this.phetioID = this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name )
+                                        : this.name;
+
       // options (even subtype options) must be stored on the instance so they can be passed through to children
       // Note: Make sure that added options here are also added to options for inheritance and/or for composition
       // (createTandem/parentTandem/getExtendedOptions) as appropriate.
@@ -67,16 +78,6 @@ define( require => {
         // if the tandem is required but not supplied, an error will be thrown.
         supplied: true
       }, options );
-
-      // @public (read-only) {Tandem|null}
-      this.parentTandem = parentTandem;
-
-      // @public (read-only) - the last part of the tandem (after the last .), used e.g., in Joist for creating button
-      // names dynamically based on screen names
-      this.name = name;
-
-      // @public (read-only)
-      this.phetioID = this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name ) : this.name;
 
       // @private
       this.required = options.required;
