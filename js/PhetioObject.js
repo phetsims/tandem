@@ -397,7 +397,8 @@ define( require => {
 
       // In order to support the structured data stream, PhetioObjects must end the messages in the correct
       // sequence, without being interrupted by dispose() calls.  Therefore, we do not clear out any of the state
-      // related to the endEvent.  Note this means it is acceptable (and expected) for endEvent() to be called on disposed PhetioObjects.
+      // related to the endEvent.  Note this means it is acceptable (and expected) for endEvent() to be called on
+      // disposed PhetioObjects.
       //
       // The phetioEvent stack should resolve by the next clock tick, so that's when we check it.
       assert && setTimeout( () => {
