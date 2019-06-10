@@ -34,7 +34,7 @@ define( require => {
   // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
   const EMPTY_OBJECT = {};
 
-  // TODO: For the reviewer, should these be documented here or in the constructor?
+  // TODO: For the reviewer, should these be documented here or in the constructor? see https://github.com/phetsims/phet-io/issues/1409
   const DEFAULTS = {
     tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
                                       // `Tandem.tandemRequired` to enforce that an actual tandem is passed in.
@@ -190,7 +190,7 @@ define( require => {
       }
       assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
-      // TODO: Can/should this be moved to phetioAPIValidation?  If so, should it be guarded by phetioAPIValidation.enabled?
+      // TODO: Can/should this be moved to phetioAPIValidation?  If so, should it be guarded by phetioAPIValidation.enabled? see https://github.com/phetsims/phet-io/issues/1409
       assert && assert( options.tandem, 'Component was missing its tandem' );
 
       const phetioID = options.tandem.phetioID;
@@ -234,7 +234,7 @@ define( require => {
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
       // overrides API file. If validation is not enabled, then we don't want to do any API work, even applying overrides.
-      // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
+      // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
       if ( PHET_IO_ENABLED && options.tandem.supplied && phetioID.indexOf( '~' ) === -1 && phetioAPIValidation.enabled ) {
 
         // Validate code baseline metadata against baseline elements schema, guard behind assert for performance.
@@ -307,7 +307,7 @@ define( require => {
         assert && assert( this.phetioWrapper, 'Can only be registered after initialization' );
       }
       this.tandem.addPhetioObject( this );
-      // TODO: prevent from happening twice
+      // TODO: prevent from happening twice, see https://github.com/phetsims/phet-io/issues/1409
     },
 
     /**
@@ -421,7 +421,7 @@ define( require => {
   }, {
 
     /**
-     * TODO: Documentation
+     * TODO: Documentation, see https://github.com/phetsims/phet-io/issues/1409
      * @public
      * @param {Object} defaults
      * @param {Object} options - mutated to included merged phetioComponentOptions
@@ -450,7 +450,7 @@ define( require => {
         phetioDocumentation: object.phetioDocumentation,
         phetioState: object.phetioState,
         phetioReadOnly: object.phetioReadOnly,
-        phetioEventType: EnumerationIO( EventType ).toStateObject( object.phetioEventType ).toLowerCase(), //TODO: https://github.com/phetsims/phet-io/issues/1427
+        phetioEventType: EnumerationIO( EventType ).toStateObject( object.phetioEventType ).toLowerCase(), //TODO: https://github.com/phetsims/phet-io/issues/1427 and https://github.com/phetsims/phet-io/issues/1409
         phetioHighFrequency: object.phetioHighFrequency,
         phetioPlayback: object.phetioPlayback,
         phetioStudioControl: object.phetioStudioControl,

@@ -147,7 +147,7 @@ define( require => {
      */
     removeInstance( phetioObject ) {
 
-      // TODO: Should we add code to make it possible to remove elements from buffer?
+      // TODO: Should we add code to make it possible to remove elements from buffer? see https://github.com/phetsims/phet-io/issues/1409
       assert && assert( launched, 'removing from buffer not yet supported.' );
       if ( !this.required && !this.supplied ) {
         return;
@@ -296,7 +296,7 @@ define( require => {
      * missed.  See https://github.com/phetsims/phet-io/issues/668
      * @public
      * @static
-     * TODO: Can this be deleted?
+     * TODO: Can this be deleted? see https://github.com/phetsims/phet-io/issues/1409
      */
     static indicateUninstrumentedCode() {
 
@@ -407,7 +407,7 @@ define( require => {
 
   /**
    * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
-   * TODO: Replace GroupTandem usages with GroupMemberTandem, see https://github.com/phetsims/tandem/issues/87
+   * TODO: Replace GroupTandem usages with GroupMemberTandem, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
    */
   class GroupTandem extends Tandem {
 
