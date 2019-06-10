@@ -19,9 +19,10 @@ define( require => {
 
   // constants
   const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
-  const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
   const GROUP_SEPARATOR = phetio.PhetioIDUtils.GROUP_SEPARATOR;
+  const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
   const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioPrintMissingTandems;
+  const VALIDATE_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
 
   // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
   const missingTandems = {
@@ -105,7 +106,7 @@ define( require => {
       if ( PHET_IO_ENABLED ) {
 
         // Throw an error if the tandem is required but not supplied
-        if ( Tandem.validationEnabled() ) {
+        if ( Tandem.errorOnFailedValidation() ) {
           assert && assert( !( this.required && !this.supplied ), 'Tandem was required but not supplied' );
         }
 
@@ -292,23 +293,19 @@ define( require => {
     }
 
     /**
-     * Determine whether or not tandem validation is turned on for the sim.
+     * Determine whether or not tandem validation failures should throw errors. If we are printing the missing tandems,
+     * then no error should be thrown so that all problems are printed.
      * @returns {boolean} If tandems are being validated or not.
      * @public
      * @static
      */
-    static validationEnabled() {
-      return PHET_IO_ENABLED &&
-             phet.phetio.queryParameters.phetioValidateTandems &&
-
-             // If we are printing the missing tandems, then validation must be disabled because the intention is to
-             // run with partial tandem coverage and see which are missing.
-             !PRINT_MISSING_TANDEMS;
+    static errorOnFailedValidation() {
+      return VALIDATE_TANDEMS && !PRINT_MISSING_TANDEMS;
     }
 
     /**
      * Given a phetioID, recursively create the Tandem structure needed to return a {Tandem} with the given phetioID.
-     * This method is mosly to support a deprecated way of handling groups and state, please see @zepumph or @samreid
+     * This method is mostly to support a deprecated way of handling groups and state, please see @zepumph or @samreid
      * before using.
      * @deprecated
      * @param {string} phetioID
@@ -366,10 +363,7 @@ define( require => {
   Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
 
     // let phetioPrintMissingTandems bypass this
-    required: PHET_IO_ENABLED && (
-      phet.phetio.queryParameters.phetioValidateTandems ||
-      PRINT_MISSING_TANDEMS
-    ),
+    required: VALIDATE_TANDEMS || PRINT_MISSING_TANDEMS,
     supplied: false
   } );
 
