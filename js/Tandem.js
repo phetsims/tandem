@@ -275,7 +275,8 @@ define( require => {
     }
 
     /**
-     * When all listeners are listening, all buffered PhetioObjects are registered.
+     * After all listeners have been added, then Tandem can be launched.  This registers all of the buffered PhetioObjects
+     * and subsequent PhetioObjects will be registered directly.
      * @public
      * @static
      */
@@ -287,18 +288,6 @@ define( require => {
         phetioObject.register();
       }
       assert && assert( bufferedPhetioObjects.length === 0, 'bufferedPhetioObjects should be empty' );
-    }
-
-    /**
-     * Catch cases where tandem is being supplied to a class that doesn't support tandem.
-     * @param {Object} [options]
-     * @public
-     * @static
-     */
-    static disallowTandem( options ) {
-      if ( Tandem.validationEnabled() ) {
-        assert && assert( !options.tandem, 'tandem is not allowed' );
-      }
     }
 
     /**
