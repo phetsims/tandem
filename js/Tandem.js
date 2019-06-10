@@ -291,31 +291,6 @@ define( require => {
     }
 
     /**
-     * When running in PhET-iO brand, some code (such as user interface components) must be instrumented for PhET-iO.
-     * Uninstrumented files should call this function to indicate they still need to be instrumented, so they aren't
-     * missed.  See https://github.com/phetsims/phet-io/issues/668
-     * @public
-     * @static
-     * TODO: Can this be deleted? see https://github.com/phetsims/phet-io/issues/1409
-     */
-    static indicateUninstrumentedCode() {
-
-      // Guard against undefined errors
-      if ( PHET_IO_ENABLED ) {
-
-        // Assert if validating tandems
-        if ( this.validationEnabled() ) {
-          assert && assert( false, 'Uninstrumented code detected' );
-        }
-
-        // Print stack trace if query parameter supplied
-        if ( PRINT_MISSING_TANDEMS ) {
-          missingTandems.uninstrumented.push( { stack: new Error().stack } );
-        }
-      }
-    }
-
-    /**
      * Determine whether or not tandem validation is turned on for the sim.
      * @returns {boolean} If tandems are being validated or not.
      * @public
