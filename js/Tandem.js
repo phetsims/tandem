@@ -23,11 +23,10 @@ define( require => {
   const GROUP_SEPARATOR = phetio.PhetioIDUtils.GROUP_SEPARATOR;
   const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioPrintMissingTandems;
 
-  // used to keep track of missing tandems
+  // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
   const missingTandems = {
     required: [],
-    optional: [],
-    uninstrumented: []
+    optional: []
   };
 
   // Listeners that will be notified when items are registered/deregistered. See doc in addPhetioObjectListener
@@ -37,6 +36,8 @@ define( require => {
   // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called and
   // buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
   let launched = false;
+
+  // {PhetioObject[]} - PhetioObjects that have been added before listeners are ready.
   const bufferedPhetioObjects = [];
 
   class Tandem {
