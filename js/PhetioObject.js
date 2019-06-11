@@ -34,23 +34,18 @@ define( require => {
   // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
   const EMPTY_OBJECT = {};
 
-  // TODO: For the reviewer, should these be documented here or in the constructor? see https://github.com/phetsims/phet-io/issues/1409
   const DEFAULTS = {
-    tandem: Tandem.optional,          // By default tandems are optional, but subtypes can specify this as
-                                      // `Tandem.tandemRequired` to enforce that an actual tandem is passed in.
-    phetioType: ObjectIO,             // Supply the appropriate IO type
+    tandem: Tandem.optional,          // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
+    phetioType: ObjectIO,             // Defines API methods, events and serialization
     phetioDocumentation: '',          // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
     phetioState: true,                // When true, includes the instance in the PhET-iO state
     phetioReadOnly: false,            // When true, you can only get values from the instance; no setting allowed.
     phetioEventType: EventType.MODEL, // Default event type for this instance, can be overridden in phetioStartEvent options
-    phetioHighFrequency: false,       // This instance emits events that are high frequency events such as mouse moves or
-                                      // stepSimulation can be omitted from data stream
-    phetioPlayback: false,            // This instance emits events that are needed for data streams intended for playback.
-                                      // See `handlePlaybackEvent.js` for wrapper-side event playback usage.
-    phetioStudioControl: true,        // By default, Studio creates controls for many types of instances.  This option
-                                      // can be set to false to direct Studio to omit the control for the instance.
+    phetioHighFrequency: false,       // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents and Client.launchSim option
+    phetioPlayback: false,            // When true, emits events for data streams for playback, see handlePlaybackEvent.js
+    phetioStudioControl: true,        // When true, Studio is allowed to create a control for this instance (if it knows how)
     phetioComponentOptions: null,     // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
-    phetioFeatured: false,            // True if this is an important instance to be "featured" in the PhET-iO API
+    phetioFeatured: false,            // When true, this is categorized as an important "featured" element in Studio.
     phetioEventMetadata: null         // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
   };
 
@@ -75,22 +70,22 @@ define( require => {
    */
   function PhetioObject( options ) {
 
-    // @public (read-only) {Tandem} - assigned in initializePhetioObject - the unique tandem for this instance
+    // @public (read-only) {Tandem} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.tandem = null;
 
-    // @public (read-only) {IOType} - assigned in initializePhetioObject - the IO type associated with this instance
+    // @public (read-only) {IOType} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioType = null;
 
-    // @public (read-only) {boolean} - assigned in initializePhetioObject - When true, included in the PhET-iO state
+    // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioState = null;
 
-    // @public (read-only) {boolean} - assigned in initializePhetioObject - When true, values can be get but not set
+    // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioReadOnly = null;
 
-    // @public (read-only) {string} - assigned in initializePhetioObject - Notes about an instance, shown in the PhET-iO Studio Wrapper
+    // @public (read-only) {string} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioDocumentation = null;
 
-    // @public (read-only) {Object} - assigned in initializePhetioObject - The wrapper instance for PhET-iO interoperation
+    // @public (read-only) {Object} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioWrapper = null;
 
     // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
@@ -103,22 +98,19 @@ define( require => {
     // @public (read-only) {boolean} - has the instance been disposed?
     this.isDisposed = false;
 
-    // @private {EventType}
+    // @private {EventType} - see docs at DEFAULTS declaration
     this.phetioEventType = null;
 
-    // @private {boolean} - If marked as phetioHighFrequency: true, the event will be omitted when the query parameter phetioEmitHighFrequencyEvents=false, also see option in Client.launchSim()
+    // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioHighFrequency = null;
 
-    // @private {boolean} - This indicates a (usually high-frequency) event that is required for
-    // visual playbacks, but can be otherwise overwhelming.  For instance, stepSimulationAction emits dt's that are critical to playbacks
-    // but not helpful when reading console: colorized.
+    // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioPlayback = null;
 
-    // @private {boolean} By default, Studio creates controls for many types of instances.  This option can be set to
-    // false to direct Studio to omit the control for the instance.
+    // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioStudioControl = null;
 
-    // @private {boolean} - See docs above
+    // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioFeatured = false;
 
     // @private {boolean} - ignoring overrides, whether the element is featured.  Used by LinkedElement
@@ -127,8 +119,7 @@ define( require => {
     // @private {Object|null}
     this.phetioEventMetadata = null;
 
-    // @public {Object} options to pass through to direct child subcomponents.
-    // See NodeIO, which introduces additional Properties that can be instrumented via phetioComponentOptions.
+    // @public {Object} - see docs at DEFAULTS declaration
     this.phetioComponentOptions = null;
 
     // @private {LinkedElement[]} - keep track of LinkedElements for disposal
