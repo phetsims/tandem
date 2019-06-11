@@ -41,14 +41,17 @@ define( require => {
     }
 
     /**
-     * Tacks on this Tandem's suffix to the given parentPhetioID, used to look up concrete phetioIDs
-     * @param {string} parentPhetioID
+     * See Tandem.getConcretePhetioID, in this case, look up the corresponding prototype.
+     * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
+     * which corresponds to the prototype "quark" ....
+     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypes.quark.visibleProperty'
      * @returns {string}
-     * @protected
+     * @public
      * @override
      */
-    appendConcreteSuffix( parentPhetioID ) {
-      return phetio.PhetioIDUtils.append( parentPhetioID, 'prototypes', this.prototypeName );
+    getConcretePhetioID() {
+      assert && assert( this.parentTandem, 'Group members must be in a Group' );
+      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), 'prototypes', this.prototypeName );
     }
   }
 

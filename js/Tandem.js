@@ -20,7 +20,6 @@ define( require => {
 
   // constants
   const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
-  const GROUP_SEPARATOR = phetio.PhetioIDUtils.GROUP_SEPARATOR;
   const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
   const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioPrintMissingTandems;
   const VALIDATE_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
@@ -193,43 +192,26 @@ define( require => {
 
     /**
      * Create a new Tandem by appending the given id
-     * @param {string} id
+     * @param {string} name
      * @param {Object} [options]
      * @returns {Tandem}
      * @public
      */
-    createTandem( id, options ) {
-
-      // This assertion isn't in the constructor because a subtype of Tandem allows this character.
-      assert && assert( id.indexOf( GROUP_SEPARATOR ) === -1, `invalid character in non-group tandem: ${GROUP_SEPARATOR}` );
-
-      return new Tandem( this, id, this.getExtendedOptions( options ) );
+    createTandem( name, options ) {
+      return new Tandem( this, name, this.getExtendedOptions( options ) );
     }
 
     /**
-     * Tacks on this Tandem's suffix to the given parentPhetioID, used to look up concrete phetioIDs
-     * @param {string} parentPhetioID
-     * @returns {string}
-     * @protected
-     */
-    appendConcreteSuffix( parentPhetioID ) {
-      return phetio.PhetioIDUtils.append( parentPhetioID, this.name );
-    }
-
-    /**
-     * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
-     * which corresponds to the prototype "quark" ....
-     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypes.quark.visibleProperty'
+     * For API validation, each PhetioObject has a corresponding concrete PhetioObject for comparison. Non-dynamic
+     * PhetioObjects have the trivial case where its concrete phetioID is the same as its phetioID.
      *
-     * NOTE: This function makes a lot of assumptions about the look of phetioIDs that are made in Group.js, don't change
-     * one without consulting the other.
      * @returns {string}
      * @public
      */
     getConcretePhetioID() {
 
       // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
-      return this.parentTandem ? this.appendConcreteSuffix( this.parentTandem.getConcretePhetioID() ) : this.phetioID;
+      return this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), this.name ) : this.phetioID;
     }
 
     /**
