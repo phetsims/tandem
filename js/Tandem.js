@@ -167,7 +167,7 @@ define( require => {
      * Used for creating new tandems, extends this Tandem's options with the passed-in options.
      * @param {Object} [options]
      * @returns {Object} -extended options
-     * @protected
+     * @public
      */
     getExtendedOptions( options ) {
 
