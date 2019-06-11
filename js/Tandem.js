@@ -221,21 +221,20 @@ define( require => {
 
     /**
      * Creates a group tandem for creating multiple indexed child tandems, such as:
-     * sim.screen.model.electron_0
-     * sim.screen.model.electron_1
+     * sim.screen.model.electrons~0
+     * sim.screen.model.electrons~1
      *
      * In this case, 'sim.screen.model.electron' is the string passed to createGroupTandem.
      *
      * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
      * have unique identifiers.
-     * @param {string} id
-     * @param {string} [elementPrefix]
+     * @param {string} name
      * @returns {GroupTandem}
-     * @deprecated
+     * @deprecated - use GroupMemberTandem instead
      * @public
      */
-    createGroupTandem( id, elementPrefix ) {
-      return new GroupTandem( this, id, elementPrefix );
+    createGroupTandem( name ) {
+      return new GroupTandem( this, name );
     }
 
     /**
@@ -389,14 +388,13 @@ define( require => {
 
     /**
      * @param {Tandem} parentTandem
-     * @param {string} id - id as a string (or '' for a root id)
+     * @param {string} name
      * @constructor
      * @deprecated - see Group.js for the way of the future
      * @private create with Tandem.createGroupTandem
      */
-    constructor( parentTandem, id ) {
-
-      super( parentTandem, id );
+    constructor( parentTandem, name ) {
+      super( parentTandem, name );
 
       // @private for generating indices from a pool
       this.groupElementIndex = 0;
