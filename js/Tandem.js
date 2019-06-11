@@ -88,7 +88,8 @@ define( require => {
     }
 
     /**
-     * Returns the regular expression which can be used to test each term.
+     * Returns the regular expression which can be used to test each term. The term must consist only of alpha-numeric
+     * characters or tildes.
      * @returns {RegExp}
      * @protected
      */
