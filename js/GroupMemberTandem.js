@@ -17,13 +17,13 @@ define( require => {
   class GroupMemberTandem extends Tandem {
 
     /**
-     * @param {Tandem|null} parentTandem - or null for root tandem
+     * @param {Tandem} parentTandem
      * @param {string} name
      * @param {string} prototypeName - describes which prototype this matches
      * @param {Object} [options]
      */
     constructor( parentTandem, name, prototypeName, options ) {
-
+      assert && assert( parentTandem, 'GroupMemberTandem must have a parentTandem' );
       super( parentTandem, name, options );
 
       // @private (read-only)
