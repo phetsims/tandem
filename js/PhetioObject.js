@@ -127,7 +127,8 @@ define( require => {
     // @private {Object|null}
     this.phetioEventMetadata = null;
 
-    // @public {Object} options to pass through to direct child subcomponents, see NodeIO
+    // @public {Object} options to pass through to direct child subcomponents.
+    // See NodeIO, which introduces additional Properties that can be instrumented via phetioComponentOptions.
     this.phetioComponentOptions = null;
 
     // @private {LinkedElement[]} - keep track of LinkedElements for disposal
