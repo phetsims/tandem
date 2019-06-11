@@ -282,7 +282,7 @@ define( require => {
       } );
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
-      if ( PHET_IO_ENABLED && this.tandem.supplied ) {
+      if ( this.isPhetioInstrumented() ) {
         // this assertion should be enabled for new phet-io sim publications
         // assert && assert( this.phetioDocumentation, 'Instance documentation is required for: ' + this.tandem.phetioID );
         this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
@@ -298,7 +298,7 @@ define( require => {
      * @public
      */
     register() {
-      if ( PHET_IO_ENABLED && this.tandem.supplied ) {
+      if ( this.isPhetioInstrumented() ) {
         assert && assert( this.phetioWrapper, 'Can only be registered after initialization' );
       }
       this.tandem.addPhetioObject( this );
