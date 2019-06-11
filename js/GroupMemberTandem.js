@@ -31,6 +31,15 @@ define( require => {
     }
 
     /**
+     * Returns the regular expression which can be used to test each term.
+     * @returns {RegExp}
+     * @protected
+     */
+    getTermRegex() {
+      return /^[a-zA-Z0-9_]+$/;
+    }
+
+    /**
      * Tacks on this Tandem's suffix to the given parentPhetioID, used to look up concrete phetioIDs
      * @param {string} parentPhetioID
      * @returns {string}

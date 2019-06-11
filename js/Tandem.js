@@ -53,10 +53,8 @@ define( require => {
      */
     constructor( parentTandem, name, options ) {
       assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
-      assert && assert( typeof name === 'string' && name.length > 0, 'name must be defined' );
-      assert && assert( name.indexOf( phetio.PhetioIDUtils.SEPARATOR ) === -1, 'SEPARATOR is reserved' );
-      assert && assert( name.indexOf( '-' ) === -1, 'dash is reserved' );
-      assert && assert( name.indexOf( ' ' ) === -1, 'whitespace is reserved' );
+      assert && assert( typeof name === 'string', 'name must be defined' );
+      assert && assert( this.getTermRegex().test( name ), `name should match the regex pattern: ${name}` );
 
       // @public (read-only) {Tandem|null}
       this.parentTandem = parentTandem;
@@ -86,6 +84,15 @@ define( require => {
 
       // @public (read-only)
       this.supplied = options.supplied;
+    }
+
+    /**
+     * Returns the regular expression which can be used to test each term.
+     * @returns {RegExp}
+     * @protected
+     */
+    getTermRegex() {
+      return /^[a-zA-Z0-9~]+$/; // TODO: eliminate ~ once GroupTandem has been deleted, see https://github.com/phetsims/tandem/issues/87
     }
 
     /**
