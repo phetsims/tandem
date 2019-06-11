@@ -59,7 +59,8 @@ define( require => {
     // TextIO
     'textProperty'
 
-    // PhetioButtonIO defines a nested pickableProperty, but it does not support phetioComponentOptions
+    // Note that JOIST/PhetButtonIO also defines a nested pickableProperty, but it is not customizable through
+    // phetioComponentOptions because all instances have the same level of instrumentation.
   ] );
 
   const OPTIONS_KEYS = _.keys( DEFAULTS );
