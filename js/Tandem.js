@@ -68,7 +68,7 @@ define( require => {
       this.phetioID = this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name )
                                         : this.name;
 
-      // options (even subtype options) must be stored on the instance so they can be passed through to children
+      // options (even subtype options) must be stored so they can be passed through to children
       // Note: Make sure that added options here are also added to options for inheritance and/or for composition
       // (createTandem/parentTandem/getExtendedOptions) as appropriate.
       options = _.extend( {
@@ -135,8 +135,7 @@ define( require => {
             }
           }
 
-          // For optionally instrumented types that are not provided tandems, the instance isn't really "added"
-          // but likewise, it in not an error
+          // Optionally instrumented types without tandems are not added.
           return;
         }
 
@@ -152,8 +151,8 @@ define( require => {
     }
 
     /**
-     * Removes an instance from the registry
-     * @param {PhetioObject} phetioObject - the instance to remove
+     * Removes a PhetioObject from the registry
+     * @param {PhetioObject} phetioObject
      * @public
      */
     removePhetioObject( phetioObject ) {
@@ -335,8 +334,8 @@ define( require => {
   Tandem.generalTandem = Tandem.rootTandem.createTandem( 'general' );
 
   /**
-   * Used to indicate a common code component that supports tandem, but doesn't not require it.
-   * If a tandem is not passed through to this instance, then it will not be instrumented.
+   * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
+   * passed in, then it will not be instrumented.
    * @public
    * @static
    * @type {Tandem}

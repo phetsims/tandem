@@ -37,13 +37,13 @@ define( require => {
   const DEFAULTS = {
     tandem: Tandem.optional,          // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
     phetioType: ObjectIO,             // Defines API methods, events and serialization
-    phetioDocumentation: '',          // Useful notes about an instrumented instance, shown in the PhET-iO Studio Wrapper
-    phetioState: true,                // When true, includes the instance in the PhET-iO state
-    phetioReadOnly: false,            // When true, you can only get values from the instance; no setting allowed.
-    phetioEventType: EventType.MODEL, // Default event type for this instance, can be overridden in phetioStartEvent options
+    phetioDocumentation: '',          // Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper
+    phetioState: true,                // When true, includes the PhetioObject in the PhET-iO state
+    phetioReadOnly: false,            // When true, you can only get values from the PhetioObject; no setting allowed.
+    phetioEventType: EventType.MODEL, // Category of event type, can be overridden in phetioStartEvent options
     phetioHighFrequency: false,       // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents and Client.launchSim option
     phetioPlayback: false,            // When true, emits events for data streams for playback, see handlePlaybackEvent.js
-    phetioStudioControl: true,        // When true, Studio is allowed to create a control for this instance (if it knows how)
+    phetioStudioControl: true,        // When true, Studio is allowed to create a control for this PhetioObject (if it knows how)
     phetioComponentOptions: null,     // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
     phetioFeatured: false,            // When true, this is categorized as an important "featured" element in Studio.
     phetioEventMetadata: null         // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
@@ -93,7 +93,7 @@ define( require => {
     // @private {number|null} - tracks the indices of started messages so that dataStream can check that ends match starts
     this.phetioMessageStack = [];
 
-    // @public (read-only) {boolean} - has the instance been disposed?
+    // @public (read-only) {boolean} - has it been disposed?
     this.isDisposed = false;
 
     // @private {EventType} - see docs at DEFAULTS declaration
@@ -252,7 +252,7 @@ define( require => {
         }
       }
 
-      // Unpack options to instance properties
+      // Unpack options to properties
       this.tandem = options.tandem;
       this.phetioType = options.phetioType;
       this.phetioState = options.phetioState;
@@ -281,12 +281,12 @@ define( require => {
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( this.isPhetioInstrumented() ) {
         // this assertion should be enabled for new phet-io sim publications
-        // assert && assert( this.phetioDocumentation, 'Instance documentation is required for: ' + this.tandem.phetioID );
+        // TODO: are we really going to add phetioDocumentation to every PhetioObject?, see https://github.com/phetsims/phet-io/issues/1409
+        // TODO: If so, this assertion should be elsewhere, see https://github.com/phetsims/phet-io/issues/1409
+        // assert && assert( this.phetioDocumentation, 'phetioDocumentation is required for: ' + this.tandem.phetioID );
         this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
       }
-
       this.register();
-
       this.phetioObjectInitialized = true;
     },
 
@@ -356,8 +356,8 @@ define( require => {
     },
 
     /**
-     * Just because a tandem is passed to an instance doesn't mean that it is instrumented. An instance will only be
-     * instrumented if:
+     * Just because a tandem is passed in doesn't mean that it is instrumented. A PhetioObject will only be instrumented
+     * if:
      * (1) Running in PhET-iO mode
      * (2) The tandem that was passed in was "supplied". See Tandem.supplied for more info
      * @returns {boolean}
