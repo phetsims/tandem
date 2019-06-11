@@ -11,6 +11,7 @@ define( require => {
   'use strict';
 
   // modules
+  const arrayRemove = require( 'PHET_CORE/arrayRemove' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const toCamelCase = require( 'PHET_CORE/toCamelCase' );
 
@@ -156,16 +157,20 @@ define( require => {
      */
     removeInstance( phetioObject ) {
 
-      // TODO: Should we add code to make it possible to remove elements from buffer? see https://github.com/phetsims/phet-io/issues/1409
-      assert && assert( launched, 'removing from buffer not yet supported.' );
       if ( !this.required && !this.supplied ) {
         return;
       }
 
       // Only active when running as phet-io
       if ( PHET_IO_ENABLED ) {
-        for ( let i = 0; i < phetioObjectListeners.length; i++ ) {
-          phetioObjectListeners[ i ].removePhetioObject( phetioObject );
+        if ( !launched ) {
+          assert && assert( bufferedPhetioObjects.indexOf( phetioObject ) >= 0, 'should contain item' );
+          arrayRemove( bufferedPhetioObjects, phetioObject );
+        }
+        else {
+          for ( let i = 0; i < phetioObjectListeners.length; i++ ) {
+            phetioObjectListeners[ i ].removePhetioObject( phetioObject );
+          }
         }
       }
     }
