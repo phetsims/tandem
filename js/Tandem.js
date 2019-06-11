@@ -20,7 +20,6 @@ define( require => {
 
   // constants
   const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
-  const GROUP_SEPARATOR = phetio.PhetioIDUtils.GROUP_SEPARATOR;
   const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
   const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioPrintMissingTandems;
   const VALIDATE_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
