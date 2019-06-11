@@ -397,10 +397,7 @@ define( require => {
         assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
       }, 0 );
 
-      // OK to dispose something that was never phetioObjectInitialized, this means it was an uninstrumented instance
       if ( this.phetioObjectInitialized ) {
-
-        // Tandem de-registration
         this.tandem.removeInstance( this );
         this.phetioWrapper && this.phetioWrapper.dispose && this.phetioWrapper.dispose();
       }
