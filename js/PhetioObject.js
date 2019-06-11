@@ -225,9 +225,9 @@ define( require => {
       );
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
-      // overrides API file. If validation is not enabled, then we don't want to do any API work, even applying overrides.
+      // overrides API file. Even when validation is not enabled, overrides should still be applied.
       // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
-      if ( PHET_IO_ENABLED && options.tandem.supplied && phetioID.indexOf( '~' ) === -1 && phetioAPIValidation.enabled ) {
+      if ( PHET_IO_ENABLED && options.tandem.supplied && phetioID.indexOf( '~' ) === -1 ) {
 
         // Validate code baseline metadata against baseline elements schema, guard behind assert for performance.
         // Should be called before setting overrides
