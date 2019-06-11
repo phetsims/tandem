@@ -202,29 +202,16 @@ define( require => {
     }
 
     /**
-     * Tacks on this Tandem's suffix to the given parentPhetioID, used to look up concrete phetioIDs
-     * @param {string} parentPhetioID
-     * @returns {string}
-     * @protected
-     */
-    appendConcreteSuffix( parentPhetioID ) {
-      return phetio.PhetioIDUtils.append( parentPhetioID, this.name );
-    }
-
-    /**
-     * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
-     * which corresponds to the prototype "quark" ....
-     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypes.quark.visibleProperty'
+     * For API validation, each PhetioObject has a corresponding concrete PhetioObject for comparison. Non-dynamic
+     * PhetioObjects have the trivial case where its concrete phetioID is the same as its phetioID.
      *
-     * NOTE: This function makes a lot of assumptions about the look of phetioIDs that are made in Group.js, don't change
-     * one without consulting the other.
      * @returns {string}
      * @public
      */
     getConcretePhetioID() {
 
       // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
-      return this.parentTandem ? this.appendConcreteSuffix( this.parentTandem.getConcretePhetioID() ) : this.phetioID;
+      return this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), this.name ) : this.phetioID;
     }
 
     /**
