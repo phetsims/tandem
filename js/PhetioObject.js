@@ -193,21 +193,23 @@ define( require => {
         assert && assert( options.phetioType.documentation, 'There must be a documentation string for each IO Type.' );
 
         for ( const methodName in options.phetioType.methods ) {
-          const method = options.phetioType.methods[ methodName ];
+          if ( options.phetioType.methods.hasOwnProperty( methodName ) ) {
+            const method = options.phetioType.methods[ methodName ];
 
-          if ( typeof method === 'function' ) {
+            if ( typeof method === 'function' ) {
 
-            // This is a private function for internal phet-io mechanics, not for exporting over the API, so it doesn't
-            // need to be checked.
-          }
-          else {
-            const IOType = options.phetioType;
+              // This is a private function for internal phet-io mechanics, not for exporting over the API, so it doesn't
+              // need to be checked.
+            }
+            else {
+              const IOType = options.phetioType;
 
-            // If you get one of these assertion errors, go to the IOType definition file and check its methods
-            assert && assert( !!method.returnType, IOType.typeName + '.' + methodName + ' needs a returnType' );
-            assert && assert( !!method.implementation, IOType.typeName + '.' + methodName + ' needs an implementation function' );
-            assert && assert( !!method.parameterTypes, IOType.typeName + '.' + methodName + ' needs a parameterTypes array' );
-            assert && assert( !!method.documentation, IOType.typeName + '.' + methodName + ' needs a documentation string' );
+              // If you get one of these assertion errors, go to the IOType definition file and check its methods
+              assert && assert( !!method.returnType, IOType.typeName + '.' + methodName + ' needs a returnType' );
+              assert && assert( !!method.implementation, IOType.typeName + '.' + methodName + ' needs an implementation function' );
+              assert && assert( !!method.parameterTypes, IOType.typeName + '.' + methodName + ' needs a parameterTypes array' );
+              assert && assert( !!method.documentation, IOType.typeName + '.' + methodName + ' needs a documentation string' );
+            }
           }
         }
 
