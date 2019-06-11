@@ -251,26 +251,6 @@ define( require => {
     }
 
     /**
-     * The Tandem base class is not a GroupMemberTandem, but GroupMemberTandem overrides this function to specify
-     * that it is dynamic. If effect this function is a replacement for checking `x instanceof GroupMemberTandem` in
-     * the Tandem base class.
-     * @returns {boolean}
-     * @protected
-     */
-    isGroupMember() {
-      return false;
-    }
-
-    /**
-     * Whether this tandem is a GroupMemberTandem or if any parents are. If this is the case, then this tandem is dynamic.
-     * @returns {boolean}
-     * @public
-     */
-    isGroupMemberOrDescendant() {
-      return this.isGroupMember() || ( !!this.parentTandem && this.parentTandem.isGroupMember() );
-    }
-
-    /**
      * Adds a listener that will be notified when items are registered/deregistered
      * Listeners have the form
      * {

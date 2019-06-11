@@ -49,15 +49,6 @@ define( require => {
     appendConcreteSuffix( parentPhetioID ) {
       return phetio.PhetioIDUtils.append( parentPhetioID, 'prototypes', this.prototypeName );
     }
-
-    /**
-     * @override
-     * @returns {boolean}
-     * @protected
-     */
-    isGroupMember() {
-      return true;
-    }
   }
 
   return tandemNamespace.register( 'GroupMemberTandem', GroupMemberTandem );
