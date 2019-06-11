@@ -156,7 +156,7 @@ define( require => {
      * @param {PhetioObject} phetioObject - the instance to remove
      * @public
      */
-    removeInstance( phetioObject ) {
+    removePhetioObject( phetioObject ) {
 
       if ( !this.required && !this.supplied ) {
         return;

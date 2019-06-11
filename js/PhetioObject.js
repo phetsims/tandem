@@ -398,7 +398,7 @@ define( require => {
       }, 0 );
 
       if ( this.phetioObjectInitialized ) {
-        this.tandem.removeInstance( this );
+        this.tandem.removePhetioObject( this );
         this.phetioWrapper && this.phetioWrapper.dispose && this.phetioWrapper.dispose();
       }
 
