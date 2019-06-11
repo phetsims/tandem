@@ -199,10 +199,6 @@ define( require => {
      * @public
      */
     createTandem( name, options ) {
-
-      // This assertion isn't in the constructor because a subtype of Tandem allows this character.
-      assert && assert( name.indexOf( GROUP_SEPARATOR ) === -1, `invalid character in non-group tandem: ${GROUP_SEPARATOR}` );
-
       return new Tandem( this, name, this.getExtendedOptions( options ) );
     }
 
