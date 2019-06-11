@@ -193,17 +193,17 @@ define( require => {
 
     /**
      * Create a new Tandem by appending the given id
-     * @param {string} id
+     * @param {string} name
      * @param {Object} [options]
      * @returns {Tandem}
      * @public
      */
-    createTandem( id, options ) {
+    createTandem( name, options ) {
 
       // This assertion isn't in the constructor because a subtype of Tandem allows this character.
-      assert && assert( id.indexOf( GROUP_SEPARATOR ) === -1, `invalid character in non-group tandem: ${GROUP_SEPARATOR}` );
+      assert && assert( name.indexOf( GROUP_SEPARATOR ) === -1, `invalid character in non-group tandem: ${GROUP_SEPARATOR}` );
 
-      return new Tandem( this, id, this.getExtendedOptions( options ) );
+      return new Tandem( this, name, this.getExtendedOptions( options ) );
     }
 
     /**
