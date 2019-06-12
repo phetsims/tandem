@@ -2,7 +2,7 @@
 
 /**
  * Tandem defines a set of trees that are used to assign unique identifiers to PhetioObjects in PhET simulations and
- * register/unregister them in a registry. It is used to support PhET-iO.
+ * notify listeners when the associated PhetioObjects have been added/removed. It is used to support PhET-iO.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -97,11 +97,8 @@ define( require => {
     }
 
     /**
-     * Adds a PhetioObject.  For example, it could be an axon Property, SCENERY/Node or SUN/RoundPushButton.  Each item
-     * should only be added to the registry once, but that is not enforced here in Tandem since Tandem does not maintain
-     * the registry.  For PhET-iO, phetioEngine.js enforces one entry per ID in phetio.phetioObjectAdded.
-     *
-     * This is used to register PhetioObjects with PhET-iO.
+     * Adds a PhetioObject.  For example, it could be an axon Property, SCENERY/Node or SUN/RoundPushButton.
+     * phetioEngine listens for when PhetioObjects are added and removed to keep track of them for PhET-iO.
      * @param {PhetioObject} phetioObject
      * @public
      */
@@ -123,7 +120,7 @@ define( require => {
           missingTandems.required.push( { phetioID: this.phetioID, stack: new Error().stack } );
         }
 
-        // If tandem is optional, then don't add it
+        // If tandem is optional and not supplied, then ignore it.
         if ( !this.required && !this.supplied ) {
           if ( PRINT_MISSING_TANDEMS ) {
             const stackTrace = new Error().stack;
@@ -151,7 +148,7 @@ define( require => {
     }
 
     /**
-     * Removes a PhetioObject from the registry
+     * Removes a PhetioObject and signifies to listeners that it has been removed.
      * @param {PhetioObject} phetioObject
      * @public
      */
@@ -261,7 +258,7 @@ define( require => {
       launched = true;
       while ( bufferedPhetioObjects.length > 0 ) {
         const phetioObject = bufferedPhetioObjects.shift();
-        phetioObject.register();
+        phetioObject.tandem.addPhetioObject( phetioObject );
       }
       assert && assert( bufferedPhetioObjects.length === 0, 'bufferedPhetioObjects should be empty' );
     }

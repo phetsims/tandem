@@ -295,20 +295,8 @@ define( require => {
         // assert && assert( this.phetioDocumentation, 'phetioDocumentation is required for: ' + this.tandem.phetioID );
         this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
       }
-      this.register();
-      this.phetioObjectInitialized = true;
-    },
-
-    /**
-     * Register with the tandem registry
-     * @public
-     */
-    register() {
-      if ( this.isPhetioInstrumented() ) {
-        assert && assert( this.phetioWrapper, 'Can only be registered after initialization' );
-      }
       this.tandem.addPhetioObject( this );
-      // TODO: prevent from happening twice, see https://github.com/phetsims/phet-io/issues/1409
+      this.phetioObjectInitialized = true;
     },
 
     /**
