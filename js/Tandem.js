@@ -20,7 +20,7 @@ define( require => {
 
   // constants
   const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
-  const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
+  const PHET_IO_ENABLED = _.hasIn( window, 'phet.phetio' );
   const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioPrintMissingTandems;
   const VALIDATE_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
 
@@ -345,6 +345,13 @@ define( require => {
    * @public
    */
   Tandem.missingTandems = missingTandems;
+
+  /**
+   * If PhET-iO is enabled in this runtime.
+   * @public
+   * @type {boolean}
+   */
+  Tandem.PHET_IO_ENABLED = PHET_IO_ENABLED;
 
   /**
    * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
