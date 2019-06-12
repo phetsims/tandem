@@ -218,9 +218,8 @@ define( require => {
             } );
           }
         }
-
-        this.assertOutIfErrorsPresent();
       }
+      this.assertOutIfErrorsPresent();
     }
 
     /**
