@@ -245,10 +245,13 @@ define( require => {
           // Dynamic elements should compare to their "concrete" counterparts.
           const concretePhetioID = options.tandem.getConcretePhetioID();
 
-          // Patch in the desired values from overrides, if any
-          const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
-          if ( overrides ) {
-            options = _.extend( {}, options, overrides );
+          // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
+          // Patch in the desired values from overrides, if any.
+          if ( window.phet.phetio.phetioElementsOverrides ) {
+            const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
+            if ( overrides ) {
+              options = _.extend( {}, options, overrides );
+            }
           }
 
           // if it is a linked element, adopt the same phetioFeatured as the target
