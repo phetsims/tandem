@@ -114,6 +114,9 @@ define( require => {
     // @private {boolean} - ignoring overrides, whether the element is featured.  Used by LinkedElement
     this.phetioFeaturedBaseline = false;
 
+    // @public {boolean} - ignoring overrides, whether the element is read-only.  Used by NodeIO
+    this.phetioReadOnlyBaseline = false;
+
     // @private {Object|null}
     this.phetioEventMetadata = null;
 
@@ -219,6 +222,9 @@ define( require => {
 
       // Store the baseline value for using in LinkedElement
       this.phetioFeaturedBaseline = options.phetioFeatured;
+
+      // Store the baseline value for use in NodeIO
+      this.phetioReadOnlyBaseline = options.phetioReadOnly;
 
       assert && assert( typeof options.phetioDocumentation === 'string',
         'invalid phetioDocumentation: ' + options.phetioDocumentation
