@@ -380,7 +380,8 @@ define( require => {
     },
 
     /**
-     * Unregisters from tandem when longer used.
+     * Remove this phetioObject from PhET-iO. After disposal, this object is no longer interoperable. Also release any
+     * other references created during its lifetime.
      * @public
      */
     dispose: function() {
