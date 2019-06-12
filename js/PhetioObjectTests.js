@@ -17,8 +17,6 @@ define( function( require ) {
 
   QUnit.module( 'PhetioObject' );
 
-  var PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
-
   // TODO: should we use phetioInherit?
   var MockTypeIO = function( instance, phetioID ) {};
   MockTypeIO.typeName = 'MockTypeIO';
@@ -57,7 +55,7 @@ define( function( require ) {
       phetioType: MockTypeIO
     } );
 
-    if ( PHET_IO_ENABLED ) {
+    if ( Tandem.PHET_IO_ENABLED ) {
       window.assert && assert.throws( function() {
         obj.phetioEndEvent();
       }, 'Should throw an assertion error when Ending an unstarted event' );

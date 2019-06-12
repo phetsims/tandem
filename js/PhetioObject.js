@@ -25,7 +25,7 @@ define( require => {
   const dataStream = require( 'ifphetio!PHET_IO/dataStream' );
 
   // constants
-  const PHET_IO_ENABLED = !!( window.phet && window.phet.phetio );
+  const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
   const EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ] );
 
   // Indicates a high frequency message was skipped.
