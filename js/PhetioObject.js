@@ -2,7 +2,7 @@
 
 /**
  * Base type that provides PhET-iO features. An instrumented PhetioObject is referred to on the wrapper side/design side
- * as a "PhET-iO Element".  Note that sims may have hundreds or thousands of PhetioObjects, so performance and memory
+ * as a "PhET-iO element".  Note that sims may have hundreds or thousands of PhetioObjects, so performance and memory
  * considerations are important.
  *
  * @author Sam Reid (PhET Interactive Simulations)
