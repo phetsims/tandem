@@ -176,11 +176,14 @@ define( require => {
     initializePhetioObject: function( baseOptions, options ) {
       assert && assert( options, 'initializePhetioObject must be called with options' );
 
-      const hasKey = specifiesPhetioObjectKey( options );
-
-      if ( !hasKey ) {
-        return; // no PhetioObject keys provided, perhaps they will be provided in a subsequent mutate call.
+      // No PhetioObject options were provided. If not yet initialized, perhaps they will be provided in a subsequent
+      // Node.mutate() call.
+      if ( !specifiesPhetioObjectKey( options ) ) {
+        return;
       }
+
+      // assert this after the `specifiesPhetioObjectKey check to support something like:
+      // `new Node( {tandem: tandem}).mutate({})`
       assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
       // TODO: Can/should this be moved to phetioAPIValidation?  If so, should it be guarded by phetioAPIValidation.enabled? see https://github.com/phetsims/phet-io/issues/1409
