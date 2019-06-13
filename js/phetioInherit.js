@@ -28,30 +28,27 @@ define( function( require ) {
 
     inherit( supertype, subtype, methods, staticProperties );
 
-    // if typeName is ObjectIO, it's not assigned to the namespace yet
-    if ( typeName !== 'ObjectIO' ) {
+    // For ObjectIO, construction is in progress and it cannot be accessed through the namespace.
+    const isIOType = typeName === 'ObjectIO' ? staticProperties.isIOType : phet.tandem.ObjectIO.isIOType;
 
-      // assert that each method is the correct type
-      for ( const method in methods ) {
-        const methodObject = methods[ method ];
-        if ( typeof methodObject === 'object' ) {
-          assert && assert( phet.tandem.ObjectIO.isIOType( methodObject.returnType ),
-            'return type must be of type IO: ' + methodObject.returnType );
+    // assert that each method is the correct type
+    for ( const method in methods ) {
+      const methodObject = methods[ method ];
+      if ( typeof methodObject === 'object' ) {
+        assert && assert( isIOType( methodObject.returnType ), 'return type must be of type IO: ' + methodObject.returnType );
 
-          assert && assert( Array.isArray( methodObject.parameterTypes ),
-            'parameter types must be an array: ' + methodObject.parameterTypes );
+        assert && assert( Array.isArray( methodObject.parameterTypes ),
+          'parameter types must be an array: ' + methodObject.parameterTypes );
 
-          methodObject.parameterTypes.forEach( parameterType => {
-            assert && assert( phet.tandem.ObjectIO.isIOType( parameterType ),
-              'parameter type must be of type IO: ' + parameterType );
-          } );
+        methodObject.parameterTypes.forEach( parameterType => {
+          assert && assert( isIOType( parameterType ), 'parameter type must be of type IO: ' + parameterType );
+        } );
 
-          assert && assert( typeof methodObject.implementation === 'function',
-            'implementation must be of type function: ' + methodObject.implementation );
+        assert && assert( typeof methodObject.implementation === 'function',
+          'implementation must be of type function: ' + methodObject.implementation );
 
-          assert && assert( typeof methodObject.documentation === 'string',
-            'documentation must be of type string: ' + methodObject.documentation );
-        }
+        assert && assert( typeof methodObject.documentation === 'string',
+          'documentation must be of type string: ' + methodObject.documentation );
       }
     }
 
