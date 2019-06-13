@@ -29,7 +29,9 @@ define( function( require ) {
     inherit( supertype, subtype, methods, staticProperties );
 
     // For ObjectIO, construction is in progress and it cannot be accessed through the namespace.
-    const isIOType = typeName === 'ObjectIO' ? staticProperties.isIOType : phet.tandem.ObjectIO.isIOType;
+    const isIOType = typeName === 'ObjectIO' ? staticProperties.isIOType :
+                     window.phet ? phet.tandem.ObjectIO.isIOType :
+                     _.stubTrue; // if running outside of phet, then we don't need this function anyways.
 
     // assert that each method is the correct type
     for ( const method in methods ) {
