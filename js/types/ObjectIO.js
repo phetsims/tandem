@@ -74,6 +74,16 @@ define( function( require ) {
      */
     fromStateObject: function( o ) {
       return o;
+    },
+
+    /**
+     * Checks if type is an IO type
+     * @param {*} type
+     * @public
+     * @returns {boolean}
+     */
+    isIOType: function( type ) {
+      return type === ObjectIO || !!( type.supertype && ObjectIO.isIOType( type.supertype ) );
     }
   } );
 

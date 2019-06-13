@@ -83,7 +83,9 @@ define( require => {
     // @public (read-only) {string} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioDocumentation = null;
 
-    // @public (read-only) {Object} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
+    // @public (read-only) {ObjectIO} - assigned in initializePhetioObject - the instantiated IO type. The phetioWrapper
+    // is the API layer between the wrapper and the phetioObject. It's used to call methods on this phetioObject from
+    // the wrapper frame.
     this.phetioWrapper = null;
 
     // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
