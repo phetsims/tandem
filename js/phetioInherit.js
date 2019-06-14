@@ -28,11 +28,6 @@ define( function( require ) {
 
     inherit( supertype, subtype, methods, staticProperties );
 
-    // For ObjectIO, construction is in progress and it cannot be accessed through the namespace.
-    const isIOType = typeName === 'ObjectIO' ? staticProperties.isIOType :
-                     window.phet ? phet.tandem.ObjectIO.isIOType :
-                     _.stubTrue; // if running outside of phet, then we don't need this function anyways.
-
     // assert that each method is the correct type
     for ( const method in methods ) {
       const methodObject = methods[ method ];
@@ -118,6 +113,14 @@ define( function( require ) {
   };
 
   tandemNamespace.register( 'phetioInherit', phetioInherit );
+
+  /**
+   * Checks if type is an IO type
+   * @param {*} type
+   * @public
+   * @returns {boolean} - true if inherits from ObjectIO or is ObjectIO
+   */
+  const isIOType = type => type.typeName === 'ObjectIO' || !!( type.supertype && isIOType( type.supertype ) );
 
   return phetioInherit;
 } );
