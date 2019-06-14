@@ -255,7 +255,9 @@ define( require => {
           if ( window.phet.phetio.phetioElementsOverrides ) {
             const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
             if ( overrides ) {
-              options = _.extend( {}, options, overrides );
+
+              // No need to make a new object, since this "options" variable was created in the previous extend call above.
+              options = _.extend( options, overrides );
             }
           }
 
