@@ -220,7 +220,7 @@ define( require => {
           }
         }
       }
-      
+
       this.assertOutIfErrorsPresent();
     }
 
