@@ -8,14 +8,17 @@
  * more information. The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453 and
  * is as follows:
  *
- * 1. A full schema is required - any phet-io brand sim without these will have a 404, but this rule isn't tested in this file.
- * 2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
- * 3. Any registered PhetioObject must be included in the schema.
- * 4. After startup, only dynamic instances can be registered.
- * 5. When the sim is finished starting up, all schema entries must be registered.
- * 6. Any static, registered PhetioObject can never be deregistered.
- * 7. Any schema entries in the overrides file must exist in the baseline file
- * 8. Any schema entries in the overrides file must be different from its baseline counterpart
+ * 1.  A full schema is required - any phet-io brand sim without these will have a 404, but this rule isn't tested in this file.
+ * 2.  Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
+ * 3.  Any registered PhetioObject must be included in the schema.
+ * 4.  After startup, only dynamic instances can be registered.
+ * 5.  When the sim is finished starting up, all schema entries must be registered.
+ * 6.  Any static, registered PhetioObject can never be deregistered.
+ * 7.  Any schema entries in the overrides file must exist in the baseline file
+ * 8.  Any schema entries in the overrides file must be different from its baseline counterpart
+ * TODO: Implement rules 9 and 10, see https://github.com/phetsims/phet-io/issues/1515
+ * 9.  Any type described in the types file must exist on startup.
+ * 10. For every type in the types file, every method must have the same name and signature.
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
