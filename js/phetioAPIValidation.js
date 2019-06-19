@@ -61,7 +61,7 @@ define( require => {
       this.enabled = !!( window.phet && window.phet.phetio && window.phet.phetio.queryParameters.phetioValidateAPI &&
                          window.phet.phetio.phetioElementsOverrides &&
                          window.phet.phetio.phetioElementsBaseline &&
-                         !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline );
+                         !phet.phetio.queryParameters.phetioPrintPhetioFiles );
 
       this.validateOverridesFile(); // these preloads can be validated immediately
     }

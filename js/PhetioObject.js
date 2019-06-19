@@ -245,7 +245,7 @@ define( require => {
         assert && phetioAPIValidation.onPhetioObjectPreOverrides( options.tandem, PhetioObject.getMetadata( options ) );
 
         // don't compare/api check if we are printing out a new baseline file
-        if ( !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
+        if ( !phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
 
           // Dynamic elements should compare to their "concrete" counterparts.
           const concretePhetioID = options.tandem.getConcretePhetioID();
