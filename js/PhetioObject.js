@@ -262,6 +262,7 @@ define( require => {
           }
 
           // if it is a linked element, adopt the same phetioFeatured as the target
+          // TODO: Should all overrides be propagated to linkedElement?
           if ( options.linkedElement ) {
             options.phetioFeatured = options.linkedElement.phetioFeatured;
           }
@@ -379,8 +380,13 @@ define( require => {
      */
     addLinkedElement: function( element, options ) {
       assert && assert( element instanceof PhetioObject, 'element must be of type PhetioObject' );
+      assert && assert( this.phetioObjectInitialized,
+        'cannot add linked element to an item that hasn\'t called PhetioObject.initializePhetioObject, (make sure to ' +
+        'call this after mutate).' );
 
-      this.linkedElements.push( new LinkedElement( element, options ) );
+      if ( this.isPhetioInstrumented() ) {
+        this.linkedElements.push( new LinkedElement( element, options ) );
+      }
     },
 
     /**

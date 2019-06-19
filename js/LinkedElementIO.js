@@ -31,7 +31,8 @@ define( function( require ) {
      * @returns {Object}
      */
     toStateObject: function( linkedElement ) {
-      return { elementID: linkedElement && linkedElement.element ? linkedElement.element.tandem.phetioID : 'null' };
+      assert && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
+      return { elementID: linkedElement.element.tandem.phetioID };
     },
 
     /**

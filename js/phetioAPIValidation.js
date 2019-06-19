@@ -60,7 +60,8 @@ define( require => {
       // @public (read-only) {boolean} - whether or not validation is enabled.
       this.enabled = !!( window.phet && window.phet.phetio && window.phet.phetio.queryParameters.phetioValidateAPI &&
                          window.phet.phetio.phetioElementsOverrides &&
-                         window.phet.phetio.phetioElementsBaseline );
+                         window.phet.phetio.phetioElementsBaseline &&
+                         !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline );
 
       this.validateOverridesFile(); // these preloads can be validated immediately
     }
@@ -78,7 +79,7 @@ define( require => {
         return;
       }
 
-      if ( !this.simHasStarted && !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
+      if ( !this.simHasStarted ) {
 
         const concretePhetioID = tandem.getConcretePhetioID();
         const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
@@ -125,11 +126,9 @@ define( require => {
         return;
       }
 
-      // (a) When screens are specified, there will be many things in the baseline file but not in the sim.  Those will
+      // When screens are specified, there will be many things in the baseline file but not in the sim.  Those will
       // not be validated.
-      // (b) When printing a new baseline file, we do not compare against the prior stale baseline file.
-      if ( phet.chipper.queryParameters.screens === null &&
-           !phet.phetio.queryParameters.phetioPrintPhetioElementsBaseline ) {
+      if ( phet.chipper.queryParameters.screens === null ) {
 
         // check to make sure all phetioElementAPI entries were used.  If an entry wasn't used, throw an assertion
         // error because the sim is missing something it is supposed to have.
