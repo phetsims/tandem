@@ -189,35 +189,38 @@ define( require => {
             message: 'phetioID expected in the baseline file but does not exist'
           } );
         }
+        else {
 
-        const override = window.phet.phetio.phetioElementsOverrides[ phetioID ];
-        const baseline = window.phet.phetio.phetioElementsBaseline[ phetioID ];
+          const override = window.phet.phetio.phetioElementsOverrides[ phetioID ];
+          const baseline = window.phet.phetio.phetioElementsBaseline[ phetioID ];
 
-        if ( Object.keys( override ).length === 0 ) {
-          this.addError( {
-            phetioID: phetioID,
-            ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
-            message: 'no metadata keys found for this override.'
-          } );
-        }
-
-        for ( const metadataKey in override ) {
-          if ( !baseline.hasOwnProperty( metadataKey ) ) {
+          if ( Object.keys( override ).length === 0 ) {
             this.addError( {
               phetioID: phetioID,
               ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
-              message: `phetioID metadata key not found in the baseline: ${metadataKey}`
+              message: 'no metadata keys found for this override.'
             } );
           }
-          if ( override[ metadataKey ] === baseline[ metadataKey ] ) {
-            this.addError( {
-              phetioID: phetioID,
-              ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
-              message: 'phetioID metadata override value is the same as the corresponding metadata value in the baseline.'
-            } );
+
+          for ( const metadataKey in override ) {
+            if ( !baseline.hasOwnProperty( metadataKey ) ) {
+              this.addError( {
+                phetioID: phetioID,
+                ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+                message: `phetioID metadata key not found in the baseline: ${metadataKey}`
+              } );
+            }
+            if ( override[ metadataKey ] === baseline[ metadataKey ] ) {
+              this.addError( {
+                phetioID: phetioID,
+                ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+                message: 'phetioID metadata override value is the same as the corresponding metadata value in the baseline.'
+              } );
+            }
           }
         }
       }
+      
       this.assertOutIfErrorsPresent();
     }
 
