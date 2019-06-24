@@ -16,7 +16,7 @@
  * 6.  Any static, registered PhetioObject can never be deregistered.
  * 7.  Any schema entries in the overrides file must exist in the baseline file
  * 8.  Any schema entries in the overrides file must be different from its baseline counterpart
- * TODO: Implement rules 9 and 10, see https://github.com/phetsims/phet-io/issues/1515
+ * TODO: Implement rule 10, see https://github.com/phetsims/phet-io/issues/1515
  * 9.  Any type described in the types file must exist on startup.
  * 10. For every type in the types file, every method must have the same name and signature.
  *
