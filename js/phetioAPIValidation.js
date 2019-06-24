@@ -8,17 +8,15 @@
  * more information. The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453 and
  * is as follows:
  *
- * 1.  A full schema is required - any phet-io brand sim without these will have a 404, but this rule isn't tested in this file.
- * 2.  Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
- * 3.  Any registered PhetioObject must be included in the schema.
- * 4.  After startup, only dynamic instances can be registered.
- * 5.  When the sim is finished starting up, all schema entries must be registered.
- * 6.  Any static, registered PhetioObject can never be deregistered.
- * 7.  Any schema entries in the overrides file must exist in the baseline file
- * 8.  Any schema entries in the overrides file must be different from its baseline counterpart
- * TODO: Implement rule 10, see https://github.com/phetsims/phet-io/issues/1515
- * 9.  Any type described in the types file must exist on startup.
- * 10. For every type in the types file, every method must have the same name and signature.
+ * 1. A full schema is required - any phet-io brand sim without these will have a 404, but this rule isn't tested in this file.
+ * 2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
+ * 3. Any registered PhetioObject must be included in the schema.
+ * 4. After startup, only dynamic instances can be registered.
+ * 5. When the sim is finished starting up, all schema entries must be registered.
+ * 6. Any static, registered PhetioObject can never be deregistered.
+ * 7. Any schema entries in the overrides file must exist in the baseline file
+ * 8. Any schema entries in the overrides file must be different from its baseline counterpart
+ * 9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
@@ -146,14 +144,12 @@ define( require => {
             } );
           }
         }
-        for ( const phetioType in window.phet.phetio.phetioTypes ) {
-          if ( window.phet.phetio.phetioTypes.hasOwnProperty( phetioType ) && !phetioTypes[ phetioType ] ) {
-            this.addError( {
-              phetioType: phetioType,
-              ruleInViolation: '9. Any type described in the types file must exist on startup.',
-              message: 'phetioType expected but does not exist'
-            } );
-          }
+
+        if ( !_.isEqual( phetioTypes, window.phet.phetio.phetioTypes ) ) {
+          this.addError( {
+            ruleInViolation: '9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.',
+            message: 'phetioTypes are not equivalent'
+          } );
         }
 
         this.assertOutIfErrorsPresent();
@@ -247,8 +243,14 @@ define( require => {
       // if there are any api mismatches
       if ( assert && this.apiMismatches.length > 0 ) {
         console.log( 'mismatches:', this.apiMismatches );
-        assert( false, 'api mismatches present:\n' + this.apiMismatches.map(
-          mismatchData => `\n${mismatchData.phetioID}:  ${mismatchData.ruleInViolation}`
+        assert( false, 'api mismatches present:\n' + this.apiMismatches.map( mismatchData => {
+            if ( mismatchData.phetioID ) {
+              return `\n${mismatchData.phetioID}:  ${mismatchData.ruleInViolation}`;
+            }
+            else {
+              return `${mismatchData.ruleInViolation}`;
+            }
+          }
         ) );
       }
     }
