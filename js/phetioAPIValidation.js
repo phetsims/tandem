@@ -122,19 +122,20 @@ define( require => {
     /**
      * Callback when the simulation is ready to go, and all static PhetioObjects have been created.
      * @param {Object.<string,PhetioObject>} phetioObjectMap
+     * @param {Object.<string,Object>} phetioTypes
      * @public
      */
-    onSimStarted( phetioObjectMap ) {
+    onSimStarted( phetioObjectMap, phetioTypes ) {
       if ( !this.enabled ) {
         return;
       }
 
-      // When screens are specified, there will be many things in the baseline file but not in the sim.  Those will
+      // When the screens query parameter is specified, there will be many things in the baseline file but not in the sim.  Those will
       // not be validated.
       if ( phet.chipper.queryParameters.screens === null ) {
 
-        // check to make sure all phetioElementAPI entries were used.  If an entry wasn't used, throw an assertion
-        // error because the sim is missing something it is supposed to have.
+        // check to make sure all phet-io elements and type entries were used.  If an entry wasn't used, throw an
+        // assertion error because the sim is missing something it is supposed to have.
         // Don't check for this when generating the API file from the code.
         for ( const phetioID in window.phet.phetio.phetioElementsBaseline ) {
           if ( window.phet.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) && !phetioObjectMap[ phetioID ] ) {
@@ -145,9 +146,19 @@ define( require => {
             } );
           }
         }
+        for ( const phetioType in window.phet.phetio.phetioTypes ) {
+          if ( window.phet.phetio.phetioTypes.hasOwnProperty( phetioType ) && !phetioTypes[ phetioType ] ) {
+            this.addError( {
+              phetioType: phetioType,
+              ruleInViolation: '9. Any type described in the types file must exist on startup.',
+              message: 'phetioType expected but does not exist'
+            } );
+          }
+        }
 
         this.assertOutIfErrorsPresent();
       }
+
       this.simHasStarted = true;
     }
 
