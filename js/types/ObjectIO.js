@@ -62,7 +62,7 @@ define( function( require ) {
      * @public
      */
     toStateObject: function( o ) {
-      assert && assert( o instanceof Object, 'Should be serializing an Object' );
+      // assert && assert( o instanceof Object, 'Should be serializing an Object' );
       return o;
     },
 
