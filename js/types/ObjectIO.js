@@ -17,23 +17,23 @@ define( function( require ) {
 
   /**
    * Main constructor for ObjectIO base IO type.
-   * @param {Object} instance
+   * @param {Object} phetioObject
    * @param {string} phetioID
    * @constructor
    * @abstract
    */
-  function ObjectIO( instance, phetioID ) {
-    assert && assert( instance, 'instance should be truthy' );
+  function ObjectIO( phetioObject, phetioID ) {
+    assert && assert( phetioObject, 'phetioObject should be truthy' );
     assert && assert( phetioID, 'phetioID should be truthy' );
 
     // @public (read-only)
-    this.instance = instance;
+    this.phetioObject = phetioObject;
 
     // @public (read-only)
     this.phetioID = phetioID;
 
-    // Use the validator defined on the constructor to make sure the instance is valid
-    validate( instance, this.constructor.validator );
+    // Use the validator defined on the constructor to make sure the phetioObject is valid
+    validate( phetioObject, this.constructor.validator );
   }
 
   // ObjectIO inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
