@@ -27,6 +27,8 @@
  * dynamic PhetioObject: A registered PhetioObject that can be created and/or destroyed at any point. Only dynamic
  *                       PhetioObjects can be created after startup.
  *
+ * See https://github.com/phetsims/phet-io/issues/1443#issuecomment-484306552 for an explanation of how to maintain the
+ * PhET-iO API for a simulation.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
