@@ -19,6 +19,7 @@
   // constants
   var SEPARATOR = '.';
   var GROUP_SEPARATOR = '_';
+  var GENERAL_COMPONENT_NAME = 'general';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -111,7 +112,7 @@
      * @public
      */
     getGeneralID: function( Client, ...componentNames ) {
-      return phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, ...[ 'general', ...componentNames ] );
+      return phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, ...[ GENERAL_COMPONENT_NAME, ...componentNames ] );
     },
 
     // TODO: Should this be reimplemented to compare to concrete phetioID? github.com/phetsims/phet-io/issues/1442
@@ -142,6 +143,15 @@
      * @constant
      * @public
      */
-    GROUP_SEPARATOR: GROUP_SEPARATOR
+    GROUP_SEPARATOR: GROUP_SEPARATOR,
+
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    /**
+     * The separator used to specify the count of a member in a group.
+     * @type {String}
+     * @constant
+     * @public
+     */
+    GENERAL_COMPONENT_NAME: GENERAL_COMPONENT_NAME
   };
 } )();
