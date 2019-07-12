@@ -113,9 +113,6 @@ define( require => {
     // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioFeatured = false;
 
-    // @private {boolean} - ignoring overrides, whether the element is featured.  Used by LinkedElement
-    this.phetioFeaturedBaseline = false;
-
     // @public {boolean} - ignoring overrides, whether the element is read-only.  Used by NodeIO
     this.phetioReadOnlyBaseline = false;
 
@@ -124,6 +121,9 @@ define( require => {
 
     // @public {Object} - see docs at DEFAULTS declaration
     this.phetioComponentOptions = null;
+
+    // @public (phetioEngine) {Object|null} - only non null with phetio.queryParameters.phetioPrintPhetioFiles enabled
+    this.baselineMetadata = null;
 
     // @private {LinkedElement[]} - keep track of LinkedElements for disposal
     this.linkedElements = [];
@@ -225,9 +225,6 @@ define( require => {
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
 
-      // Store the baseline value for using in LinkedElement
-      this.phetioFeaturedBaseline = options.phetioFeatured;
-
       // Store the baseline value for use in NodeIO
       this.phetioReadOnlyBaseline = options.phetioReadOnly;
 
@@ -244,27 +241,22 @@ define( require => {
         // Should be called before setting overrides
         assert && phetioAPIValidation.onPhetioObjectPreOverrides( options.tandem, PhetioObject.getMetadata( options ) );
 
-        // don't compare/api check if we are printing out a new baseline file
-        if ( !phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
+        // only store the full baseline if we are printing out those files. Do this before applying overrides.
+        if ( phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
+          this.baselineMetadata = PhetioObject.getMetadata( options );
+        }
 
-          // Dynamic elements should compare to their "concrete" counterparts.
-          const concretePhetioID = options.tandem.getConcretePhetioID();
+        // Dynamic elements should compare to their "concrete" counterparts.
+        const concretePhetioID = options.tandem.getConcretePhetioID();
 
-          // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
-          // Patch in the desired values from overrides, if any.
-          if ( window.phet.phetio.phetioElementsOverrides ) {
-            const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
-            if ( overrides ) {
+        // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
+        // Patch in the desired values from overrides, if any.
+        if ( window.phet.phetio.phetioElementsOverrides ) {
+          const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
+          if ( overrides ) {
 
-              // No need to make a new object, since this "options" variable was created in the previous extend call above.
-              options = _.extend( options, overrides );
-            }
-          }
-
-          // if it is a linked element, adopt the same phetioFeatured as the target
-          // TODO: Should all overrides be propagated to linkedElement?
-          if ( options.linkedElement ) {
-            options.phetioFeatured = options.linkedElement.phetioFeatured;
+            // No need to make a new object, since this "options" variable was created in the previous extend call above.
+            options = _.extend( options, overrides );
           }
         }
       }
@@ -470,28 +462,25 @@ define( require => {
   class LinkedElement extends PhetioObject {
 
     /**
-     * @param {Object} element
+     * @param {Object} coreElement
      * @param {Object} [options]
      */
-    constructor( element, options ) {
-      assert && assert( !!element, 'element should be defined' );
-      assert && assert( element instanceof PhetioObject, 'element should be PhetioObject' );
-      assert && assert( element.tandem, 'element should have a tandem' );
+    constructor( coreElement, options ) {
+      assert && assert( !!coreElement, 'coreElement should be defined' );
+      assert && assert( coreElement instanceof PhetioObject, 'coreElement should be PhetioObject' );
+      assert && assert( coreElement.tandem, 'coreElement should have a tandem' );
 
       super( _.extend( {
         phetioType: LinkedElementIO,
+        phetioReadOnly: true, // References cannot be changed
 
-        // The baseline value for phetioFeatured matches the target element
-        phetioFeatured: element.phetioFeaturedBaseline,
-
-        // But the override for the target element applies to the LinkedElement
-        linkedElement: element,
-
-        phetioReadOnly: true // References cannot be changed
+        // By default, this linked element's baseline value is the overridden value of the coreElement. This allows
+        // the them to be in sync by default, but also allows the linked element to be overridden in studio.
+        phetioFeatured: coreElement.phetioFeatured
       }, options ) );
 
       // @public (read-only)
-      this.element = element;
+      this.element = coreElement;
     }
   }
 
