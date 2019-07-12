@@ -228,29 +228,33 @@ define( require => {
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
       // overrides API file. Even when validation is not enabled, overrides should still be applied.
-      // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
-      if ( PHET_IO_ENABLED && options.tandem.supplied && phetioID.indexOf( '~' ) === -1 ) {
+      if ( PHET_IO_ENABLED && options.tandem.supplied ) {
 
-        // Validate code baseline metadata against baseline elements schema, guard behind assert for performance.
-        // Should be called before setting overrides
-        assert && phetioAPIValidation.onPhetioObjectPreOverrides( options.tandem, PhetioObject.getMetadata( options ) );
-
-        // only store the full baseline if we are printing out those files. Do this before applying overrides.
+        // Only store the full baseline if we are printing out those files. Do this before applying overrides.
         if ( phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
           this.baselineMetadata = PhetioObject.getMetadata( options );
         }
 
-        // Dynamic elements should compare to their "concrete" counterparts.
-        const concretePhetioID = options.tandem.getConcretePhetioID();
+        // If not a deprecated dynamic element
+        // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
+        if ( phetioID.indexOf( '~' ) === -1 ) {
 
-        // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
-        // Patch in the desired values from overrides, if any.
-        if ( window.phet.phetio.phetioElementsOverrides ) {
-          const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
-          if ( overrides ) {
+          // Validate code baseline metadata against baseline elements schema, guard behind assert for performance.
+          // Should be called before setting overrides
+          assert && phetioAPIValidation.onPhetioObjectPreOverrides( options.tandem, PhetioObject.getMetadata( options ) );
 
-            // No need to make a new object, since this "options" variable was created in the previous extend call above.
-            options = _.extend( options, overrides );
+          // Dynamic elements should compare to their "concrete" counterparts.
+          const concretePhetioID = options.tandem.getConcretePhetioID();
+
+          // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
+          // Patch in the desired values from overrides, if any.
+          if ( window.phet.phetio.phetioElementsOverrides ) {
+            const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
+            if ( overrides ) {
+
+              // No need to make a new object, since this "options" variable was created in the previous extend call above.
+              options = _.extend( options, overrides );
+            }
           }
         }
       }
