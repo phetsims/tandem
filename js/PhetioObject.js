@@ -113,9 +113,6 @@ define( require => {
     // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioFeatured = false;
 
-    // @public {boolean} - ignoring overrides, whether the element is read-only.  Used by NodeIO
-    this.phetioReadOnlyBaseline = false;
-
     // @private {Object|null}
     this.phetioEventMetadata = null;
 
@@ -224,9 +221,6 @@ define( require => {
       }
 
       options = _.extend( {}, DEFAULTS, baseOptions, options );
-
-      // Store the baseline value for use in NodeIO
-      this.phetioReadOnlyBaseline = options.phetioReadOnly;
 
       assert && assert( typeof options.phetioDocumentation === 'string',
         'invalid phetioDocumentation: ' + options.phetioDocumentation
