@@ -120,7 +120,7 @@ define( require => {
     this.phetioComponentOptions = null;
 
     // @public (phetioEngine) {Object|null} - only non null with phetio.queryParameters.phetioPrintPhetioFiles enabled
-    this.baselineMetadata = null;
+    this.phetioBaselineMetadata = null;
 
     // @private {LinkedElement[]} - keep track of LinkedElements for disposal
     this.linkedElements = [];
@@ -232,7 +232,7 @@ define( require => {
 
         // Only store the full baseline if we are printing out those files. Do this before applying overrides.
         if ( phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
-          this.baselineMetadata = PhetioObject.getMetadata( options );
+          this.phetioBaselineMetadata = PhetioObject.getMetadata( options );
         }
 
         // If not a deprecated dynamic element
