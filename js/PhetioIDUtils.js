@@ -77,12 +77,11 @@
      * -->  'myScreen.myControlPanel'
      * @public
      * @param {string} phetioID - the ID of the PhET-iO element
-     * @returns {string} - the phetioID of the parent
+     * @returns {string|null} - the phetioID of the parent, or null if there is no parent
      */
     getParentID: function( phetioID ) {
       var indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
-      assert && assert( indexOfLastSeparator !== -1, 'phetioID does not have a parent component: ' + phetioID );
-      return phetioID.substring( 0, indexOfLastSeparator );
+      return indexOfLastSeparator === -1 ? null : phetioID.substring( 0, indexOfLastSeparator );
     },
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
