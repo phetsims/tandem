@@ -306,12 +306,22 @@ define( require => {
   Tandem.rootTandem = new Tandem( null, toCamelCase( packageJSON.name ) );
 
   /**
-   * Many simulation elements are nested under "general".
+   * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
+   * place to put simulation specific globals, see `Tandem.globalTandem`
    * @public
    * @static
    * @type {Tandem}
    */
-  Tandem.generalTandem = Tandem.rootTandem.createTandem( 'general' );
+  Tandem.generalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
+
+  /**
+   * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
+   * have simulation specific elements in them. Instrument items used by all sims under `Tandem.generalTandem`.
+   * @public
+   * @static
+   * @type {Tandem}
+   */
+  Tandem.globalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
 
   /**
    * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not

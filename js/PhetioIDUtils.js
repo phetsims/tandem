@@ -20,6 +20,7 @@
   var SEPARATOR = '.';
   var GROUP_SEPARATOR = '_';
   var GENERAL_COMPONENT_NAME = 'general';
+  var GLOBAL_COMPONENT_NAME = 'global';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -146,11 +147,20 @@
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
-     * The separator used to specify the count of a member in a group.
+     * The component name for the id section that holds phet-io elements general to all simulations.
      * @type {String}
      * @constant
      * @public
      */
-    GENERAL_COMPONENT_NAME: GENERAL_COMPONENT_NAME
+    GENERAL_COMPONENT_NAME: GENERAL_COMPONENT_NAME,
+
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    /**
+     * The component name for the id section that holds simulation specific elements that don't belong in a screen.
+     * @type {String}
+     * @constant
+     * @public
+     */
+    GLOBAL_COMPONENT_NAME: GLOBAL_COMPONENT_NAME
   };
 } )();
