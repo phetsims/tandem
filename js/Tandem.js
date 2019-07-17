@@ -352,7 +352,6 @@ define( require => {
    * Expose collected missing tandems only populated from specific query parameter, see phetioPrintMissingTandems
    * @public (phet-io internal)
    * @type {Object}
-   * @public
    */
   Tandem.missingTandems = missingTandems;
 
