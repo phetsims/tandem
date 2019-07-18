@@ -12,8 +12,7 @@ define( require => {
   'use strict';
 
   // modules
-  const Enumeration = require( 'PHET_CORE/Enumeration' );
-  const EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
+  const EventType = require( 'TANDEM/EventType' );
   const inherit = require( 'PHET_CORE/inherit' );
   const LinkedElementIO = require( 'TANDEM/LinkedElementIO' );
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
@@ -26,7 +25,6 @@ define( require => {
 
   // constants
   const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
-  const EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ] );
 
   // Indicates a high frequency message was skipped.
   const SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
@@ -441,7 +439,7 @@ define( require => {
         phetioDocumentation: object.phetioDocumentation,
         phetioState: object.phetioState,
         phetioReadOnly: object.phetioReadOnly,
-        phetioEventType: EnumerationIO( EventType ).toStateObject( object.phetioEventType ),
+        phetioEventType: EventType.phetioType.toStateObject( object.phetioEventType ),
         phetioHighFrequency: object.phetioHighFrequency,
         phetioPlayback: object.phetioPlayback,
         phetioStudioControl: object.phetioStudioControl,
@@ -449,8 +447,7 @@ define( require => {
       };
     },
 
-    DEFAULT_OPTIONS: DEFAULTS, // the default options for the phet-io object
-    EventType: EventType // enum for phetio event types
+    DEFAULT_OPTIONS: DEFAULTS // the default options for the phet-io object
   } );
 
   /**
