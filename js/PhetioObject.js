@@ -441,7 +441,7 @@ define( require => {
         phetioDocumentation: object.phetioDocumentation,
         phetioState: object.phetioState,
         phetioReadOnly: object.phetioReadOnly,
-        phetioEventType: EnumerationIO( EventType ).toStateObject( object.phetioEventType ).toLowerCase(), //TODO: https://github.com/phetsims/phet-io/issues/1427 and https://github.com/phetsims/phet-io/issues/1409
+        phetioEventType: EnumerationIO( EventType ).toStateObject( object.phetioEventType ),
         phetioHighFrequency: object.phetioHighFrequency,
         phetioPlayback: object.phetioPlayback,
         phetioStudioControl: object.phetioStudioControl,
