@@ -27,7 +27,7 @@ define( require => {
       this.instance = null;
       this.creator = creator;
 
-      if ( phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
+      if ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
         this.getInstance( ...defaultArguments );
       }
     }
