@@ -12,7 +12,7 @@
  * 2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
  * 3. Any registered PhetioObject must be included in the schema.
  * 4. After startup, only dynamic instances can be registered.
- * 5. When the sim is finished starting up, all schema entries must be registered.
+ * 5. When the sim is finished starting up, all non-dynamic schema entries must be registered.
  * 6. Any static, registered PhetioObject can never be deregistered.
  * 7. Any schema entries in the overrides file must exist in the baseline file
  * 8. Any schema entries in the overrides file must be different from its baseline counterpart
@@ -83,11 +83,10 @@ define( require => {
         return;
       }
 
+      const concretePhetioID = tandem.getConcretePhetioID();
+      const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
+
       if ( !this.simHasStarted ) {
-
-        const concretePhetioID = tandem.getConcretePhetioID();
-        const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
-
         if ( !baseline ) {
           this.addError( {
             phetioID: tandem.phetioID,
@@ -109,14 +108,17 @@ define( require => {
           } );
         }
       }
+      else {
 
-      // Instances should generally be created on startup.  The only instances that it's OK to create after startup
-      // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
-      if ( this.simHasStarted && !phetio.PhetioIDUtils.isDynamicElement( tandem.phetioID ) ) {
-        this.addError( {
-          phetioID: tandem.phetioID,
-          ruleInViolation: '4. After startup, only dynamic instances can be registered.'
-        } );
+        // Instances should generally be created on startup.  The only instances that it's OK to create after startup
+        // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
+        const isDynamicElement = phetio.PhetioIDUtils.isDynamicElement( tandem.phetioID ) || baseline.phetioDynamicElement;
+        if ( !isDynamicElement ) {
+          this.addError( {
+            phetioID: tandem.phetioID,
+            ruleInViolation: '4. After startup, only dynamic instances can be registered.'
+          } );
+        }
       }
     }
 
@@ -139,10 +141,14 @@ define( require => {
         // assertion error because the sim is missing something it is supposed to have.
         // Don't check for this when generating the API file from the code.
         for ( const phetioID in window.phet.phetio.phetioElementsBaseline ) {
-          if ( window.phet.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) && !phetioObjectMap[ phetioID ] ) {
+          if (
+            window.phet.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) &&
+            !phetioObjectMap[ phetioID ]
+            && !window.phet.phetio.phetioElementsBaseline[ phetioID ].phetioDynamicElement
+          ) {
             this.addError( {
               phetioID: phetioID,
-              ruleInViolation: '5. When the sim is finished starting up, all schema entries must be registered.',
+              ruleInViolation: '5. When the sim is finished starting up, all non-dynamic schema entries must be registered.',
               message: 'phetioID expected but does not exist'
             } );
           }

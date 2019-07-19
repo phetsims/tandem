@@ -44,7 +44,8 @@ define( require => {
     phetioStudioControl: true,        // When true, Studio is allowed to create a control for this PhetioObject (if it knows how)
     phetioComponentOptions: null,     // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
     phetioFeatured: false,            // When true, this is categorized as an important "featured" element in Studio.
-    phetioEventMetadata: null         // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
+    phetioEventMetadata: null,        // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
+    phetioDynamicElement: false       // {boolean} optional - indicates that an object may or may not have been created
   };
 
   // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
@@ -107,6 +108,9 @@ define( require => {
 
     // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioStudioControl = null;
+
+    // @private {boolean} - see docs at DEFAULTS declaration // TODO: are these really private?
+    this.phetioDynamicElement = null;
 
     // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioFeatured = false;
@@ -267,6 +271,7 @@ define( require => {
       this.phetioHighFrequency = options.phetioHighFrequency;
       this.phetioPlayback = options.phetioPlayback;
       this.phetioStudioControl = options.phetioStudioControl;
+      this.phetioDynamicElement = options.phetioDynamicElement;
       this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
       this.phetioFeatured = options.phetioFeatured;
       this.phetioEventMetadata = options.phetioEventMetadata;
@@ -443,6 +448,7 @@ define( require => {
         phetioHighFrequency: object.phetioHighFrequency,
         phetioPlayback: object.phetioPlayback,
         phetioStudioControl: object.phetioStudioControl,
+        phetioDynamicElement: object.phetioDynamicElement,
         phetioFeatured: object.phetioFeatured
       };
     },
