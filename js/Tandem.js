@@ -118,6 +118,7 @@ define( require => {
         // When the query parameter phetioPrintMissingTandems is true, report tandems that are required but not supplied
         if ( PRINT_MISSING_TANDEMS && ( this.required && !this.supplied ) ) {
           missingTandems.required.push( { phetioID: this.phetioID, stack: new Error().stack } );
+          return;
         }
 
         // If tandem is optional and not supplied, then ignore it.
@@ -129,6 +130,7 @@ define( require => {
             // supplied, but not for Fonts because they are too numerous.
             if ( stackTrace.indexOf( 'Font' ) === -1 ) {
               missingTandems.optional.push( { phetioID: this.phetioID, stack: stackTrace } );
+              return;
             }
           }
 
