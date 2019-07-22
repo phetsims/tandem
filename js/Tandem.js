@@ -338,6 +338,15 @@ define( require => {
   } );
 
   /**
+   * To be used exclusively to opt out of situations where a tandem is required.
+   * See https://github.com/phetsims/tandem/issues/97.
+   * @public
+   * @static
+   * @type {Tandem}
+   */
+  Tandem.optOut = Tandem.optional;
+
+  /**
    * Some common code (such as Checkbox or RadioButton) must always be instrumented.
    * @public
    * @static
