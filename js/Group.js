@@ -15,6 +15,7 @@ define( require => {
   const GroupIO = require( 'TANDEM/types/GroupIO' );
   const GroupMemberTandem = require( 'TANDEM/GroupMemberTandem' );
   const ObservableArray = require( 'AXON/ObservableArray' );
+  const PhetioObject = require( 'TANDEM/PhetioObject' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   // constants
@@ -23,11 +24,11 @@ define( require => {
   class Group extends ObservableArray {
 
     /**
-     * @param {string} prefix
+     * @param {string} [prefix]
      * @param {Object} prototypeSchema
      * @param {Object} [options] - describe the Group itself
      */
-    constructor( prefix, prototypeSchema, options ) {
+    constructor( prefix = 'element', prototypeSchema, options ) {
 
       options = _.extend( {
         phetioType: GroupIO,
@@ -40,17 +41,26 @@ define( require => {
       this.groupElementIndex = 0;
 
       // @private
-      this.prefix = prefix || 'element';
+      this.prefix = prefix;
       this.prototypeSchema = prototypeSchema;
       this.prototypesTandem = this.tandem.createTandem( 'prototypes' );
       this.prototypeNames = Object.keys( prototypeSchema );
       this.groupOptions = options;
 
-      for ( let i = 0; i < this.prototypeNames.length; i++ ) {
-        const prototypeName = this.prototypeNames[ i ];
+      // When generating the baseline, output the schema for the prototype(s)
+      if ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
+        for ( let i = 0; i < this.prototypeNames.length; i++ ) {
+          const prototypeName = this.prototypeNames[ i ];
 
-        // create with any default state and nested substructure
-        this.prototypeSchema[ prototypeName ]( this.prototypesTandem.createTandem( prototypeName ) );
+          // create with any default state and nested substructure
+          // TODO: support var args
+          const prototype = this.prototypeSchema[ prototypeName ]( this.prototypesTandem.createTandem( prototypeName ) );
+
+          assert && Group.assertDynamicPhetioObject( prototype );
+        }
+
+        // There cannot be any items in the Group yet, and here we check for subsequently added items.
+        assert && this.addItemAddedListener( Group.assertDynamicPhetioObject );
       }
     }
 
@@ -105,6 +115,18 @@ define( require => {
       this.push( groupMember );
 
       return groupMember;
+    }
+
+    /**
+     * A dynamic element should be an instrumented PhetioObject with phetioDynamicElement: true
+     * @param {PhetioObject} phetioObject - object to be validated
+     * @public
+     * @static
+     */
+    static assertDynamicPhetioObject( phetioObject ) {
+      assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
+      assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
+      assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
     }
   }
 

@@ -14,7 +14,7 @@ define( require => {
   'use strict';
 
   // modules
-  const PhetioObject = require( 'TANDEM/PhetioObject' );
+  const Group = require( 'TANDEM/Group' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   class DynamicElement {
@@ -39,9 +39,9 @@ define( require => {
      * @public
      */
     getInstance() {
+      this.instance && assert( arguments.length === 0, '' );
       this.instance = this.instance || this.creator.apply( null, arguments );
-      assert && assert( this.instance instanceof PhetioObject, 'instance should be instrumented' );
-      assert && assert( this.instance.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
+      assert && Group.assertDynamicPhetioObject( this.instance );
       return this.instance;
     }
   }
