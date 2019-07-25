@@ -44,14 +44,14 @@ define( require => {
      * See Tandem.getConcretePhetioID, in this case, look up the corresponding prototype.
      * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
      * which corresponds to the prototype "quark" ....
-     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypes.quark.visibleProperty'
+     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypeQuark.visibleProperty'
      * @returns {string}
      * @public
      * @override
      */
     getConcretePhetioID() {
       assert && assert( this.parentTandem, 'Group members must be in a Group' );
-      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), 'prototypes', this.prototypeName );
+      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), this.prototypeName );
     }
   }
 
