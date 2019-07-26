@@ -17,6 +17,7 @@ define( require => {
   const ObservableArray = require( 'AXON/ObservableArray' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const StringUtils = require( 'PHETCOMMON/util/StringUtils' );
+  const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   // constants
@@ -74,7 +75,7 @@ define( require => {
       }
 
       // There cannot be any items in the Group yet, and here we check for subsequently added items.
-      assert && this.addItemAddedListener( Group.assertDynamicPhetioObject );
+      assert && Tandem.PHET_IO_ENABLED && this.addItemAddedListener( Group.assertDynamicPhetioObject );
     }
 
     /**
