@@ -307,6 +307,7 @@ define( require => {
      * @param {Object|function|null} [data] - data for the event, either an object, or a function that returns an object
      *                                      - this is transmitted over postMessage using the structured cloning algorithm
      *                                      - and hence cannot contain functions or other unclonable elements
+     *                                      - TODO: We have recently been considering overloading to be an antipattern, maybe this should be split up
      * @public
      */
     phetioStartEvent: function( event, data ) {
