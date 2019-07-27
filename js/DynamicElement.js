@@ -15,6 +15,7 @@ define( require => {
 
   // modules
   const Group = require( 'TANDEM/Group' );
+  const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   class DynamicElement {
@@ -41,7 +42,7 @@ define( require => {
     getInstance() {
       this.instance && assert( arguments.length === 0, '' );
       this.instance = this.instance || this.creator.apply( null, arguments );
-      assert && Group.assertDynamicPhetioObject( this.instance );
+      assert && Tandem.PHET_IO_ENABLED && Group.assertDynamicPhetioObject( this.instance );
       return this.instance;
     }
   }
