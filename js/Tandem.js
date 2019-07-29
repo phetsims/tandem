@@ -310,20 +310,24 @@ define( require => {
   /**
    * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
    * place to put simulation specific globals, see `Tandem.globalTandem`
+   *
+   * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/84
    * @public
    * @static
    * @type {Tandem}
    */
-  Tandem.generalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
+  Tandem.generalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME || 'general' );
 
   /**
    * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
    * have simulation specific elements in them. Instrument items used by all sims under `Tandem.generalTandem`.
+   *
+   * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/84
    * @public
    * @static
    * @type {Tandem}
    */
-  Tandem.globalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
+  Tandem.globalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME || 'global' );
 
   /**
    * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
