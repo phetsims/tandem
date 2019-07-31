@@ -17,7 +17,7 @@ define( function( require ) {
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an appropriate array IO type.
-   * @param {ObjectIO} elementType - IO type of the individual elements in the array. If loaded by phet (not phet-io)
+   * @param {function(new:ObjectIO)} elementType - IO type of the individual elements in the array. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
    * @constructor
    */
