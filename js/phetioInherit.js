@@ -61,6 +61,11 @@ define( function( require ) {
         .join( ', ' ) + '>';
     }
 
+    // Enumeration types indicate their possible values as part of the type name, to improve readability in the type docs in studio
+    if ( typeName === 'EnumerationIO' ) {
+      typeName = typeName + '(' + staticProperties.enumerationValues.join( '|' ) + ')';
+    }
+
     // The method order is used to determine the ordering of the documentation for a type's methods, see Studio for usage.
     subtype.methodOrder = staticProperties.methodOrder || [];
     subtype.methodOrder.forEach( function( methodName ) {

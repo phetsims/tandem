@@ -14,8 +14,10 @@ define( require => {
   const EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  const EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ], EventType => {
-    EventType.phetioType = EnumerationIO( EventType );
+  const EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ], {
+    beforeFreeze: EventType => {
+      EventType.phetioType = EnumerationIO( EventType );
+    }
   } );
 
   return tandemNamespace.register( 'EventType', EventType );
