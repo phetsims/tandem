@@ -17,8 +17,8 @@ define( function( require ) {
   /**
    * Parametric IO type constructor--given return type and parameter types, this function returns a type wrapper for
    * that class of functions.
-   * @param {function} returnType - wrapper IO Type of the return type of the wrapped function
-   * @param {function[]} parameterTypes - wrapper IO Types for the individual arguments of the wrapped function
+   * @param {function(new:ObjectIO)} returnType - wrapper IO Type of the return type of the wrapped function
+   * @param {function(new:ObjectIO)[]} parameterTypes - wrapper IO Types for the individual arguments of the wrapped function
    * @constructor
    */
   function FunctionIO( returnType, parameterTypes ) {
