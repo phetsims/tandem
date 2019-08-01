@@ -45,7 +45,7 @@ define( function( require ) {
       validator: {
         valueType: Array,
         isValidValue: array => {
-          return _.every( array, element => ValidatorDef.isValueValid( element, { valueType: elementType } ) );
+          return _.every( array, element => ValidatorDef.isValueValid( element, elementType.validator ) );
         }
       },
 
