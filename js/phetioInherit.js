@@ -10,9 +10,12 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var ValidatorDef = require( 'AXON/ValidatorDef' );
-  var inherit = require( 'PHET_CORE/inherit' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
+  const inherit = require( 'PHET_CORE/inherit' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+
+  // constants
+  const typeToTypeName = parameterType => parameterType.typeName;
 
   /**
    * @param {function} supertype Constructor for the supertype.
@@ -21,7 +24,7 @@ define( function( require ) {
    * @param {Object} [methods] object containing properties that will be set on the prototype.
    * @param {Object} [staticProperties] object containing properties that will be set on the constructor function itself
    */
-  var phetioInherit = function( supertype, typeName, subtype, methods, staticProperties ) {
+  const phetioInherit = function( supertype, typeName, subtype, methods, staticProperties ) {
     assert && assert( typeof typeName === 'string', 'typename must be 2nd arg' );
     assert && assert( typeName.indexOf( 'IO' ) === typeName.length - 'IO'.length, 'type name must end with IO' );
     assert && assert( typeof supertype === 'function' );
@@ -53,17 +56,22 @@ define( function( require ) {
     assert && assert( staticProperties.validator, 'validator must be provided' );
     assert && ValidatorDef.validateValidator( staticProperties.validator );
 
-    if ( staticProperties.parameterTypes ) {
+    if ( staticProperties.parameterTypes && typeName !== 'FunctionIO' ) {
       assert && assert( Array.isArray( staticProperties.parameterTypes ), 'parameterTypes expected to be array' );
 
       // Add the parameter types to the FunctionIO's type name.
-      typeName = typeName + '.<' + staticProperties.parameterTypes.map( function( parameterType ) { return parameterType.typeName;} )
+      typeName = typeName + '.<' + staticProperties.parameterTypes.map( typeToTypeName )
         .join( ', ' ) + '>';
     }
 
     // Enumeration types indicate their possible values as part of the type name, to improve readability in the type docs in studio
     if ( typeName === 'EnumerationIO' ) {
-      typeName = typeName + '(' + staticProperties.enumerationValues.join( '|' ) + ')';
+      typeName = typeName + '.(' + staticProperties.enumerationValues.join( '|' ) + ')';
+    }
+
+    // FunctionIO types indicate their return type as part of the type name, to improve readability in the type docs in studio
+    if ( typeName === 'FunctionIO' ) {
+      typeName = `${typeName}(${subtype.argumentTypes.map( typeToTypeName ).join( ',' )})=>${staticProperties.returnType.typeName}`;
     }
 
     // The method order is used to determine the ordering of the documentation for a type's methods, see Studio for usage.
@@ -76,24 +84,9 @@ define( function( require ) {
     subtype.methods = methods;
     subtype.supertype = supertype;
 
-    /**
-     * Look through the inheritance hierarchy to find the deepest (subtypiest) method declaration
-     */
-    subtype.getMethodDeclaration = function( methodName ) {
-      if ( this.methods[ methodName ] ) {
-        return this.methods[ methodName ];
-      }
-      else if ( typeName === 'ObjectIO' ) {
-        return null;
-      }
-      else {
-        return supertype.getMethodDeclaration( methodName );
-      }
-    };
-
     // Combine the subtype's with events from all parents into a single array, see https://github.com/phetsims/phet-io/issues/1069
-    var supertypeEvents = supertype.allEvents || [];
-    var subtypeEvents = subtype.events || [];
+    const supertypeEvents = supertype.allEvents || [];
+    const subtypeEvents = subtype.events || [];
     assert && subtypeEvents.forEach( function( event ) {
       assert( supertypeEvents.indexOf( event ) < 0, 'subtype should not declare event that parent also has.' );
     } );
@@ -102,7 +95,7 @@ define( function( require ) {
     subtype.allMethods = _.extend( {}, supertype.allMethods, methods );
 
     // Copy supertype's static methods to subtype, see https://github.com/phetsims/phet-io/issues/1273
-    for ( var staticProperty in supertype ) {
+    for ( const staticProperty in supertype ) {
       if ( supertype.hasOwnProperty( staticProperty ) ) {
 
         // If the subtype already provides the property, keep the subtype version.  If not, take the supertype property.

@@ -56,8 +56,29 @@ define( function( require ) {
       validator: { valueType: 'function' },
 
       returnType: returnType,
-      parameterTypes: parameterTypes,
-      wrapForPhetioCommandProcessor: true
+      argumentTypes: parameterTypes, // TODO: this is weird and not right.
+      parameterTypes: parameterTypes.concat( returnType ),
+      wrapForPhetioCommandProcessor: true,
+
+      /**
+       * @override
+       * @param {function(new:ObjectIO)} OtherFunctionIO
+       */
+      equals: function( OtherFunctionIO ) {
+        if ( this.typeName !== OtherFunctionIO.typeName ) {
+          return false;
+        }
+        for ( let i = 0; i < this.parameterTypes.length; i++ ) {
+          const thisParameterType = this.parameterTypes[ i ];
+          const otherParameterType = OtherFunctionIO.parameterTypes[ i ];
+
+          // TODO: is having the reciprocal here overkill?
+          if ( !thisParameterType.equals( otherParameterType ) || !otherParameterType.equals( thisParameterType ) ) {
+            return false;
+          }
+        }
+        return this.supertype.equals( OtherFunctionIO.supertype ) && OtherFunctionIO.supertype.equals( this.supertype );
+      }
     } );
   }
 

@@ -75,6 +75,16 @@ define( function( require ) {
      */
     fromStateObject: function( o ) {
       return o;
+    },
+
+    /**
+     * Compare two ObjectIO constructor function Types to see if they are the same. Subtypes should override to ensure
+     * compatibility.
+     * @param {function(new:ObjectIO)} OtherObjectIO
+     * @returns {boolean}
+     */
+    equals: function( OtherObjectIO ) {
+      return this === OtherObjectIO;
     }
   } );
 

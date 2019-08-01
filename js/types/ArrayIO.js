@@ -84,6 +84,23 @@ define( function( require ) {
         assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
         array.length = 0;
         array.push.apply( array, fromStateObject );
+      },
+
+      /**
+       * @override
+       * @param {function(new:ObjectIO)} OtherArrayIO
+       */
+      equals: function( OtherArrayIO ) {
+        if ( this.typeName !== OtherArrayIO.typeName ) {
+          return false;
+        }
+        if ( !OtherArrayIO.elementType ) {
+          return false;
+        }
+        if ( !this.elementType.equals( OtherArrayIO.elementType ) ) {
+          return false;
+        }
+        return this.supertype.equals( OtherArrayIO.supertype ) && OtherArrayIO.supertype.equals( this.supertype );
       }
     } );
   }
