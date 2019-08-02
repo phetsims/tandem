@@ -187,7 +187,6 @@ define( require => {
       // `new Node( {tandem: tandem}).mutate({})`
       assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
-      // TODO: Can/should this be moved to phetioAPIValidation?  If so, should it be guarded by phetioAPIValidation.enabled? see https://github.com/phetsims/phet-io/issues/1409
       assert && assert( options.tandem, 'Component was missing its tandem' );
 
       const phetioID = options.tandem.phetioID;
