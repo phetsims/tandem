@@ -17,6 +17,7 @@
  * 7. Any schema entries in the overrides file must exist in the baseline file
  * 8. Any schema entries in the overrides file must be different from its baseline counterpart
  * 9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.
+ * 10. Newly created TypeIOs cannot have the same typeName but be a different TypeIO implementation.
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
@@ -66,6 +67,15 @@ define( require => {
                          window.phet.phetio.phetioElementsBaseline &&
                          window.phet.phetio.phetioTypes &&
                          !phet.phetio.queryParameters.phetioPrintPhetioFiles );
+
+      // @private {Object.<typeName:string, function(new:ObjectIO)>} - this must be all phet-io types so that the
+      // following would fail:  add a phetioType, then remove it, then add a different one under the same typeName.
+      // A Note about memory: Every TypeIO that is loaded through requirejs is already loaded on the namespace. Therefore
+      // this map doesn't add any memory by storing these. The exception to this is parametric TypeIOs. It should be
+      // double checked that anything being passed into a parametric type is memory safe. As of this writing, only TypeIOs
+      // are passed to parametric TypeIOs, so this pattern remains memory leak free. Furthermore, this list is only
+      // populated when `this.enabled`.
+      this.everyPhetioType = {};
 
       this.validateOverridesFile(); // these preloads can be validated immediately
     }
@@ -189,6 +199,31 @@ define( require => {
           phetioID: phetioID,
           ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.'
         } );
+      }
+    }
+
+    /**
+     * Should be called from phetioEngine when a PhetioObject is added to the PhET-iO
+     * @param {PhetioObject} phetioObject
+     * @public
+     */
+    onPhetioObjectAdded( phetioObject ) {
+      if ( !this.enabled ) {
+        return;
+      }
+
+      const newPhetioType = phetioObject.phetioType;
+      const oldPhetioType = this.everyPhetioType[ newPhetioType.typeName ];
+
+      // test reciprocally to prevent false positives, for example an EmitterIO is an ActionIO, but an ActionIO isn't EmitterIO.
+      if ( oldPhetioType && ( !newPhetioType.equals( oldPhetioType ) || !oldPhetioType.equals( newPhetioType ) ) ) {
+        this.addError( {
+          phetioID: phetioObject.tandem.phetioID,
+          ruleInViolation: '10. Newly created TypeIOs cannot have the same typeName but be a different TypeIO implementation.'
+        } );
+      }
+      if ( !oldPhetioType ) { // This may not be necessary, but may be helpful so that we don't overwrite if rule 10 is in violation
+        this.everyPhetioType[ newPhetioType.typeName ] = newPhetioType;
       }
     }
 
