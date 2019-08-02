@@ -18,12 +18,12 @@ define( function( require ) {
    * Parametric IO type constructor--given return type and parameter types, this function returns a type wrapper for
    * that class of functions.
    * @param {function(new:ObjectIO)} returnType - wrapper IO Type of the return type of the wrapped function
-   * @param {function(new:ObjectIO)[]} parameterTypes - wrapper IO Types for the individual arguments of the wrapped function
+   * @param {function(new:ObjectIO)[]} functionParameterTypes - wrapper IO Types for the individual arguments of the wrapped function
    * @constructor
    */
-  function FunctionIO( returnType, parameterTypes ) {
-    for ( var i = 0; i < parameterTypes.length; i++ ) {
-      var parameterType = parameterTypes[ i ];
+  function FunctionIO( returnType, functionParameterTypes ) {
+    for ( var i = 0; i < functionParameterTypes.length; i++ ) {
+      var parameterType = functionParameterTypes[ i ];
       assert && assert( !!parameterType, 'parameter type was not truthy' );
     }
 
@@ -39,7 +39,7 @@ define( function( require ) {
     };
 
     // gather a list of argument names for the documentation string
-    var argsString = parameterTypes.map( function( parameterType ) { return parameterType.typeName; } ).join( ', ' );
+    var argsString = functionParameterTypes.map( function( parameterType ) { return parameterType.typeName; } ).join( ', ' );
     if ( argsString === '' ) {
       argsString = 'VoidIO';
     }
@@ -56,8 +56,10 @@ define( function( require ) {
       validator: { valueType: 'function' },
 
       returnType: returnType,
-      argumentTypes: parameterTypes, // TODO: this is weird and not right.
-      parameterTypes: parameterTypes.concat( returnType ),
+      functionParameterTypes: functionParameterTypes,
+
+      // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
+      parameterTypes: functionParameterTypes.concat( returnType ),
       wrapForPhetioCommandProcessor: true,
 
       /**

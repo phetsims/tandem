@@ -56,22 +56,23 @@ define( function( require ) {
     assert && assert( staticProperties.validator, 'validator must be provided' );
     assert && ValidatorDef.validateValidator( staticProperties.validator );
 
-    if ( staticProperties.parameterTypes && typeName !== 'FunctionIO' ) {
+    // Add the parameter types to the TypeIO's type name.
+    if ( staticProperties.parameterTypes ) {
       assert && assert( Array.isArray( staticProperties.parameterTypes ), 'parameterTypes expected to be array' );
 
-      // Add the parameter types to the FunctionIO's type name.
-      typeName = typeName + '.<' + staticProperties.parameterTypes.map( typeToTypeName )
-        .join( ', ' ) + '>';
+      // FunctionIO types indicate their return type as part of the type name, to improve readability in the type docs in studio
+      if ( typeName === 'FunctionIO' ) {
+        typeName = `${typeName}(${subtype.functionParameterTypes.map( typeToTypeName ).join( ',' )})=>${staticProperties.returnType.typeName}`;
+      }
+      else {
+        typeName = typeName + '.<' + staticProperties.parameterTypes.map( typeToTypeName )
+          .join( ', ' ) + '>';
+      }
     }
 
     // Enumeration types indicate their possible values as part of the type name, to improve readability in the type docs in studio
     if ( typeName === 'EnumerationIO' ) {
       typeName = typeName + '.(' + staticProperties.enumerationValues.join( '|' ) + ')';
-    }
-
-    // FunctionIO types indicate their return type as part of the type name, to improve readability in the type docs in studio
-    if ( typeName === 'FunctionIO' ) {
-      typeName = `${typeName}(${subtype.argumentTypes.map( typeToTypeName ).join( ',' )})=>${staticProperties.returnType.typeName}`;
     }
 
     // The method order is used to determine the ordering of the documentation for a type's methods, see Studio for usage.

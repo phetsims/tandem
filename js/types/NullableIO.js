@@ -42,8 +42,6 @@ define( function( require ) {
       // Signify parameterTypes to phetioInherit
       parameterTypes: [ ioType ],
 
-      elementType: ioType,
-
       // Signify documentation, used in documentation wrappers like PhET-iO Studio.
       documentation: 'A wrapper to wrap another IOType, adding support for null.',
 
@@ -99,10 +97,10 @@ define( function( require ) {
         if ( this.typeName !== OtherNullableIO.typeName ) {
           return false;
         }
-        if ( !OtherNullableIO.elementType ) {
+        if ( !OtherNullableIO.parameterTypes[ 0 ] ) {
           return false;
         }
-        if ( !this.elementType.equals( OtherNullableIO.elementType ) ) {
+        if ( !this.parameterTypes[ 0 ].equals( OtherNullableIO.parameterTypes[ 0 ] ) ) {
           return false;
         }
         return this.supertype.equals( OtherNullableIO.supertype ) && OtherNullableIO.supertype.equals( this.supertype );

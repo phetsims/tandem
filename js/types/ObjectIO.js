@@ -4,6 +4,9 @@
  * ObjectIO is the root of the IO Type hierarchy.  All IO types extend from ObjectIO.  This type can be subtyped or
  * used directly for types that only need toStateObject/fromStateObject.
  *
+ * This type purposefully does not have a `parametricTypes` static member. The presence of this field marks that it is
+ * a parameteric type. ObjectIO is not.
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
