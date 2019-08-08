@@ -54,6 +54,7 @@ define( function( require ) {
 
     assert && assert( staticProperties, 'static properties must be defined' );
     assert && assert( staticProperties.validator, 'validator must be provided' );
+    assert && assert( staticProperties.documentation, 'documentation must be provided' );
     assert && ValidatorDef.validateValidator( staticProperties.validator );
 
     // Add the parameter types to the TypeIO's type name.
