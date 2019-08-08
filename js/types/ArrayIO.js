@@ -6,14 +6,14 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
+  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an appropriate array IO type.
@@ -23,18 +23,19 @@ define( function( require ) {
    */
   function ArrayIO( parameterType ) {
 
+    const ParametricTypeIO = getParametricTypeIO( ArrayIO, 'ArrayIO', [ parameterType ] );
+
     /**
      * This type constructor is parameterized based on the parameterType.
      * @param {Object[]} array - the array to be wrapped
      * @param {string} phetioID
      * @constructor
      */
-    var ArrayIOImpl = function ArrayIOImpl( array, phetioID ) {
+    const ArrayIOImpl = function ArrayIOImpl( array, phetioID ) {
       assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
-      ObjectIO.call( this, array, phetioID );
+      ParametricTypeIO.call( this, array, phetioID );
     };
-    return phetioInherit( ObjectIO, 'ArrayIO', ArrayIOImpl, {}, {
-      parameterTypes: [ parameterType ],
+    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, ArrayIOImpl, {}, {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
 
       /**
@@ -58,8 +59,8 @@ define( function( require ) {
         assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
         assert && assert( parameterType.toStateObject, parameterType.typeName + ' does not have a toStateObject method.' );
 
-        var json = [];
-        for ( var i = 0; i < array.length; i++ ) {
+        const json = [];
+        for ( let i = 0; i < array.length; i++ ) {
           json.push( parameterType.toStateObject( array[ i ] ) );
         }
         return json;
@@ -72,8 +73,8 @@ define( function( require ) {
        * @override
        */
       fromStateObject: function( stateObject ) {
-        var array = [];
-        for ( var i = 0; i < stateObject.length; i++ ) {
+        const array = [];
+        for ( let i = 0; i < stateObject.length; i++ ) {
           array.push( parameterType.fromStateObject( stateObject[ i ] ) );
         }
         return array;
@@ -83,23 +84,6 @@ define( function( require ) {
         assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
         array.length = 0;
         array.push.apply( array, fromStateObject );
-      },
-
-      /**
-       * @override
-       * @param {function(new:ObjectIO)} OtherArrayIO
-       */
-      equals: function( OtherArrayIO ) {
-        if ( this.typeName !== OtherArrayIO.typeName ) {
-          return false;
-        }
-        if ( !OtherArrayIO.parameterTypes[ 0 ] ) {
-          return false;
-        }
-        if ( !this.parameterTypes[ 0 ].equals( OtherArrayIO.parameterTypes[ 0 ] ) ) {
-          return false;
-        }
-        return this.supertype.equals( OtherArrayIO.supertype ) && OtherArrayIO.supertype.equals( this.supertype );
       }
     } );
   }

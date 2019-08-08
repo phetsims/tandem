@@ -6,16 +6,13 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
   const ValidatorDef = require( 'AXON/ValidatorDef' );
   const inherit = require( 'PHET_CORE/inherit' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
-
-  // constants
-  const typeToTypeName = parameterType => parameterType.typeName;
 
   /**
    * @param {function} supertype Constructor for the supertype.
@@ -26,7 +23,8 @@ define( function( require ) {
    */
   const phetioInherit = function( supertype, typeName, subtype, methods, staticProperties ) {
     assert && assert( typeof typeName === 'string', 'typename must be 2nd arg' );
-    assert && assert( typeName.indexOf( 'IO' ) === typeName.length - 'IO'.length, 'type name must end with IO' );
+    const splitOnDot = typeName.split( '.' )[ 0 ];
+    assert && assert( splitOnDot.indexOf( 'IO' ) === splitOnDot.length - 'IO'.length, 'type name must end with IO' );
     assert && assert( typeof supertype === 'function' );
 
     inherit( supertype, subtype, methods, staticProperties );
@@ -56,25 +54,6 @@ define( function( require ) {
     assert && assert( staticProperties.validator, 'validator must be provided' );
     assert && assert( staticProperties.documentation, 'documentation must be provided' );
     assert && ValidatorDef.validateValidator( staticProperties.validator );
-
-    // Add the parameter types to the TypeIO's type name.
-    if ( staticProperties.parameterTypes ) {
-      assert && assert( Array.isArray( staticProperties.parameterTypes ), 'parameterTypes expected to be array' );
-
-      // FunctionIO types indicate their return type as part of the type name, to improve readability in the type docs in studio
-      if ( typeName === 'FunctionIO' ) {
-        typeName = `${typeName}(${subtype.functionParameterTypes.map( typeToTypeName ).join( ',' )})=>${staticProperties.returnType.typeName}`;
-      }
-      else {
-        typeName = typeName + '.<' + staticProperties.parameterTypes.map( typeToTypeName )
-          .join( ', ' ) + '>';
-      }
-    }
-
-    // Enumeration types indicate their possible values as part of the type name, to improve readability in the type docs in studio
-    if ( typeName === 'EnumerationIO' ) {
-      typeName = typeName + '.(' + staticProperties.enumerationValues.join( '|' ) + ')';
-    }
 
     // The method order is used to determine the ordering of the documentation for a type's methods, see Studio for usage.
     subtype.methodOrder = staticProperties.methodOrder || [];

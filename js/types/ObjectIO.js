@@ -5,7 +5,7 @@
  * used directly for types that only need toStateObject/fromStateObject.
  *
  * This type purposefully does not have a `parametricTypes` static member. The presence of this field marks that it is
- * a parameteric type. ObjectIO is not.
+ * a parametric type. ObjectIO is not.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)

@@ -15,32 +15,30 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var ValidatorDef = require( 'AXON/ValidatorDef' );
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
 
   /**
    * Parametric type constructor function, do not use `new`
-   * @param {function} ioType - an IO type (constructor function)
-   * @returns {function} - the IO type that supports null
+   * @param {function(new:ObjectIO)} parameterType - an IO type (constructor function)
+   * @returns {function(new:ObjectIO)} - the IO type that supports null
    * @constructor
    */
-  function NullableIO( ioType ) {
+  function NullableIO( parameterType ) {
+    const ParametricTypeIO = getParametricTypeIO( NullableIO, 'NullableIO', [ parameterType ] );
 
     // Instantiate the concrete IO type using the specified type parameter
-    var NullableIOImpl = function NullableIOImpl( property, phetioID ) {
-      ObjectIO.call( this, property, phetioID );
+    const NullableIOImpl = function NullableIOImpl( property, phetioID ) {
+      ParametricTypeIO.call( this, property, phetioID );
     };
 
-    return phetioInherit( ObjectIO, 'NullableIO', NullableIOImpl, {}, {
-
-      // Signify parameterTypes to phetioInherit
-      parameterTypes: [ ioType ],
+    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, NullableIOImpl, {}, {
 
       // Signify documentation, used in documentation wrappers like PhET-iO Studio.
       documentation: 'A wrapper to wrap another IOType, adding support for null.',
@@ -50,13 +48,13 @@ define( function( require ) {
        * @public
        */
       validator: {
-        isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, ioType.validator )
+        isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, parameterType.validator )
       },
 
       /**
        * If the argument is null, returns null.
        * Otherwise converts the instance to a state object for serialization.
-       * @param {Object|null} instance - of type {ioType|null}
+       * @param {Object|null} instance - of type {parameterType|null}
        * @returns {Object|null}
        * @public
        * @static
@@ -67,7 +65,7 @@ define( function( require ) {
           return null;
         }
         else {
-          return ioType.toStateObject( instance );
+          return parameterType.toStateObject( instance );
         }
       },
 
@@ -85,25 +83,8 @@ define( function( require ) {
           return null;
         }
         else {
-          return ioType.fromStateObject( stateObject );
+          return parameterType.fromStateObject( stateObject );
         }
-      },
-
-      /**
-       * @override
-       * @param {function(new:ObjectIO)} OtherNullableIO
-       */
-      equals: function( OtherNullableIO ) {
-        if ( this.typeName !== OtherNullableIO.typeName ) {
-          return false;
-        }
-        if ( !OtherNullableIO.parameterTypes[ 0 ] ) {
-          return false;
-        }
-        if ( !this.parameterTypes[ 0 ].equals( OtherNullableIO.parameterTypes[ 0 ] ) ) {
-          return false;
-        }
-        return this.supertype.equals( OtherNullableIO.supertype ) && OtherNullableIO.supertype.equals( this.supertype );
       }
     } );
   }

@@ -6,13 +6,13 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   /**
    * Parametric IO type constructor--given return type and parameter types, this function returns a type wrapper for
@@ -22,10 +22,16 @@ define( function( require ) {
    * @constructor
    */
   function FunctionIO( returnType, functionParameterTypes ) {
-    for ( var i = 0; i < functionParameterTypes.length; i++ ) {
-      var parameterType = functionParameterTypes[ i ];
+    for ( let i = 0; i < functionParameterTypes.length; i++ ) {
+      const parameterType = functionParameterTypes[ i ];
       assert && assert( !!parameterType, 'parameter type was not truthy' );
     }
+
+    const parameterTypes = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
+    const typeName = `FunctionIO.(${parameterTypes})=>${returnType.typeName}`;
+    const ParametricTypeIO = getParametricTypeIO( FunctionIO, 'FunctionIO', [ ...functionParameterTypes, returnType ], {
+      typeName: typeName
+    } );
 
     /**
      * This type constructor is parameterized based on the return type and parameter types.
@@ -33,18 +39,18 @@ define( function( require ) {
      * @param {string} phetioID
      * @constructor
      */
-    var FunctionIOImpl = function FunctionIOImpl( instance, phetioID ) {
+    const FunctionIOImpl = function FunctionIOImpl( instance, phetioID ) {
       assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
-      ObjectIO.call( instance, phetioID );
+      ParametricTypeIO.call( instance, phetioID );
     };
 
     // gather a list of argument names for the documentation string
-    var argsString = functionParameterTypes.map( function( parameterType ) { return parameterType.typeName; } ).join( ', ' );
+    let argsString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ', ' );
     if ( argsString === '' ) {
       argsString = 'VoidIO';
     }
 
-    return phetioInherit( ObjectIO, 'FunctionIO', FunctionIOImpl, {}, {
+    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, FunctionIOImpl, {}, {
       documentation: 'Wrapper for the built-in JS function type.<br>' +
                      '<strong>Arguments:</strong> ' + argsString + '<br>' +
                      '<strong>Return Type:</strong> ' + returnType.typeName,
@@ -59,28 +65,7 @@ define( function( require ) {
       functionParameterTypes: functionParameterTypes,
 
       // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
-      parameterTypes: functionParameterTypes.concat( returnType ),
-      wrapForPhetioCommandProcessor: true,
-
-      /**
-       * @override
-       * @param {function(new:ObjectIO)} OtherFunctionIO
-       */
-      equals: function( OtherFunctionIO ) {
-        if ( this.typeName !== OtherFunctionIO.typeName ) {
-          return false;
-        }
-        for ( let i = 0; i < this.parameterTypes.length; i++ ) {
-          const thisParameterType = this.parameterTypes[ i ];
-          const otherParameterType = OtherFunctionIO.parameterTypes[ i ];
-
-          // TODO: is having the reciprocal here overkill?
-          if ( !thisParameterType.equals( otherParameterType ) || !otherParameterType.equals( thisParameterType ) ) {
-            return false;
-          }
-        }
-        return this.supertype.equals( OtherFunctionIO.supertype ) && OtherFunctionIO.supertype.equals( this.supertype );
-      }
+      wrapForPhetioCommandProcessor: true
     } );
   }
 
