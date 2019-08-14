@@ -22,20 +22,27 @@ define( require => {
 
   // constants
   const GROUP_SEPARATOR = phetio.PhetioIDUtils.GROUP_SEPARATOR;
-
-  // Create the corresponding tandem name for a specific key
-  const keyToPrototypeName = key => 'prototype' + StringUtils.capitalize( key );
+  const HOMOGENEOUS_KEY_NAME = 'prototype';
 
   class Group extends ObservableArray {
 
     /**
-     * @param {string} [prefix]
-     * @param {Object.<string,function>|function} prototypeSchema
-     *   For homogeneous groups, a function that returns the sole prototype.
-     *   For heterogeneous groups, a map of prototype name to function that returns the prototype for that type.
+     * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
+     * @param {Object.<string,function>} prototypeSchema - a map of prototype name to function that returns the
+     *                                                   - prototype for that type.
+     *                                                   - For homogeneous groups, the map has only one key
+     *                                                   - For heterogeneous groups, the map has one key per element type
      * @param {Object} [options] - describe the Group itself
      */
-    constructor( prefix = 'element', prototypeSchema, options ) {
+    constructor( prefix, prototypeSchema, options ) {
+
+      assert && assert( typeof prototypeSchema === 'object', 'prototypeSchema should be an object' );
+
+      const prototypeSchemaKeys = Object.keys( prototypeSchema );
+
+      if ( prototypeSchemaKeys.length === 1 ) {
+        assert && assert( prototypeSchemaKeys[ 0 ] === HOMOGENEOUS_KEY_NAME, 'Homogeneous groups should have entry named prototype' );
+      }
 
       options = _.extend( {
         phetioType: GroupIO,
@@ -50,28 +57,20 @@ define( require => {
       // @private
       this.prefix = prefix;
 
-      // @private {Object.<string,function>|function}
+      // @private {Object.<string,function>}
       this.prototypeSchema = prototypeSchema;
+
+      // @private {string[]}
+      this.prototypeSchemaKeys = prototypeSchemaKeys;
 
       this.groupOptions = options;
 
       // When generating the baseline, output the schema for the prototype(s)
       if ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
-
-        // create with any default state and nested substructure
-        // TODO: support var args
-
-        // this.prototypesTandem = this.tandem.createTandem( 'prototypes' );
-        if ( typeof prototypeSchema === 'function' ) {
-          const prototype = this.prototypeSchema( this.tandem.createTandem( 'prototype' ) );
+        prototypeSchemaKeys.forEach( key => {
+          const prototype = this.prototypeSchema[ key ]( this.tandem.createTandem( this.keyToPrototypeName( key ) ) );
           assert && Group.assertDynamicPhetioObject( prototype );
-        }
-        else {
-          Object.keys( prototypeSchema ).forEach( key => {
-            const prototype = this.prototypeSchema[ key ]( this.tandem.createTandem( keyToPrototypeName( key ) ) );
-            assert && Group.assertDynamicPhetioObject( prototype );
-          } );
-        }
+        } );
       }
 
       // There cannot be any items in the Group yet, and here we check for subsequently added items.
@@ -79,21 +78,23 @@ define( require => {
     }
 
     /**
-     * Creates the next tandem in the group.
-     * @param {string} prototypeName - for creating Tandems for Groups. This string creates an association between
-     *                                    and instance and a group prototype, see GroupMemberTandem.
-     * @param {Object} [options]
-     * @returns {GroupMemberTandem}
-     * @public
-     * TODO: what is this method for?
+     * Create the corresponding tandem name for a specific key.  For instance:
+     *
+     * Heterogenous Group:
+     * electron => prototypeElectron
+     * neutron => prototypeNeutron
+     *
+     * Homogeneous Group:
+     * prototype => prototype
+     *
+     * @param {string} key
+     * @returns {string}
+     * @private
      */
-    createNextTandem( prototypeName, options ) {
-      return new GroupMemberTandem(
-        this.tandem,
-        this.prefix + GROUP_SEPARATOR + ( this.groupElementIndex++ ),
-        prototypeName ? keyToPrototypeName( prototypeName ) : 'prototype',
-        this.tandem.getExtendedOptions( options )
-      );
+    keyToPrototypeName( key ) {
+      return this.prototypeSchemaKeys.length === 1 ?
+             HOMOGENEOUS_KEY_NAME :
+             HOMOGENEOUS_KEY_NAME + StringUtils.capitalize( key );
     }
 
     isGroupMemberID( componentName ) {
@@ -113,25 +114,25 @@ define( require => {
      * @returns {PhetioObject}
      * @public
      */
-    createNextGroupMember( prototypeName ) {
-      assert && assert( typeof this.prototypeSchema === 'function' || this.prototypeSchema.hasOwnProperty( prototypeName ), 'prototype should match' );
+    createNextGroupMember( prototypeName = HOMOGENEOUS_KEY_NAME ) {
+      assert && assert( this.prototypeSchema.hasOwnProperty( prototypeName ), 'prototypeSchema doesnt contain ' + prototypeName );
       return this.createGroupMember( this.prefix + GROUP_SEPARATOR + ( this.groupElementIndex++ ), prototypeName );
     }
 
     /**
      * @param {string} componentName - the name of the individual member
-     * @param {string} [prototypeName] required for heterogeneous groups
+     * @param {string} prototypeName
      * @returns {Object}
      * @private
      */
     createGroupMember( componentName, prototypeName ) {
 
       // create with default state and substructure, details will need to be set by setter methods.
-      const createMember = typeof this.prototypeSchema === 'function' ? this.prototypeSchema : this.prototypeSchema[ prototypeName ];
+      const createMember = this.prototypeSchema[ prototypeName ];
       const groupMember = createMember( new GroupMemberTandem(
         this.tandem,
         componentName,
-        prototypeName ? keyToPrototypeName( prototypeName ) : 'prototype',
+        this.keyToPrototypeName( prototypeName ),
         this.tandem.getExtendedOptions( this.groupOptions )
       ) );
 
