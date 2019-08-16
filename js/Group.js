@@ -109,23 +109,44 @@ define( require => {
     }
 
     /**
+     * The component names start at _0 and increment each time.
+     * @private
+     */
+    getNextComponentName() {
+      return this.prefix + GROUP_SEPARATOR + ( this.groupElementIndex++ );
+    }
+
+    /**
      * Creates the next group member.
-     * @param {Object} state - state for the object
+     * @param {Object} [state]
      * @returns {PhetioObject}
      * @public
      */
     createNextGroupMember( state ) {
-      return this.createGroupMember( this.prefix + GROUP_SEPARATOR + ( this.groupElementIndex++ ), state );
+      assert && assert( this.prototypeSchemaKeys.length === 1, 'createNextGroupMember should only be called for homogeneous groups' );
+      return this.createGroupMember( this.getNextComponentName(), HOMOGENEOUS_KEY_NAME, state );
+    }
+
+    /**
+     * Creates the next group member for a heterogeneous group.
+     * @param {string} prototypeName
+     * @param {Object} [state]
+     * @returns {PhetioObject}
+     * @public
+     */
+    createNextHeterogeneousGroupMember( prototypeName, state ) {
+      assert && assert( this.prototypeSchemaKeys.length > 1, 'createNextHeterogeneousGroupMember should only be called for heterogeneous groups' );
+      return this.createGroupMember( this.getNextComponentName(), prototypeName, state );
     }
 
     /**
      * @param {string} componentName - the name of the individual member
+     * @param {string} prototypeName
      * @param {Object} state
      * @returns {Object}
-     * @private
+     * @public (GroupIO)
      */
-    createGroupMember( componentName, state = {} ) {
-      const prototypeName = state.prototypeName || 'prototype';
+    createGroupMember( componentName, prototypeName, state = {} ) {
       assert && assert( this.prototypeSchema.hasOwnProperty( prototypeName ), 'prototype not found' );
 
       // create with default state and substructure, details will need to be set by setter methods.
@@ -136,7 +157,7 @@ define( require => {
         componentName,
         this.keyToPrototypeName( prototypeName ),
         this.tandem.getExtendedOptions( this.groupOptions )
-      ), state );
+      ), state, prototypeName );
 
       this.push( groupMember );
 

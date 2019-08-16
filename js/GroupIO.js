@@ -107,7 +107,9 @@ define( require => {
       // TODO: compatible with legacy group patterns
       // TODO https://github.com/phetsims/phet-io/issues/1454 move this to GroupIO
       addChildInstanceFromComponentName: function( group, componentName, stateObject ) {
-        group.createGroupMember( componentName, stateObject );
+        const prototypeName = stateObject.prototypeName;
+        delete stateObject.prototypeName;
+        group.createGroupMember( componentName, prototypeName || 'prototype', stateObject );
       },
 
       clearChildInstances: function( group ) {
