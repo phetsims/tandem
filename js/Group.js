@@ -27,10 +27,9 @@ define( require => {
 
     /**
      * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
-     * @param {Object.<string,function>} prototypeSchema - a map of prototype name to function that returns the
-     *                                                   - prototype for that type.
-     *                                                   - For homogeneous groups, the map has only one key
-     *                                                   - For heterogeneous groups, the map has one key per element type
+     * @param {Object.<string,{create:function, defaults:Object}>} prototypeSchema - a map of prototype name to function
+     *   that returns the prototype for that type. For homogeneous groups, the map has only one key For heterogeneous
+     *   groups, the map has one key per element type.
      * @param {Object} [options] - describe the Group itself
      */
     constructor( prefix, prototypeSchema, options ) {
@@ -57,7 +56,7 @@ define( require => {
       // @private
       this.prefix = prefix;
 
-      // @private {Object.<string,function>}
+      // @private {Object.<string,{create:function,defaults:Object}>}
       this.prototypeSchema = prototypeSchema;
 
       // @private {string[]}
@@ -67,8 +66,14 @@ define( require => {
 
       // When generating the baseline, output the schema for the prototype(s)
       if ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
-        prototypeSchemaKeys.forEach( key => {
-          const prototype = this.prototypeSchema[ key ]( this.tandem.createTandem( this.keyToPrototypeName( key ) ) );
+        prototypeSchemaKeys.forEach( prototypeName => {
+          const schema = this.prototypeSchema[ prototypeName ];
+          const prototype = schema.create( this.tandem.createTandem( this.keyToPrototypeName( prototypeName ) ), schema.defaults,
+            prototypeName );
+
+          // {boolean} - hack alert! when printing the baseline, we need to keep track of prototype elements so they
+          // appear in the baseline
+          prototype.isGroupMemberPrototype = true;
           assert && Group.assertDynamicPhetioObject( prototype );
         } );
       }
@@ -150,9 +155,9 @@ define( require => {
       assert && assert( this.prototypeSchema.hasOwnProperty( prototypeName ), 'prototype not found' );
 
       // create with default state and substructure, details will need to be set by setter methods.
-      const createMember = this.prototypeSchema[ prototypeName ];
+      const prototypeEntry = this.prototypeSchema[ prototypeName ];
 
-      const groupMember = createMember( new GroupMemberTandem(
+      const groupMember = prototypeEntry.create( new GroupMemberTandem(
         this.tandem,
         componentName,
         this.keyToPrototypeName( prototypeName ),

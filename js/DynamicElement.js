@@ -30,6 +30,10 @@ define( require => {
 
       if ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
         this.getInstance( ...defaultArguments );
+
+        // {boolean} - hack alert! when printing the baseline, we need to keep track of dynamic element prototypes so
+        // they appear in the baseline
+        this.instance.isDynamicElementPrototype = true;
       }
     }
 
