@@ -124,8 +124,7 @@ define( require => {
      * @returns {Object}
      * @private
      */
-    createGroupMember( componentName, state ) {
-      state = state || {};
+    createGroupMember( componentName, state = {} ) {
       const prototypeName = state.prototypeName || 'prototype';
       assert && assert( this.prototypeSchema.hasOwnProperty( prototypeName ), 'prototype not found' );
 
