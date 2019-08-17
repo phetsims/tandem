@@ -27,7 +27,7 @@ define( require => {
 
     /**
      * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
-     * @param {Object.<string,{create:function, defaults:Object}>} prototypeSchema - a map of prototype name to function
+     * @param {Object.<string,{create:function, defaultState:Object}>} prototypeSchema - a map of prototype name to function
      *   that returns the prototype for that type. For homogeneous groups, the map has only one key For heterogeneous
      *   groups, the map has one key per element type.
      * @param {Object} [options] - describe the Group itself
@@ -56,7 +56,7 @@ define( require => {
       // @private
       this.prefix = prefix;
 
-      // @private {Object.<string,{create:function,defaults:Object}>}
+      // @private {Object.<string,{create:function,defaultState:Object}>}
       this.prototypeSchema = prototypeSchema;
 
       // @private {string[]}
@@ -68,7 +68,7 @@ define( require => {
       if ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
         prototypeSchemaKeys.forEach( prototypeName => {
           const schema = this.prototypeSchema[ prototypeName ];
-          const prototype = schema.create( this.tandem.createTandem( this.keyToPrototypeName( prototypeName ) ), schema.defaults,
+          const prototype = schema.create( this.tandem.createTandem( this.keyToPrototypeName( prototypeName ) ), schema.defaultState,
             prototypeName );
 
           // {boolean} - hack alert! when printing the baseline, we need to keep track of prototype elements so they
