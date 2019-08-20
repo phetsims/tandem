@@ -18,7 +18,6 @@ define( require => {
   const phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
 
   /**
-   * Main constructor for ReferenceIO base IO type.
    * @param {Object} instance
    * @param {string} phetioID
    * @constructor

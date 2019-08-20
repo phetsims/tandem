@@ -19,7 +19,6 @@ define( function( require ) {
   var validate = require( 'AXON/validate' );
 
   /**
-   * Main constructor for ObjectIO base IO type.
    * @param {Object} phetioObject
    * @param {string} phetioID
    * @constructor
