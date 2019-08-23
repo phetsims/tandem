@@ -226,6 +226,7 @@ define( require => {
       assert && assert( typeof options.phetioDocumentation === 'string',
         'invalid phetioDocumentation: ' + options.phetioDocumentation
       );
+      assert && assert( options.phetioDocumentation.indexOf( '\n' ) === -1, 'use "<br>" instead of newlines' );
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
       // overrides API file. Even when validation is not enabled, overrides should still be applied.
