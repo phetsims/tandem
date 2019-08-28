@@ -19,7 +19,7 @@ define( require => {
   'use strict';
 
   // modules
-  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
@@ -31,14 +31,14 @@ define( require => {
    * @constructor
    */
   function NullableIO( parameterType ) {
-    const ParametricTypeIO = getParametricTypeIO( NullableIO, 'NullableIO', [ parameterType ] );
+    const ParametricTypeImplIO = ParametricTypeIO( NullableIO, 'NullableIO', [ parameterType ] );
 
     // Instantiate the concrete IO type using the specified type parameter
     const NullableIOImpl = function NullableIOImpl( property, phetioID ) {
-      ParametricTypeIO.call( this, property, phetioID );
+      ParametricTypeImplIO.call( this, property, phetioID );
     };
 
-    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, NullableIOImpl, {}, {
+    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, NullableIOImpl, {}, {
 
       // Signify documentation, used in documentation wrappers like PhET-iO Studio.
       documentation: 'A wrapper to wrap another IOType, adding support for null.',

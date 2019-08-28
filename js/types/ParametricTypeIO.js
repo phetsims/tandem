@@ -25,10 +25,10 @@ define( require => {
    * @param {Array.<function(new:ObjectIO)>} parameterTypes
    * @param options
    */
-  const getParametricTypeIO = ( outerTypeIO, outerTypeName, parameterTypes, options ) => {
+  const ParametricTypeIO = ( outerTypeIO, outerTypeName, parameterTypes, options ) => {
 
     options = _.extend( {
-      typeName: null // {null|string} - if provided, this will be the typeName for the subtype of ParametricTypeIO.
+      typeName: null // {null|string} - if provided, this will be the typeName for the subtype of ParametricTypeImplIO.
     }, options );
 
     validate( parameterTypes, { valueType: Array } );
@@ -47,13 +47,13 @@ define( require => {
      * @param {string} phetioID
      * @constructor
      */
-    const ParametricTypeIO = function ParametricTypeIO( instance, phetioID ) {
+    function ParametricTypeImplIO( instance, phetioID ) {
       assert && assert( instance, 'instance should exist' );
 
       ObjectIO.call( this, instance, phetioID );
-    };
+    }
 
-    return phetioInherit( ObjectIO, `ParametricTypeIO${getDefaultParametricTypeNameSuffix( parameterTypes )}`, ParametricTypeIO, {}, {
+    return phetioInherit( ObjectIO, `ParametricTypeImplIO${getDefaultParametricTypeNameSuffix( parameterTypes )}`, ParametricTypeImplIO, {}, {
 
       documentation: 'A Type that has parameters',
 
@@ -64,7 +64,7 @@ define( require => {
        */
       parameterTypes: parameterTypes,
 
-      // ParametricTypeIO is only a parent type, and so this shouldn't be used for validation anyways
+      // ParametricTypeImplIO is only a parent type, and so this shouldn't be used for validation anyways
       validator: { isValidValue: _.stubTrue },
 
       /**
@@ -109,9 +109,9 @@ define( require => {
    * @param {Array.<function(new:ObjectIO)>} parameterTypes
    * @returns {string}
    */
-  getParametricTypeIO.getDefaultParametricTypeName = ( outerTypeName, parameterTypes ) => {
+  ParametricTypeIO.getDefaultParametricTypeName = ( outerTypeName, parameterTypes ) => {
     return `${outerTypeName}${getDefaultParametricTypeNameSuffix( parameterTypes )}`;
   };
 
-  return tandemNamespace.register( 'getParametricTypeIO', getParametricTypeIO );
+  return tandemNamespace.register( 'ParametricTypeIO', ParametricTypeIO );
 } );

@@ -12,7 +12,7 @@ define( require => {
 
   // modules
   const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const VoidIO = require( 'TANDEM/types/VoidIO' );
@@ -40,7 +40,7 @@ define( require => {
       isReferenceType: true
     }, options );
 
-    const ParametricTypeIO = getParametricTypeIO( GroupIO, 'GroupIO', [ parameterType ] );
+    const ParametricTypeImplIO = ParametricTypeIO( GroupIO, 'GroupIO', [ parameterType ] );
 
     /**
      * This type constructor is parameterized based on the parameterType
@@ -50,10 +50,10 @@ define( require => {
      */
     const ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
       assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
-      ParametricTypeIO.call( this, observableArray, phetioID );
+      ParametricTypeImplIO.call( this, observableArray, phetioID );
     };
 
-    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, ObservableArrayIOImpl, {
+    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, ObservableArrayIOImpl, {
 
       /**
        * Adds a listener to the observable array.

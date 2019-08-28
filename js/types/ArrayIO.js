@@ -10,7 +10,7 @@ define( require => {
   'use strict';
 
   // modules
-  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
@@ -23,7 +23,7 @@ define( require => {
    */
   function ArrayIO( parameterType ) {
 
-    const ParametricTypeIO = getParametricTypeIO( ArrayIO, 'ArrayIO', [ parameterType ] );
+    const ParametricTypeImplIO = ParametricTypeIO( ArrayIO, 'ArrayIO', [ parameterType ] );
 
     /**
      * This type constructor is parameterized based on the parameterType.
@@ -33,9 +33,9 @@ define( require => {
      */
     const ArrayIOImpl = function ArrayIOImpl( array, phetioID ) {
       assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
-      ParametricTypeIO.call( this, array, phetioID );
+      ParametricTypeImplIO.call( this, array, phetioID );
     };
-    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, ArrayIOImpl, {}, {
+    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, ArrayIOImpl, {}, {
       documentation: 'A wrapper for the built-in JS array type, with the element type specified.',
 
       /**

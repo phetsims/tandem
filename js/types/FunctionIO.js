@@ -10,7 +10,7 @@ define( require => {
   'use strict';
 
   // modules
-  const getParametricTypeIO = require( 'TANDEM/types/getParametricTypeIO' );
+  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const phetioInherit = require( 'TANDEM/phetioInherit' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
@@ -29,7 +29,7 @@ define( require => {
 
     const parameterTypes = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
     const typeName = `FunctionIO.(${parameterTypes})=>${returnType.typeName}`;
-    const ParametricTypeIO = getParametricTypeIO( FunctionIO, 'FunctionIO', [ ...functionParameterTypes, returnType ], {
+    const ParametricTypeImplIO = ParametricTypeIO( FunctionIO, 'FunctionIO', [ ...functionParameterTypes, returnType ], {
       typeName: typeName
     } );
 
@@ -41,7 +41,7 @@ define( require => {
      */
     const FunctionIOImpl = function FunctionIOImpl( instance, phetioID ) {
       assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
-      ParametricTypeIO.call( instance, phetioID );
+      ParametricTypeImplIO.call( instance, phetioID );
     };
 
     // gather a list of argument names for the documentation string
@@ -50,7 +50,7 @@ define( require => {
       argsString = 'VoidIO';
     }
 
-    return phetioInherit( ParametricTypeIO, ParametricTypeIO.subtypeTypeName, FunctionIOImpl, {}, {
+    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, FunctionIOImpl, {}, {
       documentation: 'Wrapper for the built-in JS function type.<br>' +
                      '<strong>Arguments:</strong> ' + argsString + '<br>' +
                      '<strong>Return Type:</strong> ' + returnType.typeName,
