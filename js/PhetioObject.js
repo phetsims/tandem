@@ -232,8 +232,9 @@ define( require => {
       // overrides API file. Even when validation is not enabled, overrides should still be applied.
       if ( PHET_IO_ENABLED && options.tandem.supplied ) {
 
-        // Only store the full baseline if we are printing out those files. Do this before applying overrides.
-        if ( phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
+        // Only store the full baseline if we are printing out those files or need it for validation. Do this before
+        // applying overrides.
+        if ( phet.phetio.queryParameters.phetioPrintPhetioFiles || phetioAPIValidation.enabled ) {
           this.phetioBaselineMetadata = PhetioObject.getMetadata( options );
         }
 

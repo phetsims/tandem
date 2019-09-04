@@ -10,7 +10,7 @@
  *
  * 1. A full schema is required - any phet-io brand sim without these will have a 404, but this rule isn't tested in this file.
  * 2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
- * 3. Any registered PhetioObject must be included in the schema.
+ * 3. ~~ is no more
  * 4. After startup, only dynamic instances can be registered.
  * 5. When the sim is finished starting up, all non-dynamic schema entries must be registered.
  * 6. Any static, registered PhetioObject can never be deregistered.
@@ -89,36 +89,9 @@ define( require => {
      * @public
      */
     onPhetioObjectPreOverrides( tandem, phetioObjectBaselineMetadata ) {
-      if ( !this.enabled ) {
-        return;
-      }
-
-      const concretePhetioID = tandem.getConcretePhetioID();
-      const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
-
-      if ( !this.simHasStarted ) {
-        if ( !baseline ) {
-          this.addError( {
-            phetioID: tandem.phetioID,
-            ruleInViolation: '3. Any registered PhetioObject must be included in the schema',
-            message: 'no baseline schema found for phetioID',
-            concretePhetioID: concretePhetioID
-          } );
-          return;
-        }
-
-        // if simulation metadata is not equal to baseline before overrides applied
-        if ( !_.isEqual( baseline, phetioObjectBaselineMetadata ) ) {
-          this.addError( {
-            phetioID: concretePhetioID,
-            ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
-            message: 'baseline schema does not match PhetioObject computed baseline metadata',
-            baselineSchema: baseline,
-            phetioObjectBaselineMetadata: phetioObjectBaselineMetadata
-          } );
-        }
-      }
-      else {
+      if ( this.enabled && this.simHasStarted ) {
+        const concretePhetioID = tandem.getConcretePhetioID();
+        const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
 
         // Instances should generally be created on startup.  The only instances that it's OK to create after startup
         // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
@@ -134,14 +107,16 @@ define( require => {
 
     /**
      * Callback when the simulation is ready to go, and all static PhetioObjects have been created.
-     * @param {Object.<string,PhetioObject>} phetioObjectMap
-     * @param {Object.<string,Object>} phetioTypes
+     * @param {PhetioEngine} phetioEngine
      * @public
      */
-    onSimStarted( phetioObjectMap, phetioTypes ) {
+    onSimStarted( phetioEngine ) {
       if ( !this.enabled ) {
         return;
       }
+
+      const phetioElementsBaseline = phetioEngine.getPhetioElementsBaseline();
+      const phetioTypes = phetioEngine.getPhetioTypes();
 
       // When the screens query parameter is specified, there will be many things in the baseline file but not in the sim.  Those will
       // not be validated.
@@ -153,7 +128,7 @@ define( require => {
         for ( const phetioID in window.phet.phetio.phetioElementsBaseline ) {
           if (
             window.phet.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) &&
-            !phetioObjectMap[ phetioID ]
+            !phetioEngine.phetioObjectMap[ phetioID ]
             && !window.phet.phetio.phetioElementsBaseline[ phetioID ].phetioDynamicElement
           ) {
             this.addError( {
@@ -164,10 +139,27 @@ define( require => {
           }
         }
 
+        if ( !_.isEqual( phetioElementsBaseline, window.phet.phetio.phetioElementsBaseline ) ) {
+          this.addError( {
+            // Note: this breaks rule 2 which may in some cases be rule 3
+            ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
+            message: 'baseline schema does not match PhetioObject computed baseline metadata',
+            phetioElementsBaseline: phetioElementsBaseline,
+            stringifiedBaseline: JSON.stringify( window.phet.preloads.phetCore.copyWithSortedKeys( phetioElementsBaseline ), null, 2 ),
+            phetioElementsBaselineFromFile: window.phet.phetio.phetioElementsBaseline
+          } );
+        }
+
         if ( !_.isEqual( phetioTypes, window.phet.phetio.phetioTypes ) ) {
+          const phetioTypesKeys = Object.keys( phetioTypes );
+          const windowPhetioTypesKeys = Object.keys( window.phet.phetio.phetioTypes );
+
           this.addError( {
             ruleInViolation: '9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.',
-            message: 'phetioTypes are not equivalent'
+            message: 'phetioTypes are not equivalent',
+            areKeysEquivalent: _.isEqual( phetioTypesKeys.sort(), windowPhetioTypesKeys.sort() ),
+            typesNotInSim: windowPhetioTypesKeys.filter( x => !phetioTypesKeys.includes( x ) ),
+            typesNotInFile: phetioTypesKeys.filter( x => !windowPhetioTypesKeys.includes( x ) )
           } );
         }
 

@@ -109,11 +109,18 @@ define( require => {
       addChildInstanceFromComponentName: function( group, componentName, stateObject ) {
         const prototypeName = stateObject.prototypeName;
         delete stateObject.prototypeName;
-        group.createGroupMember( componentName, prototypeName || 'prototype', stateObject );
+
+        const index = parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
+
+        group.createGroupMember( prototypeName || 'prototype', index, stateObject );
+
+        // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
+        // no members have been created in the sim, instead they have only been set via state.
+        group.groupElementIndex = Math.max( index + 1, group.groupElementIndex );
       },
 
       clearChildInstances: function( group ) {
-        group.clearGroup();
+        group.clear();
       },
 
       documentation: 'An array that sends notifications when its values have changed.',

@@ -14,22 +14,23 @@ define( require => {
   // modules
   const GroupMemberTandem = require( 'TANDEM/GroupMemberTandem' );
   const ObservableArray = require( 'AXON/ObservableArray' );
+  const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const StringUtils = require( 'PHETCOMMON/util/StringUtils' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   // constants
-  const GROUP_SEPARATOR = phetio.PhetioIDUtils.GROUP_SEPARATOR;
   const HOMOGENEOUS_KEY_NAME = 'prototype';
 
+  // TODO: do we really like that this extends ObservableArray?
   class Group extends ObservableArray {
 
     /**
      * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
-     * @param {Object.<string,{create:function, defaultState:Object}>} prototypeSchema - a map of prototype name to function
+     * @param {Object.<string,{create:function, [defaultState:Object]}>} prototypeSchema - a map of prototype name to function
      *   that returns the prototype for that type. For homogeneous groups, the map has only one key For heterogeneous
-     *   groups, the map has one key per element type.
+     *   groups, the map has one key per element type. // TODO: document the api for prototypes, including the create method
      * @param {Object} [options] - describe the Group itself
      */
     constructor( prefix, prototypeSchema, options ) {
@@ -50,13 +51,14 @@ define( require => {
 
       super( options );
 
-      // @private - for generating indices from a pool
+      // @public (only for GroupIO) - for generating indices from a pool
+      // TODO: This should be reset
       this.groupElementIndex = 0;
 
       // @private
       this.prefix = prefix;
 
-      // @private {Object.<string,{create:function,defaultState:Object}>}
+      // @public {Object.<string,{create:function,defaultState:Object}>}
       this.prototypeSchema = prototypeSchema;
 
       // @private {string[]}
@@ -64,8 +66,15 @@ define( require => {
 
       this.groupOptions = options;
 
+      // @private {Object.<string, groupMember:Object>} - keep track of prototypes created conditionally, see below.
+      this.prototypes = {};
+
       // When generating the baseline, output the schema for the prototype(s)
-      if ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) {
+      // TODO: (Maybe this, let's discuss more) instead of using phetioAPIValidation.enabled check here, in
+      // TODO: phetioAPIValidation use the baseline.phetioTypeName for a whitelist of types that are only
+      // TODO: instantiated dynamically.
+      // TODO: Also look over in PhetioObject for the same pattern.
+      if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
         prototypeSchemaKeys.forEach( prototypeName => {
           const schema = this.prototypeSchema[ prototypeName ];
           const prototype = schema.create( this.tandem.createTandem( this.keyToPrototypeName( prototypeName ) ), schema.defaultState,
@@ -75,11 +84,18 @@ define( require => {
           // appear in the baseline
           prototype.isGroupMemberPrototype = true;
           assert && Group.assertDynamicPhetioObject( prototype );
+
+          this.prototypes[ prototypeName ] = prototype;
         } );
       }
 
       // There cannot be any items in the Group yet, and here we check for subsequently added items.
       assert && Tandem.PHET_IO_ENABLED && this.addItemAddedListener( Group.assertDynamicPhetioObject );
+
+      // TODO: In the general case, we can't assume that the sim will do the disposal for us, we also can't assume
+      // TODO: that all groups want this disposed. Uh oh. Perhaps we could hide this code behind an option. Perhaps this
+      // TODO: could go into ObservableArray (via an option)
+      // this.addItemRemovedListener( item => item.dispose && item.dispose() )
     }
 
     /**
@@ -102,34 +118,27 @@ define( require => {
              HOMOGENEOUS_KEY_NAME + StringUtils.capitalize( key );
     }
 
-    isGroupMemberID( componentName ) {
-      return componentName.indexOf( this.prefix + GROUP_SEPARATOR ) === 0;
-    }
-
-    clearGroup() {
-
-      // TODO: add a method that clears one at a time
-      this.forEach( groupMember => groupMember.dispose() );
-      this.clear();
-    }
-
     /**
-     * The component names start at _0 and increment each time.
-     * @private
+     * TODO: how do we guarantee that all cleared elements are disposed in the general case.
+     * @override
+     * @public
      */
-    getNextComponentName() {
-      return this.prefix + GROUP_SEPARATOR + ( this.groupElementIndex++ );
+    clear() {
+      super.clear();
+
+      // TODO: this assumes that clear is disposing (unregistering tandems) for all group members
+      this.groupElementIndex = 0;
     }
 
     /**
-     * Creates the next group member.
+     * Only for homogeneous Groups. Creates the next group member.
      * @param {Object} [state]
      * @returns {PhetioObject}
      * @public
      */
     createNextGroupMember( state ) {
       assert && assert( this.prototypeSchemaKeys.length === 1, 'createNextGroupMember should only be called for homogeneous groups' );
-      return this.createGroupMember( this.getNextComponentName(), HOMOGENEOUS_KEY_NAME, state );
+      return this.createGroupMember( HOMOGENEOUS_KEY_NAME, this.groupElementIndex++, state );
     }
 
     /**
@@ -141,22 +150,26 @@ define( require => {
      */
     createNextHeterogeneousGroupMember( prototypeName, state ) {
       assert && assert( this.prototypeSchemaKeys.length > 1, 'createNextHeterogeneousGroupMember should only be called for heterogeneous groups' );
-      return this.createGroupMember( this.getNextComponentName(), prototypeName, state );
+      return this.createGroupMember( prototypeName, this.groupElementIndex++, state );
     }
 
     /**
-     * @param {string} componentName - the name of the individual member
      * @param {string} prototypeName
+     * @param {number} index - the number of the individual member
      * @param {Object} state
      * @returns {Object}
      * @public (GroupIO)
      */
-    createGroupMember( componentName, prototypeName, state = {} ) {
+    createGroupMember( prototypeName, index, state = {} ) {
+
+      const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
+
       assert && assert( this.prototypeSchema.hasOwnProperty( prototypeName ), 'prototype not found' );
 
       // create with default state and substructure, details will need to be set by setter methods.
       const prototypeEntry = this.prototypeSchema[ prototypeName ];
 
+      // TODO: discuss the api for the create method
       const groupMember = prototypeEntry.create( new GroupMemberTandem(
         this.tandem,
         componentName,
