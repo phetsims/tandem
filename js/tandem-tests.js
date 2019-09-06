@@ -10,7 +10,6 @@ define( function( require ) {
 
   // modules
   require( 'TANDEM/PhetioObjectTests' );
-  require( 'TANDEM/phetioInheritTests' );
 
   // Since our tests are loaded asynchronously, we must direct QUnit to begin the tests
   QUnit.start();

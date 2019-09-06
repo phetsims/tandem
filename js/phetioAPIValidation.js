@@ -208,12 +208,14 @@ define( require => {
       const oldPhetioType = this.everyPhetioType[ newPhetioType.typeName ];
 
       // test reciprocally to prevent false positives, for example an EmitterIO is an ActionIO, but an ActionIO isn't EmitterIO.
-      if ( oldPhetioType && ( !newPhetioType.equals( oldPhetioType ) || !oldPhetioType.equals( newPhetioType ) ) ) {
-        this.addError( {
-          phetioID: phetioObject.tandem.phetioID,
-          ruleInViolation: '10. Newly created TypeIOs cannot have the same typeName but be a different TypeIO implementation.'
-        } );
-      }
+      // TODO: Restore this check?  Or we are deleting equals anyways?
+      // TODO: See https://github.com/phetsims/phet-io/issues/1371
+      // if ( oldPhetioType && ( !newPhetioType.equals( oldPhetioType ) || !oldPhetioType.equals( newPhetioType ) ) ) {
+      //   this.addError( {
+      //     phetioID: phetioObject.tandem.phetioID,
+      //     ruleInViolation: '10. Newly created TypeIOs cannot have the same typeName but be a different TypeIO implementation.'
+      //   } );
+      // }
       if ( !oldPhetioType ) { // This may not be necessary, but may be helpful so that we don't overwrite if rule 10 is in violation
         this.everyPhetioType[ newPhetioType.typeName ] = newPhetioType;
       }

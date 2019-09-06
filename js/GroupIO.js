@@ -12,11 +12,11 @@ define( require => {
 
   // modules
   const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
   const NumberIO = require( 'TANDEM/types/NumberIO' );
-  const phetioInherit = require( 'TANDEM/phetioInherit' );
-  const VoidIO = require( 'TANDEM/types/VoidIO' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  const ObservableArrayIO = require( 'AXON/ObservableArrayIO' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // constants
   const OBSERVABLE_ARRAY_VALIDATOR = {
@@ -36,25 +36,44 @@ define( require => {
    */
   function GroupIO( parameterType, options ) {
 
+    assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
+
     options = _.extend( {
       isReferenceType: true
     }, options );
 
-    const ParametricTypeImplIO = ParametricTypeIO( GroupIO, 'GroupIO', [ parameterType ] );
 
-    /**
-     * This type constructor is parameterized based on the parameterType
-     * @param {ObservableArray} observableArray
-     * @param {string} phetioID
-     * @constructor
-     */
-    const ObservableArrayIOImpl = function ObservableArrayIOImpl( observableArray, phetioID ) {
-      assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
-      ParametricTypeImplIO.call( this, observableArray, phetioID );
-    };
+    class GroupIOImpl extends ObservableArrayIO( parameterType ) {
 
-    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, ObservableArrayIOImpl, {
+      /**
+       * Adds a Track as specified by the phetioID and state.
+       * A Track will create its own ControlPoints
+       * @param {Group} group
+       * @param {string} componentName
+       * @param {Object} stateObject
+       */
+      // TODO https://github.com/phetsims/phet-io/issues/1454 I chose a different method name to remain backward
+      // TODO: compatible with legacy group patterns
+      // TODO https://github.com/phetsims/phet-io/issues/1454 move this to GroupIO
+      static addChildInstanceFromComponentName( group, componentName, stateObject ) {
+        const prototypeName = stateObject.prototypeName;
+        delete stateObject.prototypeName;
 
+        const index = parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
+
+        group.createGroupMember( prototypeName || 'prototype', index, stateObject );
+
+        // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
+        // no members have been created in the sim, instead they have only been set via state.
+        group.groupElementIndex = Math.max( index + 1, group.groupElementIndex );
+      }
+
+      static clearChildInstances( group ) {
+        group.clear();
+      }
+    }
+
+    GroupIOImpl.methods = {
       /**
        * Adds a listener to the observable array.
        * @param listener
@@ -94,39 +113,14 @@ define( require => {
         },
         documentation: 'Get the number of elements in the observable array'
       }
-    }, {
+    };
 
-      /**
-       * Adds a Track as specified by the phetioID and state.
-       * A Track will create its own ControlPoints
-       * @param {Group} group
-       * @param {string} componentName
-       * @param {Object} stateObject
-       */
-      // TODO https://github.com/phetsims/phet-io/issues/1454 I chose a different method name to remain backward
-      // TODO: compatible with legacy group patterns
-      // TODO https://github.com/phetsims/phet-io/issues/1454 move this to GroupIO
-      addChildInstanceFromComponentName: function( group, componentName, stateObject ) {
-        const prototypeName = stateObject.prototypeName;
-        delete stateObject.prototypeName;
+    GroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';
+    GroupIOImpl.validator = OBSERVABLE_ARRAY_VALIDATOR;
+    GroupIOImpl.typeName = `GroupIO.<${parameterType.typeName}>`;
+    ObjectIO.validateSubtype( GroupIOImpl );
 
-        const index = parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
-
-        group.createGroupMember( prototypeName || 'prototype', index, stateObject );
-
-        // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
-        // no members have been created in the sim, instead they have only been set via state.
-        group.groupElementIndex = Math.max( index + 1, group.groupElementIndex );
-      },
-
-      clearChildInstances: function( group ) {
-        group.clear();
-      },
-
-      documentation: 'An array that sends notifications when its values have changed.',
-      validator: OBSERVABLE_ARRAY_VALIDATOR,
-      events: [ 'itemAdded', 'itemRemoved' ]
-    } );
+    return GroupIOImpl;
   }
 
   tandemNamespace.register( 'GroupIO', GroupIO );

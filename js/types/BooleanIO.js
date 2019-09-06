@@ -11,24 +11,15 @@ define( function( require ) {
 
   // modules
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  /**
-   * @constructor
-   */
-  function BooleanIO() {
-    assert && assert( false, 'should never be called' );
-  }
+  const valueTypeObject = { valueType: 'boolean' };
 
-  phetioInherit( ObjectIO, 'BooleanIO', BooleanIO, {}, {
-    documentation: 'Wrapper for the built-in JS boolean type (true/false)',
-
-    /**
-     * @override
-     * @public
-     */
-    validator: { valueType: 'boolean' },
+  class BooleanIO extends ObjectIO {
+    constructor() {
+      assert && assert( false, 'should never be called' );
+      super();
+    }
 
     /**
      * Encodes a boolean to a state (which also happens to be a boolean).
@@ -36,10 +27,10 @@ define( function( require ) {
      * @returns {boolean}
      * @override
      */
-    toStateObject: function( value ) {
+    static toStateObject( value ) {
       assert && assert( typeof value === 'boolean', 'value should be boolean' );
       return value;
-    },
+    }
 
     /**
      * Decode a boolean from a state, which is already a boolean.
@@ -47,13 +38,16 @@ define( function( require ) {
      * @returns {boolean}
      * @override
      */
-    fromStateObject: function( stateObject ) {
+    static fromStateObject( stateObject ) {
       assert && assert( typeof stateObject === 'boolean', 'value should be boolean' );
       return stateObject;
     }
-  } );
+  }
 
-  tandemNamespace.register( 'BooleanIO', BooleanIO );
+  BooleanIO.validator = valueTypeObject;
+  BooleanIO.documentation = 'Wrapper for the built-in JS boolean type (true/false)';
+  BooleanIO.typeName = 'BooleanIO';
+  ObjectIO.validateSubtype( BooleanIO );
 
-  return BooleanIO;
+  return tandemNamespace.register( 'BooleanIO', BooleanIO );
 } );

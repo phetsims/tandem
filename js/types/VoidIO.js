@@ -11,41 +11,31 @@ define( function( require ) {
 
   // modules
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  /**
-   * @constructor
-   */
-  function VoidIO() {
-    assert && assert( false, 'should never be called' );
+  class VoidIO extends ObjectIO {
+    constructor( instance, phetioID ) {
+      assert && assert( false, 'should never be called' );
+      super( instance, phetioID );
+    }
+
+    static toStateObject() {
+      return undefined;
+    }
   }
 
-  phetioInherit( ObjectIO, 'VoidIO', VoidIO,
+  VoidIO.documentation = 'Type for which there is no instance, usually to mark functions without a return value';
 
-    // Instance methods
-    {},
+  /**
+   * We sometimes use VoidIO as a workaround to indicate that an argument is passed in the simulation side, but
+   * that it shouldn't be leaked to the PhET-iO client.
+   *
+   * @override
+   * @public
+   */
+  VoidIO.validator = { isValidValue: () => true };
+  VoidIO.typeName = 'VoidIO';
+  ObjectIO.validateSubtype( VoidIO );
 
-    // Static methods
-    {
-      documentation: 'Type for which there is no instance, usually to mark functions without a return value',
-
-      /**
-       * We sometimes use VoidIO as a workaround to indicate that an argument is passed in the simulation side, but
-       * that it shouldn't be leaked to the PhET-iO client.
-       *
-       * @override
-       * @public
-       */
-      validator: { isValidValue: () => true },
-
-      toStateObject: function() {
-        return undefined;
-      }
-    }
-  );
-
-  tandemNamespace.register( 'VoidIO', VoidIO );
-
-  return VoidIO;
+  return tandemNamespace.register( 'VoidIO', VoidIO );
 } );

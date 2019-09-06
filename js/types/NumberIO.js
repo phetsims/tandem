@@ -11,26 +11,13 @@ define( function( require ) {
 
   // modules
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  /**
-   * @constructor
-   */
-  function NumberIO() {
-    assert && assert( false, 'should never be called' );
-  }
-
-  tandemNamespace.register( 'NumberIO', NumberIO );
-
-  return phetioInherit( ObjectIO, 'NumberIO', NumberIO, {}, {
-    documentation: 'Wrapper for the built-in JS number type (floating point, but also represents integers)',
-
-    /**
-     * @override
-     * @public
-     */
-    validator: { valueType: 'number' },
+  class NumberIO extends ObjectIO {
+    constructor() {
+      assert && assert( false, 'should never be called' );
+      super();
+    }
 
     /**
      * Encodes a number to a state (which also happens to be a number).
@@ -38,7 +25,7 @@ define( function( require ) {
      * @returns {Object}
      * @override
      */
-    toStateObject: function( value ) {
+    static toStateObject( value ) {
       assert && assert( typeof value === 'number', 'value should be number' );
       if ( value === Number.POSITIVE_INFINITY ) {
         return 'POSITIVE_INFINITY';
@@ -47,7 +34,7 @@ define( function( require ) {
         return 'NEGATIVE_INFINITY';
       }
       return value;
-    },
+    }
 
     /**
      * Decode a number from a state, which is already a number.
@@ -55,7 +42,7 @@ define( function( require ) {
      * @returns {Object}
      * @override
      */
-    fromStateObject: function( stateObject ) {
+    static fromStateObject( stateObject ) {
       if ( stateObject === 'POSITIVE_INFINITY' ) {
         return Number.POSITIVE_INFINITY;
       }
@@ -64,5 +51,12 @@ define( function( require ) {
       }
       return stateObject;
     }
-  } );
+  }
+
+  NumberIO.documentation = 'Wrapper for the built-in JS number type (floating point, but also represents integers)';
+  NumberIO.validator = { valueType: 'number' };
+  NumberIO.typeName = 'NumberIO';
+  ObjectIO.validateSubtype( NumberIO );
+
+  return tandemNamespace.register( 'NumberIO', NumberIO );
 } );

@@ -10,8 +10,7 @@ define( require => {
   'use strict';
 
   // modules
-  const ParametricTypeIO = require( 'TANDEM/types/ParametricTypeIO' );
-  const phetioInherit = require( 'TANDEM/phetioInherit' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   /**
@@ -28,21 +27,8 @@ define( require => {
     }
 
     const parameterTypes = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
-    const typeName = `FunctionIO.(${parameterTypes})=>${returnType.typeName}`;
-    const ParametricTypeImplIO = ParametricTypeIO( FunctionIO, 'FunctionIO', [ ...functionParameterTypes, returnType ], {
-      typeName: typeName
-    } );
 
-    /**
-     * This type constructor is parameterized based on the return type and parameter types.
-     * @param {function} instance - the function to be wrapped
-     * @param {string} phetioID
-     * @constructor
-     */
-    const FunctionIOImpl = function FunctionIOImpl( instance, phetioID ) {
-      assert && assert( typeof instance === 'function', 'Instance should have been a function but it was a ' + ( typeof instance ) );
-      ParametricTypeImplIO.call( instance, phetioID );
-    };
+    class FunctionIOImpl extends ObjectIO {}
 
     // gather a list of argument names for the documentation string
     let argsString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ', ' );
@@ -50,23 +36,25 @@ define( require => {
       argsString = 'VoidIO';
     }
 
-    return phetioInherit( ParametricTypeImplIO, ParametricTypeImplIO.subtypeTypeName, FunctionIOImpl, {}, {
-      documentation: 'Wrapper for the built-in JS function type.<br>' +
-                     '<strong>Arguments:</strong> ' + argsString + '<br>' +
-                     '<strong>Return Type:</strong> ' + returnType.typeName,
+    FunctionIOImpl.documentation = 'Wrapper for the built-in JS function type.<br>' +
+                                   '<strong>Arguments:</strong> ' + argsString + '<br>' +
+                                   '<strong>Return Type:</strong> ' + returnType.typeName;
 
-      /**
-       * @override
-       * @public
-       */
-      validator: { valueType: 'function' },
+    /**
+     * @override
+     * @public
+     */
+    FunctionIOImpl.validator = { valueType: 'function' };
 
-      returnType: returnType,
-      functionParameterTypes: functionParameterTypes,
+    FunctionIOImpl.returnType = returnType;
+    FunctionIOImpl.functionParameterTypes = functionParameterTypes;
 
-      // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
-      wrapForPhetioCommandProcessor: true
-    } );
+    // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
+    FunctionIOImpl.wrapForPhetioCommandProcessor = true;
+    FunctionIOImpl.typeName = `FunctionIO.(${parameterTypes})=>${returnType.typeName}`;
+    ObjectIO.validateSubtype( FunctionIOImpl );
+
+    return FunctionIOImpl;
   }
 
   tandemNamespace.register( 'FunctionIO', FunctionIO );

@@ -14,7 +14,7 @@ define( function( require ) {
   'use strict';
 
   // modules
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
+  const ValidatorDef = require( 'AXON/ValidatorDef' );
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var validate = require( 'AXON/validate' );
 
@@ -24,37 +24,21 @@ define( function( require ) {
    * @constructor
    * @abstract
    */
-  function ObjectIO( phetioObject, phetioID ) {
-    assert && assert( phetioObject, 'phetioObject should be truthy' );
-    assert && assert( phetioID, 'phetioID should be truthy' );
+  class ObjectIO {
 
-    // @public (read-only)
-    this.phetioObject = phetioObject;
+    constructor( phetioObject, phetioID ) {
+      assert && assert( phetioObject, 'phetioObject should be truthy' );
+      assert && assert( phetioID, 'phetioID should be truthy' );
 
-    // @public (read-only)
-    this.phetioID = phetioID;
+      // @public (read-only)
+      this.phetioObject = phetioObject;
 
-    // Use the validator defined on the constructor to make sure the phetioObject is valid
-    validate( phetioObject, this.constructor.validator );
-  }
+      // @public (read-only)
+      this.phetioID = phetioID;
 
-  // ObjectIO inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
-  // However, when serialized, the ObjectIO supertype is reported as null (not sent in the JSON).
-  phetioInherit( window.Object, 'ObjectIO', ObjectIO, {}, {
-
-    /**
-     * Documentation that appears in PhET-iO Studio, supports HTML markup.
-     * @public
-     */
-    documentation: 'The root of the wrapper object hierarchy.',
-
-    /**
-     * A validator object to be used to validate the core types that IOTypes wrap.
-     * @type {ValidatorDef}
-     * @public
-     * @override
-     */
-    validator: { valueType: Object },
+      // Use the validator defined on the constructor to make sure the phetioObject is valid
+      validate( phetioObject, this.constructor.validator );
+    }
 
     /**
      * Return the json that ObjectIO is wrapping.  This can be overridden by subclasses, or types can use ObjectIO type
@@ -63,10 +47,10 @@ define( function( require ) {
      * @returns {Object}
      * @public
      */
-    toStateObject: function( o ) {
+    static toStateObject( o ) {
       // assert && assert( o instanceof Object, 'Should be serializing an Object' );
       return o;
-    },
+    }
 
     /**
      * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
@@ -75,9 +59,9 @@ define( function( require ) {
      * @returns {Object}
      * @public
      */
-    fromStateObject: function( o ) {
+    static fromStateObject( o ) {
       return o;
-    },
+    }
 
     /**
      * Compare two ObjectIO constructor function Types to see if they are the same. Subtypes should override to ensure
@@ -85,12 +69,91 @@ define( function( require ) {
      * @param {function(new:ObjectIO)} OtherObjectIO
      * @returns {boolean}
      */
-    equals: function( OtherObjectIO ) {
+    static equals( OtherObjectIO ) {
       return this === OtherObjectIO;
     }
-  } );
 
-  tandemNamespace.register( 'ObjectIO', ObjectIO );
+    /**
+     * Make sure the ObjectIO subtype has all the required attributes.
+     * @param {function} subtype - class to check
+     * @public
+     */
+    static validateSubtype( subtype ) {
+      const typeName = subtype.typeName;
+      const splitOnDot = typeName.split( '.' )[ 0 ];
+      assert && assert( splitOnDot.indexOf( 'IO' ) === splitOnDot.length - 'IO'.length, 'type name must end with IO' );
 
-  return ObjectIO;
+      // assert that each method is the correct type
+      for ( const method in subtype.methods ) {
+        const methodObject = subtype.methods[ method ];
+        if ( typeof methodObject === 'object' ) {
+          assert && assert( isIOType( methodObject.returnType ), 'return type must be of type IO: ' + methodObject.returnType );
+
+          assert && assert( Array.isArray( methodObject.parameterTypes ),
+            'parameter types must be an array: ' + methodObject.parameterTypes );
+
+          methodObject.parameterTypes.forEach( parameterType => {
+            assert && assert( isIOType( parameterType ), 'parameter type must be of type IO: ' + parameterType );
+          } );
+
+          assert && assert( typeof methodObject.implementation === 'function',
+            'implementation must be of type function: ' + methodObject.implementation );
+
+          assert && assert( typeof methodObject.documentation === 'string',
+            'documentation must be of type string: ' + methodObject.documentation );
+        }
+      }
+
+      assert && assert( subtype.validator, 'validator must be provided' );
+      assert && assert( subtype.documentation, 'documentation must be provided' );
+      assert && ValidatorDef.validateValidator( subtype.validator );
+
+      subtype.hasOwnProperty( 'methodOrder' ) && subtype.methodOrder.forEach( function( methodName ) {
+        assert && assert( subtype.methods[ methodName ], 'methodName not in prototype methods: ' + methodName );
+      } );
+
+      // TODO make this check recursive, see https://github.com/phetsims/phet-io/issues/1371
+      // const supertype = Object.getPrototypeOf( subtype );
+      // const superEvents = [];
+      // const getEvents = type => {
+      //   if ( type.events ) {
+      //     type.events.forEach( e => superEvents.push( e ) );
+      //   }
+      //   Object.getPrototypeOf( type ) && getEvents( Object.getPrototypeOf( type ) );
+      // };
+      // getEvents( supertype );
+      //
+      // assert && subtype.events && subtype.events.forEach( function( event ) {
+      //   assert( superEvents.indexOf( event ) < 0, 'subtype should not declare event that parent also has.' );
+      // } );
+    }
+  }
+
+  /**
+   * Checks if type is an IO type
+   * @param {*} type
+   * @public
+   * @returns {boolean} - true if inherits from ObjectIO or is ObjectIO
+   */
+  const isIOType = type => type === ObjectIO || type.prototype instanceof ObjectIO;
+
+  /**
+   * Documentation that appears in PhET-iO Studio, supports HTML markup.
+   * @public
+   */
+  ObjectIO.documentation = 'The root of the wrapper object hierarchy.';
+
+  ObjectIO.typeName = 'ObjectIO';
+
+  /**
+   * A validator object to be used to validate the core types that IOTypes wrap.
+   * @type {ValidatorDef}
+   * @public
+   * @override
+   */
+  ObjectIO.validator = { valueType: Object };
+
+  ObjectIO.validateSubtype( ObjectIO );
+
+  return tandemNamespace.register( 'ObjectIO', ObjectIO );
 } );

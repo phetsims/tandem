@@ -11,40 +11,31 @@ define( function( require ) {
   // modules
   var tandemNamespace = require( 'TANDEM/tandemNamespace' );
   var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var phetioInherit = require( 'TANDEM/phetioInherit' );
 
-  /**
-   * @param {LinkedElement} linkedElement
-   * @param {string} phetioID
-   * @constructor
-   */
-  function LinkedElementIO( linkedElement, phetioID ) {
-    ObjectIO.call( this, linkedElement, phetioID );
-  }
-
-  phetioInherit( ObjectIO, 'LinkedElementIO', LinkedElementIO, {}, {
-    documentation: 'A LinkedElement',
-    validator: { isValidValue: () => true },
+  class LinkedElementIO extends ObjectIO {
 
     /**
      * @param {LinkedElement} linkedElement
      * @returns {Object}
      */
-    toStateObject: function( linkedElement ) {
+    static toStateObject( linkedElement ) {
       assert && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
       return { elementID: linkedElement.element.tandem.phetioID };
-    },
+    }
 
     /**
      * @param {Object} stateObject
      * @returns {Object}
      */
-    fromStateObject: function( stateObject ) {
+    static fromStateObject( stateObject ) {
       return {};
     }
-  } );
+  }
 
-  tandemNamespace.register( 'LinkedElementIO', LinkedElementIO );
+  LinkedElementIO.documentation = 'A LinkedElement';
+  LinkedElementIO.validator = { isValidValue: () => true };
+  LinkedElementIO.typeName = 'LinkedElementIO';
+  ObjectIO.validateSubtype( LinkedElementIO );
 
-  return LinkedElementIO;
+  return tandemNamespace.register( 'LinkedElementIO', LinkedElementIO );
 } );

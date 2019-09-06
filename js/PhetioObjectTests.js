@@ -9,6 +9,7 @@ define( function( require ) {
   'use strict';
 
   // modules
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   var PhetioObject = require( 'TANDEM/PhetioObject' );
   var Tandem = require( 'TANDEM/Tandem' );
 
@@ -17,7 +18,6 @@ define( function( require ) {
 
   QUnit.module( 'PhetioObject' );
 
-  // TODO: should we use phetioInherit?
   var MockTypeIO = function( instance, phetioID ) {};
   MockTypeIO.typeName = 'MockTypeIO';
   MockTypeIO.events = [ 'hello' ];
@@ -25,6 +25,8 @@ define( function( require ) {
   MockTypeIO.methods = {};
   MockTypeIO.supertype = window.Object;
   MockTypeIO.allEvents = [ 'hello' ];
+  MockTypeIO.validator = { isValidValue: () => true };
+  ObjectIO.validateSubtype( MockTypeIO );
 
   QUnit.test( 'PhetioObject start/start', function( assert ) {
     assert.ok( true, 'initial test' );
