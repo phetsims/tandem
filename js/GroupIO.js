@@ -48,6 +48,7 @@ define( require => {
       /**
        * Adds a Track as specified by the phetioID and state.
        * A Track will create its own ControlPoints
+       * TODO: Should return truthy after successful add
        * @param {Group} group
        * @param {string} componentName
        * @param {Object} stateObject
