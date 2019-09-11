@@ -65,16 +65,6 @@ define( require => {
     }
 
     /**
-     * Compare two ObjectIO constructor function Types to see if they are the same. Subtypes should override to ensure
-     * compatibility.
-     * @param {function(new:ObjectIO)} OtherObjectIO
-     * @returns {boolean}
-     */
-    static equals( OtherObjectIO ) {
-      return this === OtherObjectIO;
-    }
-
-    /**
      * Make sure the ObjectIO subtype has all the required attributes.
      * @param {function(new:ObjectIO)} subtype - class to check
      * @public

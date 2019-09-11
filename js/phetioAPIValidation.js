@@ -17,7 +17,6 @@
  * 7. Any schema entries in the overrides file must exist in the baseline file
  * 8. Any schema entries in the overrides file must be different from its baseline counterpart
  * 9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.
- * 10. Newly created TypeIOs cannot have the same typeName but be a different TypeIO implementation.
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
@@ -207,15 +206,6 @@ define( require => {
       const newPhetioType = phetioObject.phetioType;
       const oldPhetioType = this.everyPhetioType[ newPhetioType.typeName ];
 
-      // test reciprocally to prevent false positives, for example an EmitterIO is an ActionIO, but an ActionIO isn't EmitterIO.
-      // TODO: Restore this check?  Or we are deleting equals anyways?
-      // TODO: See https://github.com/phetsims/phet-io/issues/1371
-      // if ( oldPhetioType && ( !newPhetioType.equals( oldPhetioType ) || !oldPhetioType.equals( newPhetioType ) ) ) {
-      //   this.addError( {
-      //     phetioID: phetioObject.tandem.phetioID,
-      //     ruleInViolation: '10. Newly created TypeIOs cannot have the same typeName but be a different TypeIO implementation.'
-      //   } );
-      // }
       if ( !oldPhetioType ) { // This may not be necessary, but may be helpful so that we don't overwrite if rule 10 is in violation
         this.everyPhetioType[ newPhetioType.typeName ] = newPhetioType;
       }
