@@ -9,14 +9,15 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
+ * @author Michael Kauzmann (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
   const ValidatorDef = require( 'AXON/ValidatorDef' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  var validate = require( 'AXON/validate' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const validate = require( 'AXON/validate' );
 
   /**
    * @param {Object} phetioObject
@@ -75,7 +76,7 @@ define( function( require ) {
 
     /**
      * Make sure the ObjectIO subtype has all the required attributes.
-     * @param {function} subtype - class to check
+     * @param {function(new:ObjectIO)} subtype - class to check
      * @public
      */
     static validateSubtype( subtype ) {
