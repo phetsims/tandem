@@ -115,6 +115,33 @@
       return phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, ...[ GENERAL_COMPONENT_NAME, ...componentNames ] );
     },
 
+    /**
+     * Get the screen id from the phetioID.
+     * @example
+     * getScreenID( 'sim.myScreen.model.property' )
+     * --> sim.myScreen
+     * getScreenID( 'sim.myScreen' )
+     * --> sim.myScreen
+     * getScreenID( 'sim.general.activeProperty' )
+     * --> null
+     * @param {string} phetioID
+     * @returns {string|null} - null if there is no screen tandem in the phetioID
+     */
+    getScreenID: function( phetioID ) {
+      const screenIDParts = [];
+      const phetioIDParts = phetioID.split( SEPARATOR );
+      for ( let i = 0; i < phetioIDParts.length; i++ ) {
+        const componentPart = phetioIDParts[ i ];
+        screenIDParts.push( componentPart );
+        const screenMarker = 'Screen';
+        const indexOfScreenMarker = componentPart.indexOf( screenMarker );
+        if ( indexOfScreenMarker > 0 && indexOfScreenMarker + screenMarker.length === componentPart.length ) { // endsWith proxy
+          return screenIDParts.join( SEPARATOR );
+        }
+      }
+      return null;
+    },
+
     // TODO: Should this be reimplemented to compare to concrete phetioID? github.com/phetsims/phet-io/issues/1442
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely. See Tandem.getConcretePhetioID().
     /**
