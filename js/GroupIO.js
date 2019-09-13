@@ -45,6 +45,10 @@ define( require => {
 
     class GroupIOImpl extends ObservableArrayIO( parameterType ) {
 
+
+      // TODO https://github.com/phetsims/phet-io/issues/1454 I chose a different method name to remain backward
+      // TODO: compatible with legacy group patterns
+      // TODO https://github.com/phetsims/phet-io/issues/1454 move this to GroupIO
       /**
        * Adds a Track as specified by the phetioID and state.
        * A Track will create its own ControlPoints
@@ -52,17 +56,24 @@ define( require => {
        * @param {Group} group
        * @param {string} componentName
        * @param {Object} stateObject
+       * @returns {false|undefined} - false if child cannot be added
        */
-      // TODO https://github.com/phetsims/phet-io/issues/1454 I chose a different method name to remain backward
-      // TODO: compatible with legacy group patterns
-      // TODO https://github.com/phetsims/phet-io/issues/1454 move this to GroupIO
       static addChildInstanceFromComponentName( group, componentName, stateObject ) {
         const prototypeName = stateObject.prototypeName;
         delete stateObject.prototypeName;
 
+        const args = parameterType.stateObjectToArgs( stateObject );
+
+        // In this case the IOType communicated that it cannot have its state set at this time, so return null. Likely
+        // this is because another element in the state needs to be created first, so we will try again on the next
+        // iteration of the state setting engine.
+        if ( args === null ) {
+          return false; // then we return false to the state engine as the flag
+        }
+
         const index = parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
 
-        group.createGroupMember( prototypeName || 'prototype', index, stateObject );
+        group.createGroupMember( prototypeName || 'prototype', index, args );
 
         // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
         // no members have been created in the sim, instead they have only been set via state.

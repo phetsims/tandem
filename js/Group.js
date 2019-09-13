@@ -66,7 +66,7 @@ define( require => {
 
       this.groupOptions = options;
 
-      // @private {Object.<string, groupMember:Object>} - keep track of prototypes created conditionally, see below.
+      // @public (read-only) {Object.<string, groupMember:Object>} - keep track of prototypes created conditionally, see below.
       this.prototypes = {};
 
       // When generating the baseline, output the schema for the prototype(s)
@@ -77,8 +77,9 @@ define( require => {
       if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
         prototypeSchemaKeys.forEach( prototypeName => {
           const schema = this.prototypeSchema[ prototypeName ];
-          const prototype = schema.create( this.tandem.createTandem( this.keyToPrototypeName( prototypeName ) ), schema.defaultState,
-            prototypeName );
+          const argsForCreateFunction = Array.isArray( schema.defaultArguments ) ? schema.defaultArguments : schema.defaultArguments();
+          const prototype = schema.create(
+            this.tandem.createTandem( this.keyToPrototypeName( prototypeName ) ), prototypeName, ...argsForCreateFunction );
 
           // {boolean} - hack alert! when printing the baseline, we need to keep track of prototype elements so they
           // appear in the baseline
@@ -134,11 +135,11 @@ define( require => {
      * When creating a view element that corresponds to a specific model element, we match the tandem name index suffix
      * so that electron_0 corresponds to electronNode_0 and so on.
      * @param {PhetioObject} phetioObject
-     * @param [Object] state
+     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method
      * @returns {PhetioObject}
      * @public
      */
-    createNextCorrespondingGroupMember( phetioObject, state ) {
+    createNextCorrespondingGroupMember( phetioObject, ...argsForCreateFunction ) {
       const index = parseInt( phetioObject.tandem.name.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
 
       // If the specified index overlapped with the next available index, bump it up so there is no collision on the
@@ -146,40 +147,39 @@ define( require => {
       if ( this.groupElementIndex === index ) {
         this.groupElementIndex++;
       }
-      return this.createGroupMember( HOMOGENEOUS_KEY_NAME, index, state );
+      return this.createGroupMember( HOMOGENEOUS_KEY_NAME, index, argsForCreateFunction );
     }
 
     /**
      * Only for homogeneous Groups. Creates the next group member.
-     * @param {Object} [state]
+     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method
      * @returns {PhetioObject}
      * @public
      */
-    createNextGroupMember( state ) {
+    createNextGroupMember( ...argsForCreateFunction ) {
       assert && assert( this.prototypeSchemaKeys.length === 1, 'createNextGroupMember should only be called for homogeneous groups' );
-      return this.createGroupMember( HOMOGENEOUS_KEY_NAME, this.groupElementIndex++, state );
+      return this.createGroupMember( HOMOGENEOUS_KEY_NAME, this.groupElementIndex++, argsForCreateFunction );
     }
 
     /**
      * Creates the next group member for a heterogeneous group.
      * @param {string} prototypeName
-     * @param {Object} [state]
-     * @returns {PhetioObject}
+     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method     * @returns {PhetioObject}
      * @public
      */
-    createNextHeterogeneousGroupMember( prototypeName, state ) {
+    createNextHeterogeneousGroupMember( prototypeName, ...argsForCreateFunction ) {
       assert && assert( this.prototypeSchemaKeys.length > 1, 'createNextHeterogeneousGroupMember should only be called for heterogeneous groups' );
-      return this.createGroupMember( prototypeName, this.groupElementIndex++, state );
+      return this.createGroupMember( prototypeName, this.groupElementIndex++, argsForCreateFunction );
     }
 
     /**
      * @param {string} prototypeName
      * @param {number} index - the number of the individual member
-     * @param {Object} state
+     * @param {Array.<*>} argsForCreateFunction
      * @returns {Object}
      * @public (GroupIO)
      */
-    createGroupMember( prototypeName, index, state = {} ) {
+    createGroupMember( prototypeName, index, argsForCreateFunction ) {
 
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
@@ -194,7 +194,7 @@ define( require => {
         componentName,
         this.keyToPrototypeName( prototypeName ),
         this.tandem.getExtendedOptions( this.groupOptions )
-      ), state, prototypeName );
+      ), prototypeName, ...argsForCreateFunction );
 
       this.push( groupMember );
 
