@@ -131,6 +131,25 @@ define( require => {
     }
 
     /**
+     * When creating a view element that corresponds to a specific model element, we match the tandem name index suffix
+     * so that electron_0 corresponds to electronNode_0 and so on.
+     * @param {PhetioObject} phetioObject
+     * @param [Object] state
+     * @returns {PhetioObject}
+     * @public
+     */
+    createNextCorrespondingGroupMember( phetioObject, state ) {
+      const index = parseInt( phetioObject.tandem.name.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
+
+      // If the specified index overlapped with the next available index, bump it up so there is no collision on the
+      // next createNextGroupMember
+      if ( this.groupElementIndex === index ) {
+        this.groupElementIndex++;
+      }
+      return this.createGroupMember( HOMOGENEOUS_KEY_NAME, index, state );
+    }
+
+    /**
      * Only for homogeneous Groups. Creates the next group member.
      * @param {Object} [state]
      * @returns {PhetioObject}
