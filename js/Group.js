@@ -28,9 +28,10 @@ define( require => {
 
     /**
      * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
-     * @param {Object.<string,{create:function, [defaultState:Object]}>} prototypeSchema - a map of prototype name to function
-     *   that returns the prototype for that type. For homogeneous groups, the map has only one key For heterogeneous
-     *   groups, the map has one key per element type. // TODO: document the api for prototypes, including the create method
+     * @param {Object.<string,{create:function, [defaultArguments:*[]|function():*[]]}>} prototypeSchema - a map of
+     *   prototype name to function that returns the prototype for that type. For homogeneous groups, the map has
+     *   only one key For heterogeneous groups, the map has one key per element type.
+     *   // TODO: document the api for prototypes, including the create method
      * @param {Object} [options] - describe the Group itself
      */
     constructor( prefix, prototypeSchema, options ) {
@@ -58,7 +59,7 @@ define( require => {
       // @private
       this.prefix = prefix;
 
-      // @public {Object.<string,{create:function,defaultState:Object}>}
+      // @public {Object} - see constructor parameters for details
       this.prototypeSchema = prototypeSchema;
 
       // @private {string[]}
@@ -77,7 +78,12 @@ define( require => {
       if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
         prototypeSchemaKeys.forEach( prototypeName => {
           const schema = this.prototypeSchema[ prototypeName ];
-          const argsForCreateFunction = Array.isArray( schema.defaultArguments ) ? schema.defaultArguments : schema.defaultArguments();
+
+          const defaultArguments = schema.defaultArguments || [];
+
+          // TODO: support array or function but not both? samreid what do you think?
+          const argsForCreateFunction = Array.isArray( defaultArguments ) ? defaultArguments :
+                                        defaultArguments();
           const prototype = schema.create(
             this.tandem.createTandem( this.keyToPrototypeName( prototypeName ) ), prototypeName, ...argsForCreateFunction );
 
