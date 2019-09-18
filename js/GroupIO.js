@@ -130,6 +130,7 @@ define( require => {
     GroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';
     GroupIOImpl.validator = OBSERVABLE_ARRAY_VALIDATOR;
     GroupIOImpl.typeName = `GroupIO.<${parameterType.typeName}>`;
+    GroupIOImpl.parameterType = parameterType;
     ObjectIO.validateSubtype( GroupIOImpl );
 
     return GroupIOImpl;

@@ -19,6 +19,7 @@ define( require => {
   const StringUtils = require( 'PHETCOMMON/util/StringUtils' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const validate = require( 'AXON/validate' );
 
   // constants
   const HOMOGENEOUS_KEY_NAME = 'prototype';
@@ -201,6 +202,9 @@ define( require => {
         this.keyToPrototypeName( prototypeName ),
         this.tandem.getExtendedOptions( this.groupOptions )
       ), prototypeName, ...argsForCreateFunction );
+
+      // Make sure the new group member matches the schema for members.
+      validate( groupMember, this.phetioType.parameterType.validator );
 
       this.push( groupMember );
 
