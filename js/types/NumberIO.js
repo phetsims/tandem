@@ -6,12 +6,12 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   class NumberIO extends ObjectIO {
     constructor() {

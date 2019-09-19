@@ -5,13 +5,13 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  var PhetioObject = require( 'TANDEM/PhetioObject' );
-  var Tandem = require( 'TANDEM/Tandem' );
+  const PhetioObject = require( 'TANDEM/PhetioObject' );
+  const Tandem = require( 'TANDEM/Tandem' );
 
   // ifphetio
   require( 'ifphetio!PHET_IO/phetioEngine' );

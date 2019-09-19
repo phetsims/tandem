@@ -5,12 +5,12 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( function( require ) {
+define( require => {
   'use strict';
 
   // modules
-  var tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  var ObjectIO = require( 'TANDEM/types/ObjectIO' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
 
   class LinkedElementIO extends ObjectIO {
 
