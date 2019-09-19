@@ -129,8 +129,9 @@ define( require => {
 
     GroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';
     GroupIOImpl.validator = OBSERVABLE_ARRAY_VALIDATOR;
-    GroupIOImpl.typeName = `GroupIO.<${parameterType.typeName}>`;
-    GroupIOImpl.parameterType = parameterType;
+    GroupIOImpl.typeName = `GroupIO<${parameterType.typeName}>`;
+    GroupIOImpl.parameterType = parameterType; // TODO: I hope we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
+    GroupIOImpl.parameterTypes = [ parameterType];
     ObjectIO.validateSubtype( GroupIOImpl );
 
     return GroupIOImpl;

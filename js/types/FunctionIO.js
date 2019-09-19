@@ -51,7 +51,8 @@ define( require => {
 
     // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
     FunctionIOImpl.wrapForPhetioCommandProcessor = true;
-    FunctionIOImpl.typeName = `FunctionIO.(${parameterTypes})=>${returnType.typeName}`;
+    FunctionIOImpl.typeName = `FunctionIO(${parameterTypes})=>${returnType.typeName}`;
+    FunctionIOImpl.parameterTypes = functionParameterTypes.concat( [ returnType ] );
     ObjectIO.validateSubtype( FunctionIOImpl );
 
     return FunctionIOImpl;

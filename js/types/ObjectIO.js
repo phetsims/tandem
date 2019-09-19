@@ -82,8 +82,8 @@ define( require => {
      */
     static validateSubtype( subtype ) {
       const typeName = subtype.typeName;
-      const splitOnDot = typeName.split( '.' )[ 0 ];
-      assert && assert( splitOnDot.indexOf( 'IO' ) === splitOnDot.length - 'IO'.length, 'type name must end with IO' );
+      const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
+      assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'type name must end with IO' );
 
       // assert that each method is the correct type
       for ( const method in subtype.methods ) {

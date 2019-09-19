@@ -74,7 +74,9 @@ define( require => {
     NullableIO.validator = {
       isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, parameterType.validator )
     };
-    NullableIO.typeName = `NullableIO.<${parameterType.typeName}>`;
+    NullableIO.typeName = `NullableIO<${parameterType.typeName}>`;
+    NullableIO.parameterTypes = [ parameterType ];
+
     ObjectIO.validateSubtype( NullableIO );
 
     return NullableIO;

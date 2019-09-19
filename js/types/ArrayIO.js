@@ -68,7 +68,7 @@ define( require => {
         return _.every( array, element => ValidatorDef.isValueValid( element, parameterType.validator ) );
       }
     };
-    ArrayIOImpl.typeName = `ArrayIO.<${parameterType.typeName}>`;
+    ArrayIOImpl.typeName = `ArrayIO<${parameterType.typeName}>`;
     ObjectIO.validateSubtype( ArrayIOImpl );
 
     return ArrayIOImpl;
