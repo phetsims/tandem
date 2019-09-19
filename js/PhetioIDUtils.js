@@ -17,10 +17,10 @@
   window.phetio = window.phetio || {};
 
   // constants
-  var SEPARATOR = '.';
-  var GROUP_SEPARATOR = '_';
-  var GENERAL_COMPONENT_NAME = 'general';
-  var GLOBAL_COMPONENT_NAME = 'global';
+  const SEPARATOR = '.';
+  const GROUP_SEPARATOR = '_';
+  const GENERAL_COMPONENT_NAME = 'general';
+  const GLOBAL_COMPONENT_NAME = 'global';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -61,7 +61,7 @@
      */
     getComponentName: function( phetioID ) {
       assert && assert( phetioID.length > 0 );
-      var indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
+      const indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
       if ( indexOfLastSeparator === -1 ) {
         return phetioID;
       }
@@ -81,7 +81,7 @@
      * @returns {string|null} - the phetioID of the parent, or null if there is no parent
      */
     getParentID: function( phetioID ) {
-      var indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
+      const indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
       return indexOfLastSeparator === -1 ? null : phetioID.substring( 0, indexOfLastSeparator );
     },
 

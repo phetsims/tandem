@@ -18,7 +18,7 @@ define( require => {
 
   QUnit.module( 'PhetioObject' );
 
-  var MockTypeIO = function( instance, phetioID ) {};
+  const MockTypeIO = function( instance, phetioID ) {};
   MockTypeIO.typeName = 'MockTypeIO';
   MockTypeIO.events = [ 'hello' ];
   MockTypeIO.documentation = 'mock type';
@@ -31,7 +31,7 @@ define( require => {
   QUnit.test( 'PhetioObject start/start', function( assert ) {
     assert.ok( true, 'initial test' );
 
-    var obj = new PhetioObject( {
+    const obj = new PhetioObject( {
       tandem: Tandem.rootTandem,
       phetioType: MockTypeIO
     } );
@@ -41,7 +41,7 @@ define( require => {
   QUnit.test( 'PhetioObject start/end', function( assert ) {
     assert.ok( true, 'initial test' );
 
-    var obj = new PhetioObject( {
+    const obj = new PhetioObject( {
       tandem: Tandem.rootTandem.createTandem( 'test1' ),
       phetioType: MockTypeIO
     } );
@@ -52,7 +52,7 @@ define( require => {
   QUnit.test( 'PhetioObject end without start', function( assert ) {
     assert.ok( true, 'initial test' );
 
-    var obj = new PhetioObject( {
+    const obj = new PhetioObject( {
       tandem: Tandem.rootTandem.createTandem( 'test2' ),
       phetioType: MockTypeIO
     } );
