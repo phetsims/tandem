@@ -1,4 +1,4 @@
-// Copyright 2015, University of Colorado Boulder
+// Copyright 2015-2019, University of Colorado Boulder
 
 /**
  * Creates the namespace for this repository.  By convention, this should have been declared in a file "tandem.js"
