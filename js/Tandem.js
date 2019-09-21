@@ -225,7 +225,7 @@ define( require => {
      * have unique identifiers.
      * @param {string} name
      * @returns {GroupTandem}
-     * @deprecated - use GroupMemberTandem instead
+     * @deprecated - use Group instead
      * @public
      */
     createGroupTandem( name ) {
