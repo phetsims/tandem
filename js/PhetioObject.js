@@ -417,7 +417,7 @@ define( require => {
   }, {
 
     /**
-     * TODO: Documentation, see https://github.com/phetsims/phet-io/issues/1409
+     * Convenience function which assigns phetioComponentOptions based on a merge, and performs basic sanity checks.
      * @public
      * @param {Object} defaults
      * @param {Object} options - mutated to included merged phetioComponentOptions
@@ -429,6 +429,8 @@ define( require => {
         assert( !options.phetioComponentOptions.phetioType, 'phetioType not supported in phetioComponentOptions' );
         assert( !options.phetioComponentOptions.phetioEventType, 'phetioEventType not supported in phetioComponentOptions' );
       }
+
+      // This uses lodash merge instead of PHET_CORE/merge because it merges recursively on all keys, not just *Options keys
       options.phetioComponentOptions = _.merge( defaults, options.phetioComponentOptions );
     },
 
