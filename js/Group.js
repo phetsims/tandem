@@ -146,7 +146,7 @@ define( require => {
      * @returns {PhetioObject}
      * @public
      */
-    createNextCorrespondingGroupMember( phetioObject, ...argsForCreateFunction ) {
+    createCorrespondingGroupMember( phetioObject, ...argsForCreateFunction ) {
       const index = parseInt( phetioObject.tandem.name.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
 
       // If the specified index overlapped with the next available index, bump it up so there is no collision on the
