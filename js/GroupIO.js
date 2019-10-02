@@ -30,21 +30,14 @@ define( require => {
    * Parametric IO type constructor.  Given an element type, this function returns an ObservableArray IO type.
    * @param {function(new:ObjectIO)} parameterType - IO type of the DerivedProperty. If loaded by phet (not phet-io)
    *                                    it will be the function returned by the 'ifphetio!' plugin.
-   * @param {Object} options
    * @returns {function(new:ObjectIO)}
    * @constructor
    */
-  function GroupIO( parameterType, options ) {
+  function GroupIO( parameterType ) {
 
     assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
 
-    options = _.extend( {
-      isReferenceType: true
-    }, options );
-
-
     class GroupIOImpl extends ObservableArrayIO( parameterType ) {
-
 
       // TODO https://github.com/phetsims/phet-io/issues/1454 I chose a different method name to remain backward
       // TODO: compatible with legacy group patterns
@@ -130,8 +123,8 @@ define( require => {
     GroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';
     GroupIOImpl.validator = OBSERVABLE_ARRAY_VALIDATOR;
     GroupIOImpl.typeName = `GroupIO<${parameterType.typeName}>`;
-    GroupIOImpl.parameterType = parameterType; // TODO: I hope we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
-    GroupIOImpl.parameterTypes = [ parameterType];
+    GroupIOImpl.parameterType = parameterType; // TODO: zepumph hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
+    GroupIOImpl.parameterTypes = [ parameterType ]; // TODO: samreid hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
     ObjectIO.validateSubtype( GroupIOImpl );
 
     return GroupIOImpl;
