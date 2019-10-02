@@ -147,6 +147,19 @@ define( require => {
      * @public
      */
     createCorrespondingGroupMember( phetioObject, ...argsForCreateFunction ) {
+      return this.createCorrespondingHeterogeneousGroupMember( HOMOGENEOUS_KEY_NAME, phetioObject, ...argsForCreateFunction );
+    }
+
+    /**
+     * When creating a view element that corresponds to a specific model element, we match the tandem name index suffix
+     * so that electron_0 corresponds to electronNode_0 and so on.
+     * @param {string} prototypeName
+     * @param {PhetioObject} phetioObject
+     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method
+     * @returns {PhetioObject}
+     * @public
+     */
+    createCorrespondingHeterogeneousGroupMember( prototypeName, phetioObject, ...argsForCreateFunction ) {
       const index = parseInt( phetioObject.tandem.name.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
 
       // If the specified index overlapped with the next available index, bump it up so there is no collision on the
@@ -154,7 +167,7 @@ define( require => {
       if ( this.groupElementIndex === index ) {
         this.groupElementIndex++;
       }
-      return this.createGroupMember( HOMOGENEOUS_KEY_NAME, index, argsForCreateFunction );
+      return this.createGroupMember( prototypeName, index, argsForCreateFunction );
     }
 
     /**
