@@ -23,7 +23,7 @@ define( require => {
   MockTypeIO.events = [ 'hello' ];
   MockTypeIO.documentation = 'mock type';
   MockTypeIO.methods = {};
-  MockTypeIO.supertype = window.Object;
+  MockTypeIO.supertype = null;
   MockTypeIO.allEvents = [ 'hello' ];
   MockTypeIO.validator = { isValidValue: () => true };
   ObjectIO.validateSubtype( MockTypeIO );

@@ -76,6 +76,26 @@ define( require => {
     }
 
     /**
+     * Get the supertype of the passed in IO type.
+     * @example
+     * ObjectIO.getSupertype( SliderIO )
+     * --> NodeIO
+     * ObjectIO.getSupertype( ObjectIO )
+     * --> null
+     *
+     * @param {function(new:ObjectIO)} typeIO
+     * @returns {function(new:ObjectIO)|null} - null if `typeIO` is ObjectIO, because that is the root of the IO hierarchy
+     * @public
+     */
+    static getSupertype( typeIO ) {
+      assert && assert( isIOType( typeIO ), 'IO type expected' );
+
+      // getPrototypeOf get's the next "subtypiest" type in the prototype hierarchy that isn't the subtype.
+      const supertype = Object.getPrototypeOf( typeIO );
+      return supertype === Object.getPrototypeOf( window.Object ) ? null : supertype;
+    }
+
+    /**
      * Make sure the ObjectIO subtype has all the required attributes.
      * @param {function(new:ObjectIO)} subtype - class to check
      * @public
@@ -115,13 +135,13 @@ define( require => {
       } );
 
       // TODO make this check recursive, see https://github.com/phetsims/phet-io/issues/1371
-      // const supertype = Object.getPrototypeOf( subtype );
+      // const supertype = ObjectIO.getSupertype( subtype );
       // const superEvents = [];
       // const getEvents = type => {
       //   if ( type.events ) {
       //     type.events.forEach( e => superEvents.push( e ) );
       //   }
-      //   Object.getPrototypeOf( type ) && getEvents( Object.getPrototypeOf( type ) );
+      //   ObjectIO.getSupertype( type ) && getEvents( ObjectIO.getSupertype( type ) );
       // };
       // getEvents( supertype );
       //
