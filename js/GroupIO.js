@@ -12,15 +12,11 @@ define( require => {
   'use strict';
 
   // modules
-  const FunctionIO = require( 'TANDEM/types/FunctionIO' );
-  const NumberIO = require( 'TANDEM/types/NumberIO' );
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  const ObservableArrayIO = require( 'AXON/ObservableArrayIO' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  const VoidIO = require( 'TANDEM/types/VoidIO' );
 
   // constants
-  const OBSERVABLE_ARRAY_VALIDATOR = {
+  const GROUP_VALIDATOR = {
     isValidValue: v => {
       const Group = window.phet ? phet.tandem.Group : tandemNamespace.Group;
       return v instanceof Group;
@@ -38,7 +34,7 @@ define( require => {
 
     assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
 
-    class GroupIOImpl extends ObservableArrayIO( parameterType ) {
+    class GroupIOImpl extends ObjectIO {
 
       // TODO https://github.com/phetsims/phet-io/issues/1454 I chose a different method name to remain backward
       // TODO: compatible with legacy group patterns
@@ -80,50 +76,8 @@ define( require => {
       }
     }
 
-    GroupIOImpl.methods = {
-      /**
-       * Adds a listener to the observable array.
-       * @param listener
-       * @public
-       */
-      addItemAddedListener: {
-        returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
-        implementation: function( listener ) {
-          this.phetioObject.addItemAddedListener( listener );
-        },
-        documentation: 'Add a listener that is called when an item is added to the observable array.'
-      },
-
-      /**
-       * Removes a listener that was added via addItemAddedListener.
-       * @param listener
-       * @public
-       */
-      addItemRemovedListener: {
-        returnType: VoidIO,
-        parameterTypes: [ FunctionIO( VoidIO, [ parameterType ] ) ],
-        implementation: function( listener ) {
-          this.phetioObject.addItemRemovedListener( listener );
-        },
-        documentation: 'Add a listener that is called when an item is removed from the observable array.'
-      },
-
-      /**
-       * Get the number of electrons currently in the array.
-       */
-      getLength: {
-        returnType: NumberIO,
-        parameterTypes: [],
-        implementation: function() {
-          return this.phetioObject.length;
-        },
-        documentation: 'Get the number of elements in the observable array'
-      }
-    };
-
     GroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';
-    GroupIOImpl.validator = OBSERVABLE_ARRAY_VALIDATOR;
+    GroupIOImpl.validator = GROUP_VALIDATOR;
     GroupIOImpl.typeName = `GroupIO<${parameterType.typeName}>`;
     GroupIOImpl.parameterType = parameterType; // TODO: zepumph hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
     GroupIOImpl.parameterTypes = [ parameterType ]; // TODO: samreid hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371

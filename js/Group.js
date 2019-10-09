@@ -12,8 +12,9 @@ define( require => {
   'use strict';
 
   // modules
+  const arrayRemove = require( 'PHET_CORE/arrayRemove' );
+  const Emitter = require( 'AXON/Emitter' );
   const GroupMemberTandem = require( 'TANDEM/GroupMemberTandem' );
-  const ObservableArray = require( 'AXON/ObservableArray' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const StringUtils = require( 'PHETCOMMON/util/StringUtils' );
@@ -24,8 +25,7 @@ define( require => {
   // constants
   const HOMOGENEOUS_KEY_NAME = 'prototype';
 
-  // TODO: do we really like that this extends ObservableArray?
-  class Group extends ObservableArray {
+  class Group extends PhetioObject {
 
     /**
      * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
@@ -52,6 +52,11 @@ define( require => {
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
 
       super( options );
+
+      // @public (read-only)
+      this.array = [];
+      this.groupMemberCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+      this.groupMemberDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
       // @public (only for GroupIO) - for generating indices from a pool
       // TODO: This should be reset
@@ -98,12 +103,26 @@ define( require => {
       }
 
       // There cannot be any items in the Group yet, and here we check for subsequently added items.
-      assert && Tandem.PHET_IO_ENABLED && this.addItemAddedListener( Group.assertDynamicPhetioObject );
+      assert && Tandem.PHET_IO_ENABLED && this.groupMemberCreatedEmitter.addListener( Group.assertDynamicPhetioObject );
+    }
 
-      // TODO: In the general case, we can't assume that the sim will do the disposal for us, we also can't assume
-      // TODO: that all groups want this disposed. Uh oh. Perhaps we could hide this code behind an option. Perhaps this
-      // TODO: could go into ObservableArray (via an option)
-      // this.addItemRemovedListener( item => item.dispose && item.dispose() )
+    /**
+     * remove an element from this Group, unregistering it from PhET-iO and disposing it.
+     * @param element
+     * @public
+     */
+    disposeGroupMember( element ) {
+      arrayRemove( this.array, element );
+      this.groupMemberDisposedEmitter.emit( element );
+      element.dispose();
+    }
+
+    /**
+     * Get number of Group members
+     * @returns {number}
+     */
+    get length() {
+      return this.array.length;
     }
 
     /**
@@ -127,14 +146,14 @@ define( require => {
     }
 
     /**
-     * TODO: how do we guarantee that all cleared elements are disposed in the general case.
-     * @override
+     * remove and dispose all registered group members
      * @public
      */
     clear() {
-      super.clear();
+      while ( this.array.length > 0 ) {
+        this.disposeGroupMember( this.array[ this.array.length - 1 ] );
+      }
 
-      // TODO: this assumes that clear is disposing (unregistering tandems) for all group members
       this.groupElementIndex = 0;
     }
 
@@ -219,7 +238,8 @@ define( require => {
       // Make sure the new group member matches the schema for members.
       validate( groupMember, this.phetioType.parameterType.validator );
 
-      this.push( groupMember );
+      this.array.push( groupMember );
+      this.groupMemberCreatedEmitter.emit( groupMember );
 
       return groupMember;
     }
