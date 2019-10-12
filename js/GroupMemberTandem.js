@@ -19,15 +19,11 @@ define( require => {
     /**
      * @param {Tandem} parentTandem
      * @param {string} name
-     * @param {string} prototypeName - describes which prototype this matches
      * @param {Object} [options]
      */
-    constructor( parentTandem, name, prototypeName, options ) {
+    constructor( parentTandem, name, options ) {
       assert && assert( parentTandem, 'GroupMemberTandem must have a parentTandem' );
       super( parentTandem, name, options );
-
-      // @private (read-only)
-      this.prototypeName = prototypeName;
     }
 
     /**
@@ -51,7 +47,7 @@ define( require => {
      */
     getConcretePhetioID() {
       assert && assert( this.parentTandem, 'Group members must be in a Group' );
-      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), this.prototypeName );
+      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), 'prototype' );
     }
   }
 

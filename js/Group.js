@@ -17,32 +17,24 @@ define( require => {
   const GroupMemberTandem = require( 'TANDEM/GroupMemberTandem' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
-  const StringUtils = require( 'PHETCOMMON/util/StringUtils' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const validate = require( 'AXON/validate' );
-
-  // constants
-  const HOMOGENEOUS_KEY_NAME = 'prototype';
 
   class Group extends PhetioObject {
 
     /**
      * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
-     * @param {Object.<string,{create:function, [defaultArguments:*[]|function():*[]]}>} prototypeSchema - a map of
-     *   prototype name to function that returns the prototype for that type. For homogeneous groups, the map has
-     *   only one key For heterogeneous groups, the map has one key per element type.
-     *   // TODO: document the api for prototypes, including the create method
+     * @param {function} createMember - function that creates a group member
+     * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
      * @param {Object} [options] - describe the Group itself
      */
-    constructor( prefix, prototypeSchema, options ) {
+    constructor( prefix, createMember, defaultArguments, options ) {
 
-      assert && assert( typeof prototypeSchema === 'object', 'prototypeSchema should be an object' );
-
-      const prototypeSchemaKeys = Object.keys( prototypeSchema );
-
-      if ( prototypeSchemaKeys.length === 1 ) {
-        assert && assert( prototypeSchemaKeys[ 0 ] === HOMOGENEOUS_KEY_NAME, 'Homogeneous groups should have entry named prototype' );
+      assert && assert( typeof createMember === 'function', 'createMember should be a function' );
+      assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
+      if ( Array.isArray( defaultArguments ) ) {
+        assert && assert( createMember.length === defaultArguments.length + 1, 'mismatched number of arguments' ); // createMember also takes tandem
       }
 
       options = _.extend( {
@@ -52,6 +44,9 @@ define( require => {
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
 
       super( options );
+
+      // @private
+      this.createMember = createMember;
 
       // @public (read-only)
       this.array = [];
@@ -67,41 +62,26 @@ define( require => {
       // @private
       this.prefix = prefix;
 
-      // @public {Object} - see constructor parameters for details
-      this.prototypeSchema = prototypeSchema;
-
-      // @private {string[]}
-      this.prototypeSchemaKeys = prototypeSchemaKeys;
-
       this.groupOptions = options;
 
-      // @public (read-only) {Object.<string, groupMember:Object>} - keep track of prototypes created conditionally, see below.
-      this.prototypes = {};
-
-      // When generating the baseline, output the schema for the prototype(s)
+      // When generating the baseline, output the schema for the prototype
       // TODO: (Maybe this, let's discuss more) instead of using phetioAPIValidation.enabled check here, in
       // TODO: phetioAPIValidation use the baseline.phetioTypeName for a whitelist of types that are only
       // TODO: instantiated dynamically.
       // TODO: Also look over in PhetioObject for the same pattern.
       if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
-        prototypeSchemaKeys.forEach( prototypeName => {
-          const schema = this.prototypeSchema[ prototypeName ];
 
-          const defaultArguments = schema.defaultArguments || [];
+        // TODO: support array or function but not both? samreid what do you think?
+        const args = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
+        assert && assert( createMember.length === args.length + 1, 'mismatched number of arguments' );
 
-          // TODO: support array or function but not both? samreid what do you think?
-          const argsForCreateFunction = Array.isArray( defaultArguments ) ? defaultArguments :
-                                        defaultArguments();
-          const prototype = schema.create(
-            this.tandem.createTandem( this.keyToPrototypeName( prototypeName ) ), prototypeName, ...argsForCreateFunction );
+        // @private
+        this.memberPrototype = createMember( this.tandem.createTandem( 'prototype' ), ...args );
 
-          // {boolean} - hack alert! when printing the baseline, we need to keep track of prototype elements so they
-          // appear in the baseline
-          prototype.isGroupMemberPrototype = true;
-          assert && Group.assertDynamicPhetioObject( prototype );
-
-          this.prototypes[ prototypeName ] = prototype;
-        } );
+        // {boolean} - hack alert! when printing the baseline, we need to keep track of prototype elements so they
+        // appear in the baseline
+        this.memberPrototype.isGroupMemberPrototype = true;
+        assert && Group.assertDynamicPhetioObject( this.memberPrototype );
       }
 
       // There cannot be any items in the Group yet, and here we check for subsequently added items.
@@ -142,13 +122,13 @@ define( require => {
 
     /**
      * remove an element from this Group, unregistering it from PhET-iO and disposing it.
-     * @param element
+     * @param member
      * @public
      */
-    disposeGroupMember( element ) {
-      arrayRemove( this.array, element );
-      this.memberDisposedEmitter.emit( element );
-      element.dispose();
+    disposeGroupMember( member ) { // TODO: rename disposeMember
+      arrayRemove( this.array, member );
+      this.memberDisposedEmitter.emit( member );
+      member.dispose();
     }
 
     /**
@@ -157,26 +137,6 @@ define( require => {
      */
     get length() {
       return this.array.length;
-    }
-
-    /**
-     * Create the corresponding tandem name for a specific key.  For instance:
-     *
-     * Heterogenous Group:
-     * electron => prototypeElectron
-     * neutron => prototypeNeutron
-     *
-     * Homogeneous Group:
-     * prototype => prototype
-     *
-     * @param {string} key
-     * @returns {string}
-     * @private
-     */
-    keyToPrototypeName( key ) {
-      return this.prototypeSchemaKeys.length === 1 ?
-             HOMOGENEOUS_KEY_NAME :
-             HOMOGENEOUS_KEY_NAME + StringUtils.capitalize( key );
     }
 
     /**
@@ -200,19 +160,6 @@ define( require => {
      * @public
      */
     createCorrespondingGroupMember( phetioObject, ...argsForCreateFunction ) {
-      return this.createCorrespondingHeterogeneousGroupMember( HOMOGENEOUS_KEY_NAME, phetioObject, ...argsForCreateFunction );
-    }
-
-    /**
-     * When creating a view element that corresponds to a specific model element, we match the tandem name index suffix
-     * so that electron_0 corresponds to electronNode_0 and so on.
-     * @param {string} prototypeName
-     * @param {PhetioObject} phetioObject
-     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method
-     * @returns {PhetioObject}
-     * @public
-     */
-    createCorrespondingHeterogeneousGroupMember( prototypeName, phetioObject, ...argsForCreateFunction ) {
       const index = parseInt( phetioObject.tandem.name.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
 
       // If the specified index overlapped with the next available index, bump it up so there is no collision on the
@@ -220,7 +167,7 @@ define( require => {
       if ( this.groupElementIndex === index ) {
         this.groupElementIndex++;
       }
-      return this.createGroupMember( prototypeName, index, argsForCreateFunction );
+      return this.createGroupMember( index, argsForCreateFunction );
     }
 
     /**
@@ -230,44 +177,24 @@ define( require => {
      * @public
      */
     createNextGroupMember( ...argsForCreateFunction ) {
-      assert && assert( this.prototypeSchemaKeys.length === 1, 'createNextGroupMember should only be called for homogeneous groups' );
-      return this.createGroupMember( HOMOGENEOUS_KEY_NAME, this.groupElementIndex++, argsForCreateFunction );
+      return this.createGroupMember( this.groupElementIndex++, argsForCreateFunction );
     }
 
     /**
-     * Creates the next group member for a heterogeneous group.
-     * @param {string} prototypeName
-     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method     * @returns {PhetioObject}
-     * @public
-     */
-    createNextHeterogeneousGroupMember( prototypeName, ...argsForCreateFunction ) {
-      assert && assert( this.prototypeSchemaKeys.length > 1, 'createNextHeterogeneousGroupMember should only be called for heterogeneous groups' );
-      return this.createGroupMember( prototypeName, this.groupElementIndex++, argsForCreateFunction );
-    }
-
-    /**
-     * @param {string} prototypeName
      * @param {number} index - the number of the individual member
      * @param {Array.<*>} argsForCreateFunction
      * @returns {Object}
      * @public (GroupIO)
      */
-    createGroupMember( prototypeName, index, argsForCreateFunction ) {
+    createGroupMember( index, argsForCreateFunction ) {
+      assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
-      assert && assert( this.prototypeSchema.hasOwnProperty( prototypeName ), 'prototype not found' );
-
       // create with default state and substructure, details will need to be set by setter methods.
-      const prototypeEntry = this.prototypeSchema[ prototypeName ];
-
       // TODO: discuss the api for the create method
-      const groupMember = prototypeEntry.create( new GroupMemberTandem(
-        this.tandem,
-        componentName,
-        this.keyToPrototypeName( prototypeName ),
-        this.tandem.getExtendedOptions( this.groupOptions )
-      ), prototypeName, ...argsForCreateFunction );
+      const groupMemberTandem = new GroupMemberTandem( this.tandem, componentName, this.tandem.getExtendedOptions( this.groupOptions ) );
+      const groupMember = this.createMember( groupMemberTandem, ...argsForCreateFunction );
 
       // Make sure the new group member matches the schema for members.
       validate( groupMember, this.phetioType.parameterType.validator );

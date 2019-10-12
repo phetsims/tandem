@@ -36,7 +36,7 @@ define( require => {
     tandem: Tandem.optional,          // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
     phetioType: ObjectIO,             // Defines API methods, events and serialization
     phetioDocumentation: '',          // Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper
-    phetioState: true,                // When true, includes the PhetioObject in the PhET-iO state
+    phetioState: true,                // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, may require phetioComponentOptions for Nodes or other types)
     phetioReadOnly: false,            // When true, you can only get values from the PhetioObject; no setting allowed.
     phetioEventType: EventType.MODEL, // Category of event type, can be overridden in phetioStartEvent options
     phetioHighFrequency: false,       // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents and Client.launchSim option
@@ -45,7 +45,7 @@ define( require => {
     phetioComponentOptions: null,     // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
     phetioFeatured: false,            // When true, this is categorized as an important "featured" element in Studio.
     phetioEventMetadata: null,        // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
-    phetioDynamicElement: false       // {boolean} optional - indicates that an object may or may not have been created
+    phetioDynamicElement: false       // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically
   };
 
   // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from

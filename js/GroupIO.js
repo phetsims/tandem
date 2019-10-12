@@ -48,8 +48,6 @@ define( require => {
        * @throws CouldNotYetDeserializeError - if it could not yet deserialize
        */
       static addChildInstanceFromComponentName( group, componentName, stateObject ) {
-        const prototypeName = stateObject.prototypeName;
-        delete stateObject.prototypeName;
 
         // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
         // element in the state needs to be created first, so we will try again on the next iteration of the state
@@ -58,7 +56,7 @@ define( require => {
 
         // TODO: factor this out to PhetioIDUtils (see usage in Group.js too)
         const index = parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
-        const groupMember = group.createGroupMember( prototypeName || 'prototype', index, args );
+        const groupMember = group.createGroupMember( index, args );
 
         // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
         // no members have been created in the sim, instead they have only been set via state.
