@@ -90,7 +90,7 @@ define( require => {
     static getSupertype( typeIO ) {
       assert && assert( isIOType( typeIO ), 'IO type expected' );
 
-      // getPrototypeOf get's the next "subtypiest" type in the prototype hierarchy that isn't the subtype.
+      // getPrototypeOf get's the typeIO's parent type, because the prototype is for the parent.
       const supertype = Object.getPrototypeOf( typeIO );
       return supertype === Object.getPrototypeOf( window.Object ) ? null : supertype;
     }
