@@ -55,8 +55,10 @@ define( require => {
 
       // @public (read-only)
       this.array = [];
-      this.groupMemberCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
-      this.groupMemberDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+
+      // @private
+      this.memberCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+      this.memberDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
       // @public (only for GroupIO) - for generating indices from a pool
       // TODO: This should be reset
@@ -103,7 +105,39 @@ define( require => {
       }
 
       // There cannot be any items in the Group yet, and here we check for subsequently added items.
-      assert && Tandem.PHET_IO_ENABLED && this.groupMemberCreatedEmitter.addListener( Group.assertDynamicPhetioObject );
+      assert && Tandem.PHET_IO_ENABLED && this.addMemberCreatedListener( Group.assertDynamicPhetioObject );
+    }
+
+    /**
+     * @param {function} listener
+     * @public
+     */
+    addMemberCreatedListener( listener ) {
+      this.memberCreatedEmitter.addListener( listener );
+    }
+
+    /**
+     * @param {function} listener
+     * @public
+     */
+    removeMemberCreatedListener( listener ) {
+      this.memberCreatedEmitter.removeListener( listener );
+    }
+
+    /**
+     * @param {function} listener
+     * @public
+     */
+    addMemberDisposedListener( listener ) {
+      this.memberDisposedEmitter.addListener( listener );
+    }
+
+    /**
+     * @param {function} listener
+     * @public
+     */
+    removeMemberDisposedListener( listener ) {
+      this.memberDisposedEmitter.removeListener( listener );
     }
 
     /**
@@ -113,7 +147,7 @@ define( require => {
      */
     disposeGroupMember( element ) {
       arrayRemove( this.array, element );
-      this.groupMemberDisposedEmitter.emit( element );
+      this.memberDisposedEmitter.emit( element );
       element.dispose();
     }
 
@@ -239,7 +273,7 @@ define( require => {
       validate( groupMember, this.phetioType.parameterType.validator );
 
       this.array.push( groupMember );
-      this.groupMemberCreatedEmitter.emit( groupMember );
+      this.memberCreatedEmitter.emit( groupMember );
 
       return groupMember;
     }
