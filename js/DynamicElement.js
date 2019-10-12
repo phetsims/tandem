@@ -46,7 +46,7 @@ define( require => {
     getInstance() {
       this.instance && assert( arguments.length === 0, '' );
       this.instance = this.instance || this.creator.apply( null, arguments );
-      assert && Tandem.PHET_IO_ENABLED && Group.assertDynamicPhetioObject( this.instance );
+      assert && Tandem.PHET_IO_ENABLED && PhetioGroup.assertDynamicPhetioObject( this.instance );
       return this.instance;
     }
   }
