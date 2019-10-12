@@ -66,7 +66,7 @@ define( require => {
 
     /**
      * Map the state object to arguments that are passed to the `create` function in Group.js. This function only needs
-     * to be implemented on IO Types that are element types of a GroupIO (for example CAF ChargedParticleIO)
+     * to be implemented on IO Types that are element types of a PhetioGroupIO (for example CAF ChargedParticleIO)
      * @param {Object} stateObject - from a `toStateObject` method
      * @returns {Array.<*>} - the array of arguments to be passed to the `create` function in the Group element type schema.
      * @public

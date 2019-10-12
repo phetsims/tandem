@@ -14,7 +14,7 @@ define( require => {
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  class GroupMemberTandem extends Tandem {
+  class PhetioGroupMemberTandem extends Tandem {
 
     /**
      * @param {Tandem} parentTandem
@@ -22,7 +22,7 @@ define( require => {
      * @param {Object} [options]
      */
     constructor( parentTandem, name, options ) {
-      assert && assert( parentTandem, 'GroupMemberTandem must have a parentTandem' );
+      assert && assert( parentTandem, 'PhetioGroupMemberTandem must have a parentTandem' );
       super( parentTandem, name, options );
     }
 
@@ -51,5 +51,5 @@ define( require => {
     }
   }
 
-  return tandemNamespace.register( 'GroupMemberTandem', GroupMemberTandem );
+  return tandemNamespace.register( 'PhetioGroupMemberTandem', PhetioGroupMemberTandem );
 } );

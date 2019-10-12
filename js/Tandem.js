@@ -379,7 +379,7 @@ define( require => {
 
   /**
    * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
-   * TODO: Replace GroupTandem usages with GroupMemberTandem, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
+   * TODO: Replace GroupTandem usages with PhetioGroupMemberTandem, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
    */
   class GroupTandem extends Tandem {
 
@@ -394,7 +394,7 @@ define( require => {
       super( parentTandem, name );
 
       // @private for generating indices from a pool
-      this.groupElementIndex = 0;
+      this.groupMemberIndex = 0;
     }
 
     /**
@@ -403,7 +403,7 @@ define( require => {
      * @public
      */
     createNextTandem() {
-      return Tandem.createFromPhetioID( this.phetioID + '~' + ( this.groupElementIndex++ ) );
+      return Tandem.createFromPhetioID( this.phetioID + '~' + ( this.groupMemberIndex++ ) );
     }
   }
 

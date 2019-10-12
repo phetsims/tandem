@@ -18,8 +18,8 @@ define( require => {
   // constants
   const GROUP_VALIDATOR = {
     isValidValue: v => {
-      const Group = window.phet ? phet.tandem.Group : tandemNamespace.Group;
-      return v instanceof Group;
+      const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
+      return v instanceof PhetioGroup;
     }
   };
 
@@ -30,19 +30,19 @@ define( require => {
    * @returns {function(new:ObjectIO)}
    * @constructor
    */
-  function GroupIO( parameterType ) {
+  function PhetioGroupIO( parameterType ) {
 
     assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
 
-    class GroupIOImpl extends ObjectIO {
+    class PhetioGroupIOImpl extends ObjectIO {
 
       // TODO https://github.com/phetsims/phet-io/issues/1454 I chose a different method name to remain backward
       // TODO: compatible with legacy group patterns
-      // TODO https://github.com/phetsims/phet-io/issues/1454 move this to GroupIO
+      // TODO https://github.com/phetsims/phet-io/issues/1454 move this to PhetioGroupIO
       /**
        * Adds a Track as specified by the phetioID and state.
        * A Track will create its own ControlPoints
-       * @param {Group} group
+       * @param {PhetioGroup} group
        * @param {string} componentName
        * @param {Object} stateObject
        * @throws CouldNotYetDeserializeError - if it could not yet deserialize
@@ -54,38 +54,38 @@ define( require => {
         // setting engine.
         const args = parameterType.stateObjectToArgs( stateObject );
 
-        // TODO: factor this out to PhetioIDUtils (see usage in Group.js too)
+        // TODO: factor this out to PhetioIDUtils (see usage in PhetioGroup.js too)
         const index = parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
         const groupMember = group.createGroupMember( index, args );
 
-        // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
+        // Keep the groupMemberIndex in sync so that the next index is set appropriately. This covers the case where
         // no members have been created in the sim, instead they have only been set via state.
-        group.groupElementIndex = Math.max( index + 1, group.groupElementIndex );
+        group.groupMemberIndex = Math.max( index + 1, group.groupMemberIndex );
 
         return groupMember;
       }
 
       /**
        * @public (phet-io state)
-       * @param {Group} group
+       * @param {PhetioGroup} group
        */
       static clearChildInstances( group ) {
         group.clear();
       }
     }
 
-    GroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';
-    GroupIOImpl.validator = GROUP_VALIDATOR;
-    GroupIOImpl.typeName = `GroupIO<${parameterType.typeName}>`;
-    GroupIOImpl.parameterType = parameterType; // TODO: zepumph hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
-    GroupIOImpl.parameterTypes = [ parameterType ]; // TODO: samreid hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
-    ObjectIO.validateSubtype( GroupIOImpl );
+    PhetioGroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';
+    PhetioGroupIOImpl.validator = GROUP_VALIDATOR;
+    PhetioGroupIOImpl.typeName = `PhetioGroupIO<${parameterType.typeName}>`;
+    PhetioGroupIOImpl.parameterType = parameterType; // TODO: zepumph hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
+    PhetioGroupIOImpl.parameterTypes = [ parameterType ]; // TODO: samreid hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
+    ObjectIO.validateSubtype( PhetioGroupIOImpl );
 
-    return GroupIOImpl;
+    return PhetioGroupIOImpl;
   }
 
-  tandemNamespace.register( 'GroupIO', GroupIO );
+  tandemNamespace.register( 'PhetioGroupIO', PhetioGroupIO );
 
-  return GroupIO;
+  return PhetioGroupIO;
 } );
 

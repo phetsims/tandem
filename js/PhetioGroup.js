@@ -1,7 +1,7 @@
 // Copyright 2019, University of Colorado Boulder
 
 /**
- * Provides a placeholder in the static API for where dynamic elements may be created.  Checks that members of the group
+ * Provides a placeholder in the static API for where dynamic members may be created.  Checks that members of the group
  * match the approved schema.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -14,14 +14,14 @@ define( require => {
   // modules
   const arrayRemove = require( 'PHET_CORE/arrayRemove' );
   const Emitter = require( 'AXON/Emitter' );
-  const GroupMemberTandem = require( 'TANDEM/GroupMemberTandem' );
+  const PhetioGroupMemberTandem = require( 'TANDEM/PhetioGroupMemberTandem' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const validate = require( 'AXON/validate' );
 
-  class Group extends PhetioObject {
+  class PhetioGroup extends PhetioObject {
 
     /**
      * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
@@ -55,9 +55,9 @@ define( require => {
       this.memberCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
       this.memberDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
-      // @public (only for GroupIO) - for generating indices from a pool
+      // @public (only for PhetioGroupIO) - for generating indices from a pool
       // TODO: This should be reset
-      this.groupElementIndex = 0;
+      this.groupMemberIndex = 0;
 
       // @private
       this.prefix = prefix;
@@ -78,14 +78,14 @@ define( require => {
         // @private
         this.memberPrototype = createMember( this.tandem.createTandem( 'prototype' ), ...args );
 
-        // {boolean} - hack alert! when printing the baseline, we need to keep track of prototype elements so they
+        // {boolean} - hack alert! when printing the baseline, we need to keep track of prototype members so they
         // appear in the baseline
         this.memberPrototype.isGroupMemberPrototype = true;
-        assert && Group.assertDynamicPhetioObject( this.memberPrototype );
+        assert && PhetioGroup.assertDynamicPhetioObject( this.memberPrototype );
       }
 
       // There cannot be any items in the Group yet, and here we check for subsequently added items.
-      assert && Tandem.PHET_IO_ENABLED && this.addMemberCreatedListener( Group.assertDynamicPhetioObject );
+      assert && Tandem.PHET_IO_ENABLED && this.addMemberCreatedListener( PhetioGroup.assertDynamicPhetioObject );
     }
 
     /**
@@ -121,7 +121,7 @@ define( require => {
     }
 
     /**
-     * remove an element from this Group, unregistering it from PhET-iO and disposing it.
+     * Remove an member from this Group, unregistering it from PhET-iO and disposing it.
      * @param member
      * @public
      */
@@ -134,6 +134,7 @@ define( require => {
     /**
      * Get number of Group members
      * @returns {number}
+     * @public
      */
     get length() {
       return this.array.length;
@@ -148,7 +149,7 @@ define( require => {
         this.disposeGroupMember( this.array[ this.array.length - 1 ] );
       }
 
-      this.groupElementIndex = 0;
+      this.groupMemberIndex = 0;
     }
 
     /**
@@ -164,27 +165,27 @@ define( require => {
 
       // If the specified index overlapped with the next available index, bump it up so there is no collision on the
       // next createNextMember
-      if ( this.groupElementIndex === index ) {
-        this.groupElementIndex++;
+      if ( this.groupMemberIndex === index ) {
+        this.groupMemberIndex++;
       }
       return this.createGroupMember( index, argsForCreateFunction );
     }
 
     /**
-     * Only for homogeneous Groups. Creates the next group member.
+     * Creates the next group member.
      * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method
      * @returns {PhetioObject}
      * @public
      */
     createNextMember( ...argsForCreateFunction ) {
-      return this.createGroupMember( this.groupElementIndex++, argsForCreateFunction );
+      return this.createGroupMember( this.groupMemberIndex++, argsForCreateFunction );
     }
 
     /**
      * @param {number} index - the number of the individual member
      * @param {Array.<*>} argsForCreateFunction
      * @returns {Object}
-     * @public (GroupIO)
+     * @public (PhetioGroupIO)
      */
     createGroupMember( index, argsForCreateFunction ) {
       assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
@@ -193,7 +194,7 @@ define( require => {
 
       // create with default state and substructure, details will need to be set by setter methods.
       // TODO: discuss the api for the create method
-      const groupMemberTandem = new GroupMemberTandem( this.tandem, componentName, this.tandem.getExtendedOptions( this.groupOptions ) );
+      const groupMemberTandem = new PhetioGroupMemberTandem( this.tandem, componentName, this.tandem.getExtendedOptions( this.groupOptions ) );
       const groupMember = this.createMember( groupMemberTandem, ...argsForCreateFunction );
 
       // Make sure the new group member matches the schema for members.
@@ -206,7 +207,7 @@ define( require => {
     }
 
     /**
-     * A dynamic element should be an instrumented PhetioObject with phetioDynamicElement: true
+     * A dynamic member should be an instrumented PhetioObject with phetioDynamicElement: true
      * @param {PhetioObject} phetioObject - object to be validated
      * @public
      * @static
@@ -218,5 +219,5 @@ define( require => {
     }
   }
 
-  return tandemNamespace.register( 'Group', Group );
+  return tandemNamespace.register( 'PhetioGroup', PhetioGroup );
 } );

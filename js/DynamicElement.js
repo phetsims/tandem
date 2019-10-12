@@ -14,7 +14,7 @@ define( require => {
   'use strict';
 
   // modules
-  const Group = require( 'TANDEM/Group' );
+  const PhetioGroup = require( 'TANDEM/PhetioGroup' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
