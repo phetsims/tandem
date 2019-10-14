@@ -136,9 +136,38 @@ define( require => {
      * @returns {number}
      * @public
      */
-    get length() {
-      return this.array.length;
-    }
+    get length() { return this.array.length; }
+
+    /**
+     * Returns an array with elements that pass the filter predicate.
+     * @param {function} predicate
+     * @returns {Object[]}
+     * @public
+     */
+    filter( predicate ) { return this.array.filter( predicate ); }
+
+    /**
+     * Returns true if the group contains the specified object.
+     * @param {Object} member
+     * @returns {boolean}
+     * @public
+     */
+    contains( member ) { return this.array.indexOf( member ) >= 0; }
+
+    /**
+     * Runs the function on each member of the group.
+     * @param {function} action
+     * @public
+     */
+    forEach( action ) { this.array.forEach( action ); }
+
+    /**
+     * Returns an array with every element mapped to a new one.
+     * @param {function} f
+     * @returns {Object[]}
+     * @public
+     */
+    map( f ) { return this.array.map( f ); }
 
     /**
      * remove and dispose all registered group members
