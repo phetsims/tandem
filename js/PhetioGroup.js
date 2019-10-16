@@ -132,6 +132,15 @@ define( require => {
     }
 
     /**
+     * Returns the member at the specified index
+     * @param {number} index
+     * @returns {Object}
+     */
+    get( index ) {
+      return this.array[ index ];
+    }
+
+    /**
      * Get number of Group members
      * @returns {number}
      * @public
