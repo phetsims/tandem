@@ -320,7 +320,9 @@ define( require => {
 
   /**
    * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
-   * have simulation specific elements in them. Instrument items used by all sims under `Tandem.generalTandem`.
+   * have simulation specific elements in them. Instrument items used by all sims under `Tandem.generalTandem`. Most
+   * likely simulations elements should not be directly under this, but instead either under the model or view sub
+   * tandems.
    *
    * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/84
    * @public
@@ -328,6 +330,26 @@ define( require => {
    * @type {Tandem}
    */
   Tandem.globalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME || 'global' );
+
+  /**
+   * Model simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
+   * tandem should only have simulation specific elements in them.
+   *
+   * @public
+   * @static
+   * @type {Tandem}
+   */
+  Tandem.GLOBAL_MODEL = Tandem.globalTandem.createTandem( 'model' );
+
+  /**
+   * View simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
+   * tandem should only have simulation specific elements in them.
+   *
+   * @public
+   * @static
+   * @type {Tandem}
+   */
+  Tandem.GLOBAL_VIEW = Tandem.globalTandem.createTandem( 'view' );
 
   /**
    * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
