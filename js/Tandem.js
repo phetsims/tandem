@@ -12,6 +12,7 @@ define( require => {
 
   // modules
   const arrayRemove = require( 'PHET_CORE/arrayRemove' );
+  const merge = require( 'PHET_CORE/merge' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const toCamelCase = require( 'PHET_CORE/toCamelCase' );
 
@@ -70,7 +71,7 @@ define( require => {
       // options (even subtype options) must be stored so they can be passed through to children
       // Note: Make sure that added options here are also added to options for inheritance and/or for composition
       // (createTandem/parentTandem/getExtendedOptions) as appropriate.
-      options = _.extend( {
+      options = merge( {
 
         // required === false means it is an optional tandem
         required: true,
@@ -184,7 +185,7 @@ define( require => {
 
       // Any child of something should be passed all inherited options. Make sure that this extend call includes all
       // that make sense from the constructor's extend call.
-      return _.extend( {
+      return merge( {
         supplied: this.supplied,
         required: this.required
       }, options );

@@ -14,8 +14,9 @@ define( require => {
   // modules
   const arrayRemove = require( 'PHET_CORE/arrayRemove' );
   const Emitter = require( 'AXON/Emitter' );
-  const PhetioGroupMemberTandem = require( 'TANDEM/PhetioGroupMemberTandem' );
+  const merge = require( 'PHET_CORE/merge' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
+  const PhetioGroupMemberTandem = require( 'TANDEM/PhetioGroupMemberTandem' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
@@ -37,7 +38,7 @@ define( require => {
         assert && assert( createMember.length === defaultArguments.length + 1, 'mismatched number of arguments' ); // createMember also takes tandem
       }
 
-      options = _.extend( {
+      options = merge( {
         phetioState: false
       }, options );
 

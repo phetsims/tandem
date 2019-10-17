@@ -15,6 +15,7 @@ define( require => {
   const EventType = require( 'TANDEM/EventType' );
   const inherit = require( 'PHET_CORE/inherit' );
   const LinkedElementIO = require( 'TANDEM/LinkedElementIO' );
+  const merge = require( 'PHET_CORE/merge' );
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   const Tandem = require( 'TANDEM/Tandem' );
@@ -221,7 +222,7 @@ define( require => {
         assert && assert( options.phetioType.typeName, 'type must be specified and have a typeName for ' + phetioID );
       }
 
-      options = _.extend( {}, DEFAULTS, baseOptions, options );
+      options = merge( {}, DEFAULTS, baseOptions, options );
 
       assert && assert( typeof options.phetioDocumentation === 'string',
         'invalid phetioDocumentation: ' + options.phetioDocumentation
@@ -256,7 +257,7 @@ define( require => {
             if ( overrides ) {
 
               // No need to make a new object, since this "options" variable was created in the previous extend call above.
-              options = _.extend( options, overrides );
+              options = merge( options, overrides );
             }
           }
         }
@@ -475,7 +476,7 @@ define( require => {
       assert && assert( coreElement instanceof PhetioObject, 'coreElement should be PhetioObject' );
       assert && assert( coreElement.tandem, 'coreElement should have a tandem' );
 
-      super( _.extend( {
+      super( merge( {
         phetioType: LinkedElementIO,
         phetioReadOnly: true, // References cannot be changed
 
