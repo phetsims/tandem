@@ -206,7 +206,7 @@ define( require => {
       if ( this.groupMemberIndex === index ) {
         this.groupMemberIndex++;
       }
-      return this.createGroupMember( index, argsForCreateFunction );
+      return this.createIndexedMember( index, argsForCreateFunction );
     }
 
     /**
@@ -216,16 +216,17 @@ define( require => {
      * @public
      */
     createNextMember( ...argsForCreateFunction ) {
-      return this.createGroupMember( this.groupMemberIndex++, argsForCreateFunction );
+      return this.createIndexedMember( this.groupMemberIndex++, argsForCreateFunction );
     }
 
     /**
+     * CreatPrimarily for internal use, clients should usually use createNextMember.
      * @param {number} index - the number of the individual member
      * @param {Array.<*>} argsForCreateFunction
      * @returns {Object}
      * @public (PhetioGroupIO)
      */
-    createGroupMember( index, argsForCreateFunction ) {
+    createIndexedMember( index, argsForCreateFunction ) {
       assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;

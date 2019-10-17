@@ -56,7 +56,7 @@ define( require => {
 
         // TODO: factor this out to PhetioIDUtils (see usage in PhetioGroup.js too)
         const index = parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
-        const groupMember = group.createGroupMember( index, args );
+        const groupMember = group.createIndexedMember( index, args );
 
         // Keep the groupMemberIndex in sync so that the next index is set appropriately. This covers the case where
         // no members have been created in the sim, instead they have only been set via state.
