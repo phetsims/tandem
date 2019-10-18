@@ -14,12 +14,29 @@ define( require => {
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
 
+  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized PropertyIO so that it is
+  // only created once.
+  const cache = {};
+
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an appropriate array IO type.
-   * @param {function(new:ObjectIO)} parameterType - IO type of the individual elements in the array. If loaded by phet (not phet-io)
-   *                                    it will be the function returned by the 'ifphetio!' plugin.
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
    */
   function ArrayIO( parameterType ) {
+    if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
+      cache[ parameterType.typeName ] = create( parameterType );
+    }
+
+    return cache[ parameterType.typeName ];
+  }
+
+  /**
+   * Creates a ArrayIOImpl
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = parameterType => {
 
     class ArrayIOImpl extends ObjectIO {
 
@@ -72,7 +89,7 @@ define( require => {
     ObjectIO.validateSubtype( ArrayIOImpl );
 
     return ArrayIOImpl;
-  }
+  };
 
   return tandemNamespace.register( 'ArrayIO', ArrayIO );
 } );

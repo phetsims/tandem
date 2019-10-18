@@ -13,18 +13,38 @@ define( require => {
   const ObjectIO = require( 'TANDEM/types/ObjectIO' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
+  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - cache each parameterized PropertyIO so that it is only created once
+  const cache = {};
+
   /**
    * Parametric IO type constructor--given return type and parameter types, this function returns a type wrapper for
    * that class of functions.
    * @param {function(new:ObjectIO)} returnType - wrapper IO Type of the return type of the wrapped function
-   * @param {function(new:ObjectIO)[]} functionParameterTypes - wrapper IO Types for the individual arguments of the wrapped function
-   * @constructor
+   * @param {function(new:ObjectIO)[]} functionParameterTypes - wrapper IO Types for the individual arguments of the
+   * wrapped function.
    */
   function FunctionIO( returnType, functionParameterTypes ) {
     for ( let i = 0; i < functionParameterTypes.length; i++ ) {
-      const parameterType = functionParameterTypes[ i ];
-      assert && assert( !!parameterType, 'parameter type was not truthy' );
+      assert && assert( functionParameterTypes[ i ], 'parameter type was not truthy' );
     }
+    assert && assert( returnType, 'return type was not truthy' );
+
+    const cacheKey = `${returnType.typeName}${functionParameterTypes.map( type => type.typeName ).join( '' )}`;
+
+    if ( !cache.hasOwnProperty( cacheKey ) ) {
+      cache[ cacheKey ] = create( returnType, functionParameterTypes );
+    }
+
+    return cache[ cacheKey ];
+  }
+
+  /**
+   * Creates a FunctionIOImpl
+   * @param {function(new:ObjectIO)} returnType
+   * @param {function(new:ObjectIO)[]} functionParameterTypes
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = ( returnType, functionParameterTypes ) => {
 
     const parameterTypes = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
 
@@ -56,9 +76,7 @@ define( require => {
     ObjectIO.validateSubtype( FunctionIOImpl );
 
     return FunctionIOImpl;
-  }
+  };
 
-  tandemNamespace.register( 'FunctionIO', FunctionIO );
-
-  return FunctionIO;
+  return tandemNamespace.register( 'FunctionIO', FunctionIO );
 } );

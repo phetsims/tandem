@@ -23,16 +23,33 @@ define( require => {
     }
   };
 
+  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - cache each parameterized PropertyIO so that it is
+  // only created once.
+  const cache = {};
+
   /**
-   * Parametric IO type constructor.  Given an element type, this function returns an ObservableArray IO type.
-   * @param {function(new:ObjectIO)} parameterType - IO type of the DerivedProperty. If loaded by phet (not phet-io)
-   *                                    it will be the function returned by the 'ifphetio!' plugin.
+   * Parametric IO type constructor.  Given an element type, this function returns a PhetioGroup IO type.
+   * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    * @constructor
    */
   function PhetioGroupIO( parameterType ) {
 
     assert && assert( typeof ( parameterType ) === 'function', 'element type should be defined' );
+
+    if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
+      cache[ parameterType.typeName ] = create( parameterType );
+    }
+
+    return cache[ parameterType.typeName ];
+  }
+
+  /**
+   * Creates a PhetioGroupIOImpl
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = parameterType => {
 
     class PhetioGroupIOImpl extends ObjectIO {
 
@@ -82,10 +99,8 @@ define( require => {
     ObjectIO.validateSubtype( PhetioGroupIOImpl );
 
     return PhetioGroupIOImpl;
-  }
+  };
 
-  tandemNamespace.register( 'PhetioGroupIO', PhetioGroupIO );
-
-  return PhetioGroupIO;
+  return tandemNamespace.register( 'PhetioGroupIO', PhetioGroupIO );
 } );
 
