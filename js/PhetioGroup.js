@@ -25,7 +25,7 @@ define( require => {
   class PhetioGroup extends PhetioObject {
 
     /**
-     * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
+     * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0" // TODO: do we need this? why now something consistent like `element_0`
      * @param {function} createMember - function that creates a group member
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
      * @param {Object} [options] - describe the Group itself
@@ -43,6 +43,7 @@ define( require => {
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
+      assert && assert( !!options.phetioType.parameterType, 'PhetioCapsule is parametric, and needs a phetioType with a parameterType.' );
 
       super( options );
 
@@ -64,28 +65,21 @@ define( require => {
 
       this.groupOptions = options;
 
+      // @private
+      this.memberPrototype = null;
+
       // When generating the baseline, output the schema for the prototype
-      // TODO: (Maybe this, let's discuss more) instead of using phetioAPIValidation.enabled check here, in
-      // TODO: phetioAPIValidation use the baseline.phetioTypeName for a whitelist of types that are only
-      // TODO: instantiated dynamically.
-      // TODO: Also look over in PhetioObject for the same pattern.
       if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
 
-        // TODO: support array or function but not both? samreid what do you think?
         const args = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
         assert && assert( createMember.length === args.length + 1, 'mismatched number of arguments' );
 
-        // @private
         this.memberPrototype = createMember( this.tandem.createTandem( 'prototype' ), ...args );
 
-        // {boolean} - hack alert! when printing the baseline, we need to keep track of prototype members so they
-        // appear in the baseline
-        this.memberPrototype.isGroupMemberPrototype = true;
+        // So that the prototype get's included in the baseline schema
+        this.memberPrototype.isDynamicElementPrototype = true;
         assert && PhetioGroup.assertDynamicPhetioObject( this.memberPrototype );
       }
-
-      // There cannot be any items in the Group yet, and here we check for subsequently added items.
-      assert && Tandem.PHET_IO_ENABLED && this.addMemberCreatedListener( PhetioGroup.assertDynamicPhetioObject );
     }
 
     /**
@@ -232,12 +226,13 @@ define( require => {
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
       // create with default state and substructure, details will need to be set by setter methods.
-      // TODO: discuss the api for the create method
+      // TODO: getExtendOptions isn't needed here, and likely we shouldn't store this.groupOptions
       const groupMemberTandem = new PhetioGroupMemberTandem( this.tandem, componentName, this.tandem.getExtendedOptions( this.groupOptions ) );
       const groupMember = this.createMember( groupMemberTandem, ...argsForCreateFunction );
 
       // Make sure the new group member matches the schema for members.
       validate( groupMember, this.phetioType.parameterType.validator );
+      assert && PhetioGroup.assertDynamicPhetioObject( groupMember );
 
       this.array.push( groupMember );
       this.memberCreatedEmitter.emit( groupMember );

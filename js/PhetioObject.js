@@ -46,7 +46,10 @@ define( require => {
     phetioComponentOptions: null,     // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
     phetioFeatured: false,            // When true, this is categorized as an important "featured" element in Studio.
     phetioEventMetadata: null,        // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
-    phetioDynamicElement: false       // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically
+    phetioDynamicElement: false,      // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically
+
+    // TODO: this is used very rarely, perhaps we should make a sparse map of this directly on phetioEngine instead?
+    isDynamicElementPrototype: false  // {boolean} optional - indicates that an object is a prototype for a dynamic class. Settable by classes that create dynamic elements when creating their prototypes, i.e. PhetioGroup
   };
 
   // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
