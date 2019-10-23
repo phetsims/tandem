@@ -72,7 +72,9 @@ define( require => {
        * @param {PhetioCapsule} capsule
        */
       static clearChildInstances( capsule ) {
-        capsule.disposeInstance();
+        if ( capsule.instance ) {
+          capsule.disposeInstance();
+        }
       }
     }
 
