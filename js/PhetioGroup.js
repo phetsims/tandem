@@ -57,7 +57,6 @@ define( require => {
       this.memberDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
       // @public (only for PhetioGroupIO) - for generating indices from a pool
-      // TODO: This should be reset
       this.groupMemberIndex = 0;
 
       // @private
