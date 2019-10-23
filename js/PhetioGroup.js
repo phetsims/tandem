@@ -13,11 +13,12 @@ define( require => {
 
   // modules
   const arrayRemove = require( 'PHET_CORE/arrayRemove' );
+  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
   const Emitter = require( 'AXON/Emitter' );
   const merge = require( 'PHET_CORE/merge' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
-  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
+  const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const validate = require( 'AXON/validate' );
 
