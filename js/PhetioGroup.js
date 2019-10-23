@@ -246,9 +246,11 @@ define( require => {
      * @static
      */
     static assertDynamicPhetioObject( phetioObject ) {
-      assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
-      assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
-      assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
+      if ( Tandem.PHET_IO_ENABLED ) {
+        assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
+        assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
+        assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
+      }
     }
   }
 

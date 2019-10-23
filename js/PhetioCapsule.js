@@ -12,9 +12,10 @@ define( require => {
   'use strict';
 
   // modules
+  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
   const merge = require( 'PHET_CORE/merge' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
-  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
+  const PhetioGroup = require( 'TANDEM/PhetioGroup' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const validate = require( 'AXON/validate' );
@@ -66,7 +67,7 @@ define( require => {
 
         // So that the prototype get's included in the baseline schema
         this.instancePrototype.isDynamicElementPrototype = true;
-        assert && PhetioCapsule.assertDynamicPhetioObject( this.instancePrototype );
+        assert && PhetioGroup.assertDynamicPhetioObject( this.instancePrototype );
       }
     }
 
@@ -96,21 +97,9 @@ define( require => {
       // Make sure the new group member matches the schema for members.
       validate( this.instance, this.phetioType.parameterType.validator );
 
-      assert && PhetioCapsule.assertDynamicPhetioObject( this.instance );
+      assert && PhetioGroup.assertDynamicPhetioObject( this.instance );
 
       return this.instance;
-    }
-
-    /**
-     * A dynamic member should be an instrumented PhetioObject with phetioDynamicElement: true
-     * @param {PhetioObject} phetioObject - object to be validated
-     * @public
-     * @static
-     */
-    static assertDynamicPhetioObject( phetioObject ) {
-      assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
-      assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
-      assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
     }
   }
 
