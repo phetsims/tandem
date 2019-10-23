@@ -16,9 +16,8 @@ define( require => {
   const Emitter = require( 'AXON/Emitter' );
   const merge = require( 'PHET_CORE/merge' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
-  const PhetioGroupMemberTandem = require( 'TANDEM/PhetioGroupMemberTandem' );
+  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
-  const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const validate = require( 'AXON/validate' );
 
@@ -227,7 +226,7 @@ define( require => {
 
       // create with default state and substructure, details will need to be set by setter methods.
       // TODO: getExtendOptions isn't needed here, and likely we shouldn't store this.groupOptions
-      const groupMemberTandem = new PhetioGroupMemberTandem( this.tandem, componentName, this.tandem.getExtendedOptions( this.groupOptions ) );
+      const groupMemberTandem = new DynamicTandem( this.tandem, componentName, this.tandem.getExtendedOptions( this.groupOptions ) );
       const groupMember = this.createMember( groupMemberTandem, ...argsForCreateFunction );
 
       // Make sure the new group member matches the schema for members.

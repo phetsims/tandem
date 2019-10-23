@@ -14,7 +14,7 @@ define( require => {
   // modules
   const merge = require( 'PHET_CORE/merge' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
-  const PhetioGroupMemberTandem = require( 'TANDEM/PhetioGroupMemberTandem' );
+  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const validate = require( 'AXON/validate' );
@@ -88,7 +88,7 @@ define( require => {
       assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
       // TODO: underscore hackary to declare this as a dynamic tandem.
-      const instanceTandem = new PhetioGroupMemberTandem( this.tandem, '_' + this.instanceTandemName, this.tandem.getExtendedOptions() );
+      const instanceTandem = new DynamicTandem( this.tandem, '_' + this.instanceTandemName, this.tandem.getExtendedOptions() );
 
       // create with default state and substructure, details will need to be set by setter methods.
       this.instance = this.createInstance( instanceTandem, ...argsForCreateFunction );
