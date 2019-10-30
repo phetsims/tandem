@@ -36,7 +36,8 @@ define( require => {
 
     const obj = new PhetioObject( {
       tandem: Tandem.rootTandem,
-      phetioType: MockTypeIO
+      phetioType: MockTypeIO,
+      phetioState: false
     } );
     obj.phetioStartEvent( 'hello' );
   } );
@@ -46,7 +47,8 @@ define( require => {
 
     const obj = new PhetioObject( {
       tandem: Tandem.rootTandem.createTandem( 'test1' ),
-      phetioType: MockTypeIO
+      phetioType: MockTypeIO,
+      phetioState: false
     } );
     obj.phetioStartEvent( 'hello' );
     obj.phetioEndEvent();
@@ -57,7 +59,8 @@ define( require => {
 
     const obj = new PhetioObject( {
       tandem: Tandem.rootTandem.createTandem( 'test2' ),
-      phetioType: MockTypeIO
+      phetioType: MockTypeIO,
+      phetioState: false
     } );
 
     if ( Tandem.PHET_IO_ENABLED ) {
