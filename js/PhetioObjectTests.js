@@ -18,6 +18,9 @@ define( require => {
 
   QUnit.module( 'PhetioObject' );
 
+  // launch to make sure tandem registration fires listeners
+  Tandem.launch();
+
   const MockTypeIO = function( instance, phetioID ) {};
   MockTypeIO.typeName = 'MockTypeIO';
   MockTypeIO.events = [ 'hello' ];
@@ -62,5 +65,39 @@ define( require => {
         obj.phetioEndEvent();
       }, 'Should throw an assertion error when Ending an unstarted event' );
     }
+  } );
+
+  QUnit.test( 'PhetioObject.isDynamicElement', assert => {
+    const test1 = Tandem.rootTandem.createTandem( 'test1' );
+    const parentTandem = test1.createTandem( 'parent' );
+    const child1Tandem = parentTandem.createTandem( 'child1' );
+    const child2Tandem = parentTandem.createTandem( 'child2' );
+    const child1 = new PhetioObject( {
+      tandem: child1Tandem
+    } );
+    const grandChild1 = new PhetioObject( {
+      tandem: child1Tandem.createTandem( 'grandChild' )
+    } );
+    assert.ok( !child1.phetioDynamicElement, 'direct child not dynamic before parent created' );
+    assert.ok( !grandChild1.phetioDynamicElement, 'grandchild not dynamic before parent created' );
+
+    const parent = new PhetioObject( {
+      tandem: parentTandem,
+      phetioDynamicElement: true
+    } );
+    assert.ok( parent.phetioDynamicElement, 'parent should be dynamic when marked dynamic' );
+    assert.ok( child1.phetioDynamicElement, 'direct child before parent creation' );
+    assert.ok( grandChild1.phetioDynamicElement, 'descendant child before parent creation' );
+
+    const child2 = new PhetioObject( {
+      tandem: parentTandem.createTandem( 'child2' )
+    } );
+
+    const grandChild2 = new PhetioObject( {
+      tandem: child2Tandem.createTandem( 'grandChild' )
+    } );
+
+    assert.ok( child2.phetioDynamicElement, 'direct child after parent creation' );
+    assert.ok( grandChild2.phetioDynamicElement, 'descendant child after parent creation' );
   } );
 } );

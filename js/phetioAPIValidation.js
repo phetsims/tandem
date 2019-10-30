@@ -11,7 +11,7 @@
  * 1. A full schema is required - any phet-io brand sim without these will have a 404, but this rule isn't tested in this file.
  * 2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
  * 3. ~~ is no more
- * 4. After startup, only dynamic instances can be registered.
+ * 4. After startup, only dynamic instances prescribed by the baseline file can be registered.
  * 5. When the sim is finished starting up, all non-dynamic schema entries must be registered.
  * 6. Any static, registered PhetioObject can never be deregistered.
  * 7. Any schema entries in the overrides file must exist in the baseline file
@@ -78,31 +78,6 @@ define( require => {
       this.everyPhetioType = {};
 
       this.validateOverridesFile(); // these preloads can be validated immediately
-    }
-
-    /**
-     * This callback should be called before the overrides have been mixed into the PhetioObject metadata to ensure that
-     * the comparison is baseline schema (from the file) to PhetioObject baseline (computed at runtime).
-     *
-     * @param {Tandem} tandem
-     * @param {Object} phetioObjectBaselineMetadata
-     * @public
-     */
-    onPhetioObjectPreOverrides( tandem, phetioObjectBaselineMetadata ) {
-      if ( this.enabled && this.simHasStarted ) {
-        const concretePhetioID = tandem.getConcretePhetioID();
-        const baseline = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
-
-        // Instances should generally be created on startup.  The only instances that it's OK to create after startup
-        // are "dynamic instances" which have underscores (at the moment). Only assert if validating the phet-io API
-        const isDynamicElement = phetio.PhetioIDUtils.isDynamicElement( tandem.phetioID ) || baseline.phetioDynamicElement;
-        if ( !isDynamicElement ) {
-          this.addError( {
-            phetioID: tandem.phetioID,
-            ruleInViolation: '4. After startup, only dynamic instances can be registered.'
-          } );
-        }
-      }
     }
 
     /**
@@ -182,7 +157,7 @@ define( require => {
       const phetioID = phetioObject.tandem.phetioID;
 
       // if it isn't dynamic, then it shouldn't be removed during the lifetime of the sim.
-      if ( !phetio.PhetioIDUtils.isDynamicElement( phetioObject.tandem.phetioID ) &&
+      if ( !phetioObject.phetioDynamicElement &&
 
            // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
            phetioID.indexOf( '~' ) === -1
@@ -209,6 +184,32 @@ define( require => {
 
       if ( !oldPhetioType ) { // This may not be necessary, but may be helpful so that we don't overwrite if rule 10 is in violation
         this.everyPhetioType[ newPhetioType.typeName ] = newPhetioType;
+      }
+
+      if ( this.simHasStarted &&
+
+           // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
+           phetioObject.tandem.phetioID.indexOf( '~' ) === -1 ) {
+        const concretePhetioID = phetioObject.tandem.getConcretePhetioID();
+        const baselineFromFile = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
+        assert && assert( baselineFromFile, 'There should always be an entry in the baseline for each phetioID' );
+
+        // Here we need to kick this validation to the next frame to support construction in any order. Parent first, or
+        // child first. Use namespace to avoid because timer is a PhetioObject.
+        phet.axon.timer.setTimeout( () => {
+
+          // Instances should generally be created on startup.  The only instances that it's OK to create after startup
+          // are "dynamic instances" which are marked as such.
+          const isDynamicElement = baselineFromFile.phetioDynamicElement && // baseline expects it to be dynamic
+                                   ( phetioObject.phetioDynamicElement && // it is dynamic
+                                   !phetioObject.isDynamicElementPrototype ); // it is not the prototype for a dynamic interface
+          if ( !isDynamicElement ) {
+            this.addError( {
+              phetioID: phetioObject.tandem.phetioID,
+              ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
+            } );
+          }
+        }, 0 );
       }
     }
 

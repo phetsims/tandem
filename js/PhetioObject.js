@@ -46,7 +46,7 @@ define( require => {
     phetioComponentOptions: null,     // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
     phetioFeatured: false,            // When true, this is categorized as an important "featured" element in Studio.
     phetioEventMetadata: null,        // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
-    phetioDynamicElement: false,      // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically
+    phetioDynamicElement: false,      // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically. Dynamic prototypes will be marked as this as well.
 
     // TODO: this is used very rarely, perhaps we should make a sparse map of this directly on phetioEngine instead?
     isDynamicElementPrototype: false  // {boolean} optional - indicates that an object is a prototype for a dynamic class. Settable by classes that create dynamic elements when creating their prototypes, i.e. PhetioGroup
@@ -64,6 +64,10 @@ define( require => {
   ] );
 
   const OPTIONS_KEYS = _.keys( DEFAULTS );
+
+  // factor these out so that we don't recreate closures for each instance.
+  const isDynamicElementPredicate = phetioObject => phetioObject.phetioDynamicElement;
+  const isDynamicElementPrototypePredicate = phetioObject => phetioObject.isDynamicElementPrototype;
 
   /**
    * @param {Object} [options]
@@ -246,10 +250,6 @@ define( require => {
         // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
         if ( phetioID.indexOf( '~' ) === -1 ) {
 
-          // Validate code baseline metadata against baseline elements schema, guard behind assert for performance.
-          // Should be called before setting overrides
-          assert && phetioAPIValidation.onPhetioObjectPreOverrides( options.tandem, PhetioObject.getMetadata( options ) );
-
           // Dynamic elements should compare to their "concrete" counterparts.
           const concretePhetioID = options.tandem.getConcretePhetioID();
 
@@ -276,10 +276,30 @@ define( require => {
       this.phetioHighFrequency = options.phetioHighFrequency;
       this.phetioPlayback = options.phetioPlayback;
       this.phetioStudioControl = options.phetioStudioControl;
-      this.phetioDynamicElement = options.phetioDynamicElement;
       this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
       this.phetioFeatured = options.phetioFeatured;
       this.phetioEventMetadata = options.phetioEventMetadata;
+      this.phetioDynamicElement = options.phetioDynamicElement ||
+
+                                  // Support phet brand, and phetioEngine doesn't yet exist while registering
+                                  // engine-related objects (including phetioEngine itself). This is okay though, as
+                                  // none of these should be marked as dynamic.
+                                  !!( phet.phetIo && phet.phetIo.phetioEngine &&
+                                      phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) );
+
+      // Support phet brand, and phetioEngine doesn't yet exist while registering
+      // engine-related objects (including phetioEngine itself). This is okay though, as
+      // none of these should be marked as dynamic.
+      // TODO: do we need this? What if phetioDynamicElement was false for prototypes?
+      this.isDynamicElementPrototype = !!( phet.phetIo && phet.phetIo.phetioEngine &&
+                                           phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPrototypePredicate ) );
+
+      assert && assert( typeof this.phetioDynamicElement === 'boolean' );
+
+      // Path this in after we have determined if parents are dynamic elements as well.
+      if ( this.phetioBaselineMetadata ) {
+        this.phetioBaselineMetadata.phetioDynamicElement = this.phetioDynamicElement;
+      }
 
       // Make sure playback shows in the phetioEventMetadata
       if ( this.phetioPlayback ) {
@@ -299,7 +319,14 @@ define( require => {
         // TODO: are we really going to add phetioDocumentation to every PhetioObject?, see https://github.com/phetsims/phet-io/issues/1409
         // TODO: If so, this assertion should be elsewhere, see https://github.com/phetsims/phet-io/issues/1409
         // assert && assert( this.phetioDocumentation, 'phetioDocumentation is required for: ' + this.tandem.phetioID );
+
+        // @public (read-only phet-io-internal)
         this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
+
+        // Any children that have been created thus far should be now marked as phetioDynamicElement.
+        // Get this value from options because this only needs to be done on the root dynamic element
+        options.phetioDynamicElement && this.propagatePhetioDynamicFlagToChildren();
+        assert && assert( typeof this.phetioDynamicElement === 'boolean' );
       }
       this.tandem.addPhetioObject( this );
       this.phetioObjectInitialized = true;
@@ -357,6 +384,35 @@ define( require => {
       if ( this.isPhetioInstrumented() ) {
         dataStream.end( topMessageIndex );
       }
+    },
+
+    /**
+     * Set any instrumented children of this PhetioObject to the same value as this phetioDynamicElement. Expects to be
+     * called only if this instance is phetioDynamicElement:true.
+     * @private
+     */
+    propagatePhetioDynamicFlagToChildren: function() {
+      assert && assert( typeof this.phetioDynamicElement === 'boolean' );
+      assert && assert( this.phetioDynamicElement, 'why call this if not a dynamic element?' );
+      const children = phet.phetIo.phetioEngine.getChildren( this );
+
+      for ( let i = 0; i < children.length; i++ ) {
+        const child = children[ i ];
+        child.phetioDynamicElement = this.phetioDynamicElement;
+
+        // we need this logic to apply for prototype markers too
+        child.isDynamicElementPrototype = this.isDynamicElementPrototype;
+
+        if ( child.phetioBaselineMetadata ) {
+          child.phetioBaselineMetadata.phetioDynamicElement = this.phetioDynamicElement;
+          child.phetioBaselineMetadata.isDynamicElementPrototype = this.isDynamicElementPrototype;
+        }
+      }
+    },
+
+    setIsDynamicElementPrototype: function( isDynamicElementPrototype ) {
+      this.isDynamicElementPrototype = isDynamicElementPrototype;
+      this.propagatePhetioDynamicFlagToChildren();
     },
 
     /**
@@ -458,6 +514,7 @@ define( require => {
      * @public
      */
     getMetadata: function( object ) {
+      assert && assert( typeof object.phetioDynamicElement === 'boolean' );
       return {
         phetioTypeName: object.phetioType.typeName,
         phetioDocumentation: object.phetioDocumentation,
@@ -468,6 +525,7 @@ define( require => {
         phetioPlayback: object.phetioPlayback,
         phetioStudioControl: object.phetioStudioControl,
         phetioDynamicElement: object.phetioDynamicElement,
+        isDynamicElementPrototype: object.isDynamicElementPrototype,
         phetioFeatured: object.phetioFeatured
       };
     },

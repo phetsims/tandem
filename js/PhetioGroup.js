@@ -77,7 +77,7 @@ define( require => {
         this.memberPrototype = createMember( this.tandem.createTandem( 'prototype' ), ...args );
 
         // So that the prototype get's included in the baseline schema
-        this.memberPrototype.isDynamicElementPrototype = true;
+        this.memberPrototype.setIsDynamicElementPrototype( true );
         assert && PhetioGroup.assertDynamicPhetioObject( this.memberPrototype );
       }
     }

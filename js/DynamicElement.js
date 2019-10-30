@@ -9,6 +9,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
+ * @deprecated
  */
 define( require => {
   'use strict';
@@ -33,7 +34,7 @@ define( require => {
 
         // {boolean} - hack alert! when printing the baseline, we need to keep track of dynamic element prototypes so
         // they appear in the baseline
-        this.instance.isDynamicElementPrototype = true;
+        this.instance.setIsDynamicElementPrototype( true );
       }
     }
 

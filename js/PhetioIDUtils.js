@@ -142,18 +142,6 @@
       return null;
     },
 
-    // TODO: Should this be reimplemented to compare to concrete phetioID? github.com/phetsims/phet-io/issues/1442
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely. See Tandem.getConcretePhetioID().
-    /**
-     * If the PhET-iO element was created dynamically, after the sim was constructed.
-     * @param {string} phetioID - the ID of the PhET-iO element
-     * @returns {boolean}
-     * @public
-     */
-    isDynamicElement: function( phetioID ) {
-      return phetioID.indexOf( GROUP_SEPARATOR ) >= 0;
-    },
-
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The separator used to piece together a phet-io ID.
