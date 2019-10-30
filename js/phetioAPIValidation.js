@@ -190,6 +190,7 @@ define( require => {
 
            // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
            phetioObject.tandem.phetioID.indexOf( '~' ) === -1 ) {
+
         const concretePhetioID = phetioObject.tandem.getConcretePhetioID();
         const baselineFromFile = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
         assert && assert( baselineFromFile, 'There should always be an entry in the baseline for each phetioID' );
@@ -198,11 +199,10 @@ define( require => {
         // child first. Use namespace to avoid because timer is a PhetioObject.
         phet.axon.timer.setTimeout( () => {
 
-          // Instances should generally be created on startup.  The only instances that it's OK to create after startup
-          // are "dynamic instances" which are marked as such.
-          const isDynamicElement = baselineFromFile.phetioDynamicElement && // baseline expects it to be dynamic
-                                   ( phetioObject.phetioDynamicElement && // it is dynamic
-                                   !phetioObject.isDynamicElementPrototype ); // it is not the prototype for a dynamic interface
+          // Everything in the baseline was created on startup, but the prototypes mark dynamic elements' non-dynamic
+          // counterparts. The only instances that it's OK to create after startup are "dynamic instances" which are
+          // marked as such.
+          const isDynamicElement = baselineFromFile.phetioDynamicElementPrototype && phetioObject.phetioDynamicElement;
           if ( !isDynamicElement ) {
             this.addError( {
               phetioID: phetioObject.tandem.phetioID,

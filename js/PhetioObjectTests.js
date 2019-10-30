@@ -89,18 +89,29 @@ define( require => {
       phetioDynamicElement: true
     } );
     assert.ok( parent.phetioDynamicElement, 'parent should be dynamic when marked dynamic' );
-    assert.ok( child1.phetioDynamicElement, 'direct child before parent creation' );
-    assert.ok( grandChild1.phetioDynamicElement, 'descendant child before parent creation' );
 
-    const child2 = new PhetioObject( {
-      tandem: parentTandem.createTandem( 'child2' )
-    } );
+    // This will only happen in phet-io brand
+    if ( Tandem.PHET_IO_ENABLED ) {
 
-    const grandChild2 = new PhetioObject( {
-      tandem: child2Tandem.createTandem( 'grandChild' )
-    } );
+      assert.ok( child1.phetioDynamicElement, 'direct child before parent creation' );
+      assert.ok( grandChild1.phetioDynamicElement, 'descendant child before parent creation' );
 
-    assert.ok( child2.phetioDynamicElement, 'direct child after parent creation' );
-    assert.ok( grandChild2.phetioDynamicElement, 'descendant child after parent creation' );
+      const child2 = new PhetioObject( {
+        tandem: parentTandem.createTandem( 'child2' )
+      } );
+
+      const grandChild2 = new PhetioObject( {
+        tandem: child2Tandem.createTandem( 'grandChild' )
+      } );
+
+      assert.ok( child2.phetioDynamicElement, 'direct child after parent creation' );
+      assert.ok( grandChild2.phetioDynamicElement, 'descendant child after parent creation' );
+
+      child2.markDynamicElementPrototype();
+
+      assert.ok( !child2.phetioDynamicElement, 'Not dynamic if prototype: direct child after parent creation' );
+      assert.ok( !grandChild2.phetioDynamicElement, 'Not dynamic if prototype: descendant child after parent creation' );
+    }
+
   } );
 } );

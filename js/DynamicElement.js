@@ -34,7 +34,7 @@ define( require => {
 
         // {boolean} - hack alert! when printing the baseline, we need to keep track of dynamic element prototypes so
         // they appear in the baseline
-        this.instance.setIsDynamicElementPrototype( true );
+        this.instance.markDynamicElementPrototype();
       }
     }
 
