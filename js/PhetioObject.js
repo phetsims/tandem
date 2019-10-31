@@ -287,13 +287,13 @@ define( require => {
                                   // Support phet brand, and phetioEngine doesn't yet exist while registering
                                   // engine-related objects (including phetioEngine itself). This is okay though, as
                                   // none of these should be marked as dynamic.
-                                  !!( phet.phetIo && phet.phetIo.phetioEngine &&
+                                  !!( window.phet && phet.phetIo && phet.phetIo.phetioEngine &&
                                       phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) );
 
       // Support phet brand, and phetioEngine doesn't yet exist while registering
       // engine-related objects (including phetioEngine itself). This is okay though, as
       // none of these should be marked as dynamic.
-      this.phetioDynamicElementPrototype = !!( phet.phetIo && phet.phetIo.phetioEngine &&
+      this.phetioDynamicElementPrototype = !!( window.phet && phet.phetIo && phet.phetIo.phetioEngine &&
                                                phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPrototypePredicate ) );
 
       // Patch this in after we have determined if parents are dynamic elements as well.
