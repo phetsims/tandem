@@ -287,13 +287,12 @@ define( require => {
                                   // Support phet brand, and phetioEngine doesn't yet exist while registering
                                   // engine-related objects (including phetioEngine itself). This is okay though, as
                                   // none of these should be marked as dynamic.
-                                  !!( window.phet && phet.phetIo && phet.phetIo.phetioEngine &&
+                                  !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
                                       phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) );
 
-      // Support phet brand, and phetioEngine doesn't yet exist while registering
-      // engine-related objects (including phetioEngine itself). This is okay though, as
-      // none of these should be marked as dynamic.
-      this.phetioDynamicElementPrototype = !!( window.phet && phet.phetIo && phet.phetIo.phetioEngine &&
+      // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
+      // phetioEngine itself). This is okay though, as none of these should be marked as dynamic.
+      this.phetioDynamicElementPrototype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
                                                phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPrototypePredicate ) );
 
       // Patch this in after we have determined if parents are dynamic elements as well.
@@ -348,11 +347,10 @@ define( require => {
       assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
 
       // Opt out of certain events if queryParameter override is provided
-      if ( window.phet && window.phet.phetio ) {
-        if ( !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency ) {
-          this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
-          return;
-        }
+      if ( _.hasIn( window, 'phet.phetio.queryParameters' ) &&
+           !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency ) {
+        this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
+        return;
       }
 
       if ( this.isPhetioInstrumented() ) {
@@ -390,6 +388,7 @@ define( require => {
      * @private
      */
     propagateDynamicFlagsToChildren: function() {
+      assert && assert( _.hasIn( window, 'phet.phetIo.phetioEngine' ), 'phetioEngine should be defined' );
       const children = phet.phetIo.phetioEngine.getChildren( this );
 
       for ( let i = 0; i < children.length; i++ ) {
