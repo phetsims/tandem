@@ -44,7 +44,7 @@ define( require => {
     /**
      * Return the json that ObjectIO is wrapping.  This can be overridden by subclasses, or types can use ObjectIO type
      * directly to use this implementation.
-     * @param {Object} o
+     * @param {PhetioObject} o
      * @returns {Object}
      * @public
      */
@@ -62,6 +62,16 @@ define( require => {
      */
     static fromStateObject( o ) {
       return o;
+    }
+
+    /**
+     * Applies the deserialized value to the object.  This is only called when setting the entire state of the simulation,
+     * and hence also sets the initial values, so resets will return to the customized value instead of the simulation
+     * default (uncustomized) value.
+     * @param {PhetioObject} o
+     * @param {Object} value - result from fromStateObject
+     */
+    static setValue( o, value ) {
     }
 
     /**
