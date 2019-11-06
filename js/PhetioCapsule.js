@@ -14,7 +14,6 @@ define( require => {
   // modules
   const DynamicTandem = require( 'TANDEM/DynamicTandem' );
   const merge = require( 'PHET_CORE/merge' );
-  const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   const PhetioGroup = require( 'TANDEM/PhetioGroup' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
@@ -54,20 +53,8 @@ define( require => {
       // @private
       this.instanceTandemName = instanceTandemName;
 
-      // @private {PhetioObject}
-      this.instancePrototype = null;
-
-      // When generating the baseline, output the schema for the prototype
-      if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
-
-        const args = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
-        assert && assert( createInstance.length === args.length + 1, 'mismatched number of arguments' );
-
-        this.instancePrototype = createInstance( this.tandem.createTandem( DynamicTandem.DYNAMIC_PROTOTYPE_NAME ), ...args );
-
-        // So that the prototype get's included in the baseline schema
-        this.instancePrototype.markDynamicElementPrototype();
-      }
+      // @public (read-only) {PhetioObject|null} Can be used as an argument to create other prototypes
+      this.instancePrototype = PhetioGroup.createPrototype( this.tandem, createInstance, defaultArguments );
     }
 
     /**

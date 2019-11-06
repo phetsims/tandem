@@ -65,19 +65,34 @@ define( require => {
 
       this.groupOptions = options;
 
-      // @private
-      this.memberPrototype = null;
+      // @public (read-only) {PhetioObject|null} Can be used as an argument to create other prototypes
+      this.memberPrototype = PhetioGroup.createPrototype( this.tandem, createMember, defaultArguments );
+    }
+
+    /**
+     * @param {Tandem} tandem
+     * @param {function} create - function that creates a PhetioObject which will serve as the prototype
+     * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
+     * @returns {null|*}
+     * @public
+     */
+    static createPrototype( tandem, create, defaultArguments ) {
 
       // When generating the baseline, output the schema for the prototype
       if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
+        const defaultArgs = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
 
-        const args = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
-        assert && assert( createMember.length === args.length + 1, 'mismatched number of arguments' );
+        // The create function takes a tandem plus the default args
+        assert && assert( create.length === defaultArgs.length + 1, 'mismatched number of arguments' );
 
-        this.memberPrototype = createMember( this.tandem.createTandem( DynamicTandem.DYNAMIC_PROTOTYPE_NAME ), ...args );
+        const memberPrototype = create( tandem.createTandem( DynamicTandem.DYNAMIC_PROTOTYPE_NAME ), ...defaultArgs );
 
         // So that the prototype get's included in the baseline schema
-        this.memberPrototype.markDynamicElementPrototype();
+        memberPrototype.markDynamicElementPrototype();
+        return memberPrototype;
+      }
+      else {
+        return null;
       }
     }
 
