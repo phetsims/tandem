@@ -79,10 +79,23 @@ define( require => {
     }
 
     /**
+     * Creates the instance if it has not been created yet, and returns it.
+     * @param {Array.<*>} [argsForCreateFunction]
+     * @returns {Object}
+     * @public
+     */
+    getInstance( ...argsForCreateFunction ) {
+      if ( !this.instance ) {
+        this.create( ...argsForCreateFunction );
+      }
+      return this.instance;
+    }
+
+    /**
      * CreatPrimarily for internal use, clients should usually use createNextMember.
      * @param {Array.<*>} [argsForCreateFunction]
      * @returns {Object}
-     * @public (PhetioCapsuleIO)
+     * @public
      */
     create( ...argsForCreateFunction ) {
       assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
