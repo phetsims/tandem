@@ -1,7 +1,7 @@
 // Copyright 2019, University of Colorado Boulder
 
 /**
- * A tandem that stores the name of the prototype that defines its schema
+ * A tandem for a dynamic element that stores the name of the prototype that defines its dynamic element's schema.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
@@ -13,6 +13,9 @@ define( require => {
   // modules
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+
+  // constants
+  const DYNAMIC_PROTOTYPE_NAME = 'prototype';
 
   class DynamicTandem extends Tandem {
 
@@ -47,9 +50,12 @@ define( require => {
      */
     getConcretePhetioID() {
       assert && assert( this.parentTandem, 'Group members must be in a Group' );
-      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), 'prototype' );
+      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), DYNAMIC_PROTOTYPE_NAME );
     }
   }
+
+  // @public
+  DynamicTandem.DYNAMIC_PROTOTYPE_NAME = DYNAMIC_PROTOTYPE_NAME;
 
   return tandemNamespace.register( 'DynamicTandem', DynamicTandem );
 } );

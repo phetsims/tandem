@@ -74,7 +74,7 @@ define( require => {
         const args = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
         assert && assert( createMember.length === args.length + 1, 'mismatched number of arguments' );
 
-        this.memberPrototype = createMember( this.tandem.createTandem( 'prototype' ), ...args );
+        this.memberPrototype = createMember( this.tandem.createTandem( DynamicTandem.DYNAMIC_PROTOTYPE_NAME ), ...args );
 
         // So that the prototype get's included in the baseline schema
         this.memberPrototype.markDynamicElementPrototype();
