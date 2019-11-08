@@ -13,7 +13,7 @@ define( require => {
 
   // modules
   const merge = require( 'PHET_CORE/merge' );
-  const PhetioGroup = require( 'TANDEM/PhetioGroup' );
+  const PhetioDynamicUtil = require( 'TANDEM/PhetioDynamicUtil' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
@@ -54,7 +54,7 @@ define( require => {
       this.instanceTandemName = instanceTandemName;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other prototypes
-      this.instancePrototype = PhetioGroup.createPrototype( this.tandem, createInstance, defaultArguments );
+      this.instancePrototype = PhetioDynamicUtil.createPrototype( this.tandem, createInstance, defaultArguments );
     }
 
     /**
@@ -88,7 +88,7 @@ define( require => {
 
       // TODO: underscore hackary to declare this as a dynamic tandem.
       // create with default state and substructure, details will need to be set by setter methods.
-      this.instance = PhetioGroup.createDynamicPhetioObject( this.tandem, '_' + this.instanceTandemName,
+      this.instance = PhetioDynamicUtil.createDynamicPhetioObject( this.tandem, '_' + this.instanceTandemName,
         this.createInstance, argsForCreateFunction, this.phetioType.parameterType.validator );
 
       return this.instance;

@@ -13,14 +13,12 @@ define( require => {
 
   // modules
   const arrayRemove = require( 'PHET_CORE/arrayRemove' );
-  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
   const Emitter = require( 'AXON/Emitter' );
   const merge = require( 'PHET_CORE/merge' );
-  const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
+  const PhetioDynamicUtil = require( 'TANDEM/PhetioDynamicUtil' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  const validate = require( 'AXON/validate' );
 
   class PhetioGroup extends PhetioObject {
 
@@ -65,34 +63,7 @@ define( require => {
       this.prefix = prefix;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other prototypes
-      this.memberPrototype = PhetioGroup.createPrototype( this.tandem, createMember, defaultArguments );
-    }
-
-    /**
-     * @param {Tandem} tandem
-     * @param {function} create - function that creates a PhetioObject which will serve as the prototype
-     * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
-     * @returns {null|*}
-     * @public
-     */
-    static createPrototype( tandem, create, defaultArguments ) {
-
-      // When generating the baseline, output the schema for the prototype
-      if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
-        const defaultArgs = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
-
-        // The create function takes a tandem plus the default args
-        assert && assert( create.length === defaultArgs.length + 1, 'mismatched number of arguments' );
-
-        const memberPrototype = create( tandem.createTandem( DynamicTandem.DYNAMIC_PROTOTYPE_NAME ), ...defaultArgs );
-
-        // So that the prototype get's included in the baseline schema
-        memberPrototype.markDynamicElementPrototype();
-        return memberPrototype;
-      }
-      else {
-        return null;
-      }
+      this.memberPrototype = PhetioDynamicUtil.createPrototype( this.tandem, createMember, defaultArguments );
     }
 
     /**
@@ -237,51 +208,13 @@ define( require => {
 
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
-      const groupMember = PhetioGroup.createDynamicPhetioObject( this.tandem, componentName, this.createMember,
+      const groupMember = PhetioDynamicUtil.createDynamicPhetioObject( this.tandem, componentName, this.createMember,
         argsForCreateFunction, this.phetioType.parameterType.validator );
 
       this.array.push( groupMember );
       this.memberCreatedEmitter.emit( groupMember );
 
       return groupMember;
-    }
-
-    /**
-     * Static function to create a dynamic PhetioObject
-     * @param {Tandem} parentTandem
-     * @param {string} componentName
-     * @param {function(Tandem[, ...*]):PhetioObject} createFunction
-     * @param {Array.<*>} argsForCreateFunction
-     * @param {ValidatorDef} objectValidator
-     * @returns {PhetioObject}
-     * @public
-     */
-    static createDynamicPhetioObject( parentTandem, componentName, createFunction, argsForCreateFunction, objectValidator ) {
-      assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
-
-      // create with default state and substructure, details will need to be set by setter methods.
-      const createdObjectTandem = new DynamicTandem( parentTandem, componentName, parentTandem.getExtendedOptions() );
-      const createdObject = createFunction( createdObjectTandem, ...argsForCreateFunction );
-
-      // Make sure the new group member matches the schema for members.
-      validate( createdObject, objectValidator );
-      assert && PhetioGroup.assertDynamicPhetioObject( createdObject );
-
-      return createdObject;
-    }
-
-    /**
-     * A dynamic member should be an instrumented PhetioObject with phetioDynamicElement: true
-     * @param {PhetioObject} phetioObject - object to be validated
-     * @public
-     * @static
-     */
-    static assertDynamicPhetioObject( phetioObject ) {
-      if ( Tandem.PHET_IO_ENABLED ) {
-        assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
-        assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
-        assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
-      }
     }
   }
 
