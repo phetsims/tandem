@@ -86,9 +86,8 @@ define( require => {
      */
     create( ...argsForCreateFunction ) {
 
-      // TODO: underscore hackary to declare this as a dynamic tandem.
       // create with default state and substructure, details will need to be set by setter methods.
-      this.instance = PhetioDynamicUtil.createDynamicPhetioObject( this.tandem, '_' + this.instanceTandemName,
+      this.instance = PhetioDynamicUtil.createDynamicPhetioObject( this.tandem, this.instanceTandemName,
         this.createInstance, argsForCreateFunction, this.phetioType.parameterType.validator );
 
       return this.instance;
