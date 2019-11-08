@@ -504,7 +504,7 @@ define( require => {
       // disposed PhetioObjects.
       //
       // The phetioEvent stack should resolve by the next clock tick, so that's when we check it.
-      assert && setTimeout( () => {
+      assert && setTimeout( () => { // eslint-disable-line bad-sim-text
         assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
       }, 0 );
 
