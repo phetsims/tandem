@@ -39,7 +39,8 @@ define( require => {
       }
 
       options = merge( {
-        phetioState: false
+        phetioState: false,
+        tandem: Tandem.required
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
@@ -62,8 +63,6 @@ define( require => {
 
       // @private
       this.prefix = prefix;
-
-      this.groupOptions = options;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other prototypes
       this.memberPrototype = PhetioGroup.createPrototype( this.tandem, createMember, defaultArguments );
@@ -235,23 +234,40 @@ define( require => {
      * @public (PhetioGroupIO)
      */
     createIndexedMember( index, argsForCreateFunction ) {
-      assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
-      // create with default state and substructure, details will need to be set by setter methods.
-      // TODO: getExtendOptions isn't needed here, and likely we shouldn't store this.groupOptions
-      const groupMemberTandem = new DynamicTandem( this.tandem, componentName, this.tandem.getExtendedOptions( this.groupOptions ) );
-      const groupMember = this.createMember( groupMemberTandem, ...argsForCreateFunction );
-
-      // Make sure the new group member matches the schema for members.
-      validate( groupMember, this.phetioType.parameterType.validator );
-      assert && PhetioGroup.assertDynamicPhetioObject( groupMember );
+      const groupMember = PhetioGroup.createDynamicPhetioObject( this.tandem, componentName, this.createMember,
+        argsForCreateFunction, this.phetioType.parameterType.validator );
 
       this.array.push( groupMember );
       this.memberCreatedEmitter.emit( groupMember );
 
       return groupMember;
+    }
+
+    /**
+     * Static function to create a dynamic PhetioObject
+     * @param {Tandem} parentTandem
+     * @param {string} componentName
+     * @param {function(Tandem[, ...*]):PhetioObject} createFunction
+     * @param {Array.<*>} argsForCreateFunction
+     * @param {ValidatorDef} objectValidator
+     * @returns {PhetioObject}
+     * @public
+     */
+    static createDynamicPhetioObject( parentTandem, componentName, createFunction, argsForCreateFunction, objectValidator ) {
+      assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
+
+      // create with default state and substructure, details will need to be set by setter methods.
+      const createdObjectTandem = new DynamicTandem( parentTandem, componentName, parentTandem.getExtendedOptions() );
+      const createdObject = createFunction( createdObjectTandem, ...argsForCreateFunction );
+
+      // Make sure the new group member matches the schema for members.
+      validate( createdObject, objectValidator );
+      assert && PhetioGroup.assertDynamicPhetioObject( createdObject );
+
+      return createdObject;
     }
 
     /**

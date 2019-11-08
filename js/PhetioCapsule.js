@@ -12,12 +12,11 @@ define( require => {
   'use strict';
 
   // modules
-  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
   const merge = require( 'PHET_CORE/merge' );
   const PhetioGroup = require( 'TANDEM/PhetioGroup' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
+  const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  const validate = require( 'AXON/validate' );
 
   class PhetioCapsule extends PhetioObject {
 
@@ -36,7 +35,8 @@ define( require => {
       }
 
       options = merge( {
-        phetioState: false
+        phetioState: false,
+        tandem: Tandem.required
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
@@ -85,18 +85,11 @@ define( require => {
      * @public
      */
     create( ...argsForCreateFunction ) {
-      assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
       // TODO: underscore hackary to declare this as a dynamic tandem.
-      const instanceTandem = new DynamicTandem( this.tandem, '_' + this.instanceTandemName, this.tandem.getExtendedOptions() );
-
       // create with default state and substructure, details will need to be set by setter methods.
-      this.instance = this.createInstance( instanceTandem, ...argsForCreateFunction );
-
-      // Make sure the new group member matches the schema for members.
-      validate( this.instance, this.phetioType.parameterType.validator );
-
-      assert && PhetioGroup.assertDynamicPhetioObject( this.instance );
+      this.instance = PhetioGroup.createDynamicPhetioObject( this.tandem, '_' + this.instanceTandemName,
+        this.createInstance, argsForCreateFunction, this.phetioType.parameterType.validator );
 
       return this.instance;
     }
