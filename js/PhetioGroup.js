@@ -25,7 +25,7 @@ define( require => {
   class PhetioGroup extends PhetioObject {
 
     /**
-     * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0" // TODO: do we need this? why now something consistent like `element_0`
+     * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
      * @param {function} createMember - function that creates a group member
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
      * @param {Object} [options] - describe the Group itself
