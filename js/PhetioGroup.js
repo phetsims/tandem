@@ -133,7 +133,7 @@ define( require => {
      * @param member
      * @public
      */
-    disposeGroupMember( member ) { // TODO: rename disposeMember
+    disposeMember( member ) {
       arrayRemove( this.array, member );
       this.memberDisposedEmitter.emit( member );
       member.dispose();
@@ -192,7 +192,7 @@ define( require => {
      */
     clear() {
       while ( this.array.length > 0 ) {
-        this.disposeGroupMember( this.array[ this.array.length - 1 ] );
+        this.disposeMember( this.array[ this.array.length - 1 ] );
       }
 
       this.groupMemberIndex = 0;
