@@ -18,13 +18,13 @@ define( require => {
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  class PhetioCapsule extends PhetioObject {
+  class PhetioSingleton extends PhetioObject {
 
     /**
      * @param {string} instanceTandemName - name of the instance
      * @param {function(tandem, ...):PhetioObject} createInstance - function that creates a group member
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
-     * @param {Object} [options] - describe the Capsule itself
+     * @param {Object} [options] - describe the Singleton itself
      */
     constructor( instanceTandemName, createInstance, defaultArguments, options ) {
 
@@ -40,7 +40,7 @@ define( require => {
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
-      assert && assert( !!options.phetioType.parameterType, 'PhetioCapsule is parametric, and needs a phetioType with a parameterType.' );
+      assert && assert( !!options.phetioType.parameterType, 'PhetioSingleton is parametric, and needs a phetioType with a parameterType.' );
 
       super( options );
 
@@ -94,5 +94,5 @@ define( require => {
     }
   }
 
-  return tandemNamespace.register( 'PhetioCapsule', PhetioCapsule );
+  return tandemNamespace.register( 'PhetioSingleton', PhetioSingleton );
 } );

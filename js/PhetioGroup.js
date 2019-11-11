@@ -42,7 +42,7 @@ define( require => {
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
-      assert && assert( !!options.phetioType.parameterType, 'PhetioCapsule is parametric, and needs a phetioType with a parameterType.' );
+      assert && assert( !!options.phetioType.parameterType, 'PhetioSingleton is parametric, and needs a phetioType with a parameterType.' );
 
       super( options );
 
