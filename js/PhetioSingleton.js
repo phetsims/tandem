@@ -21,12 +21,11 @@ define( require => {
   class PhetioSingleton extends PhetioObject {
 
     /**
-     * @param {string} instanceTandemName - name of the instance
      * @param {function(tandem, ...):PhetioObject} createInstance - function that creates a group member
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
      * @param {Object} [options] - describe the Singleton itself
      */
-    constructor( instanceTandemName, createInstance, defaultArguments, options ) {
+    constructor( createInstance, defaultArguments, options ) {
 
       assert && assert( typeof createInstance === 'function', 'createInstance should be a function' );
       assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
@@ -41,6 +40,7 @@ define( require => {
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
       assert && assert( !!options.phetioType.parameterType, 'PhetioSingleton is parametric, and needs a phetioType with a parameterType.' );
+      assert && assert( options.tandem.name.endsWith( 'Singleton' ), 'PhetioSingleton tandems should end with Singleton suffix' );
 
       super( options );
 
@@ -49,9 +49,6 @@ define( require => {
 
       // @public (read-only)
       this.instance = null;
-
-      // @private
-      this.instanceTandemName = instanceTandemName;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other prototypes
       this.instancePrototype = PhetioDynamicUtil.createPrototype( this.tandem, createInstance, defaultArguments );
@@ -87,8 +84,13 @@ define( require => {
     create( ...argsForCreateFunction ) {
 
       // create with default state and substructure, details will need to be set by setter methods.
-      this.instance = PhetioDynamicUtil.createDynamicPhetioObject( this.tandem, this.instanceTandemName,
-        this.createInstance, argsForCreateFunction, this.phetioType.parameterType.validator );
+      this.instance = PhetioDynamicUtil.createDynamicPhetioObject(
+        this.tandem,
+        'instance',
+        this.createInstance,
+        argsForCreateFunction,
+        this.phetioType.parameterType.validator
+      );
 
       return this.instance;
     }

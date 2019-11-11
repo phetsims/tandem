@@ -43,6 +43,7 @@ define( require => {
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
       assert && assert( !!options.phetioType.parameterType, 'PhetioSingleton is parametric, and needs a phetioType with a parameterType.' );
+      assert && assert( options.tandem.name.endsWith( 'Group' ), 'PhetioGroup tandems should end with Group suffix' );
 
       super( options );
 
