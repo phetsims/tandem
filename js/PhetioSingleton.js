@@ -39,7 +39,9 @@ define( require => {
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
-      assert && assert( !!options.phetioType.parameterType, 'PhetioSingleton is parametric, and needs a phetioType with a parameterType.' );
+      assert && assert( !!options.phetioType.parameterTypes, 'PhetioSingletonIO must supply its parameter types' );
+      assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioSingletonIO must have exactly one parameter type' );
+      assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioSingletonIO parameterType must be truthy' );
       assert && assert( options.tandem.name.endsWith( 'Singleton' ), 'PhetioSingleton tandems should end with Singleton suffix' );
 
       super( options );
@@ -89,7 +91,7 @@ define( require => {
         'instance',
         this.createInstance,
         argsForCreateFunction,
-        this.phetioType.parameterType.validator
+        this.phetioType.parameterTypes[ 0 ].validator
       );
 
       return this.instance;

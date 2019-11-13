@@ -42,7 +42,9 @@ define( require => {
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
-      assert && assert( !!options.phetioType.parameterType, 'PhetioSingleton is parametric, and needs a phetioType with a parameterType.' );
+      assert && assert( !!options.phetioType.parameterTypes, 'PhetioGroupIO must supply its parameter types' );
+      assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioGroupIO must have exactly one parameter type' );
+      assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioGroupIO parameterType must be truthy' );
       assert && assert( options.tandem.name.endsWith( 'Group' ), 'PhetioGroup tandems should end with Group suffix' );
 
       super( options );
@@ -210,7 +212,7 @@ define( require => {
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
       const groupMember = PhetioDynamicUtil.createDynamicPhetioObject( this.tandem, componentName, this.createMember,
-        argsForCreateFunction, this.phetioType.parameterType.validator );
+        argsForCreateFunction, this.phetioType.parameterTypes[ 0 ].validator );
 
       this.array.push( groupMember );
       this.memberCreatedEmitter.emit( groupMember );

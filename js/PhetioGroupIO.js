@@ -91,8 +91,7 @@ define( require => {
     PhetioGroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';
     PhetioGroupIOImpl.validator = GROUP_VALIDATOR;
     PhetioGroupIOImpl.typeName = `PhetioGroupIO<${parameterType.typeName}>`;
-    PhetioGroupIOImpl.parameterType = parameterType; // TODO: zepumph hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
-    PhetioGroupIOImpl.parameterTypes = [ parameterType ]; // TODO: samreid hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
+    PhetioGroupIOImpl.parameterTypes = [ parameterType ];
     ObjectIO.validateSubtype( PhetioGroupIOImpl );
 
     return PhetioGroupIOImpl;

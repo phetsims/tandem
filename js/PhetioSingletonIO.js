@@ -82,8 +82,7 @@ define( require => {
     PhetioSingletonIOImpl.documentation = 'An array that sends notifications when its values have changed.';
     PhetioSingletonIOImpl.validator = GROUP_VALIDATOR;
     PhetioSingletonIOImpl.typeName = `PhetioSingletonIO<${parameterType.typeName}>`;
-    PhetioSingletonIOImpl.parameterType = parameterType; // TODO: zepumph hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
-    PhetioSingletonIOImpl.parameterTypes = [ parameterType ]; // TODO: samreid hopes we can get rid of this, https://github.com/phetsims/phet-io/issues/1371
+    PhetioSingletonIOImpl.parameterTypes = [ parameterType ];
     ObjectIO.validateSubtype( PhetioSingletonIOImpl );
 
     return PhetioSingletonIOImpl;
