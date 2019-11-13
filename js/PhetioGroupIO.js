@@ -52,18 +52,16 @@ define( require => {
 
     class PhetioGroupIOImpl extends ObjectIO {
 
-      // TODO https://github.com/phetsims/phet-io/issues/1454 I chose a different method name to remain backward
-      // TODO: compatible with legacy group patterns
-      // TODO https://github.com/phetsims/phet-io/issues/1454 move this to PhetioGroupIO
       /**
        * Adds a Track as specified by the phetioID and state.
        * A Track will create its own ControlPoints
        * @param {PhetioGroup} group
        * @param {string} componentName
        * @param {Object} stateObject
+       * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError - if it could not yet deserialize
        */
-      static addChildInstanceFromComponentName( group, componentName, stateObject ) {
+      static addChildInstance( group, componentName, stateObject ) {
 
         // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
         // element in the state needs to be created first, so we will try again on the next iteration of the state
