@@ -37,7 +37,7 @@ define( require => {
       }
 
       options = merge( {
-        phetioState: false,
+        phetioState: false, // members are included in state, but the container will exist in the downstream sim.
         tandem: Tandem.required
       }, options );
 
