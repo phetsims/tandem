@@ -68,8 +68,8 @@ define( require => {
         // setting engine.
         const args = parameterType.stateObjectToArgs( stateObject );
 
-        // TODO: factor this out to PhetioIDUtils (see usage in PhetioGroup.js too)
-        const index = parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
+        const index =  phetio.PhetioIDUtils.getGroupMemberIndex( componentName );
+
         const groupMember = group.createIndexedMember( index, args );
 
         // Keep the groupMemberIndex in sync so that the next index is set appropriately. This covers the case where

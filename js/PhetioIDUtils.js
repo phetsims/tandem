@@ -115,6 +115,7 @@
       return phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, ...[ GENERAL_COMPONENT_NAME, ...componentNames ] );
     },
 
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * Get the screen id from the phetioID.
      * @example
@@ -125,7 +126,7 @@
      * getScreenID( 'sim.general.activeProperty' )
      * --> null
      * @param {string} phetioID
-     * @returns {string|null} - null if there is no screen tandem in the phetioID
+     * @returns {string|null} - null if there is no screen component name in the phetioID
      */
     getScreenID: function( phetioID ) {
       const screenIDParts = [];
@@ -140,6 +141,22 @@
         }
       }
       return null;
+    },
+
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    /**
+     * Get the index number from the component name of the component name provided.
+     * @param {string} componentName
+     * @returns {number}
+     * @example
+     * getGroupMemberIndex( 'particle_1' )
+     * --> 1
+     * @public
+     */
+    getGroupMemberIndex: function( componentName ) {
+      assert && assert( componentName.indexOf( phetio.PhetioIDUtils.GROUP_SEPARATOR ) >= 0,
+        'component name for phetioID should have group member syntax' );
+      return parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
     },
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
