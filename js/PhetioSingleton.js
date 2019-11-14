@@ -2,7 +2,11 @@
 
 /**
  * A PhET-iO class that encapsulates a PhetioObject that is not created during sim startup to provide PhET-iO API
- * validation, API communication (like to view in studio before creation), and to support PhET-iO state if applicable
+ * validation, API communication (like to view in studio before creation), and to support PhET-iO state if applicable.
+ *
+ * Constructing a PhetioSingleton effectively creates the singleton where the wrapped instance can be of any type.
+ *
+ * Clients should use mySingleton.getInstance() instead of storing the instance value itself.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Sam Reid (PhET Interactive Simulations)
@@ -57,11 +61,13 @@ define( require => {
     }
 
     /**
-     * remove and dispose all registered group members
-     * @public
+     * Dispose the underlying instance.  Called by the PhetioStateEngine so the singleton can be recreated with the
+     * correct state.
+     * @public (phet-io)
      */
     disposeInstance() {
       this.instance.dispose();
+      this.instance = null;
     }
 
     /**
@@ -78,10 +84,10 @@ define( require => {
     }
 
     /**
-     * CreatPrimarily for internal use, clients should usually use createNextMember.
+     * Primarily for internal use, clients should usually use getInstance.
      * @param {Array.<*>} [argsForCreateFunction]
      * @returns {Object}
-     * @public
+     * @public (phet-io)
      */
     create( ...argsForCreateFunction ) {
 
