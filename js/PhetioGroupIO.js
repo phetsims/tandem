@@ -66,9 +66,10 @@ define( require => {
         // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
         // element in the state needs to be created first, so we will try again on the next iteration of the state
         // setting engine.
-        const args = parameterType.stateObjectToArgs( stateObject );
+        const state = parameterType.fromStateObject( stateObject );
+        const args = parameterType.stateToArgs( state );
 
-        const index =  phetio.PhetioIDUtils.getGroupMemberIndex( componentName );
+        const index = phetio.PhetioIDUtils.getGroupMemberIndex( componentName );
 
         const groupMember = group.createIndexedMember( index, args );
 

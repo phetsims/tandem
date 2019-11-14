@@ -175,7 +175,7 @@ define( require => {
      * When creating a view element that corresponds to a specific model element, we match the tandem name index suffix
      * so that electron_0 corresponds to electronNode_0 and so on.
      * @param {PhetioObject} phetioObject
-     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method
+     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateToArgs` method
      * @returns {PhetioObject}
      * @public
      */
@@ -192,7 +192,7 @@ define( require => {
 
     /**
      * Creates the next group member.
-     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateObjectToArgs` method
+     * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateToArgs` method
      * @returns {PhetioObject}
      * @public
      */
