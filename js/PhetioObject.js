@@ -47,9 +47,10 @@ define( require => {
     phetioFeatured: false,            // When true, this is categorized as an important "featured" element in Studio.
     phetioEventMetadata: null,        // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
     phetioDynamicElement: false,      // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically. Dynamic prototypes will have this overwritten to false, even if provided as true as prototypes cannot be dynamic.
-
-    // TODO: this is used very rarely, perhaps we should make a sparse map of this directly on phetioEngine instead?
-    phetioDynamicElementPrototype: false  // {boolean} optional - indicates that an object is a prototype for a dynamic class. Settable by classes that create dynamic elements when creating their prototypes (like PhetioGroup), see PhetioObject.markDynamicElementPrototype()
+    phetioDynamicElementPrototype: false  // {boolean} optional - indicates that an object is a prototype for a dynamic class.
+                                          // Settable by classes that create dynamic elements when creating their prototypes
+                                          // (like PhetioGroup), see PhetioObject.markDynamicElementPrototype().
+                                          // if true, items will be excluded from phetioState.
   };
 
   // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
