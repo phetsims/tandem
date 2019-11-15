@@ -312,7 +312,7 @@ define( require => {
    * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
    * place to put simulation specific globals, see `Tandem.globalTandem`
    *
-   * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/84
+   * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/93
    * @public
    * @static
    * @type {Tandem}
@@ -325,7 +325,7 @@ define( require => {
    * likely simulations elements should not be directly under this, but instead either under the model or view sub
    * tandems.
    *
-   * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/84
+   * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/93
    * @public
    * @static
    * @type {Tandem}
