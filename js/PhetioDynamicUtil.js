@@ -26,6 +26,7 @@ define( require => {
      */
     static createPrototype( tandem, create, defaultArguments ) {
 
+      // Once the sim has started, any prototypes being created are likely done so because they are nested PhetioGroups.
       if ( phetioAPIValidation.simHasStarted ) {
         return null;
       }
