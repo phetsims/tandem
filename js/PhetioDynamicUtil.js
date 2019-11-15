@@ -26,6 +26,10 @@ define( require => {
      */
     static createPrototype( tandem, create, defaultArguments ) {
 
+      if ( phetioAPIValidation.simHasStarted ) {
+        return null;
+      }
+
       // When generating the baseline, output the schema for the prototype
       if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
         const defaultArgs = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
