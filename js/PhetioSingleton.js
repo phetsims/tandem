@@ -26,7 +26,7 @@ define( require => {
 
     /**
      * @param {function(tandem, ...):PhetioObject} createInstance - function that creates a group member
-     * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
+     * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments - arguments passed to createInstance during API baseline generation
      * @param {Object} [options] - describe the Singleton itself
      */
     constructor( createInstance, defaultArguments, options ) {
