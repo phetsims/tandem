@@ -131,7 +131,7 @@ define( require => {
     // @private {Object|null}
     this.phetioEventMetadata = null;
 
-    // @public {Object} - see docs at DEFAULTS declaration
+    // @public (read-only) {Object} - see docs at DEFAULTS declaration
     this.phetioComponentOptions = null;
 
     // @public (phetioEngine) {Object|null} - only non null with phetio.queryParameters.phetioPrintPhetioFiles enabled
