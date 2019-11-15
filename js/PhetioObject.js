@@ -118,13 +118,14 @@ define( require => {
     // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioStudioControl = null;
 
-    // @private {boolean} - see docs at DEFAULTS declaration
-    this._phetioDynamicElement = null;
+    // @private {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to children
+    // the setPhetioDynamicElement() function must be used instead of setting this attribute directly
+    this.phetioDynamicElement = null;
 
-    // @private {boolean} - see docs at DEFAULTS declaration
+    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
     this.phetioDynamicElementPrototype = null;
 
-    // @private {boolean} - see docs at DEFAULTS declaration // TODO: are these really private?
+    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
     this.phetioFeatured = false;
 
     // @private {Object|null}
@@ -283,13 +284,13 @@ define( require => {
       this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
       this.phetioFeatured = options.phetioFeatured;
       this.phetioEventMetadata = options.phetioEventMetadata;
-      this.phetioDynamicElement = options.phetioDynamicElement ||
+      this.setPhetioDynamicElement( options.phetioDynamicElement ||
 
-                                  // Support phet brand, and phetioEngine doesn't yet exist while registering
-                                  // engine-related objects (including phetioEngine itself). This is okay though, as
-                                  // none of these should be marked as dynamic.
-                                  !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
-                                      phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) );
+                                    // Support phet brand, and phetioEngine doesn't yet exist while registering
+                                    // engine-related objects (including phetioEngine itself). This is okay though, as
+                                    // none of these should be marked as dynamic.
+                                    !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
+                                        phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) ) );
 
       // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
       // phetioEngine itself). This is okay though, as none of these should be marked as dynamic.
@@ -298,7 +299,7 @@ define( require => {
 
       // Patch this in after we have determined if parents are dynamic elements as well.
       if ( this.phetioBaselineMetadata ) {
-        this.phetioBaselineMetadata.phetioDynamicElement = this._phetioDynamicElement;
+        this.phetioBaselineMetadata.phetioDynamicElement = this.phetioDynamicElement;
       }
 
       // Make sure playback shows in the phetioEventMetadata
@@ -398,7 +399,7 @@ define( require => {
         // Order matters here! The phetioDynamicElementPrototype needs to be first to ensure that the phetioDynamicElement
         // setter can opt out for prototypes.
         child.phetioDynamicElementPrototype = this.phetioDynamicElementPrototype;
-        child.phetioDynamicElement = this._phetioDynamicElement;
+        child.setPhetioDynamicElement( this.phetioDynamicElement );
 
         if ( child.phetioBaselineMetadata ) {
           child.phetioBaselineMetadata.phetioDynamicElementPrototype = this.phetioDynamicElementPrototype;
@@ -411,28 +412,20 @@ define( require => {
      * @private
      * @param {boolean} phetioDynamicElement
      */
-    set phetioDynamicElement( phetioDynamicElement ) {
+    setPhetioDynamicElement( phetioDynamicElement ) {
 
       //If this element is a prototype, it is not a dynamic element.
       if ( this.phetioDynamicElementPrototype ) {
-        this._phetioDynamicElement = false;
+        this.phetioDynamicElement = false;
       }
       else {
-        this._phetioDynamicElement = phetioDynamicElement;
+        this.phetioDynamicElement = phetioDynamicElement;
       }
 
       // keep baseline metadata in sync too
       if ( this.phetioBaselineMetadata ) {
-        this.phetioBaselineMetadata.phetioDynamicElement = this._phetioDynamicElement;
+        this.phetioBaselineMetadata.phetioDynamicElement = this.phetioDynamicElement;
       }
-    },
-
-    /**
-     * @public
-     * @returns {boolean}
-     */
-    get phetioDynamicElement() {
-      return this._phetioDynamicElement;
     },
 
     /**
@@ -440,7 +433,7 @@ define( require => {
      */
     markDynamicElementPrototype: function() {
       this.phetioDynamicElementPrototype = true;
-      this.phetioDynamicElement = false; // because prototypes aren't dynamic elements
+      this.setPhetioDynamicElement( false ); // because prototypes aren't dynamic elements
 
       if ( this.phetioBaselineMetadata ) {
         this.phetioBaselineMetadata.phetioDynamicElementPrototype = this.phetioDynamicElementPrototype;
