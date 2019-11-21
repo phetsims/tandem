@@ -4,7 +4,7 @@
  * A PhET-iO class that encapsulates a PhetioObject that is not created during sim startup to provide PhET-iO API
  * validation, API communication (like to view in studio before creation), and to support PhET-iO state if applicable.
  *
- * Constructing a PhetioSingleton effectively creates the singleton where the wrapped instance can be of any type.
+ * Constructing a PhetioCapsule effectively creates the singleton where the wrapped instance can be of any type.
  *
  * Clients should use mySingleton.getInstance() instead of storing the instance value itself.
  *
@@ -22,7 +22,7 @@ define( require => {
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  class PhetioSingleton extends PhetioObject {
+  class PhetioCapsule extends PhetioObject {
 
     /**
      * @param {function(tandem, ...):PhetioObject} createInstance - function that creates a group member
@@ -43,10 +43,10 @@ define( require => {
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
-      assert && assert( !!options.phetioType.parameterTypes, 'PhetioSingletonIO must supply its parameter types' );
-      assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioSingletonIO must have exactly one parameter type' );
-      assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioSingletonIO parameterType must be truthy' );
-      assert && assert( options.tandem.name.endsWith( 'Singleton' ), 'PhetioSingleton tandems should end with Singleton suffix' );
+      assert && assert( !!options.phetioType.parameterTypes, 'PhetioCapsuleIO must supply its parameter types' );
+      assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioCapsuleIO must have exactly one parameter type' );
+      assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioCapsuleIO parameterType must be truthy' );
+      assert && assert( options.tandem.name.endsWith( 'Singleton' ), 'PhetioCapsule tandems should end with Singleton suffix' );
 
       super( options );
 
@@ -104,5 +104,5 @@ define( require => {
     }
   }
 
-  return tandemNamespace.register( 'PhetioSingleton', PhetioSingleton );
+  return tandemNamespace.register( 'PhetioCapsule', PhetioCapsule );
 } );

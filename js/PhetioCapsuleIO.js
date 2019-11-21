@@ -1,7 +1,7 @@
 // Copyright 2019, University of Colorado Boulder
 
 /**
- * IO type for PhetioSingleton.
+ * IO type for PhetioCapsule.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
@@ -15,7 +15,7 @@ define( require => {
   // constants
   const GROUP_VALIDATOR = {
     isValidValue: v => {
-      const PhetioGroup = window.phet ? phet.tandem.PhetioSingleton : tandemNamespace.PhetioSingleton;
+      const PhetioGroup = window.phet ? phet.tandem.PhetioCapsule : tandemNamespace.PhetioCapsule;
       return v instanceof PhetioGroup;
     }
   };
@@ -25,12 +25,12 @@ define( require => {
   const cache = {};
 
   /**
-   * Parametric IO type constructor.  Given an element type, this function returns a PhetioSingleton IO type.
+   * Parametric IO type constructor.  Given an element type, this function returns a PhetioCapsule IO type.
    * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    * @constructor
    */
-  function PhetioSingletonIO( parameterType ) {
+  function PhetioCapsuleIO( parameterType ) {
 
     assert && assert( typeof parameterType === 'function', 'element type should be defined' );
 
@@ -42,17 +42,17 @@ define( require => {
   }
 
   /**
-   * Creates a PhetioSingletonIOImpl
+   * Creates a PhetioCapsuleIOImpl
    * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    */
   const create = parameterType => {
 
-    class PhetioSingletonIOImpl extends ObjectIO {
+    class PhetioCapsuleIOImpl extends ObjectIO {
 
       /**
        * Creates the singleton's instance.
-       * @param {PhetioSingleton} singleton
+       * @param {PhetioCapsule} singleton
        * @param {string} componentName
        * @param {Object} stateObject
        * @returns {PhetioObject}
@@ -71,7 +71,7 @@ define( require => {
 
       /**
        * @public (phet-io state)
-       * @param {PhetioSingleton} singleton
+       * @param {PhetioCapsule} singleton
        */
       static clearChildInstances( singleton ) {
         if ( singleton.instance ) {
@@ -80,15 +80,15 @@ define( require => {
       }
     }
 
-    PhetioSingletonIOImpl.documentation = 'An array that sends notifications when its values have changed.';
-    PhetioSingletonIOImpl.validator = GROUP_VALIDATOR;
-    PhetioSingletonIOImpl.typeName = `PhetioSingletonIO<${parameterType.typeName}>`;
-    PhetioSingletonIOImpl.parameterTypes = [ parameterType ];
-    ObjectIO.validateSubtype( PhetioSingletonIOImpl );
+    PhetioCapsuleIOImpl.documentation = 'An array that sends notifications when its values have changed.';
+    PhetioCapsuleIOImpl.validator = GROUP_VALIDATOR;
+    PhetioCapsuleIOImpl.typeName = `PhetioCapsuleIO<${parameterType.typeName}>`;
+    PhetioCapsuleIOImpl.parameterTypes = [ parameterType ];
+    ObjectIO.validateSubtype( PhetioCapsuleIOImpl );
 
-    return PhetioSingletonIOImpl;
+    return PhetioCapsuleIOImpl;
   };
 
-  return tandemNamespace.register( 'PhetioSingletonIO', PhetioSingletonIO );
+  return tandemNamespace.register( 'PhetioCapsuleIO', PhetioCapsuleIO );
 } );
 
