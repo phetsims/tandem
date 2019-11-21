@@ -1,6 +1,7 @@
 // Copyright 2019, University of Colorado Boulder
 
 /**
+ * Shared code between PhetioGroup and PhetioCapsule.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
@@ -18,6 +19,9 @@ define( require => {
   class PhetioDynamicUtil {
 
     /**
+     * Prototypes are created to generate the baseline file, or to validate against an existing baseline file.  They are
+     * PhetioObjects and registered with the phetioEngine, but not send out via notifications for phetioObjectAddedListeners,
+     * because they are intended for internal usage only.  Prototypes should not be created in production code.
      * @param {Tandem} tandem
      * @param {function} create - function that creates a PhetioObject which will serve as the prototype
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
