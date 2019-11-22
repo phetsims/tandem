@@ -44,7 +44,7 @@ define( require => {
 
         const archetype = create( tandem.createTandem( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ), ...defaultArgs );
 
-        // So that the archetype get's included in the baseline schema
+        // Mark the archetype for inclusion in the baseline schema
         archetype.markDynamicElementArchetype();
         return archetype;
       }
