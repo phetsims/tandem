@@ -62,7 +62,7 @@ define( require => {
       this.instance = null;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other prototypes
-      this.instancePrototype = PhetioDynamicUtil.createPrototype( this.tandem, createInstance, defaultArguments );
+      this.archetype = PhetioDynamicUtil.createArchetype( this.tandem, createInstance, defaultArguments );
     }
 
     /**

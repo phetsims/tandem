@@ -66,7 +66,7 @@ define( require => {
       this.prefix = prefix;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other prototypes
-      this.archetype = PhetioDynamicUtil.createPrototype( this.tandem, createMember, defaultArguments );
+      this.archetype = PhetioDynamicUtil.createArchetype( this.tandem, createMember, defaultArguments );
     }
 
     /**
