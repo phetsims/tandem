@@ -4,9 +4,9 @@
  * A PhET-iO class that encapsulates a PhetioObject that is not created during sim startup to provide PhET-iO API
  * validation, API communication (like to view in studio before creation), and to support PhET-iO state if applicable.
  *
- * Constructing a PhetioCapsule effectively creates the singleton where the wrapped instance can be of any type.
+ * Constructing a PhetioCapsule creates a container encapsulating a wrapped instance that can be of any type.
  *
- * Clients should use mySingleton.getInstance() instead of storing the instance value itself.
+ * Clients should use myCapsule.getInstance() instead of storing the instance value itself.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Sam Reid (PhET Interactive Simulations)
@@ -27,7 +27,7 @@ define( require => {
     /**
      * @param {function(tandem, ...):PhetioObject} createInstance - function that creates a group member
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments - arguments passed to createInstance during API baseline generation
-     * @param {Object} [options] - describe the Singleton itself
+     * @param {Object} [options]
      */
     constructor( createInstance, defaultArguments, options ) {
 
@@ -46,7 +46,7 @@ define( require => {
       assert && assert( !!options.phetioType.parameterTypes, 'PhetioCapsuleIO must supply its parameter types' );
       assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioCapsuleIO must have exactly one parameter type' );
       assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioCapsuleIO parameterType must be truthy' );
-      assert && assert( options.tandem.name.endsWith( 'Singleton' ), 'PhetioCapsule tandems should end with Singleton suffix' );
+      assert && assert( options.tandem.name.endsWith( 'Capsule' ), 'PhetioCapsule tandems should end with Capsule suffix' );
 
       super( options );
 
@@ -61,7 +61,7 @@ define( require => {
     }
 
     /**
-     * Dispose the underlying instance.  Called by the PhetioStateEngine so the singleton can be recreated with the
+     * Dispose the underlying instance.  Called by the PhetioStateEngine so the capsule instance can be recreated with the
      * correct state.
      * @public (phet-io)
      */
