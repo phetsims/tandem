@@ -51,14 +51,14 @@ define( require => {
     class PhetioCapsuleIOImpl extends ObjectIO {
 
       /**
-       * Creates the singleton's instance.
-       * @param {PhetioCapsule} singleton
+       * Creates the capsule's instance.
+       * @param {PhetioCapsule} capsule
        * @param {string} componentName
        * @param {Object} stateObject
        * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError - if it could not yet deserialize
        */
-      static addChildInstance( singleton, componentName, stateObject ) {
+      static addChildInstance( capsule, componentName, stateObject ) {
 
         // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
         // element in the state needs to be created first, so we will try again on the next iteration of the state
@@ -66,16 +66,16 @@ define( require => {
         const state = parameterType.fromStateObject( stateObject );
         const args = parameterType.stateToArgs( state );
 
-        return singleton.create( ...args );
+        return capsule.create( ...args );
       }
 
       /**
        * @public (phet-io state)
-       * @param {PhetioCapsule} singleton
+       * @param {PhetioCapsule} capsule
        */
-      static clearChildInstances( singleton ) {
-        if ( singleton.instance ) {
-          singleton.disposeInstance();
+      static clearChildInstances( capsule ) {
+        if ( capsule.instance ) {
+          capsule.disposeInstance();
         }
       }
     }
