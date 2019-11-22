@@ -168,6 +168,9 @@ define( require => {
     // @public (phetioEngine) {Object|null} - only non null with phetio.queryParameters.phetioPrintPhetioFiles enabled
     this.phetioBaselineMetadata = null;
 
+    // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
+    this.phetioArchetypePhetioID = null;
+
     // @private {LinkedElement[]} - keep track of LinkedElements for disposal
     this.linkedElements = [];
 
@@ -286,7 +289,8 @@ define( require => {
         // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
         if ( phetioID.indexOf( '~' ) === -1 ) {
 
-          // Dynamic elements should compare to their "concrete" counterparts.
+          // Dynamic elements should compare to their "concrete" counterparts.  For example, this means that a Particle
+          // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
           const concretePhetioID = options.tandem.getConcretePhetioID();
 
           // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
@@ -457,6 +461,15 @@ define( require => {
       if ( this.phetioBaselineMetadata ) {
         this.phetioBaselineMetadata.phetioDynamicElement = this.phetioDynamicElement;
       }
+
+      // For dynamic elements, indicate the corresponding archetype element, so that clients like Studio can leverage
+      // the archetype metadata.
+      if ( phetioDynamicElement ) {
+        this.phetioArchetypePhetioID = this.tandem.getConcretePhetioID();
+      }
+      else {
+        this.phetioArchetypePhetioID = null; // Only dynamic elements have archetypes
+      }
     },
 
     /**
@@ -575,7 +588,7 @@ define( require => {
      * @public
      */
     getMetadata: function( object ) {
-      return {
+      const metadata = {
         phetioTypeName: object.phetioType.typeName,
         phetioDocumentation: object.phetioDocumentation,
         phetioState: object.phetioState,
@@ -588,6 +601,10 @@ define( require => {
         phetioDynamicElementArchetype: object.phetioDynamicElementArchetype,
         phetioFeatured: object.phetioFeatured
       };
+      if ( object.phetioArchetypePhetioID ) {
+        metadata.phetioArchetypePhetioID = object.phetioArchetypePhetioID;
+      }
+      return metadata;
     },
 
     DEFAULT_OPTIONS: DEFAULTS // the default options for the phet-io object
