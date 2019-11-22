@@ -16,6 +16,7 @@ define( require => {
   'use strict';
 
   // modules
+  const Emitter = require( 'AXON/Emitter' );
   const merge = require( 'PHET_CORE/merge' );
   const PhetioDynamicUtil = require( 'TANDEM/PhetioDynamicUtil' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
@@ -25,7 +26,7 @@ define( require => {
   class PhetioCapsule extends PhetioObject {
 
     /**
-     * @param {function(tandem, ...):PhetioObject} createInstance - function that creates a group member
+     * @param {function(tandem, ...):PhetioObject} createInstance - function that creates the encapsulated instance
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments - arguments passed to createInstance during API baseline generation
      * @param {Object} [options]
      */
@@ -53,6 +54,10 @@ define( require => {
       // @private
       this.createInstance = createInstance;
 
+      // @private
+      this.instanceCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+      this.instanceDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+
       // @public (read-only)
       this.instance = null;
 
@@ -61,11 +66,44 @@ define( require => {
     }
 
     /**
+     * @param {function} listener
+     * @public
+     */
+    addInstanceCreatedListener( listener ) {
+      this.instanceCreatedEmitter.addListener( listener );
+    }
+
+    /**
+     * @param {function} listener
+     * @public
+     */
+    removeInstanceCreatedListener( listener ) {
+      this.instanceCreatedEmitter.removeListener( listener );
+    }
+
+    /**
+     * @param {function} listener
+     * @public
+     */
+    addInstanceDisposedListener( listener ) {
+      this.instanceDisposedEmitter.addListener( listener );
+    }
+
+    /**
+     * @param {function} listener
+     * @public
+     */
+    removeInstanceDisposedListener( listener ) {
+      this.instanceDisposedEmitter.removeListener( listener );
+    }
+
+    /**
      * Dispose the underlying instance.  Called by the PhetioStateEngine so the capsule instance can be recreated with the
      * correct state.
      * @public (phet-io)
      */
     disposeInstance() {
+      this.instanceDisposedEmitter.emit( this.instance );
       this.instance.dispose();
       this.instance = null;
     }
@@ -99,6 +137,8 @@ define( require => {
         argsForCreateFunction,
         this.phetioType.parameterTypes[ 0 ].validator
       );
+
+      this.instanceCreatedEmitter.emit( this.instance );
 
       return this.instance;
     }
