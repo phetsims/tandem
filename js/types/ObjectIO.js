@@ -142,7 +142,7 @@ define( require => {
       assert && ValidatorDef.validateValidator( subtype.validator );
 
       subtype.hasOwnProperty( 'methodOrder' ) && subtype.methodOrder.forEach( function( methodName ) {
-        assert && assert( subtype.methods[ methodName ], 'methodName not in prototype methods: ' + methodName );
+        assert && assert( subtype.methods[ methodName ], 'methodName not in public methods: ' + methodName );
       } );
 
       // TODO make this check recursive, see https://github.com/phetsims/phet-io/issues/1371

@@ -199,10 +199,10 @@ define( require => {
         // child first. Use namespace to avoid because timer is a PhetioObject.
         phet.axon.timer.setTimeout( () => {
 
-          // Everything in the baseline was created on startup, but the prototypes mark dynamic elements' non-dynamic
+          // Everything in the baseline was created on startup, but the archetypes mark dynamic elements' non-dynamic
           // counterparts. The only instances that it's OK to create after startup are "dynamic instances" which are
           // marked as such.
-          const isDynamicElement = baselineFromFile.phetioDynamicElementPrototype && phetioObject.phetioDynamicElement;
+          const isDynamicElement = baselineFromFile.phetioDynamicElementArchetype && phetioObject.phetioDynamicElement;
           if ( !isDynamicElement ) {
             this.addError( {
               phetioID: phetioObject.tandem.phetioID,

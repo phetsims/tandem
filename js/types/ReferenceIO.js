@@ -17,8 +17,6 @@ define( require => {
   // ifphetio
   const phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
 
-  // ReferenceIO inherits from window.Object because it starts with its prototype in phetioInherit.inheritBase
-  // However, when serialized, the ReferenceIO supertype is reported as null (not sent in the JSON).
   class ReferenceIO extends ObjectIO {
 
     /**

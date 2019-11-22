@@ -1,7 +1,7 @@
 // Copyright 2019, University of Colorado Boulder
 
 /**
- * A tandem for a dynamic element that stores the name of the prototype that defines its dynamic element's schema.
+ * A tandem for a dynamic element that stores the name of the archetype that defines its dynamic element's schema.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
@@ -15,7 +15,7 @@ define( require => {
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   // constants
-  const DYNAMIC_PROTOTYPE_NAME = 'prototype';
+  const DYNAMIC_ARCHETYPE_NAME = 'archetype';
 
   class DynamicTandem extends Tandem {
 
@@ -40,22 +40,21 @@ define( require => {
     }
 
     /**
-     * See Tandem.getConcretePhetioID, in this case, look up the corresponding prototype.
+     * See Tandem.getConcretePhetioID, in this case, look up the corresponding archetype.
      * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
-     * which corresponds to the prototype "quark" ....
-     * This method looks up the corresponding prototype like..'sim.screen1.particles.prototypeQuark.visibleProperty'
+     * This method looks up the corresponding archetype like..'sim.screen1.particles.archetype.visibleProperty'
      * @returns {string}
      * @public
      * @override
      */
     getConcretePhetioID() {
       assert && assert( this.parentTandem, 'Group members must be in a Group' );
-      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), DYNAMIC_PROTOTYPE_NAME );
+      return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), DYNAMIC_ARCHETYPE_NAME );
     }
   }
 
-  // @public
-  DynamicTandem.DYNAMIC_PROTOTYPE_NAME = DYNAMIC_PROTOTYPE_NAME;
+  // @public {string}
+  DynamicTandem.DYNAMIC_ARCHETYPE_NAME = DYNAMIC_ARCHETYPE_NAME;
 
   return tandemNamespace.register( 'DynamicTandem', DynamicTandem );
 } );

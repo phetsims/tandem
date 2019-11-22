@@ -34,23 +34,54 @@ define( require => {
   const EMPTY_OBJECT = {};
 
   const DEFAULTS = {
-    tandem: Tandem.optional,          // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
-    phetioType: ObjectIO,             // Defines API methods, events and serialization
-    phetioDocumentation: '',          // Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper
-    phetioState: true,                // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, may require phetioComponentOptions for Nodes or other types)
-    phetioReadOnly: false,            // When true, you can only get values from the PhetioObject; no setting allowed.
-    phetioEventType: EventType.MODEL, // Category of event type, can be overridden in phetioStartEvent options
-    phetioHighFrequency: false,       // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents and Client.launchSim option
-    phetioPlayback: false,            // When true, emits events for data streams for playback, see handlePlaybackEvent.js
-    phetioStudioControl: true,        // When true, Studio is allowed to create a control for this PhetioObject (if it knows how)
-    phetioComponentOptions: null,     // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
-    phetioFeatured: false,            // When true, this is categorized as an important "featured" element in Studio.
-    phetioEventMetadata: null,        // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
-    phetioDynamicElement: false,      // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically. Dynamic prototypes will have this overwritten to false, even if provided as true as prototypes cannot be dynamic.
-    phetioDynamicElementPrototype: false  // {boolean} optional - indicates that an object is a prototype for a dynamic class.
-                                          // Settable by classes that create dynamic elements when creating their prototypes
-                                          // (like PhetioGroup), see PhetioObject.markDynamicElementPrototype().
-                                          // if true, items will be excluded from phetioState.
+
+    // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
+    tandem: Tandem.optional,
+
+    // Defines API methods, events and serialization
+    phetioType: ObjectIO,
+
+    // Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper
+    phetioDocumentation: '',
+
+    // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, may require
+    // phetioComponentOptions for Nodes or other types)
+    phetioState: true,
+
+    // When true, you can only get values from the PhetioObject; no setting allowed.
+    phetioReadOnly: false,
+
+    // Category of event type, can be overridden in phetioStartEvent options
+    phetioEventType: EventType.MODEL,
+
+    // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents
+    // and Client.launchSim option
+    phetioHighFrequency: false,
+
+    // When true, emits events for data streams for playback, see handlePlaybackEvent.js
+    phetioPlayback: false,
+
+    // When true, Studio is allowed to create a control for this PhetioObject (if it knows how)
+    phetioStudioControl: true,
+
+    // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
+    phetioComponentOptions: null,
+
+    // When true, this is categorized as an important "featured" element in Studio.
+    phetioFeatured: false,
+
+    // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
+    phetioEventMetadata: null,
+
+    // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically.
+    // Dynamic archetypes will have this overwritten to false even if explicitely provided as true, as archetypes
+    // cannot be dynamic.
+    phetioDynamicElement: false,
+
+    // {boolean} optional - indicates that an object is a archetype for a dynamic class.Settable by classes that create
+    // dynamic elements when creating their archetype (like PhetioGroup), see PhetioObject.markDynamicElementArchetype().
+    // if true, items will be excluded from phetioState.
+    phetioDynamicElementArchetype: false
   };
 
   // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
@@ -68,7 +99,7 @@ define( require => {
 
   // factor these out so that we don't recreate closures for each instance.
   const isDynamicElementPredicate = phetioObject => phetioObject.phetioDynamicElement;
-  const isDynamicElementPrototypePredicate = phetioObject => phetioObject.phetioDynamicElementPrototype;
+  const isDynamicElementArchetypePredicate = phetioObject => phetioObject.phetioDynamicElementArchetype;
 
   /**
    * @param {Object} [options]
@@ -123,7 +154,7 @@ define( require => {
     this.phetioDynamicElement = null;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
-    this.phetioDynamicElementPrototype = null;
+    this.phetioDynamicElementArchetype = null;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
     this.phetioFeatured = false;
@@ -294,8 +325,8 @@ define( require => {
 
       // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
       // phetioEngine itself). This is okay though, as none of these should be marked as dynamic.
-      this.phetioDynamicElementPrototype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
-                                               phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPrototypePredicate ) );
+      this.phetioDynamicElementArchetype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
+                                               phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementArchetypePredicate ) );
 
       // Patch this in after we have determined if parents are dynamic elements as well.
       if ( this.phetioBaselineMetadata ) {
@@ -396,13 +427,13 @@ define( require => {
       for ( let i = 0; i < children.length; i++ ) {
         const child = children[ i ];
 
-        // Order matters here! The phetioDynamicElementPrototype needs to be first to ensure that the phetioDynamicElement
-        // setter can opt out for prototypes.
-        child.phetioDynamicElementPrototype = this.phetioDynamicElementPrototype;
+        // Order matters here! The phetioDynamicElementArchetype needs to be first to ensure that the phetioDynamicElement
+        // setter can opt out for archetypes.
+        child.phetioDynamicElementArchetype = this.phetioDynamicElementArchetype;
         child.setPhetioDynamicElement( this.phetioDynamicElement );
 
         if ( child.phetioBaselineMetadata ) {
-          child.phetioBaselineMetadata.phetioDynamicElementPrototype = this.phetioDynamicElementPrototype;
+          child.phetioBaselineMetadata.phetioDynamicElementArchetype = this.phetioDynamicElementArchetype;
         }
       }
     },
@@ -414,8 +445,8 @@ define( require => {
      */
     setPhetioDynamicElement( phetioDynamicElement ) {
 
-      //If this element is a prototype, it is not a dynamic element.
-      if ( this.phetioDynamicElementPrototype ) {
+      //If this element is a archetype, it is not a dynamic element.
+      if ( this.phetioDynamicElementArchetype ) {
         this.phetioDynamicElement = false;
       }
       else {
@@ -429,14 +460,15 @@ define( require => {
     },
 
     /**
-     * Mark this PhetioObject as a prototype for a dynamic element.
+     * Mark this PhetioObject as a archetype for a dynamic element.
+     * @public
      */
-    markDynamicElementPrototype: function() {
-      this.phetioDynamicElementPrototype = true;
-      this.setPhetioDynamicElement( false ); // because prototypes aren't dynamic elements
+    markDynamicElementArchetype: function() {
+      this.phetioDynamicElementArchetype = true;
+      this.setPhetioDynamicElement( false ); // because archetypes aren't dynamic elements
 
       if ( this.phetioBaselineMetadata ) {
-        this.phetioBaselineMetadata.phetioDynamicElementPrototype = this.phetioDynamicElementPrototype;
+        this.phetioBaselineMetadata.phetioDynamicElementArchetype = this.phetioDynamicElementArchetype;
       }
 
       // recompute for children also, but only if phet-io is enabled
@@ -460,6 +492,7 @@ define( require => {
      * Studio as a "symbolic" link or hyperlink.
      * @param {PhetioObject} element - the target element.
      * @param {Object} [options]
+     * @public
      */
     addLinkedElement: function( element, options ) {
       assert && assert( element instanceof PhetioObject, 'element must be of type PhetioObject' );
@@ -552,7 +585,7 @@ define( require => {
         phetioPlayback: object.phetioPlayback,
         phetioStudioControl: object.phetioStudioControl,
         phetioDynamicElement: object.phetioDynamicElement,
-        phetioDynamicElementPrototype: object.phetioDynamicElementPrototype,
+        phetioDynamicElementArchetype: object.phetioDynamicElementArchetype,
         phetioFeatured: object.phetioFeatured
       };
     },

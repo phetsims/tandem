@@ -107,10 +107,10 @@ define( require => {
       assert.ok( child2.phetioDynamicElement, 'direct child after parent creation' );
       assert.ok( grandChild2.phetioDynamicElement, 'descendant child after parent creation' );
 
-      child2.markDynamicElementPrototype();
+      child2.markDynamicElementArchetype();
 
-      assert.ok( !child2.phetioDynamicElement, 'Not dynamic if prototype: direct child after parent creation' );
-      assert.ok( !grandChild2.phetioDynamicElement, 'Not dynamic if prototype: descendant child after parent creation' );
+      assert.ok( !child2.phetioDynamicElement, 'Not dynamic if archetype: direct child after parent creation' );
+      assert.ok( !grandChild2.phetioDynamicElement, 'Not dynamic if archetype: descendant child after parent creation' );
     }
 
   } );

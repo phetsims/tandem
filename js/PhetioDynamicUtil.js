@@ -19,33 +19,33 @@ define( require => {
   class PhetioDynamicUtil {
 
     /**
-     * Prototypes are created to generate the baseline file, or to validate against an existing baseline file.  They are
+     * Archetypes are created to generate the baseline file, or to validate against an existing baseline file.  They are
      * PhetioObjects and registered with the phetioEngine, but not send out via notifications for phetioObjectAddedListeners,
-     * because they are intended for internal usage only.  Prototypes should not be created in production code.
+     * because they are intended for internal usage only.  Archetypes should not be created in production code.
      * @param {Tandem} tandem
-     * @param {function} create - function that creates a PhetioObject which will serve as the prototype
+     * @param {function} create - function that creates a PhetioObject which will serve as the archetype
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
      * @returns {null|*}
      * @public
      */
     static createArchetype( tandem, create, defaultArguments ) {
 
-      // Once the sim has started, any prototypes being created are likely done so because they are nested PhetioGroups.
+      // Once the sim has started, any archetypes being created are likely done so because they are nested PhetioGroups.
       if ( phetioAPIValidation.simHasStarted ) {
         return null;
       }
 
-      // When generating the baseline, output the schema for the prototype
+      // When generating the baseline, output the schema for the archetype
       if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
         const defaultArgs = Array.isArray( defaultArguments ) ? defaultArguments : defaultArguments();
 
         // The create function takes a tandem plus the default args
         assert && assert( create.length === defaultArgs.length + 1, 'mismatched number of arguments' );
 
-        const archetype = create( tandem.createTandem( DynamicTandem.DYNAMIC_PROTOTYPE_NAME ), ...defaultArgs );
+        const archetype = create( tandem.createTandem( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ), ...defaultArgs );
 
-        // So that the prototype get's included in the baseline schema
-        archetype.markDynamicElementPrototype();
+        // So that the archetype get's included in the baseline schema
+        archetype.markDynamicElementArchetype();
         return archetype;
       }
       else {
