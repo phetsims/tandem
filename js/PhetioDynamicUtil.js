@@ -42,11 +42,11 @@ define( require => {
         // The create function takes a tandem plus the default args
         assert && assert( create.length === defaultArgs.length + 1, 'mismatched number of arguments' );
 
-        const memberPrototype = create( tandem.createTandem( DynamicTandem.DYNAMIC_PROTOTYPE_NAME ), ...defaultArgs );
+        const archetype = create( tandem.createTandem( DynamicTandem.DYNAMIC_PROTOTYPE_NAME ), ...defaultArgs );
 
         // So that the prototype get's included in the baseline schema
-        memberPrototype.markDynamicElementPrototype();
-        return memberPrototype;
+        archetype.markDynamicElementPrototype();
+        return archetype;
       }
       else {
         return null;
