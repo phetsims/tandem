@@ -65,6 +65,18 @@ define( require => {
     }
 
     /**
+     * Map the state (obtained by fromStateObject) to arguments that are passed to the `create` function in PhetioGroup.js.
+     * This function only needs to be implemented on IO Types that are element types of a PhetioGroupIO (for example CAF
+     * ChargedParticleIO)
+     * @param {Object} state - from a `fromStateObject` method
+     * @returns {Array.<*>} - the array of arguments to be passed to the `create` function in the PhetioGroup element type schema.
+     * @public
+     */
+    static stateToArgs( state ) {
+      return [];
+    }
+
+    /**
      * Applies the deserialized value to the object.  This is only called when setting the entire state of the simulation,
      * and hence also sets the initial values, so resets will return to the customized value instead of the simulation
      * default (uncustomized) value.
@@ -72,18 +84,6 @@ define( require => {
      * @param {Object} value - result from fromStateObject
      */
     static setValue( o, value ) {
-    }
-
-    /**
-     * Map the state (obtained by fromStateObject) to arguments that are passed to the `create` function in Group.js.
-     * This function only needs to be implemented on IO Types that are element types of a PhetioGroupIO (for example CAF
-     * ChargedParticleIO)
-     * @param {Object} state - from a `fromStateObject` method
-     * @returns {Array.<*>} - the array of arguments to be passed to the `create` function in the Group element type schema.
-     * @public
-     */
-    static stateToArgs( state ) {
-      return [];
     }
 
     /**

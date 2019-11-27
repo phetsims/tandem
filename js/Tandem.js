@@ -410,7 +410,7 @@ define( require => {
      * @param {Tandem} parentTandem
      * @param {string} name
      * @constructor
-     * @deprecated - see Group.js for the way of the future
+     * @deprecated - see PhetioGroup.js for the way of the future
      * @private create with Tandem.createGroupTandem
      */
     constructor( parentTandem, name ) {
