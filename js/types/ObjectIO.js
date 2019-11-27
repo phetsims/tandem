@@ -66,13 +66,14 @@ define( require => {
 
     /**
      * Map the state (obtained by fromStateObject) to arguments that are passed to the `create` function in PhetioGroup.js.
-     * This function only needs to be implemented on IO Types that are element types of a PhetioGroupIO (for example CAF
-     * ChargedParticleIO)
+     * Note that other non-serialized args (not dealt with here) may be supplied as closure variables. This function
+     * only needs to be implemented on IO Types that are phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule
+     * members.
      * @param {Object} state - from a `fromStateObject` method
      * @returns {Array.<*>} - the array of arguments to be passed to the `create` function in the PhetioGroup element type schema.
      * @public
      */
-    static stateToArgs( state ) {
+    static stateToArgsForConstructor( state ) {
       return [];
     }
 
