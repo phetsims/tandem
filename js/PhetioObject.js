@@ -73,14 +73,14 @@ define( require => {
     // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
     phetioEventMetadata: null,
 
-    // {boolean} optional - indicates that an object may or may not have been created, applies recursively automatically.
-    // Dynamic archetypes will have this overwritten to false even if explicitely provided as true, as archetypes
-    // cannot be dynamic.
+    // {boolean} optional - indicates that an object may or may not have been created. Applies recursively automatically
+    // and should only be set manually on the root dynamic element. Dynamic archetypes will have this overwritten to
+    // false even if explicitly provided as true, as archetypes cannot be dynamic.
     phetioDynamicElement: false,
 
     // {boolean} optional - indicates that an object is a archetype for a dynamic class.Settable by classes that create
     // dynamic elements when creating their archetype (like PhetioGroup), see PhetioObject.markDynamicElementArchetype().
-    // if true, items will be excluded from phetioState.
+    // if true, items will be excluded from phetioState. This applies recursively automatically.
     phetioDynamicElementArchetype: false
   };
 
