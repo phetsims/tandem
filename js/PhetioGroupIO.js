@@ -67,7 +67,7 @@ define( require => {
         // element in the state needs to be created first, so we will try again on the next iteration of the state
         // setting engine.
         const state = parameterType.fromStateObject( stateObject );
-        const args = parameterType.stateToArgs( state );
+        const args = parameterType.stateToArgsForConstructor( state );
 
         const index = phetio.PhetioIDUtils.getGroupMemberIndex( componentName );
 
