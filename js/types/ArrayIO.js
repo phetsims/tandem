@@ -20,10 +20,12 @@ define( require => {
 
   /**
    * Parametric IO type constructor.  Given an element type, this function returns an appropriate array IO type.
+   * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
    * @param {function(new:ObjectIO)} parameterType
    * @returns {function(new:ObjectIO)}
    */
   function ArrayIO( parameterType ) {
+    assert && assert( !!parameterType, 'parameterType should be defined' );
     if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
       cache[ parameterType.typeName ] = create( parameterType );
     }
