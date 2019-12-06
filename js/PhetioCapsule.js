@@ -39,8 +39,15 @@ define( require => {
       }
 
       options = merge( {
-        phetioState: false,
-        tandem: Tandem.required
+        phetioState: false, // instance is included in state, but the capsule will exist in the downstream sim.
+        tandem: Tandem.required,
+
+        // By default, a PhetioCapsule's instance is included in state such that on every setState call, the instance is
+        // cleared out by the phetioStateEngine so the instance in the state can be added to the empty capsule. This
+        // option is for opting out of that behavior. NOTE: Only use when it's guaranteed that the instance is
+        // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
+        // is no need for the instance to support dynamic state.
+        supportsDynamicState: true
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );

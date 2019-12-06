@@ -38,7 +38,14 @@ define( require => {
 
       options = merge( {
         phetioState: false, // members are included in state, but the container will exist in the downstream sim.
-        tandem: Tandem.required
+        tandem: Tandem.required,
+
+        // By default, a PhetioGroup's members are included in state such that on every setState call, the members are
+        // cleared out by the phetioStateEngine so members in the state can be added to the empty group. This option is
+        // for opting out of that behavior. NOTE: Only use when it's guaranteed that all of the members are
+        // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
+        // is no need for members to support dynamic state.
+        supportsDynamicState: true
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
@@ -71,6 +78,9 @@ define( require => {
       // Emit to the data stream on member creation/disposal
       this.addMemberCreatedListener( member => PhetioDynamicUtil.createdEventListener( this, member ) );
       this.addMemberDisposedListener( member => PhetioDynamicUtil.disposedEventListener( this, member ) );
+
+      // @public (read-only phet-io internal)
+      this.supportsDynamicState = options.supportsDynamicState;
     }
 
     /**
