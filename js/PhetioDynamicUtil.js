@@ -10,6 +10,7 @@ define( require => {
 
   // modules
   const DynamicTandem = require( 'TANDEM/DynamicTandem' );
+  const merge = require( 'PHET_CORE/merge' );
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
@@ -89,6 +90,44 @@ define( require => {
         assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
         assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
       }
+    }
+
+    /**
+     * Emit a created or disposed event.
+     * @param {PhetioGroup|PhetioCapsule} container
+     * @param {PhetioObject} dynamicElement
+     * @param {string} eventName
+     * @param {Object} [additionalData] additional data for the event
+     * @private
+     */
+    static eventListener( container, dynamicElement, eventName, additionalData ) {
+      container.phetioStartEvent( eventName, merge( {
+        phetioID: dynamicElement.tandem.phetioID
+      }, additionalData ) );
+      container.phetioEndEvent();
+    }
+
+    /**
+     * Emit events when dynamic elements are created.
+     * @param {PhetioGroup|PhetioCapsule} container
+     * @param {PhetioObject} dynamicElement
+     * @public
+     */
+    static createdEventListener( container, dynamicElement ) {
+      const additionalData = dynamicElement.phetioState ? {
+        state: container.phetioType.parameterTypes[ 0 ].toStateObject( dynamicElement )
+      } : null;
+      PhetioDynamicUtil.eventListener( container, dynamicElement, 'created', additionalData );
+    }
+
+    /**
+     * Emit events when dynamic elements are disposed.
+     * @param {PhetioGroup|PhetioCapsule} container
+     * @param {PhetioObject} dynamicElement
+     * @public
+     */
+    static disposedEventListener( container, dynamicElement ) {
+      PhetioDynamicUtil.eventListener( container, dynamicElement, 'disposed' );
     }
   }
 

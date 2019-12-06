@@ -63,6 +63,10 @@ define( require => {
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes
       this.archetype = PhetioDynamicUtil.createArchetype( this.tandem, createInstance, defaultArguments );
+
+      // Emit to the data stream on instance creation/disposal
+      this.addInstanceCreatedListener( instance => PhetioDynamicUtil.createdEventListener( this, instance ) );
+      this.addInstanceDisposedListener( instance => PhetioDynamicUtil.disposedEventListener( this, instance ) );
     }
 
     /**
