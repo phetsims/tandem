@@ -77,6 +77,13 @@ define( require => {
     }
 
     /**
+     * @public
+     */
+    dispose() {
+      assert && assert( false, 'PhetioGroup not intended for disposal' );
+    }
+
+    /**
      * @param {function} listener
      * @public
      */
