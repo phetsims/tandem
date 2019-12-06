@@ -14,7 +14,7 @@ define( require => {
   const EnumerationIO = require( 'PHET_CORE/EnumerationIO' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  const EventType = new Enumeration( [ 'USER', 'MODEL', 'WRAPPER' ], {
+  const EventType = Enumeration.byKeys( [ 'USER', 'MODEL', 'WRAPPER' ], {
     beforeFreeze: EventType => {
       EventType.phetioType = EnumerationIO( EventType );
     }
