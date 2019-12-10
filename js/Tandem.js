@@ -312,12 +312,11 @@ define( require => {
    * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
    * place to put simulation specific globals, see `Tandem.globalTandem`
    *
-   * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/93
    * @public
    * @static
    * @type {Tandem}
    */
-  Tandem.generalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME || 'general' );
+  Tandem.generalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
 
   /**
    * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
@@ -325,12 +324,11 @@ define( require => {
    * likely simulations elements should not be directly under this, but instead either under the model or view sub
    * tandems.
    *
-   * Hard coded "or" string to support backwards compatibility with the sonification wrapper, see https://github.com/phetsims/phet-io-wrapper-sonification/issues/93
    * @public
    * @static
    * @type {Tandem}
    */
-  Tandem.globalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME || 'global' );
+  Tandem.globalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
 
   /**
    * Model simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
