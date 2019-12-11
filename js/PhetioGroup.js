@@ -233,7 +233,7 @@ define( require => {
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
       const groupMember = PhetioDynamicUtil.createDynamicPhetioObject( this.tandem, componentName, this.createMember,
-        argsForCreateFunction, this.phetioType.parameterTypes[ 0 ].validator );
+        argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
 
       this.array.push( groupMember );
       this.memberCreatedEmitter.emit( groupMember );

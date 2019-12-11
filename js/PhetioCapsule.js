@@ -153,7 +153,7 @@ define( require => {
         'instance',
         this.createInstance,
         argsForCreateFunction,
-        this.phetioType.parameterTypes[ 0 ].validator
+        this.phetioType.parameterTypes[ 0 ]
       );
 
       this.instanceCreatedEmitter.emit( this.instance );

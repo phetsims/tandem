@@ -60,11 +60,11 @@ define( require => {
      * @param {string} componentName
      * @param {function(Tandem[, ...*]):PhetioObject} createFunction
      * @param {Array.<*>} argsForCreateFunction
-     * @param {ValidatorDef} objectValidator
+     * @param {function(new:ObjectIO)} containerParameterType
      * @returns {PhetioObject}
      * @public
      */
-    static createDynamicPhetioObject( parentTandem, componentName, createFunction, argsForCreateFunction, objectValidator ) {
+    static createDynamicPhetioObject( parentTandem, componentName, createFunction, argsForCreateFunction, containerParameterType ) {
       assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
       // create with default state and substructure, details will need to be set by setter methods.
@@ -72,7 +72,11 @@ define( require => {
       const createdObject = createFunction( createdObjectTandem, ...argsForCreateFunction );
 
       // Make sure the new group member matches the schema for members.
-      validate( createdObject, objectValidator );
+      validate( createdObject, containerParameterType.validator );
+
+      assert && assert( createdObject.phetioType === containerParameterType,
+        'dynamic element container expected its created instance\'s phetioType to match its parameterType.' );
+
       assert && PhetioDynamicUtil.assertDynamicPhetioObject( createdObject );
 
       return createdObject;
