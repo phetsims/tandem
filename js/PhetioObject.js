@@ -625,14 +625,20 @@ define( require => {
       assert && assert( coreElement instanceof PhetioObject, 'coreElement should be PhetioObject' );
       assert && assert( coreElement.tandem, 'coreElement should have a tandem' );
 
-      super( merge( {
-        phetioType: LinkedElementIO,
-        phetioReadOnly: true, // References cannot be changed
+      options = merge( {
+        phetioType: LinkedElementIO
+      }, options );
 
-        // By default, this linked element's baseline value is the overridden value of the coreElement. This allows
-        // the them to be in sync by default, but also allows the linked element to be overridden in studio.
-        phetioFeatured: coreElement.phetioFeatured
-      }, options ) );
+      // References cannot be changed by PhET-iO
+      assert && assert( !options.hasOwnProperty( 'phetioReadOnly' ), 'phetioReadOnly set by LinkedElement' );
+      options.phetioReadOnly = true;
+
+      // By default, this linked element's baseline value is the overridden value of the coreElement. This allows
+      // the them to be in sync by default, but also allows the linked element to be overridden in studio.
+      assert && assert( !options.hasOwnProperty( 'phetioFeatured' ), 'phetioFeatured set by LinkedElement' );
+      options.phetioFeatured = coreElement.phetioFeatured;
+
+      super( options );
 
       // @public (read-only)
       this.element = coreElement;
