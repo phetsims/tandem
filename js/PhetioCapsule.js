@@ -26,11 +26,12 @@ define( require => {
   class PhetioCapsule extends PhetioObject {
 
     /**
+     * @param {string} instanceTandemName - name of the instance
      * @param {function(tandem, ...):PhetioObject} createInstance - function that creates the encapsulated instance
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments - arguments passed to createInstance during API baseline generation
      * @param {Object} [options]
      */
-    constructor( createInstance, defaultArguments, options ) {
+    constructor( instanceTandemName, createInstance, defaultArguments, options ) {
 
       assert && assert( typeof createInstance === 'function', 'createInstance should be a function' );
       assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
@@ -67,6 +68,9 @@ define( require => {
 
       // @public (read-only)
       this.instance = null;
+
+      // @private {string}
+      this.instanceTandemName = instanceTandemName;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes
       this.archetype = PhetioDynamicUtil.createArchetype( this.tandem, createInstance, defaultArguments );
@@ -150,7 +154,7 @@ define( require => {
       // create with default state and substructure, details will need to be set by setter methods.
       this.instance = PhetioDynamicUtil.createDynamicPhetioObject(
         this.tandem,
-        'instance',
+        this.instanceTandemName,
         this.createInstance,
         argsForCreateFunction,
         this.phetioType.parameterTypes[ 0 ]
