@@ -36,7 +36,7 @@ define( require => {
   const DEFAULTS = {
 
     // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
-    tandem: Tandem.optional,
+    tandem: Tandem.OPTIONAL,
 
     // Defines API methods, events and serialization
     phetioType: ObjectIO,

@@ -38,7 +38,7 @@ define( require => {
 
       options = merge( {
         phetioState: false, // members are included in state, but the container will exist in the downstream sim.
-        tandem: Tandem.required,
+        tandem: Tandem.REQUIRED,
 
         // By default, a PhetioGroup's members are included in state such that on every setState call, the members are
         // cleared out by the phetioStateEngine so members in the state can be added to the empty group. This option is

@@ -303,61 +303,61 @@ define( require => {
   /**
    * The root tandem for a simulation
    * @public
-   * @static
+   * @constant
    * @type {Tandem}
    */
-  Tandem.rootTandem = new Tandem( null, toCamelCase( packageJSON.name ) );
+  Tandem.ROOT = new Tandem( null, toCamelCase( packageJSON.name ) );
 
   /**
    * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
-   * place to put simulation specific globals, see `Tandem.globalTandem`
+   * place to put simulation specific globals, see `Tandem.GLOBAL`
    *
    * @public
-   * @static
+   * @constant
    * @type {Tandem}
    */
-  Tandem.generalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
+  Tandem.GENERAL = Tandem.ROOT.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
 
   /**
    * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
-   * have simulation specific elements in them. Instrument items used by all sims under `Tandem.generalTandem`. Most
+   * have simulation specific elements in them. Instrument items used by all sims under `Tandem.GENERAL`. Most
    * likely simulations elements should not be directly under this, but instead either under the model or view sub
    * tandems.
    *
    * @public
-   * @static
+   * @constant
    * @type {Tandem}
    */
-  Tandem.globalTandem = Tandem.rootTandem.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
+  Tandem.GLOBAL = Tandem.ROOT.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
 
   /**
    * Model simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
    * tandem should only have simulation specific elements in them.
    *
    * @public
-   * @static
+   * @constant
    * @type {Tandem}
    */
-  Tandem.GLOBAL_MODEL = Tandem.globalTandem.createTandem( 'model' );
+  Tandem.GLOBAL_MODEL = Tandem.GLOBAL.createTandem( 'model' );
 
   /**
    * View simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
    * tandem should only have simulation specific elements in them.
    *
    * @public
-   * @static
+   * @constant
    * @type {Tandem}
    */
-  Tandem.GLOBAL_VIEW = Tandem.globalTandem.createTandem( 'view' );
+  Tandem.GLOBAL_VIEW = Tandem.GLOBAL.createTandem( 'view' );
 
   /**
    * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
    * passed in, then it will not be instrumented.
    * @public
-   * @static
+   * @constant
    * @type {Tandem}
    */
-  Tandem.optional = Tandem.rootTandem.createTandem( 'optionalTandem', {
+  Tandem.OPTIONAL = Tandem.ROOT.createTandem( 'optionalTandem', {
     required: false,
     supplied: false
   } );
@@ -366,18 +366,18 @@ define( require => {
    * To be used exclusively to opt out of situations where a tandem is required.
    * See https://github.com/phetsims/tandem/issues/97.
    * @public
-   * @static
+   * @constant
    * @type {Tandem}
    */
-  Tandem.optOut = Tandem.optional;
+  Tandem.OPT_OUT = Tandem.OPTIONAL;
 
   /**
    * Some common code (such as Checkbox or RadioButton) must always be instrumented.
    * @public
-   * @static
+   * @constant
    * @type {Tandem}
    */
-  Tandem.required = Tandem.rootTandem.createTandem( 'requiredTandem', {
+  Tandem.REQUIRED = Tandem.ROOT.createTandem( 'requiredTandem', {
 
     // let phetioPrintMissingTandems bypass this
     required: VALIDATE_TANDEMS || PRINT_MISSING_TANDEMS,

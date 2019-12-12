@@ -35,7 +35,7 @@ define( require => {
     assert.ok( true, 'initial test' );
 
     const obj = new PhetioObject( {
-      tandem: Tandem.rootTandem,
+      tandem: Tandem.ROOT,
       phetioType: MockTypeIO,
       phetioState: false
     } );
@@ -46,7 +46,7 @@ define( require => {
     assert.ok( true, 'initial test' );
 
     const obj = new PhetioObject( {
-      tandem: Tandem.rootTandem.createTandem( 'test1' ),
+      tandem: Tandem.ROOT.createTandem( 'test1' ),
       phetioType: MockTypeIO,
       phetioState: false
     } );
@@ -58,7 +58,7 @@ define( require => {
     assert.ok( true, 'initial test' );
 
     const obj = new PhetioObject( {
-      tandem: Tandem.rootTandem.createTandem( 'test2' ),
+      tandem: Tandem.ROOT.createTandem( 'test2' ),
       phetioType: MockTypeIO,
       phetioState: false
     } );
@@ -71,7 +71,7 @@ define( require => {
   } );
 
   QUnit.test( 'PhetioObject.isDynamicElement', assert => {
-    const test1 = Tandem.rootTandem.createTandem( 'test1' );
+    const test1 = Tandem.ROOT.createTandem( 'test1' );
     const parentTandem = test1.createTandem( 'parent' );
     const child1Tandem = parentTandem.createTandem( 'child1' );
     const child2Tandem = parentTandem.createTandem( 'child2' );
