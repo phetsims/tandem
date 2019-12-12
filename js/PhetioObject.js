@@ -583,8 +583,9 @@ define( require => {
      * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
      * for baseline (before object fully constructed we use object) and after fully constructed
      * which includes overrides.
-     * @param {Object} object - used to get metadata keys
-     * @returns {Object}
+     * @param {Object} object - used to get metadata keys, can be a PhetioObject, or an options object
+     *                          (see usage initializePhetioObject)
+     * @returns {Object} - metadata plucked from the passed in parameter
      * @public
      */
     getMetadata: function( object ) {
@@ -617,7 +618,7 @@ define( require => {
   class LinkedElement extends PhetioObject {
 
     /**
-     * @param {Object} coreElement
+     * @param {PhetioObject} coreElement
      * @param {Object} [options]
      */
     constructor( coreElement, options ) {
