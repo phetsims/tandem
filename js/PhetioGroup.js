@@ -20,15 +20,17 @@ define( require => {
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
+  // strings
+  const groupString = 'Group';
+
   class PhetioGroup extends PhetioObject {
 
     /**
-     * @param {string} prefix - like "particle" or "person" or "electron", and will be suffixed like "particle_0"
      * @param {function} createMember - function that creates a group member
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
      * @param {Object} [options] - describe the Group itself
      */
-    constructor( prefix, createMember, defaultArguments, options ) {
+    constructor( createMember, defaultArguments, options ) {
 
       assert && assert( typeof createMember === 'function', 'createMember should be a function' );
       assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
@@ -52,7 +54,14 @@ define( require => {
       assert && assert( !!options.phetioType.parameterTypes, 'PhetioGroupIO must supply its parameter types' );
       assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioGroupIO must have exactly one parameter type' );
       assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioGroupIO parameterType must be truthy' );
-      assert && assert( options.tandem.name.endsWith( 'Group' ), 'PhetioGroup tandems should end with Group suffix' );
+      assert && assert( options.tandem.name.endsWith( groupString ), 'PhetioGroup tandems should end with Group suffix' );
+
+      // options that depend on other options
+      options = merge( {
+
+        // {string} - the PhetioGroup tandem name without the "Group" suffix
+        phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - groupString.length )
+      }, options );
 
       super( options );
 
@@ -69,8 +78,8 @@ define( require => {
       // @public (only for PhetioGroupIO) - for generating indices from a pool
       this.groupMemberIndex = 0;
 
-      // @private
-      this.prefix = prefix;
+      // @private {string}
+      this.prefix = options.phetioDynamicElementName;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes
       this.archetype = PhetioDynamicUtil.createArchetype( this.tandem, createMember, defaultArguments );

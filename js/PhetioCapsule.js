@@ -23,15 +23,17 @@ define( require => {
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
+  // strings
+  const capsuleString = 'Capsule';
+
   class PhetioCapsule extends PhetioObject {
 
     /**
-     * @param {string} instanceTandemName - name of the instance
      * @param {function(tandem, ...):PhetioObject} createInstance - function that creates the encapsulated instance
      * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments - arguments passed to createInstance during API baseline generation
      * @param {Object} [options]
      */
-    constructor( instanceTandemName, createInstance, defaultArguments, options ) {
+    constructor( createInstance, defaultArguments, options ) {
 
       assert && assert( typeof createInstance === 'function', 'createInstance should be a function' );
       assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
@@ -55,7 +57,14 @@ define( require => {
       assert && assert( !!options.phetioType.parameterTypes, 'PhetioCapsuleIO must supply its parameter types' );
       assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioCapsuleIO must have exactly one parameter type' );
       assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioCapsuleIO parameterType must be truthy' );
-      assert && assert( options.tandem.name.endsWith( 'Capsule' ), 'PhetioCapsule tandems should end with Capsule suffix' );
+      assert && assert( options.tandem.name.endsWith( capsuleString ), 'PhetioCapsule tandems should end with Capsule suffix' );
+
+      // options that depend on other options
+      options = merge( {
+
+        // {string} - the PhetioCapsule tandem name without the "Capsule" suffix
+        phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - capsuleString.length )
+      }, options );
 
       super( options );
 
@@ -70,7 +79,7 @@ define( require => {
       this.instance = null;
 
       // @private {string}
-      this.instanceTandemName = instanceTandemName;
+      this.instanceTandemName = options.phetioDynamicElementName;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes
       this.archetype = PhetioDynamicUtil.createArchetype( this.tandem, createInstance, defaultArguments );
