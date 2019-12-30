@@ -15,7 +15,7 @@ define( require => {
   const arrayRemove = require( 'PHET_CORE/arrayRemove' );
   const Emitter = require( 'AXON/Emitter' );
   const merge = require( 'PHET_CORE/merge' );
-  const PhetioDynamicUtil = require( 'TANDEM/PhetioDynamicUtil' );
+  const PhetioDynamicUtils = require( 'TANDEM/PhetioDynamicUtils' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
@@ -82,11 +82,11 @@ define( require => {
       this.prefix = options.phetioDynamicElementName;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes
-      this.archetype = PhetioDynamicUtil.createArchetype( this.tandem, createMember, defaultArguments );
+      this.archetype = PhetioDynamicUtils.createArchetype( this.tandem, createMember, defaultArguments );
 
       // Emit to the data stream on member creation/disposal
-      this.addMemberCreatedListener( member => PhetioDynamicUtil.createdEventListener( this, member ) );
-      this.addMemberDisposedListener( member => PhetioDynamicUtil.disposedEventListener( this, member ) );
+      this.addMemberCreatedListener( member => PhetioDynamicUtils.createdEventListener( this, member ) );
+      this.addMemberDisposedListener( member => PhetioDynamicUtils.disposedEventListener( this, member ) );
 
       // @public (read-only phet-io internal)
       this.supportsDynamicState = options.supportsDynamicState;
@@ -241,7 +241,7 @@ define( require => {
 
       const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
-      const groupMember = PhetioDynamicUtil.createDynamicPhetioObject( this.tandem, componentName, this.createMember,
+      const groupMember = PhetioDynamicUtils.createDynamicPhetioObject( this.tandem, componentName, this.createMember,
         argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
 
       this.array.push( groupMember );

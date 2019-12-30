@@ -17,7 +17,7 @@ define( require => {
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const validate = require( 'AXON/validate' );
 
-  class PhetioDynamicUtil {
+  class PhetioDynamicUtils {
 
     /**
      * Archetypes are created to generate the baseline file, or to validate against an existing baseline file.  They are
@@ -77,7 +77,7 @@ define( require => {
       assert && assert( createdObject.phetioType === containerParameterType,
         'dynamic element container expected its created instance\'s phetioType to match its parameterType.' );
 
-      assert && PhetioDynamicUtil.assertDynamicPhetioObject( createdObject );
+      assert && PhetioDynamicUtils.assertDynamicPhetioObject( createdObject );
 
       return createdObject;
     }
@@ -121,7 +121,7 @@ define( require => {
       const additionalData = dynamicElement.phetioState ? {
         state: container.phetioType.parameterTypes[ 0 ].toStateObject( dynamicElement )
       } : null;
-      PhetioDynamicUtil.eventListener( container, dynamicElement, 'created', additionalData );
+      PhetioDynamicUtils.eventListener( container, dynamicElement, 'created', additionalData );
     }
 
     /**
@@ -131,10 +131,10 @@ define( require => {
      * @public
      */
     static disposedEventListener( container, dynamicElement ) {
-      PhetioDynamicUtil.eventListener( container, dynamicElement, 'disposed' );
+      PhetioDynamicUtils.eventListener( container, dynamicElement, 'disposed' );
     }
   }
 
-  return tandemNamespace.register( 'PhetioDynamicUtil', PhetioDynamicUtil );
+  return tandemNamespace.register( 'PhetioDynamicUtils', PhetioDynamicUtils );
 } );
 

@@ -18,7 +18,7 @@ define( require => {
   // modules
   const Emitter = require( 'AXON/Emitter' );
   const merge = require( 'PHET_CORE/merge' );
-  const PhetioDynamicUtil = require( 'TANDEM/PhetioDynamicUtil' );
+  const PhetioDynamicUtils = require( 'TANDEM/PhetioDynamicUtils' );
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
@@ -82,11 +82,11 @@ define( require => {
       this.instanceTandemName = options.phetioDynamicElementName;
 
       // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes
-      this.archetype = PhetioDynamicUtil.createArchetype( this.tandem, createInstance, defaultArguments );
+      this.archetype = PhetioDynamicUtils.createArchetype( this.tandem, createInstance, defaultArguments );
 
       // Emit to the data stream on instance creation/disposal
-      this.addInstanceCreatedListener( instance => PhetioDynamicUtil.createdEventListener( this, instance ) );
-      this.addInstanceDisposedListener( instance => PhetioDynamicUtil.disposedEventListener( this, instance ) );
+      this.addInstanceCreatedListener( instance => PhetioDynamicUtils.createdEventListener( this, instance ) );
+      this.addInstanceDisposedListener( instance => PhetioDynamicUtils.disposedEventListener( this, instance ) );
     }
 
     /**
@@ -161,7 +161,7 @@ define( require => {
     create( ...argsForCreateFunction ) {
 
       // create with default state and substructure, details will need to be set by setter methods.
-      this.instance = PhetioDynamicUtil.createDynamicPhetioObject(
+      this.instance = PhetioDynamicUtils.createDynamicPhetioObject(
         this.tandem,
         this.instanceTandemName,
         this.createInstance,
