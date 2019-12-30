@@ -78,10 +78,10 @@ define( require => {
     // false even if explicitly provided as true, as archetypes cannot be dynamic.
     phetioDynamicElement: false,
 
-    // {boolean} optional - indicates that an object is a archetype for a dynamic class.Settable by classes that create
+    // {boolean} optional - indicates that an object is a archetype for a dynamic class. Settable by classes that create
     // dynamic elements when creating their archetype (like PhetioGroup), see PhetioObject.markDynamicElementArchetype().
     // if true, items will be excluded from phetioState. This applies recursively automatically.
-    phetioDynamicElementArchetype: false
+    phetioIsArchetype: false
   };
 
   // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
@@ -99,7 +99,7 @@ define( require => {
 
   // factor these out so that we don't recreate closures for each instance.
   const isDynamicElementPredicate = phetioObject => phetioObject.phetioDynamicElement;
-  const isDynamicElementArchetypePredicate = phetioObject => phetioObject.phetioDynamicElementArchetype;
+  const isDynamicElementArchetypePredicate = phetioObject => phetioObject.phetioIsArchetype;
 
   /**
    * @param {Object} [options]
@@ -154,7 +154,7 @@ define( require => {
     this.phetioDynamicElement = null;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
-    this.phetioDynamicElementArchetype = null;
+    this.phetioIsArchetype = null;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
     this.phetioFeatured = false;
@@ -329,7 +329,7 @@ define( require => {
 
       // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
       // phetioEngine itself). This is okay though, as none of these should be marked as dynamic.
-      this.phetioDynamicElementArchetype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
+      this.phetioIsArchetype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
                                                phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementArchetypePredicate ) );
 
       // Patch this in after we have determined if parents are dynamic elements as well.
@@ -430,13 +430,13 @@ define( require => {
       for ( let i = 0; i < children.length; i++ ) {
         const child = children[ i ];
 
-        // Order matters here! The phetioDynamicElementArchetype needs to be first to ensure that the phetioDynamicElement
+        // Order matters here! The phetioIsArchetype needs to be first to ensure that the phetioDynamicElement
         // setter can opt out for archetypes.
-        child.phetioDynamicElementArchetype = this.phetioDynamicElementArchetype;
+        child.phetioIsArchetype = this.phetioIsArchetype;
         child.setPhetioDynamicElement( this.phetioDynamicElement );
 
         if ( child.phetioBaselineMetadata ) {
-          child.phetioBaselineMetadata.phetioDynamicElementArchetype = this.phetioDynamicElementArchetype;
+          child.phetioBaselineMetadata.phetioIsArchetype = this.phetioIsArchetype;
         }
       }
     },
@@ -449,7 +449,7 @@ define( require => {
     setPhetioDynamicElement( phetioDynamicElement ) {
 
       //If this element is a archetype, it is not a dynamic element.
-      if ( this.phetioDynamicElementArchetype ) {
+      if ( this.phetioIsArchetype ) {
         this.phetioDynamicElement = false;
       }
       else {
@@ -476,11 +476,11 @@ define( require => {
      * @public
      */
     markDynamicElementArchetype: function() {
-      this.phetioDynamicElementArchetype = true;
+      this.phetioIsArchetype = true;
       this.setPhetioDynamicElement( false ); // because archetypes aren't dynamic elements
 
       if ( this.phetioBaselineMetadata ) {
-        this.phetioBaselineMetadata.phetioDynamicElementArchetype = this.phetioDynamicElementArchetype;
+        this.phetioBaselineMetadata.phetioIsArchetype = this.phetioIsArchetype;
       }
 
       // recompute for children also, but only if phet-io is enabled
@@ -598,7 +598,7 @@ define( require => {
         phetioPlayback: object.phetioPlayback,
         phetioStudioControl: object.phetioStudioControl,
         phetioDynamicElement: object.phetioDynamicElement,
-        phetioDynamicElementArchetype: object.phetioDynamicElementArchetype,
+        phetioIsArchetype: object.phetioIsArchetype,
         phetioFeatured: object.phetioFeatured
       };
       if ( object.phetioArchetypePhetioID ) {
