@@ -14,7 +14,6 @@ define( require => {
   const arrayRemove = require( 'PHET_CORE/arrayRemove' );
   const merge = require( 'PHET_CORE/merge' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
-  const toCamelCase = require( 'PHET_CORE/toCamelCase' );
 
   // text
   const packageString = require( 'text!REPOSITORY/package.json' );
@@ -306,7 +305,7 @@ define( require => {
    * @constant
    * @type {Tandem}
    */
-  Tandem.ROOT = new Tandem( null, toCamelCase( packageJSON.name ) );
+  Tandem.ROOT = new Tandem( null, _.camelCase( packageJSON.name ) );
 
   /**
    * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
