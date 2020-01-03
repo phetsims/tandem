@@ -330,7 +330,7 @@ define( require => {
       // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
       // phetioEngine itself). This is okay though, as none of these should be marked as dynamic.
       this.phetioIsArchetype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
-                                               phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementArchetypePredicate ) );
+                                   phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementArchetypePredicate ) );
 
       // Patch this in after we have determined if parents are dynamic elements as well.
       if ( this.phetioBaselineMetadata ) {
@@ -512,7 +512,9 @@ define( require => {
         'cannot add linked element to an item that hasn\'t called PhetioObject.initializePhetioObject, (make sure to ' +
         'call this after mutate).' );
 
-      if ( this.isPhetioInstrumented() ) {
+      // In some cases, UI components need to be wired up to a private (internal) Property which should neither be
+      // instrumented nor linked.
+      if ( this.isPhetioInstrumented() && element.isPhetioInstrumented() ) {
         this.linkedElements.push( new LinkedElement( element, options ) );
       }
     },
