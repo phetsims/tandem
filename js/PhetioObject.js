@@ -502,9 +502,12 @@ define( require => {
     },
 
     /**
-     * This creates a one-way association between this PhetioObject and the specified element, which is rendered in
-     * Studio as a "symbolic" link or hyperlink.
-     * @param {PhetioObject} element - the target element.
+     * When an instrumented PhetioObject is linked with another instrumented PhetioObject, this creates a one-way
+     * association which is rendered in Studio as a "symbolic" link or hyperlink. Many common code UI elements use this
+     * automatically. To keep client sites simple, this has a graceful opt-out mechanism which makes this function a
+     * no-op if either this PhetioObject or the target PhetioObject is not instrumented.
+     * @param {PhetioObject} element - the target element. Must be instrumented for a LinkedElement to be created--
+     *                               - otherwise it gracefully opts out
      * @param {Object} [options]
      * @public
      */
