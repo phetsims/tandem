@@ -396,7 +396,9 @@ define( require => {
           data = data();
         }
 
-        this.phetioMessageStack.push( dataStream.start( this.phetioEventType, this, event, data, this.phetioEventMetadata ) );
+        this.phetioMessageStack.push(
+          dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata )
+        );
       }
     },
 
