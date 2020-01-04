@@ -184,7 +184,7 @@ define( require => {
    * "PropertyIO<Boolean>". Some other types use a more custom format for displaying their parameter types, in this case
    * the parameter section of the type name (immediately following "IO") should begin with an open paren, "(". Thus the
    * schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`. In most cases, parameterized
-   * types should also include a `parameters` field on the TypeIO.
+   * types should also include a `parameterTypes` field on the TypeIO.
    * @type {string}
    */
   ObjectIO.typeName = 'ObjectIO';
