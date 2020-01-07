@@ -182,8 +182,8 @@ define( require => {
    */
 
   /**
-   * The public methods available for this IO Type. Each method not just a function, but a collection of metadata about
-   * the method to be able to serialize parameters and return types and provide better documentation.
+   * The public methods available for this IO Type. Each method is not just a function, but a collection of metadata
+   * about the method to be able to serialize parameters and return types and provide better documentation.
    * @type {Object.<string, MethodObject>}
    */
   ObjectIO.methods = {};
