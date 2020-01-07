@@ -48,7 +48,9 @@ define( require => {
     // phetioComponentOptions for Nodes or other types)
     phetioState: true,
 
-    // When true, you can only get values from the PhetioObject; no setting allowed.
+    // This option controls how PhET-iO wrappers can interface with this PhetioObject. Predominately this occurs via
+    // public methods defined on this PhetioObject's phetioType, in which some method are not executable when this flag
+    // is true. See `ObjectIO.methods` for further documentation, especially regarding `invocableForReadOnlyElements`.
     phetioReadOnly: false,
 
     // Category of event type, can be overridden in phetioStartEvent options

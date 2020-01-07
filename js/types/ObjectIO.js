@@ -172,6 +172,23 @@ define( require => {
   const isIOType = type => type === ObjectIO || type.prototype instanceof ObjectIO;
 
   /**
+   * @typeDef {Object} MethodObject
+   * @property {string} documentation
+   * @property {function()} implementation - the function to execute when this method is called
+   * @property {function(new:ObjectIO)} returnType - the return IO type of the method
+   * @property {Array.<function(new:ObjectIO)>} parameterTypes - the parameter IO types for the method
+   * @property {boolean} invocableForReadOnlyElements - when true, a method will still be callable even on a readonly
+   *                                                    PhET-iO element (marked as `phetioReadOnly` in PhetioObject).
+   */
+
+  /**
+   * The public methods available for this IO Type. Each method not just a function, but a collection of metadata about
+   * the method to be able to serialize parameters and return types and provide better documentation.
+   * @type {Object.<string, MethodObject>}
+   */
+  ObjectIO.methods = {};
+
+  /**
    * Documentation that appears in PhET-iO Studio, supports HTML markup.
    * @public
    */
