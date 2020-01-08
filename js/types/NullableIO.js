@@ -23,15 +23,32 @@ define( require => {
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const ValidatorDef = require( 'AXON/ValidatorDef' );
 
+  // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized NullableIO so that it is only created once
+  const cache = {};
+
   /**
    * Parametric type constructor function, do not use `new`
    * @param {function(new:ObjectIO)} parameterType - an IO type (constructor function)
    * @returns {function(new:ObjectIO)} - the IO type that supports null
-   * @constructor
    */
   function NullableIO( parameterType ) {
+    assert && assert( parameterType, 'NullableIO needs parameterType' );
 
-    class NullableIO extends ObjectIO {
+    if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
+      cache[ parameterType.typeName ] = create( parameterType );
+    }
+
+    return cache[ parameterType.typeName ];
+  }
+
+  /**
+   * Creates a NullableIOImpl
+   * @param {function(new:ObjectIO)} parameterType
+   * @returns {function(new:ObjectIO)}
+   */
+  const create = parameterType => {
+
+    class NullableIOImpl extends ObjectIO {
 
       /**
        * If the argument is null, returns null.
@@ -70,17 +87,17 @@ define( require => {
       }
     }
 
-    NullableIO.documentation = 'A wrapper to wrap another IOType, adding support for null.';
-    NullableIO.validator = {
+    NullableIOImpl.documentation = 'A wrapper to wrap another IOType, adding support for null.';
+    NullableIOImpl.validator = {
       isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, parameterType.validator )
     };
-    NullableIO.typeName = `NullableIO<${parameterType.typeName}>`;
-    NullableIO.parameterTypes = [ parameterType ];
+    NullableIOImpl.typeName = `NullableIO<${parameterType.typeName}>`;
+    NullableIOImpl.parameterTypes = [ parameterType ];
 
-    ObjectIO.validateSubtype( NullableIO );
+    ObjectIO.validateSubtype( NullableIOImpl );
 
-    return NullableIO;
-  }
+    return NullableIOImpl;
+  };
 
   tandemNamespace.register( 'NullableIO', NullableIO );
 
