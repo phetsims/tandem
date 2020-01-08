@@ -117,6 +117,10 @@ define( require => {
       const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
       assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'type name must end with IO' );
 
+      assert && assert( !subtype.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
+      assert && assert( !subtype.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
+      assert && assert( !subtype.prototype.setValue, 'setValue should be a static method, not prototype one.' );
+
       // assert that each method is the correct type
       for ( const method in subtype.methods ) {
         const methodObject = subtype.methods[ method ];
