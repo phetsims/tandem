@@ -12,6 +12,7 @@ define( require => {
   'use strict';
 
   // modules
+  const assertMutuallyExclusiveOptions = require( 'PHET_CORE/assertMutuallyExclusiveOptions' );
   const EventType = require( 'TANDEM/EventType' );
   const inherit = require( 'PHET_CORE/inherit' );
   const LinkedElementIO = require( 'TANDEM/LinkedElementIO' );
@@ -373,15 +374,27 @@ define( require => {
      * Start an event for the nested PhET-iO data stream.
      *
      * @param {string} event - the name of the event
-     * @param {Object|function|null} [data] - data for the event, either an object, or a function that returns an object
-     *                                      - this is transmitted over postMessage using the structured cloning algorithm
-     *                                      - and hence cannot contain functions or other unclonable elements
+     * @param {Object} [options]
      * @public
      */
-    phetioStartEvent: function( event, data ) {
+    phetioStartEvent: function( event, options ) {
+
+      // only one or the other can be provided
+      assert && assertMutuallyExclusiveOptions( options, [ 'data' ], [ 'getData' ] );
+
+      options = merge( {
+
+        // {Object|null} - the data
+        data: null,
+
+        // {function():Object|null} - function that, when called get's the data.
+        getData: null
+      }, options );
+
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
       assert && assert( typeof event === 'string' );
-      assert && data && assert( typeof data === 'object' || typeof data === 'function' );
+      assert && options.data && assert( typeof options.data === 'object' );
+      assert && options.getData && assert( typeof options.getData === 'function' );
       assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
 
       // Opt out of certain events if queryParameter override is provided
@@ -394,9 +407,7 @@ define( require => {
       if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
         // Only get the args if we are actually going to send the event.
-        if ( typeof data === 'function' ) {
-          data = data();
-        }
+        const data = options.getData ? options.getData() : options.data;
 
         this.phetioMessageStack.push(
           dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata )

@@ -105,9 +105,11 @@ define( require => {
      * @private
      */
     static eventListener( container, dynamicElement, eventName, additionalData ) {
-      container.phetioStartEvent( eventName, merge( {
-        phetioID: dynamicElement.tandem.phetioID
-      }, additionalData ) );
+      container.phetioStartEvent( eventName, {
+        data: merge( {
+          phetioID: dynamicElement.tandem.phetioID
+        }, additionalData )
+      } );
       container.phetioEndEvent();
     }
 
