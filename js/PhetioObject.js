@@ -352,7 +352,7 @@ define( require => {
       } );
 
       // Instantiate the wrapper instance which is used for PhET-iO communication
-      if ( this.isPhetioInstrumented() ) {
+      if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
         // this assertion should be enabled for new phet-io sim publications
         // TODO: are we really going to add phetioDocumentation to every PhetioObject?, see https://github.com/phetsims/phet-io/issues/1409
         // TODO: If so, this assertion should be elsewhere, see https://github.com/phetsims/phet-io/issues/1409
@@ -391,7 +391,7 @@ define( require => {
         return;
       }
 
-      if ( this.isPhetioInstrumented() ) {
+      if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
         // Only get the args if we are actually going to send the event.
         if ( typeof data === 'function' ) {
@@ -418,7 +418,7 @@ define( require => {
         return;
       }
 
-      if ( this.isPhetioInstrumented() ) {
+      if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
         dataStream.end( topMessageIndex );
       }
     },
@@ -492,15 +492,13 @@ define( require => {
     },
 
     /**
-     * Just because a tandem is passed in doesn't mean that it is instrumented. A PhetioObject will only be instrumented
-     * if:
-     * (1) Running in PhET-iO mode
-     * (2) The tandem that was passed in was "supplied". See Tandem.supplied for more info
+     * A PhetioObject will only be instrumented if the tandem that was passed in was "supplied". See Tandem.supplied
+     * for more info.
      * @returns {boolean}
      * @public
      */
     isPhetioInstrumented: function() {
-      return this.tandem && this.tandem.supplied && PHET_IO_ENABLED;
+      return this.tandem && this.tandem.supplied;
     },
 
     /**
@@ -521,7 +519,7 @@ define( require => {
 
       // In some cases, UI components need to be wired up to a private (internal) Property which should neither be
       // instrumented nor linked.
-      if ( this.isPhetioInstrumented() && element.isPhetioInstrumented() ) {
+      if ( PHET_IO_ENABLED && this.isPhetioInstrumented() && element.isPhetioInstrumented() ) {
         this.linkedElements.push( new LinkedElement( element, options ) );
       }
     },
