@@ -378,7 +378,7 @@ define( require => {
 
       // Opt out of certain events if queryParameter override is provided
       if ( _.hasIn( window, 'phet.phetio.queryParameters' ) &&
-           !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency && !dataStream.canEmitHighFrequencyEventsAnyways ) {
+           !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency && !dataStream.emittingLowFrequencyEvent ) {
         this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
         return;
       }
