@@ -249,7 +249,7 @@ define( require => {
       validate( options.phetioState, booleanValidator );
       validate( options.phetioReadOnly, booleanValidator );
       validate( options.phetioEventType, { valueType: EventType } );
-      // TODO: Can we add support for messages to ValidatorDef so we can add 'use "<br>" instead of newlines' below?
+      // TODO: Can we add support for messages to ValidatorDef so we can add 'use "<br>" instead of newlines' below? see https://github.com/phetsims/tandem/issues/141
       validate( options.phetioDocumentation, { valueType: 'string', isValidValue: doc => doc.indexOf( '\n' ) === -1 } );
       validate( options.phetioHighFrequency, booleanValidator );
       validate( options.phetioPlayback, booleanValidator );
