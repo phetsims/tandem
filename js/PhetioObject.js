@@ -378,7 +378,7 @@ define( require => {
 
       // Opt out of certain events if queryParameter override is provided
       if ( _.hasIn( window, 'phet.phetio.queryParameters' ) &&
-           !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency ) {
+           !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency && !dataStream.canEmitHighFrequencyEventsAnyways ) {
         this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
         return;
       }
@@ -389,7 +389,7 @@ define( require => {
         const data = options.getData ? options.getData() : options.data;
 
         this.phetioMessageStack.push(
-          dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata )
+          dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata, this.phetioHighFrequency )
         );
       }
     },
