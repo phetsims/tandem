@@ -255,8 +255,10 @@ define( require => {
       validate( options.phetioHighFrequency, booleanValidator );
       validate( options.phetioPlayback, booleanValidator );
       validate( options.phetioStudioControl, booleanValidator );
-      validate( options.phetioComponentOptions, { isValidValue: options =>
-          _.every( _.keys( options ), key => SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( key ) >= 0 ) } );
+      validate( options.phetioComponentOptions, {
+        isValidValue: options =>
+          _.every( _.keys( options ), key => SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( key ) >= 0 )
+      } );
       validate( options.phetioFeatured, booleanValidator );
       validate( options.phetioDynamicElement, booleanValidator );
       validate( options.phetioIsArchetype, booleanValidator );
@@ -376,9 +378,13 @@ define( require => {
       assert && options.getData && assert( typeof options.getData === 'function' );
       assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
 
-      // Opt out of certain events if queryParameter override is provided
-      if ( _.hasIn( window, 'phet.phetio.queryParameters' ) &&
-           !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents && this.phetioHighFrequency && !dataStream.emittingLowFrequencyEvent ) {
+      if ( this.phetioHighFrequency &&
+
+           // Opt out of certain events if queryParameter override is provided
+           _.hasIn( window, 'phet.phetio.queryParameters' ) && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents &&
+
+           // Even for a low frequency data stream, high frequency events can still be emitted when they have a low frequency ancestor.
+           !dataStream.isEmittingLowFrequencyEvent() ) {
         this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
         return;
       }
