@@ -360,36 +360,35 @@ define( require => {
      */
     phetioStartEvent: function( event, options ) {
 
-      // only one or the other can be provided
-      assert && assertMutuallyExclusiveOptions( options, [ 'data' ], [ 'getData' ] );
-
-      options = merge( {
-
-        // {Object|null} - the data
-        data: null,
-
-        // {function():Object|null} - function that, when called get's the data.
-        getData: null
-      }, options );
-
-      assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
-      assert && assert( typeof event === 'string' );
-      assert && options.data && assert( typeof options.data === 'object' );
-      assert && options.getData && assert( typeof options.getData === 'function' );
-      assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
-
-      if ( this.phetioHighFrequency &&
-
-           // Opt out of certain events if queryParameter override is provided
-           _.hasIn( window, 'phet.phetio.queryParameters' ) && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents &&
-
-           // Even for a low frequency data stream, high frequency events can still be emitted when they have a low frequency ancestor.
-           !dataStream.isEmittingLowFrequencyEvent() ) {
-        this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
-        return;
-      }
-
       if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
+
+        // only one or the other can be provided
+        assert && assertMutuallyExclusiveOptions( options, [ 'data' ], [ 'getData' ] );
+        options = merge( {
+
+          // {Object|null} - the data
+          data: null,
+
+          // {function():Object|null} - function that, when called get's the data.
+          getData: null
+        }, options );
+
+        assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
+        assert && assert( typeof event === 'string' );
+        assert && options.data && assert( typeof options.data === 'object' );
+        assert && options.getData && assert( typeof options.getData === 'function' );
+        assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
+
+        if ( this.phetioHighFrequency &&
+
+             // Opt out of certain events if queryParameter override is provided
+             _.hasIn( window, 'phet.phetio.queryParameters' ) && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents &&
+
+             // Even for a low frequency data stream, high frequency events can still be emitted when they have a low frequency ancestor.
+             !dataStream.isEmittingLowFrequencyEvent() ) {
+          this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
+          return;
+        }
 
         // Only get the args if we are actually going to send the event.
         const data = options.getData ? options.getData() : options.data;
@@ -406,15 +405,14 @@ define( require => {
      * @public
      */
     phetioEndEvent: function() {
-
-      const topMessageIndex = this.phetioMessageStack.pop();
-
-      // The message was started as a high frequency event to be skipped, so the end is a no-op
-      if ( topMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
-        return;
-      }
-
       if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
+
+        const topMessageIndex = this.phetioMessageStack.pop();
+
+        // The message was started as a high frequency event to be skipped, so the end is a no-op
+        if ( topMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
+          return;
+        }
         dataStream.end( topMessageIndex );
       }
     },
