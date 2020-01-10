@@ -100,7 +100,7 @@ define( require => {
      * @public
      */
     static getSupertype( typeIO ) {
-      assert && assert( isIOType( typeIO ), 'IO type expected' );
+      assert && assert( ObjectIO.isIOType( typeIO ), 'IO type expected' );
 
       // getPrototypeOf get's the typeIO's parent type, because the prototype is for the parent.
       const supertype = Object.getPrototypeOf( typeIO );
@@ -125,13 +125,13 @@ define( require => {
       for ( const method in subtype.methods ) {
         const methodObject = subtype.methods[ method ];
         if ( typeof methodObject === 'object' ) {
-          assert && assert( isIOType( methodObject.returnType ), 'return type must be of type IO: ' + methodObject.returnType );
+          assert && assert( ObjectIO.isIOType( methodObject.returnType ), 'return type must be of type IO: ' + methodObject.returnType );
 
           assert && assert( Array.isArray( methodObject.parameterTypes ),
             'parameter types must be an array: ' + methodObject.parameterTypes );
 
           methodObject.parameterTypes.forEach( parameterType => {
-            assert && assert( isIOType( parameterType ), 'parameter type must be of type IO: ' + parameterType );
+            assert && assert( ObjectIO.isIOType( parameterType ), 'parameter type must be of type IO: ' + parameterType );
           } );
 
           assert && assert( typeof methodObject.implementation === 'function',
@@ -139,6 +139,9 @@ define( require => {
 
           assert && assert( typeof methodObject.documentation === 'string',
             'documentation must be of type string: ' + methodObject.documentation );
+
+          assert && methodObject.invocableForReadOnlyElements && assert( typeof methodObject.invocableForReadOnlyElements === 'boolean',
+            'invocableForReadOnlyElements must be of type boolean: ' + methodObject.invocableForReadOnlyElements );
         }
       }
 
@@ -173,7 +176,7 @@ define( require => {
    * @public
    * @returns {boolean} - true if inherits from ObjectIO or is ObjectIO
    */
-  const isIOType = type => type === ObjectIO || type.prototype instanceof ObjectIO;
+  ObjectIO.isIOType = type => type === ObjectIO || type.prototype instanceof ObjectIO;
 
   /**
    * @typeDef {Object} MethodObject
@@ -181,8 +184,9 @@ define( require => {
    * @property {function()} implementation - the function to execute when this method is called
    * @property {function(new:ObjectIO)} returnType - the return IO type of the method
    * @property {Array.<function(new:ObjectIO)>} parameterTypes - the parameter IO types for the method
-   * @property {boolean} invocableForReadOnlyElements - when true, a method will still be callable even on a readonly
-   *                                                    PhET-iO element (marked as `phetioReadOnly` in PhetioObject).
+   * @property {boolean} [invocableForReadOnlyElements=true] - by default, all methods are invocable for all elements.
+   *    However, for some read-only elements, certain methods should not be invocable. In that case, they are marked as
+   *    invocableForReadOnlyElements: false.
    */
 
   /**

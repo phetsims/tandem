@@ -21,6 +21,7 @@ define( require => {
   const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const validate = require( 'AXON/validate' );
 
   // ifphetio
   const dataStream = require( 'ifphetio!PHET_IO/dataStream' );
@@ -237,46 +238,23 @@ define( require => {
       // `new Node( {tandem: tandem}).mutate({})`
       assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
-      assert && assert( options.tandem, 'Component was missing its tandem' );
-
-      const phetioID = options.tandem.phetioID;
-      assert && assert( phetioID, 'Component was missing its phetioID' );
-
-      if ( assert && options.phetioType && PHET_IO_ENABLED ) {
-        assert && assert( options.phetioType.documentation, 'There must be a documentation string for each IO Type.' );
-
-        for ( const methodName in options.phetioType.methods ) {
-          if ( options.phetioType.methods.hasOwnProperty( methodName ) ) {
-            const method = options.phetioType.methods[ methodName ];
-
-            if ( typeof method === 'function' ) {
-
-              // This is a private function for internal phet-io mechanics, not for exporting over the API, so it doesn't
-              // need to be checked.
-            }
-            else {
-              const IOType = options.phetioType;
-
-              // If you get one of these assertion errors, go to the IOType definition file and check its methods
-              assert && assert( !!method.returnType, IOType.typeName + '.' + methodName + ' needs a returnType' );
-              assert && assert( !!method.implementation, IOType.typeName + '.' + methodName + ' needs an implementation function' );
-              assert && assert( !!method.parameterTypes, IOType.typeName + '.' + methodName + ' needs a parameterTypes array' );
-              assert && assert( !!method.documentation, IOType.typeName + '.' + methodName + ' needs a documentation string' );
-            }
-          }
-        }
-
-        assert && assert( options.phetioType !== undefined, phetioID + ' missing type from phetio.api' );
-        assert && assert( options.phetioType.typeName, 'no type name for ' + phetioID + '(may be missing type parameter)' );
-        assert && assert( options.phetioType.typeName, 'type must be specified and have a typeName for ' + phetioID );
-      }
+      validate( options.tandem, { valueType: Tandem } );
 
       options = merge( {}, DEFAULTS, baseOptions, options );
 
-      assert && assert( typeof options.phetioDocumentation === 'string',
-        'invalid phetioDocumentation: ' + options.phetioDocumentation
-      );
-      assert && assert( options.phetioDocumentation.indexOf( '\n' ) === -1, 'use "<br>" instead of newlines' );
+      const booleanValidator = { valueType: 'boolean' };
+
+      // validate options before assigning to properties
+      validate( options.phetioType, { isValidValue: ObjectIO.isIOType } );
+      validate( options.phetioState, booleanValidator );
+      validate( options.phetioReadOnly, booleanValidator );
+      validate( options.phetioEventType, { valueType: EventType } );
+      // TODO: Can we add support for messages to ValidatorDef so we can add 'use "<br>" instead of newlines' below?
+      validate( options.phetioDocumentation, { valueType: 'string', isValidValue: doc => doc.indexOf( '\n' ) === -1 } );
+      validate( options.phetioHighFrequency, booleanValidator );
+      validate( options.phetioPlayback, booleanValidator );
+      validate( options.phetioStudioControl, booleanValidator );
+      validate( options.phetioFeatured, booleanValidator );
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
       // overrides API file. Even when validation is not enabled, overrides should still be applied.
@@ -290,7 +268,7 @@ define( require => {
 
         // If not a deprecated dynamic element
         // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
-        if ( phetioID.indexOf( '~' ) === -1 ) {
+        if ( options.tandem.phetioID.indexOf( '~' ) === -1 ) {
 
           // Dynamic elements should compare to their "concrete" counterparts.  For example, this means that a Particle
           // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
@@ -322,6 +300,7 @@ define( require => {
       this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
       this.phetioFeatured = options.phetioFeatured;
       this.phetioEventMetadata = options.phetioEventMetadata;
+
       this.setPhetioDynamicElement( options.phetioDynamicElement ||
 
                                     // Support phet brand, and phetioEngine doesn't yet exist while registering
