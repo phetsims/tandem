@@ -85,6 +85,7 @@ define( require => {
     // {boolean} optional - indicates that an object is a archetype for a dynamic class. Settable by classes that create
     // dynamic elements when creating their archetype (like PhetioGroup), see PhetioObject.markDynamicElementArchetype().
     // if true, items will be excluded from phetioState. This applies recursively automatically.
+    // TODO: is this needed as an option? see https://github.com/phetsims/tandem/issues/141
     phetioIsArchetype: false
   };
 
@@ -257,6 +258,8 @@ define( require => {
       validate( options.phetioComponentOptions, { isValidValue: options =>
           _.every( _.keys( options ), key => SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( key ) >= 0 ) } );
       validate( options.phetioFeatured, booleanValidator );
+      validate( options.phetioDynamicElement, booleanValidator );
+      validate( options.phetioIsArchetype, booleanValidator );
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
       // overrides API file. Even when validation is not enabled, overrides should still be applied.
