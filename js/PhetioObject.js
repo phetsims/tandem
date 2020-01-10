@@ -254,6 +254,8 @@ define( require => {
       validate( options.phetioHighFrequency, booleanValidator );
       validate( options.phetioPlayback, booleanValidator );
       validate( options.phetioStudioControl, booleanValidator );
+      validate( options.phetioComponentOptions, { isValidValue: options =>
+          _.every( _.keys( options ), key => SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( key ) >= 0 ) } );
       validate( options.phetioFeatured, booleanValidator );
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
