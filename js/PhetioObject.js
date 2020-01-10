@@ -328,11 +328,6 @@ define( require => {
         this.phetioEventMetadata.playback = true;
       }
 
-      // validate phetioComponentOptions
-      assert && _.keys( this.phetioComponentOptions ).forEach( option => {
-        assert && assert( SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( option ) >= 0, 'Unsupported phetioComponentOptions: ' + option );
-      } );
-
       // Instantiate the wrapper instance which is used for PhET-iO communication
       if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
         // this assertion should be enabled for new phet-io sim publications
