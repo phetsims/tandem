@@ -28,6 +28,7 @@ define( require => {
 
   // constants
   const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
+  const BOOLEAN_VALIDATOR = { valueType: 'boolean' };
 
   // Indicates a high frequency message was skipped.
   const SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
@@ -243,25 +244,23 @@ define( require => {
 
       options = merge( {}, DEFAULTS, baseOptions, options );
 
-      const booleanValidator = { valueType: 'boolean' };
-
       // validate options before assigning to properties
       validate( options.phetioType, { isValidValue: ObjectIO.isIOType } );
-      validate( options.phetioState, booleanValidator );
-      validate( options.phetioReadOnly, booleanValidator );
+      validate( options.phetioState, BOOLEAN_VALIDATOR );
+      validate( options.phetioReadOnly, BOOLEAN_VALIDATOR );
       validate( options.phetioEventType, { valueType: EventType } );
       // TODO: Can we add support for messages to ValidatorDef so we can add 'use "<br>" instead of newlines' below? see https://github.com/phetsims/tandem/issues/141
       validate( options.phetioDocumentation, { valueType: 'string', isValidValue: doc => doc.indexOf( '\n' ) === -1 } );
-      validate( options.phetioHighFrequency, booleanValidator );
-      validate( options.phetioPlayback, booleanValidator );
-      validate( options.phetioStudioControl, booleanValidator );
+      validate( options.phetioHighFrequency, BOOLEAN_VALIDATOR );
+      validate( options.phetioPlayback, BOOLEAN_VALIDATOR );
+      validate( options.phetioStudioControl, BOOLEAN_VALIDATOR );
       validate( options.phetioComponentOptions, {
         isValidValue: options =>
           _.every( _.keys( options ), key => SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( key ) >= 0 )
       } );
-      validate( options.phetioFeatured, booleanValidator );
-      validate( options.phetioDynamicElement, booleanValidator );
-      validate( options.phetioIsArchetype, booleanValidator );
+      validate( options.phetioFeatured, BOOLEAN_VALIDATOR );
+      validate( options.phetioDynamicElement, BOOLEAN_VALIDATOR );
+      validate( options.phetioIsArchetype, BOOLEAN_VALIDATOR );
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
       // overrides API file. Even when validation is not enabled, overrides should still be applied.
