@@ -120,6 +120,7 @@ define( require => {
       assert && assert( !subtype.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
       assert && assert( !subtype.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
       assert && assert( !subtype.prototype.setValue, 'setValue should be a static method, not prototype one.' );
+      assert && assert( !subtype.prototype.stateToArgsForConstructor, 'stateToArgsForConstructor should be a static method, not prototype one.' );
 
       // assert that each method is the correct type
       for ( const method in subtype.methods ) {
