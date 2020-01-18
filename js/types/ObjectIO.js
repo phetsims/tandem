@@ -114,6 +114,8 @@ define( require => {
      */
     static validateSubtype( subtype ) {
       const typeName = subtype.typeName;
+      assert && assert( typeName.indexOf( '.' ) === -1, 'Dots should not appear in type names' );
+
       const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
       assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'type name must end with IO' );
 
