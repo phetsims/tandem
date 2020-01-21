@@ -1,0 +1,185 @@
+// Copyright 2019-2020, University of Colorado Boulder
+
+/**
+ * Supertype for containers that hold dynamic elements that are PhET-iO instrumented. This type handles common
+ * features like creating the archetype for the PhET-iO api, and managing created/disposed data stream events.
+ *
+ * @author Michael Kauzmann (PhET Interactive Simulations)
+ */
+define( require => {
+  'use strict';
+
+  // modules
+  const DynamicTandem = require( 'TANDEM/DynamicTandem' );
+  const merge = require( 'PHET_CORE/merge' );
+  const phetioAPIValidation = require( 'TANDEM/phetioAPIValidation' );
+  const PhetioObject = require( 'TANDEM/PhetioObject' );
+  const Tandem = require( 'TANDEM/Tandem' );
+  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+  const validate = require( 'AXON/validate' );
+
+  class PhetioDynamicElementContainer extends PhetioObject {
+
+    /**
+     * @param {function} createElement - function that creates a dynamic element to be housed in this container. All of
+     * this dynamic element container's elements will be created from this function, including the archetype.
+     * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
+     * @param {Object} [options] - describe the Group itself
+     */
+    constructor( createElement, defaultArguments, options ) {
+
+      options = merge( {
+        phetioState: false, // members are included in state, but the container will exist in the downstream sim.
+        tandem: Tandem.REQUIRED,
+
+        // By default, a PhetioGroup's members are included in state such that on every setState call, the members are
+        // cleared out by the phetioStateEngine so members in the state can be added to the empty group. This option is
+        // for opting out of that behavior. NOTE: Only use when it's guaranteed that all of the members are
+        // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
+        // is no need for members to support dynamic state.
+        supportsDynamicState: true
+      }, options );
+
+      assert && assert( typeof createElement === 'function', 'createElement should be a function' );
+      assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
+      if ( Array.isArray( defaultArguments ) ) {
+
+        // createElement expects a Tandem as the first arg
+        assert && assert( createElement.length === defaultArguments.length + 1, 'mismatched number of arguments' );
+      }
+
+      super( options );
+
+      // @public (read-only phet-io internal)
+      this.supportsDynamicState = options.supportsDynamicState;
+
+      // @private
+      this.createElement = createElement;
+      this.defaultArguments = defaultArguments;
+
+      // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes, but otherwise
+      // access should not be needed.
+      this.archetype = this.createArchetype();
+    }
+
+    /**
+     * @public
+     */
+    dispose() {
+      assert && assert( false, 'PhetioDynamicElementContainers are not intended for disposal' );
+    }
+
+
+    /**
+     * Archetypes are created to generate the baseline file, or to validate against an existing baseline file.  They are
+     * PhetioObjects and registered with the phetioEngine, but not send out via notifications for phetioObjectAddedListeners,
+     * because they are intended for internal usage only.  Archetypes should not be created in production code.
+     * @returns {null|PhetioObject}
+     * @private
+     */
+    createArchetype() {
+
+      // Once the sim has started, any archetypes being created are likely done so because they are nested PhetioGroups.
+      if ( phetioAPIValidation.simHasStarted ) {
+        return null;
+      }
+
+      // When generating the baseline, output the schema for the archetype
+      if ( ( phet.phetio && phet.phetio.queryParameters.phetioPrintPhetioFiles ) || phetioAPIValidation.enabled ) {
+        const defaultArgs = Array.isArray( this.defaultArguments ) ? this.defaultArguments : this.defaultArguments();
+
+        // The create function takes a tandem plus the default args
+        assert && assert( this.createElement.length === defaultArgs.length + 1, 'mismatched number of arguments' );
+
+        const archetype = this.createElement( this.tandem.createTandem( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ), ...defaultArgs );
+
+        // Mark the archetype for inclusion in the baseline schema
+        archetype.markDynamicElementArchetype();
+        return archetype;
+      }
+      else {
+        return null;
+      }
+    }
+
+    /**
+     * Create a dynamic PhetioObject element for this container
+     * @param {string} componentName
+     * @param {function(Tandem[, ...*]):PhetioObject} createFunction
+     * @param {Array.<*>} argsForCreateFunction
+     * @param {function(new:ObjectIO)} containerParameterType
+     * @returns {PhetioObject}
+     * @public
+     */
+    createDynamicElement( componentName, createFunction, argsForCreateFunction, containerParameterType ) {
+      assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
+
+      // create with default state and substructure, details will need to be set by setter methods.
+      const createdObjectTandem = new DynamicTandem( this.tandem, componentName, this.tandem.getExtendedOptions() );
+      const createdObject = createFunction( createdObjectTandem, ...argsForCreateFunction );
+
+      // Make sure the new group member matches the schema for members.
+      validate( createdObject, containerParameterType.validator );
+
+      assert && assert( createdObject.phetioType === containerParameterType,
+        'dynamic element container expected its created instance\'s phetioType to match its parameterType.' );
+
+      assert && this.assertDynamicPhetioObject( createdObject );
+
+      return createdObject;
+    }
+
+    /**
+     * A dynamic member should be an instrumented PhetioObject with phetioDynamicElement: true
+     * @param {PhetioObject} phetioObject - object to be validated
+     * @private
+     */
+    assertDynamicPhetioObject( phetioObject ) {
+      if ( Tandem.PHET_IO_ENABLED ) {
+        assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
+        assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
+        assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
+      }
+    }
+
+    /**
+     * Emit a created or disposed event.
+     * @param {PhetioObject} dynamicElement
+     * @param {string} eventName
+     * @param {Object} [additionalData] additional data for the event
+     * @private
+     */
+    emitDataStreamEvent( dynamicElement, eventName, additionalData ) {
+      this.phetioStartEvent( eventName, {
+        data: merge( {
+          phetioID: dynamicElement.tandem.phetioID
+        }, additionalData )
+      } );
+      this.phetioEndEvent();
+    }
+
+    /**
+     * Emit events when dynamic elements are created.
+     * @param {PhetioObject} dynamicElement
+     * @public
+     */
+    createdEventListener( dynamicElement ) {
+      const additionalData = dynamicElement.phetioState ? {
+        state: this.phetioType.parameterTypes[ 0 ].toStateObject( dynamicElement )
+      } : null;
+      this.emitDataStreamEvent( dynamicElement, 'created', additionalData );
+    }
+
+    /**
+     * Emit events when dynamic elements are disposed.
+     * @param {PhetioObject} dynamicElement
+     * @public
+     */
+    disposedEventListener( dynamicElement ) {
+      this.emitDataStreamEvent( dynamicElement, 'disposed' );
+    }
+  }
+
+  return tandemNamespace.register( 'PhetioDynamicElementContainer', PhetioDynamicElementContainer );
+} );
+

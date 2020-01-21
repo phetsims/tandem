@@ -18,15 +18,14 @@ define( require => {
   // modules
   const Emitter = require( 'AXON/Emitter' );
   const merge = require( 'PHET_CORE/merge' );
-  const PhetioDynamicUtils = require( 'TANDEM/PhetioDynamicUtils' );
-  const PhetioObject = require( 'TANDEM/PhetioObject' );
+  const PhetioDynamicElementContainer = require( 'TANDEM/PhetioDynamicElementContainer' );
   const Tandem = require( 'TANDEM/Tandem' );
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   // strings
   const capsuleString = 'Capsule';
 
-  class PhetioCapsule extends PhetioObject {
+  class PhetioCapsule extends PhetioDynamicElementContainer {
 
     /**
      * @param {function(tandem, ...):PhetioObject} createInstance - function that creates the encapsulated instance
@@ -35,22 +34,8 @@ define( require => {
      */
     constructor( createInstance, defaultArguments, options ) {
 
-      assert && assert( typeof createInstance === 'function', 'createInstance should be a function' );
-      assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
-      if ( Array.isArray( defaultArguments ) ) {
-        assert && assert( createInstance.length === defaultArguments.length + 1, 'mismatched number of arguments' ); // createInstance also takes tandem
-      }
-
       options = merge( {
-        phetioState: false, // instance is included in state, but the capsule will exist in the downstream sim.
-        tandem: Tandem.REQUIRED,
-
-        // By default, a PhetioCapsule's instance is included in state such that on every setState call, the instance is
-        // cleared out by the phetioStateEngine so the instance in the state can be added to the empty capsule. This
-        // option is for opting out of that behavior. NOTE: Only use when it's guaranteed that the instance is
-        // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
-        // is no need for the instance to support dynamic state.
-        supportsDynamicState: true
+        tandem: Tandem.REQUIRED
       }, options );
 
       assert && assert( !!options.phetioType, 'phetioType must be supplied' );
@@ -66,7 +51,7 @@ define( require => {
         phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - capsuleString.length )
       }, options );
 
-      super( options );
+      super( createInstance, defaultArguments, options );
 
       // @private
       this.createInstance = createInstance;
@@ -81,19 +66,9 @@ define( require => {
       // @private {string}
       this.instanceTandemName = options.phetioDynamicElementName;
 
-      // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes
-      this.archetype = PhetioDynamicUtils.createArchetype( this.tandem, createInstance, defaultArguments );
-
       // Emit to the data stream on instance creation/disposal
-      this.addInstanceCreatedListener( instance => PhetioDynamicUtils.createdEventListener( this, instance ) );
-      this.addInstanceDisposedListener( instance => PhetioDynamicUtils.disposedEventListener( this, instance ) );
-    }
-
-    /**
-     * @public
-     */
-    dispose() {
-      assert && assert( false, 'PhetioGroup not intended for disposal' );
+      this.addInstanceCreatedListener( instance => this.createdEventListener( instance ) );
+      this.addInstanceDisposedListener( instance => this.disposedEventListener( instance ) );
     }
 
     /**
@@ -161,8 +136,7 @@ define( require => {
     create( ...argsForCreateFunction ) {
 
       // create with default state and substructure, details will need to be set by setter methods.
-      this.instance = PhetioDynamicUtils.createDynamicPhetioObject(
-        this.tandem,
+      this.instance = this.createDynamicElement(
         this.instanceTandemName,
         this.createInstance,
         argsForCreateFunction,
