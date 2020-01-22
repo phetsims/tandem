@@ -1,4 +1,4 @@
-// Copyright 2019, University of Colorado Boulder
+// Copyright 2019-2020, University of Colorado Boulder
 
 /**
  * A PhET-iO class that encapsulates a PhetioObject that is not created during sim startup to provide PhET-iO API

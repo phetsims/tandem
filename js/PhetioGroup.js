@@ -1,4 +1,4 @@
-// Copyright 2019, University of Colorado Boulder
+// Copyright 2019-2020, University of Colorado Boulder
 
 /**
  * Provides a placeholder in the static API for where dynamic members may be created.  Checks that members of the group
