@@ -35,20 +35,8 @@ define( require => {
     constructor( createInstance, defaultArguments, options ) {
 
       options = merge( {
-        tandem: Tandem.REQUIRED
-      }, options );
-
-      assert && assert( !!options.phetioType, 'phetioType must be supplied' );
-      assert && assert( !!options.phetioType.parameterTypes, 'PhetioCapsuleIO must supply its parameter types' );
-      assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioCapsuleIO must have exactly one parameter type' );
-      assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioCapsuleIO parameterType must be truthy' );
-      assert && assert( options.tandem.name.endsWith( capsuleString ), 'PhetioCapsule tandems should end with Capsule suffix' );
-
-      // options that depend on other options
-      options = merge( {
-
-        // {string} - the PhetioCapsule tandem name without the "Capsule" suffix
-        phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - capsuleString.length )
+        tandem: Tandem.REQUIRED,
+        containerSuffix: capsuleString
       }, options );
 
       super( createInstance, defaultArguments, options );
@@ -60,11 +48,8 @@ define( require => {
       this.instanceCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
       this.instanceDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
-      // @public (read-only)
+      // @public (read-only) {PhetioObject}
       this.instance = null;
-
-      // @private {string}
-      this.instanceTandemName = options.phetioDynamicElementName;
 
       // Emit to the data stream on instance creation/disposal
       this.addInstanceCreatedListener( instance => this.createdEventListener( instance ) );
@@ -137,7 +122,7 @@ define( require => {
 
       // create with default state and substructure, details will need to be set by setter methods.
       this.instance = this.createDynamicElement(
-        this.instanceTandemName,
+        this.phetioDynamicElementName,
         this.createInstance,
         argsForCreateFunction,
         this.phetioType.parameterTypes[ 0 ]

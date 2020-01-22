@@ -37,7 +37,10 @@ define( require => {
         // for opting out of that behavior. NOTE: Only use when it's guaranteed that all of the members are
         // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
         // is no need for members to support dynamic state.
-        supportsDynamicState: true
+        supportsDynamicState: true,
+
+        // {string} - The suffix for the container. Used for assertions to make sure that tandems are organized correctly.
+        containerSuffix: 'Container'
       }, options );
 
       assert && assert( typeof createElement === 'function', 'createElement should be a function' );
@@ -48,10 +51,29 @@ define( require => {
         assert && assert( createElement.length === defaultArguments.length + 1, 'mismatched number of arguments' );
       }
 
+      assert && assert( !!options.phetioType, 'phetioType must be supplied' );
+      assert && assert( Array.isArray( options.phetioType.parameterTypes ), 'phetioType must supply its parameter types' );
+      assert && assert( options.phetioType.parameterTypes.length === 1,
+        'PhetioDynamicElementContainer\'s phetioType must have exactly one parameter type' );
+      assert && assert( !!options.phetioType.parameterTypes[ 0 ],
+        'PhetioDynamicElementContainer\'s phetioType\'s parameterType must be truthy' );
+      assert && assert( options.tandem.name.endsWith( options.containerSuffix ),
+        'PhetioDynamicElementContainer tandems should end with options.containerSuffix' );
+
+      // options that depend on other options
+      options = merge( {
+
+        // {string} - the PhetioGroup tandem name without the "Container" suffix
+        phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - options.containerSuffix.length )
+      }, options );
+
       super( options );
 
-      // @public (read-only phet-io internal)
+      // @public (read-only phet-io internal) {boolean}
       this.supportsDynamicState = options.supportsDynamicState;
+
+      // @protected {string}
+      this.phetioDynamicElementName = options.phetioDynamicElementName;
 
       // @private
       this.createElement = createElement;

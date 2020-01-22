@@ -32,31 +32,11 @@ define( require => {
     constructor( createMember, defaultArguments, options ) {
 
       options = merge( {
-        phetioState: false, // members are included in state, but the container will exist in the downstream sim.
         tandem: Tandem.REQUIRED,
-
-        // By default, a PhetioGroup's members are included in state such that on every setState call, the members are
-        // cleared out by the phetioStateEngine so members in the state can be added to the empty group. This option is
-        // for opting out of that behavior. NOTE: Only use when it's guaranteed that all of the members are
-        // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
-        // is no need for members to support dynamic state.
-        supportsDynamicState: true
+        containerSuffix: groupString
       }, options );
 
-      assert && assert( !!options.phetioType, 'phetioType must be supplied' );
-      assert && assert( !!options.phetioType.parameterTypes, 'PhetioGroupIO must supply its parameter types' );
-      assert && assert( options.phetioType.parameterTypes.length === 1, 'PhetioGroupIO must have exactly one parameter type' );
-      assert && assert( !!options.phetioType.parameterTypes[ 0 ], 'PhetioGroupIO parameterType must be truthy' );
-      assert && assert( options.tandem.name.endsWith( groupString ), 'PhetioGroup tandems should end with Group suffix' );
-
-      // options that depend on other options
-      options = merge( {
-
-        // {string} - the PhetioGroup tandem name without the "Group" suffix
-        phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - groupString.length )
-      }, options );
-
-      super(  createMember, defaultArguments,options );
+      super( createMember, defaultArguments, options );
 
       // @private
       this.createMember = createMember;
@@ -70,9 +50,6 @@ define( require => {
 
       // @public (only for PhetioGroupIO) - for generating indices from a pool
       this.groupMemberIndex = 0;
-
-      // @private {string}
-      this.prefix = options.phetioDynamicElementName;
 
       // Emit to the data stream on member creation/disposal
       this.addMemberCreatedListener( member => this.createdEventListener( member ) );
@@ -226,7 +203,7 @@ define( require => {
      */
     createIndexedMember( index, argsForCreateFunction ) {
 
-      const componentName = this.prefix + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
+      const componentName = this.phetioDynamicElementName + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
       const groupMember = this.createDynamicElement( componentName, this.createMember,
         argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
