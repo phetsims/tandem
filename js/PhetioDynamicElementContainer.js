@@ -4,6 +4,12 @@
  * Supertype for containers that hold dynamic elements that are PhET-iO instrumented. This type handles common
  * features like creating the archetype for the PhET-iO api, and managing created/disposed data stream events.
  *
+ * "Dynamic" is an overloaded term, so allow me to explain what it means in the context of this type. A "dynamic element"
+ * is an instrumented PhET-iO element that is conditionally in the PhET-iO api. Most commonly this is because elements
+ * can be created and destroyed during the runtime of the sim. Another "dynamic element" for the PhET-iO project is when
+ * an element may or may not be created based on a query parameter. In this case, even if the object then exists for the
+ * lifetime of the sim, we may still call this "dynamic" as it pertains to this type, and the PhET-iO api.
+ *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 define( require => {
@@ -32,11 +38,15 @@ define( require => {
         phetioState: false, // members are included in state, but the container will exist in the downstream sim.
         tandem: Tandem.REQUIRED,
 
-        // By default, a PhetioGroup's members are included in state such that on every setState call, the members are
-        // cleared out by the phetioStateEngine so members in the state can be added to the empty group. This option is
-        // for opting out of that behavior. NOTE: Only use when it's guaranteed that all of the members are
+        // By default, a PhetioDynamicElementContainer's elements are included in state such that on every setState call,
+        // the members are cleared out by the phetioStateEngine so members in the state can be added to the empty group.
+        // This option is for opting out of that behavior. When false, this container will not have its elements cleared
+        // when beginning to set PhET-iO state. NOTE: Only use when it's guaranteed that all of the members are
         // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
-        // is no need for members to support dynamic state.
+        // is no need for members to support dynamic state. This may seem like a confusing option because you may be
+        // thinking, "shouldn't all instances of PhetioDynamicElementContainer contain dynamic elements that are added
+        // and removed throughout the lifetime of the sim?!?!" Please note the documentation above about the term "dynamic"
+        // and note that this is an atypical option.
         supportsDynamicState: true,
 
         // {string} - The suffix for the container. Used for assertions to make sure that tandems are organized correctly.
