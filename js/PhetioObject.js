@@ -28,7 +28,17 @@ define( require => {
 
   // constants
   const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
+  const IO_TYPE_VALIDATOR = { isValidValue: ObjectIO.isIOType };
   const BOOLEAN_VALIDATOR = { valueType: 'boolean' };
+
+  // use "<br>" instead of newlines
+  const PHET_IO_DOCUMENTATION_VALIDATOR = { valueType: 'string', isValidValue: doc => doc.indexOf( '\n' ) === -1 };
+  const PHET_IO_EVENT_TYPE_VALIDATOR = { valueType: EventType };
+  const PHET_IO_COMPONENT_OPTIONS_VALIDATOR = {
+    isValidValue: options =>
+      _.every( _.keys( options ), key => SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( key ) >= 0 )
+  };
+  const OBJECT_VALIDATOR = { valueType: [ Object, null ] };
 
   // Indicates a high frequency message was skipped.
   const SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
@@ -44,7 +54,8 @@ define( require => {
     // Defines API methods, events and serialization
     phetioType: ObjectIO,
 
-    // Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper
+    // {string} Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper. It's an html
+    // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio
     phetioDocumentation: '',
 
     // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, may require
@@ -75,19 +86,13 @@ define( require => {
     // When true, this is categorized as an important "featured" element in Studio.
     phetioFeatured: false,
 
-    // {Object} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
+    // {Object|null} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
     phetioEventMetadata: null,
 
     // {boolean} optional - indicates that an object may or may not have been created. Applies recursively automatically
     // and should only be set manually on the root dynamic element. Dynamic archetypes will have this overwritten to
     // false even if explicitly provided as true, as archetypes cannot be dynamic.
-    phetioDynamicElement: false,
-
-    // {boolean} optional - indicates that an object is a archetype for a dynamic class. Settable by classes that create
-    // dynamic elements when creating their archetype (like PhetioGroup), see PhetioObject.markDynamicElementArchetype().
-    // if true, items will be excluded from phetioState. This applies recursively automatically.
-    // TODO: is this needed as an option? see https://github.com/phetsims/tandem/issues/141
-    phetioIsArchetype: false
+    phetioDynamicElement: false
   };
 
   // phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
@@ -159,7 +164,9 @@ define( require => {
     // the setPhetioDynamicElement() function must be used instead of setting this attribute directly
     this.phetioDynamicElement = null;
 
-    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
+    // @public (read-only) {boolean} optional - indicates that an object is a archetype for a dynamic class. Settable by classes that create
+    // dynamic elements when creating their archetype (like PhetioGroup), see PhetioObject.markDynamicElementArchetype().
+    // if true, items will be excluded from phetioState. This applies recursively automatically.
     this.phetioIsArchetype = null;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
@@ -245,22 +252,24 @@ define( require => {
       options = merge( {}, DEFAULTS, baseOptions, options );
 
       // validate options before assigning to properties
-      validate( options.phetioType, { isValidValue: ObjectIO.isIOType } );
+      validate( options.phetioType, IO_TYPE_VALIDATOR );
       validate( options.phetioState, BOOLEAN_VALIDATOR );
       validate( options.phetioReadOnly, BOOLEAN_VALIDATOR );
-      validate( options.phetioEventType, { valueType: EventType } );
-      // TODO: Can we add support for messages to ValidatorDef so we can add 'use "<br>" instead of newlines' below? see https://github.com/phetsims/tandem/issues/141
-      validate( options.phetioDocumentation, { valueType: 'string', isValidValue: doc => doc.indexOf( '\n' ) === -1 } );
+      validate( options.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR );
+      validate( options.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR );
       validate( options.phetioHighFrequency, BOOLEAN_VALIDATOR );
       validate( options.phetioPlayback, BOOLEAN_VALIDATOR );
       validate( options.phetioStudioControl, BOOLEAN_VALIDATOR );
-      validate( options.phetioComponentOptions, {
-        isValidValue: options =>
-          _.every( _.keys( options ), key => SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( key ) >= 0 )
-      } );
+      validate( options.phetioComponentOptions, PHET_IO_COMPONENT_OPTIONS_VALIDATOR );
       validate( options.phetioFeatured, BOOLEAN_VALIDATOR );
+      validate( options.phetioEventMetadata, OBJECT_VALIDATOR );
       validate( options.phetioDynamicElement, BOOLEAN_VALIDATOR );
-      validate( options.phetioIsArchetype, BOOLEAN_VALIDATOR );
+
+      // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
+      // phetioEngine itself). This is okay though, as none of these should be marked as dynamic. Store this early
+      // because it's a non-option metadata key.
+      this.phetioIsArchetype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
+                                   phet.phetIo.phetioEngine.ancestorMatches( options.tandem.phetioID, isDynamicElementArchetypePredicate ) );
 
       // This block is associated with validating the baseline api and filling in metadata specified in the elements
       // overrides API file. Even when validation is not enabled, overrides should still be applied.
@@ -269,7 +278,11 @@ define( require => {
         // Store the full baseline if we are printing out those files or need it for validation. Do this before
         // applying overrides.
         if ( phet.phetio.queryParameters.phetioPrintPhetioFiles || phetioAPIValidation.enabled ) {
-          this.phetioBaselineMetadata = PhetioObject.getMetadata( options );
+
+          // not all metadata are passed through via options, so store baseline for these additional properties
+          this.phetioBaselineMetadata = PhetioObject.getMetadata( merge( {
+            phetioIsArchetype: this.phetioIsArchetype
+          }, options ) );
         }
 
         // If not a deprecated dynamic element
@@ -314,11 +327,6 @@ define( require => {
                                     // none of these should be marked as dynamic.
                                     !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
                                         phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) ) );
-
-      // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
-      // phetioEngine itself). This is okay though, as none of these should be marked as dynamic.
-      this.phetioIsArchetype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
-                                   phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementArchetypePredicate ) );
 
       // Patch this in after we have determined if parents are dynamic elements as well.
       if ( this.phetioBaselineMetadata ) {

@@ -202,8 +202,7 @@ define( require => {
           // Everything in the baseline was created on startup, but the archetypes mark dynamic elements' non-dynamic
           // counterparts. The only instances that it's OK to create after startup are "dynamic instances" which are
           // marked as such.
-          const isDynamicElement = baselineFromFile.phetioIsArchetype && phetioObject.phetioDynamicElement;
-          if ( !isDynamicElement ) {
+          if ( !( baselineFromFile.phetioIsArchetype && phetioObject.phetioDynamicElement ) ) {
             this.addError( {
               phetioID: phetioObject.tandem.phetioID,
               ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
