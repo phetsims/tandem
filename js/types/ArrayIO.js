@@ -61,7 +61,7 @@ define( require => {
 
       /**
        * Deserialize from a serialized state.
-       * @param {Object} stateObject - from toStateObject
+       * @param {Array} stateObject - from toStateObject
        * @returns {Object[]}
        * @override
        */
@@ -73,6 +73,13 @@ define( require => {
         return array;
       }
 
+      /**
+       * Applies the deserialized value to the object.  This is only called when setting the entire state of the simulation,
+       * and hence also sets the initial values, so resets will return to the customized value instead of the simulation
+       * default (uncustomized) value.
+       * @public
+       * @override
+       */
       static setValue( array, fromStateObject ) {
         assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
         array.length = 0;
