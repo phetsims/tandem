@@ -14,6 +14,7 @@ define( require => {
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
   class Float64ArrayIO extends ObjectIO {
+
     /**
      * Serialize an array by serializing each element
      * @public
@@ -48,11 +49,11 @@ define( require => {
      * @override
      *
      * @param {Float64Array} array
-     * @param {Array.<number>}
+     * @param {Float64Array} stateObject
      */
-    static setValue( array, fromStateObject ) {
+    static setValue( array, stateObject ) {
       assert && assert( array instanceof Float64Array, 'Float64ArrayIO should wrap array instances' );
-      array.set( fromStateObject );
+      array.set( stateObject );
     }
   }
 
