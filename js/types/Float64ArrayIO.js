@@ -1,4 +1,4 @@
-// Copyright 2018-2019, University of Colorado Boulder
+// Copyright 2020, University of Colorado Boulder
 
 /**
  * IO type for JS's built-in Float64Array type
