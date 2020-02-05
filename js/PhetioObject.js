@@ -210,7 +210,7 @@ define( require => {
    * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to
    * _.intersection( _.keys( options ), OPTIONS_KEYS ).length>0 but implemented imperatively to avoid memory or
    * performance issues.
-   * @param {Object} options
+   * @param {Object} [options]
    * @returns {boolean}
    */
   const specifiesPhetioObjectKey = options => {
@@ -231,7 +231,7 @@ define( require => {
      * Like SCENERY/Node, PhetioObject can be configured during construction or later with a mutate call.
      *
      * @param {Object} baseOptions - only applied if options keys intersect OPTIONS_KEYS
-     * @param {Object} options
+     * @param {Object} [options]
      * @protected
      */
     initializePhetioObject: function( baseOptions, options ) {
@@ -572,7 +572,7 @@ define( require => {
      * Convenience function which assigns phetioComponentOptions based on a merge, and performs basic sanity checks.
      * @public
      * @param {Object} defaults
-     * @param {Object} options - mutated to included merged phetioComponentOptions
+     * @param {Object} [options] - mutated to included merged phetioComponentOptions
      */
     mergePhetioComponentOptions: function( defaults, options ) {
       if ( assert && options.phetioComponentOptions ) {
