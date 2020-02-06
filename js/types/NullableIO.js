@@ -54,7 +54,7 @@ define( require => {
        * If the argument is null, returns null.
        * Otherwise converts the instance to a state object for serialization.
        * @param {Object|null} instance - of type {parameterType|null}
-       * @returns {Object|null}
+       * @returns {*|null}
        * @public
        * @static
        * @override
@@ -71,7 +71,7 @@ define( require => {
       /**
        * If the argument is null, returns null.
        * Otherwise converts a state object to an instance of the underlying type.
-       * @param {Object|null} stateObject
+       * @param {*|null} stateObject
        * @returns {Object|null}
        * @public
        * @static
