@@ -23,7 +23,7 @@ define( require => {
      * Return the json that ReferenceIO is wrapping.  This can be overridden by subclasses, or types can use ReferenceIO type
      * directly to use this implementation.
      * @param {Object} o
-     * @returns {Object}
+     * @returns {string}
      * @public
      */
     static toStateObject( o ) {
@@ -34,12 +34,13 @@ define( require => {
     /**
      * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
      * use ReferenceIO type directly to use this implementation.
-     * @param {Object} stateObject
+     * @param {string} stateObject
      * @returns {Object}
      * @throws CouldNotYetDeserializeError
      * @public
      */
     static fromStateObject( stateObject ) {
+      assert && assert( typeof stateObject === 'string' );
       if ( phetioEngine.hasPhetioObject( stateObject ) ) {
         const phetioObject = phetioEngine.getPhetioObject( stateObject );
         validate( phetioObject, this.validator );
