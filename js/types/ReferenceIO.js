@@ -22,27 +22,27 @@ define( require => {
     /**
      * Return the json that ReferenceIO is wrapping.  This can be overridden by subclasses, or types can use ReferenceIO type
      * directly to use this implementation.
-     * @param {Object} o
-     * @returns {string}
+     * @param {PhetioObject} phetioObject
+     * @returns {string} - the phetioID
      * @public
      */
-    static toStateObject( o ) {
-      validate( o, this.validator );
-      return o.tandem.phetioID;
+    static toStateObject( phetioObject ) {
+      validate( phetioObject, this.validator );
+      return phetioObject.tandem.phetioID;
     }
 
     /**
      * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
      * use ReferenceIO type directly to use this implementation.
-     * @param {string} stateObject
-     * @returns {Object}
+     * @param {string} referencePhetioID
+     * @returns {PhetioObject}
      * @throws CouldNotYetDeserializeError
      * @public
      */
-    static fromStateObject( stateObject ) {
-      assert && assert( typeof stateObject === 'string' );
-      if ( phetioEngine.hasPhetioObject( stateObject ) ) {
-        const phetioObject = phetioEngine.getPhetioObject( stateObject );
+    static fromStateObject( referencePhetioID ) {
+      assert && assert( typeof referencePhetioID === 'string' );
+      if ( phetioEngine.hasPhetioObject( referencePhetioID ) ) {
+        const phetioObject = phetioEngine.getPhetioObject( referencePhetioID );
         validate( phetioObject, this.validator );
         return phetioObject;
       }
