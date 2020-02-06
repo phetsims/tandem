@@ -45,7 +45,7 @@ define( require => {
      * Return the json that ObjectIO is wrapping.  This can be overridden by subclasses, or types can use ObjectIO type
      * directly to use this implementation.
      * @param {PhetioObject} o
-     * @returns {Object}
+     * @returns {*} - most of the time it is an Object with data inside, but there are some other cases like NullableIO and ReferenceIO
      * @public
      */
     static toStateObject( o ) {
@@ -56,7 +56,7 @@ define( require => {
     /**
      * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
      * use ObjectIO type directly to use this implementation.
-     * @param {Object} o
+     * @param {*} o - whatever was returned from the toStateObject method
      * @returns {Object}
      * @public
      */
