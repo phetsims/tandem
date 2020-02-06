@@ -87,8 +87,7 @@ define( require => {
     phetioFeatured: false,
 
     // {Object|null} optional - delivered with each event, if specified. phetioPlayback is appended here, if true.
-    // Note unlike other options, this option can be mutated update the call chain, and should be created newly
-    // for each instance.
+    // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
     phetioEventMetadata: null,
 
     // {boolean} optional - indicates that an object may or may not have been created. Applies recursively automatically
