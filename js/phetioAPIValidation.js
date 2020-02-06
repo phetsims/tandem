@@ -106,7 +106,7 @@ define( require => {
             !phetioEngine.phetioObjectMap[ phetioID ]
             && !window.phet.phetio.phetioElementsBaseline[ phetioID ].phetioDynamicElement
           ) {
-            this.addError( {
+            this.assertAPIError( {
               phetioID: phetioID,
               ruleInViolation: '5. When the sim is finished starting up, all non-dynamic schema entries must be registered.',
               message: 'phetioID expected but does not exist'
@@ -115,7 +115,7 @@ define( require => {
         }
 
         if ( !_.isEqual( phetioElementsBaseline, window.phet.phetio.phetioElementsBaseline ) ) {
-          this.addError( {
+          this.assertAPIError( {
             // Note: this breaks rule 2 which may in some cases be rule 3
             ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
             message: 'baseline schema does not match PhetioObject computed baseline metadata',
@@ -129,7 +129,7 @@ define( require => {
           const phetioTypesKeys = Object.keys( phetioTypes );
           const windowPhetioTypesKeys = Object.keys( window.phet.phetio.phetioTypes );
 
-          this.addError( {
+          this.assertAPIError( {
             ruleInViolation: '9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.',
             message: 'phetioTypes are not equivalent',
             areKeysEquivalent: _.isEqual( phetioTypesKeys.sort(), windowPhetioTypesKeys.sort() ),
@@ -137,8 +137,6 @@ define( require => {
             typesNotInFile: phetioTypesKeys.filter( x => !windowPhetioTypesKeys.includes( x ) )
           } );
         }
-
-        this.assertOutIfErrorsPresent();
       }
 
       this.simHasStarted = true;
@@ -162,7 +160,7 @@ define( require => {
            // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
            phetioID.indexOf( '~' ) === -1
       ) {
-        this.addError( {
+        this.assertAPIError( {
           phetioID: phetioID,
           ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.'
         } );
@@ -193,7 +191,14 @@ define( require => {
 
         const concretePhetioID = phetioObject.tandem.getConcretePhetioID();
         const baselineFromFile = window.phet.phetio.phetioElementsBaseline[ concretePhetioID ];
-        assert && assert( baselineFromFile, 'There should always be an entry in the baseline for each phetioID' );
+
+        if ( !baselineFromFile ) {
+          this.assertAPIError( {
+            phetioID: phetioObject.tandem.phetioID,
+            ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.',
+            message: 'element\'s concrete phetioID was not in the baseline file after being created after startup.'
+          } );
+        }
 
         // Here we need to kick this validation to the next frame to support construction in any order. Parent first, or
         // child first. Use namespace to avoid because timer is a PhetioObject.
@@ -203,7 +208,7 @@ define( require => {
           // counterparts. The only instances that it's OK to create after startup are "dynamic instances" which are
           // marked as such.
           if ( !( baselineFromFile.phetioIsArchetype && phetioObject.phetioDynamicElement ) ) {
-            this.addError( {
+            this.assertAPIError( {
               phetioID: phetioObject.tandem.phetioID,
               ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
             } );
@@ -222,7 +227,7 @@ define( require => {
 
       for ( const phetioID in window.phet.phetio.phetioElementsOverrides ) {
         if ( !window.phet.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) ) {
-          this.addError( {
+          this.assertAPIError( {
             phetioID: phetioID,
             ruleInViolation: '7. Any schema entries in the overrides file must exist in the baseline file.',
             message: 'phetioID expected in the baseline file but does not exist'
@@ -234,7 +239,7 @@ define( require => {
           const baseline = window.phet.phetio.phetioElementsBaseline[ phetioID ];
 
           if ( Object.keys( override ).length === 0 ) {
-            this.addError( {
+            this.assertAPIError( {
               phetioID: phetioID,
               ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
               message: 'no metadata keys found for this override.'
@@ -243,14 +248,14 @@ define( require => {
 
           for ( const metadataKey in override ) {
             if ( !baseline.hasOwnProperty( metadataKey ) ) {
-              this.addError( {
+              this.assertAPIError( {
                 phetioID: phetioID,
                 ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
                 message: `phetioID metadata key not found in the baseline: ${metadataKey}`
               } );
             }
             if ( override[ metadataKey ] === baseline[ metadataKey ] ) {
-              this.addError( {
+              this.assertAPIError( {
                 phetioID: phetioID,
                 ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
                 message: 'phetioID metadata override value is the same as the corresponding metadata value in the baseline.'
@@ -259,45 +264,20 @@ define( require => {
           }
         }
       }
-
-      this.assertOutIfErrorsPresent();
     }
 
     /**
-     * If there are errors, then assert out and log them.
-     * @private
-     */
-    assertOutIfErrorsPresent() {
-
-      // if there are any api mismatches
-      if ( assert && this.apiMismatches.length > 0 ) {
-        console.log( 'mismatches:', this.apiMismatches );
-        assert( false, 'api mismatches present:\n' + this.apiMismatches.map( mismatchData => {
-            if ( mismatchData.phetioID ) {
-              return `\n${mismatchData.phetioID}:  ${mismatchData.ruleInViolation}`;
-            }
-            else {
-              return `${mismatchData.ruleInViolation}`;
-            }
-          }
-        ) );
-      }
-    }
-
-    /**
-     * Add an api error to the list to be flushed on sim completion, or immediately if the sim has already started.
+     * Assert out the failed api validation rule.
      * @param {Object} apiErrorObject - see doc for this.apiMismatches
      * @private
      */
-    addError( apiErrorObject ) {
-      apiErrorObject.stack = new Error().stack;
+    assertAPIError( apiErrorObject ) {
 
-      this.apiMismatches.push( apiErrorObject );
+      const mismatchMessage = apiErrorObject.phetioID ? `${apiErrorObject.phetioID}:  ${apiErrorObject.ruleInViolation}` :
+                              `${apiErrorObject.ruleInViolation}`;
 
-      // if the sim has already started, then immediately error out
-      if ( this.simHasStarted ) {
-        this.assertOutIfErrorsPresent();
-      }
+      console.log( 'error data:', apiErrorObject );
+      assert && assert( false, 'PhET-iO API error:\n' + mismatchMessage );
     }
   }
 
