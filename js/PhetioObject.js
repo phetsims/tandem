@@ -86,7 +86,9 @@ define( require => {
     // When true, this is categorized as an important "featured" element in Studio.
     phetioFeatured: false,
 
-    // {Object|null} optional - delivered with each event, if specified. phetioPlayback is appended here, if true
+    // {Object|null} optional - delivered with each event, if specified. phetioPlayback is appended here, if true.
+    // Note unlike other options, this option can be mutated update the call chain, and should be created newly
+    // for each instance.
     phetioEventMetadata: null,
 
     // {boolean} optional - indicates that an object may or may not have been created. Applies recursively automatically
@@ -299,7 +301,7 @@ define( require => {
             const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
             if ( overrides ) {
 
-              // No need to make a new object, since this "options" variable was created in the previous extend call above.
+              // No need to make a new object, since this "options" variable was created in the previous merge call above.
               options = merge( options, overrides );
             }
           }
