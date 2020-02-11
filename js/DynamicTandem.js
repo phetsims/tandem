@@ -34,6 +34,7 @@ define( require => {
      * characters or underscores.
      * @returns {RegExp}
      * @protected
+     * @override
      */
     getTermRegex() {
       return /^[a-zA-Z0-9_]+$/;
