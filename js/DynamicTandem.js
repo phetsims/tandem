@@ -1,4 +1,4 @@
-// Copyright 2019, University of Colorado Boulder
+// Copyright 2019-2020, University of Colorado Boulder
 
 /**
  * A tandem for a dynamic element that stores the name of the archetype that defines its dynamic element's schema.
@@ -34,6 +34,7 @@ define( require => {
      * characters or underscores.
      * @returns {RegExp}
      * @protected
+     * @override
      */
     getTermRegex() {
       return /^[a-zA-Z0-9_]+$/;
