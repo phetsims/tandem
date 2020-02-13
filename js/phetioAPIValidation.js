@@ -93,9 +93,9 @@ define( require => {
       const phetioElementsBaseline = phetioEngine.getPhetioElementsBaseline();
       const phetioTypes = phetioEngine.getPhetioTypes();
 
-      // When the screens query parameter is specified, there will be many things in the baseline file but not in the sim.  Those will
-      // not be validated.
-      if ( phet.chipper.queryParameters.screens === null ) {
+      // When screen-related query parameters are specified, there will be many things in the baseline file but not
+      // in the sim. Those will not be validated.
+      if ( phet.chipper.queryParameters.screens === null && phet.chipper.queryParameters.homeScreen ) {
 
         // check to make sure all phet-io elements and type entries were used.  If an entry wasn't used, throw an
         // assertion error because the sim is missing something it is supposed to have.
