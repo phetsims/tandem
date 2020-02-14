@@ -23,9 +23,6 @@ define( require => {
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
   const validate = require( 'AXON/validate' );
 
-  // ifphetio
-  const dataStream = require( 'ifphetio!PHET_IO/dataStream' );
-
   // constants
   const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
   const IO_TYPE_VALIDATOR = { isValidValue: ObjectIO.isIOType };
@@ -393,7 +390,7 @@ define( require => {
              _.hasIn( window, 'phet.phetio.queryParameters' ) && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents &&
 
              // Even for a low frequency data stream, high frequency events can still be emitted when they have a low frequency ancestor.
-             !dataStream.isEmittingLowFrequencyEvent() ) {
+             !phet.phetIo.dataStream.isEmittingLowFrequencyEvent() ) {
           this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
           return;
         }
@@ -402,7 +399,7 @@ define( require => {
         const data = options.getData ? options.getData() : options.data;
 
         this.phetioMessageStack.push(
-          dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata, this.phetioHighFrequency )
+          phet.phetIo.dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata, this.phetioHighFrequency )
         );
       }
     },
@@ -421,7 +418,7 @@ define( require => {
         if ( topMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
           return;
         }
-        dataStream.end( topMessageIndex );
+        phet.phetIo.dataStream.end( topMessageIndex );
       }
     },
 

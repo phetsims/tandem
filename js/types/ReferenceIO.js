@@ -14,9 +14,6 @@ define( require => {
   const validate = require( 'AXON/validate' );
   const CouldNotYetDeserializeError = require( 'TANDEM/CouldNotYetDeserializeError' );
 
-  // ifphetio
-  const phetioEngine = require( 'ifphetio!PHET_IO/phetioEngine' );
-
   class ReferenceIO extends ObjectIO {
 
     /**
@@ -41,8 +38,8 @@ define( require => {
      */
     static fromStateObject( referencePhetioID ) {
       assert && assert( typeof referencePhetioID === 'string' );
-      if ( phetioEngine.hasPhetioObject( referencePhetioID ) ) {
-        const phetioObject = phetioEngine.getPhetioObject( referencePhetioID );
+      if ( phet.phetIo.phetioEngine.hasPhetioObject( referencePhetioID ) ) {
+        const phetioObject = phet.phetIo.phetioEngine.getPhetioObject( referencePhetioID );
         validate( phetioObject, this.validator );
         return phetioObject;
       }
