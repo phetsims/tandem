@@ -21,7 +21,8 @@ define( require => {
   // launch to make sure tandem registration fires listeners
   Tandem.launch();
 
-  const MockTypeIO = function( instance, phetioID ) {};
+  class MockTypeIO extends ObjectIO {}
+
   MockTypeIO.typeName = 'MockTypeIO';
   MockTypeIO.events = [ 'hello' ];
   MockTypeIO.documentation = 'mock type';
