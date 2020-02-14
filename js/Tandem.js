@@ -268,7 +268,7 @@ define( require => {
     /**
      * ONLY FOR TESTING!!!!
      * This was created to "undo" launch so that tests can better expose cases around calling Tandem.launch()
-     * @public
+     * @public (tests only)
      */
     static unlaunch() {
       launched = false;
