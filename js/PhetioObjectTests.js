@@ -115,4 +115,27 @@ define( require => {
     }
 
   } );
+
+  QUnit.test( 'archetype bugginess when Tandem is not launched yet', assert => {
+
+    // reset Tandem launch status to make sure that nothing goes through to phetioEngine in this test until launched again.
+    Tandem.unlaunch();
+
+    assert.ok( true, 'initial test' );
+
+    const object1Tandem = Tandem.ROOT.createTandem( 'object1' );
+    const phetioObject1 = new PhetioObject( { tandem: object1Tandem } );
+    assert.ok( !phetioObject1.phetioIsArchetype, 'should not be an archetype before marking' );
+    phetioObject1.markDynamicElementArchetype();
+    assert.ok( phetioObject1.phetioIsArchetype, 'should be an archetype after marking' );
+
+    const phetioObject1Child = new PhetioObject( { tandem: object1Tandem.createTandem( 'child' ) } );
+    assert.ok( !phetioObject1Child.phetioIsArchetype, 'cannot be an archetype until tandem is launched because nothing is in the map' );
+
+    // launch to make sure tandem registration fires listeners
+    Tandem.launch();
+
+    // TODO Failing! because Tandem.launch() doesn't recalculate phetioIsArchetype, see https://github.com/phetsims/tandem/issues/147
+    // assert.ok( phetioObject1Child.phetioIsArchetype, 'should be an archetype now that tandem is launched' );
+  } );
 } );

@@ -266,6 +266,16 @@ define( require => {
     }
 
     /**
+     * ONLY FOR TESTING!!!!
+     * This was created to "undo" launch so that tests can better expose cases around calling Tandem.launch()
+     * @public
+     */
+    static unlaunch() {
+      launched = false;
+      bufferedPhetioObjects.length = 0;
+    }
+
+    /**
      * Determine whether or not tandem validation failures should throw errors. If we are printing the missing tandems,
      * then no error should be thrown so that all problems are printed.
      * @returns {boolean} If tandems are being validated or not.
