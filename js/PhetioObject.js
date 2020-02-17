@@ -117,7 +117,7 @@ define( require => {
   function PhetioObject( options ) {
 
     // @public (read-only) {Tandem} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.tandem = null;
+    this.tandem = Tandem.OPTIONAL;
 
     // @public (read-only) {IOType} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioType = null;
