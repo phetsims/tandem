@@ -120,20 +120,45 @@ define( require => {
     this.tandem = DEFAULTS.tandem;
 
     // @public (read-only) {IOType} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.phetioType = null;
+    this.phetioType = DEFAULTS.phetioType;
 
     // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.phetioState = null;
+    this.phetioState = DEFAULTS.phetioState;
 
     // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.phetioReadOnly = null;
+    this.phetioReadOnly = DEFAULTS.phetioReadOnly;
 
     // @public (read-only) {string} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.phetioDocumentation = null;
+    this.phetioDocumentation = DEFAULTS.phetioDocumentation;
 
-    // @public (read-only) {ObjectIO} - assigned in initializePhetioObject - the instantiated IO type. The phetioWrapper
+    // @private {EventType} - see docs at DEFAULTS declaration
+    this.phetioEventType = DEFAULTS.phetioEventType;
+
+    // @private {boolean} - see docs at DEFAULTS declaration
+    this.phetioHighFrequency = DEFAULTS.phetioHighFrequency;
+
+    // @private {boolean} - see docs at DEFAULTS declaration
+    this.phetioPlayback = DEFAULTS.phetioPlayback;
+
+    // @private {boolean} - see docs at DEFAULTS declaration
+    this.phetioStudioControl = DEFAULTS.phetioStudioControl;
+
+    // @private {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to children
+    // the setPhetioDynamicElement() function must be used instead of setting this attribute directly
+    this.phetioDynamicElement = DEFAULTS.phetioDynamicElement;
+
+    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
+    this.phetioFeatured = DEFAULTS.phetioFeatured;
+
+    // @private {Object|null}
+    this.phetioEventMetadata = DEFAULTS.phetioEventMetadata;
+
+    // @public (read-only) {Object|null} - see docs at DEFAULTS declaration
+    this.phetioComponentOptions = DEFAULTS.phetioComponentOptions;
+
+    // @public (read-only) {ObjectIO|null} - assigned in initializePhetioObject - the instantiated IO type. The phetioWrapper
     // is the API layer between the wrapper and the phetioObject. It's used to call methods on this phetioObject from
-    // the wrapper frame.
+    // the wrapper frame. Will be null if this PhetioObject is never instrumented.
     this.phetioWrapper = null;
 
     // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
@@ -146,35 +171,10 @@ define( require => {
     // @public (read-only) {boolean} - has it been disposed?
     this.isDisposed = false;
 
-    // @private {EventType} - see docs at DEFAULTS declaration
-    this.phetioEventType = null;
-
-    // @private {boolean} - see docs at DEFAULTS declaration
-    this.phetioHighFrequency = null;
-
-    // @private {boolean} - see docs at DEFAULTS declaration
-    this.phetioPlayback = null;
-
-    // @private {boolean} - see docs at DEFAULTS declaration
-    this.phetioStudioControl = null;
-
-    // @private {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to children
-    // the setPhetioDynamicElement() function must be used instead of setting this attribute directly
-    this.phetioDynamicElement = null;
-
     // @public (read-only) {boolean} optional - indicates that an object is a archetype for a dynamic class. Settable by classes that create
     // dynamic elements when creating their archetype (like PhetioGroup), see PhetioObject.markDynamicElementArchetype().
     // if true, items will be excluded from phetioState. This applies recursively automatically.
     this.phetioIsArchetype = null;
-
-    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
-    this.phetioFeatured = false;
-
-    // @private {Object|null}
-    this.phetioEventMetadata = null;
-
-    // @public (read-only) {Object} - see docs at DEFAULTS declaration
-    this.phetioComponentOptions = null;
 
     // @public (phetioEngine) {Object|null} - only non null with phetio.queryParameters.phetioPrintPhetioFiles enabled
     this.phetioBaselineMetadata = null;
