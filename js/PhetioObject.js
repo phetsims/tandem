@@ -77,7 +77,10 @@ define( require => {
     // When true, Studio is allowed to create a control for this PhetioObject (if it knows how)
     phetioStudioControl: true,
 
-    // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS
+    // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS. Since supported
+    // components most often don't end in "Options", `merge` doesn't support defaults and overwriting as expected. As a
+    // result, types that want to specify default component options must use `PhetioObject.mergePhetioComponentOptions
+    // to make sure that component options are properly sent up to PhetioObject.
     phetioComponentOptions: null,
 
     // When true, this is categorized as an important "featured" element in Studio.
