@@ -93,7 +93,7 @@ define( require => {
      * @protected
      */
     getTermRegex() {
-      return /^[a-zA-Z0-9~[\]]+$/; // TODO: eliminate ~ once GroupTandem has been deleted, see https://github.com/phetsims/tandem/issues/87
+      return /^[a-zA-Z0-9~[\],]+$/; // TODO: eliminate ~ once GroupTandem has been deleted, see https://github.com/phetsims/tandem/issues/87
     }
 
     /**
