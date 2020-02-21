@@ -81,7 +81,7 @@ define( require => {
     // components most often don't end in "Options", `merge` doesn't support defaults and overwriting as expected. As a
     // result, types that want to specify default component options must use `PhetioObject.mergePhetioComponentOptions
     // to make sure that component options are properly sent up to PhetioObject.
-    phetioComponentOptions: null,
+    phetioComponentOptions: EMPTY_OBJECT,
 
     // When true, this is categorized as an important "featured" element in Studio.
     phetioFeatured: false,
@@ -317,7 +317,7 @@ define( require => {
       this.phetioHighFrequency = options.phetioHighFrequency;
       this.phetioPlayback = options.phetioPlayback;
       this.phetioStudioControl = options.phetioStudioControl;
-      this.phetioComponentOptions = options.phetioComponentOptions || EMPTY_OBJECT;
+      this.phetioComponentOptions = options.phetioComponentOptions;
       this.phetioFeatured = options.phetioFeatured;
       this.phetioEventMetadata = options.phetioEventMetadata;
 
