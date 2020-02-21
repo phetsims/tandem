@@ -156,7 +156,7 @@ define( require => {
     // @private {Object|null}
     this.phetioEventMetadata = DEFAULTS.phetioEventMetadata;
 
-    // @public (read-only) {Object|null} - see docs at DEFAULTS declaration
+    // @public (read-only) {Object} - see docs at DEFAULTS declaration
     this.phetioComponentOptions = DEFAULTS.phetioComponentOptions;
 
     // @public (read-only) {ObjectIO|null} - assigned in initializePhetioObject - the instantiated IO type. The phetioWrapper
