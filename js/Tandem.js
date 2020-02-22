@@ -408,6 +408,13 @@ define( require => {
   Tandem.PHET_IO_ENABLED = PHET_IO_ENABLED;
 
   /**
+   * If PhET-iO is validating its tandems in this runtime.
+   * @public
+   * @type {boolean}
+   */
+  Tandem.VALIDATE_TANDEMS = VALIDATE_TANDEMS;
+
+  /**
    * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
    * TODO: Replace GroupTandem usages with DynamicTandem, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
    */
