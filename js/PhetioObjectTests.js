@@ -13,9 +13,9 @@ define( require => {
   const PhetioObject = require( 'TANDEM/PhetioObject' );
   const Tandem = require( 'TANDEM/Tandem' );
 
-  // ifphetio
-  require( 'ifphetio!PHET_IO/phetioEngine' );
-
+  // ifphetio // ES6-MIGRATE-DELETE - loaded via dynamic import()
+  require( 'ifphetio!PHET_IO/phetioEngine' ); // ES6-MIGRATE-DELETE
+  // ES6-MIGRATE-DELETE
   QUnit.module( 'PhetioObject' );
 
   // launch to make sure tandem registration fires listeners
