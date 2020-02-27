@@ -6,36 +6,33 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+import tandemNamespace from '../tandemNamespace.js';
+import ObjectIO from './ObjectIO.js';
 
-  class VoidIO extends ObjectIO {
-    constructor( instance, phetioID ) {
-      assert && assert( false, 'should never be called' );
-      super( instance, phetioID );
-    }
-
-    static toStateObject() {
-      return undefined;
-    }
+class VoidIO extends ObjectIO {
+  constructor( instance, phetioID ) {
+    assert && assert( false, 'should never be called' );
+    super( instance, phetioID );
   }
 
-  VoidIO.documentation = 'Type for which there is no instance, usually to mark functions without a return value';
+  static toStateObject() {
+    return undefined;
+  }
+}
 
-  /**
-   * We sometimes use VoidIO as a workaround to indicate that an argument is passed in the simulation side, but
-   * that it shouldn't be leaked to the PhET-iO client.
-   *
-   * @override
-   * @public
-   */
-  VoidIO.validator = { isValidValue: () => true };
-  VoidIO.typeName = 'VoidIO';
-  ObjectIO.validateSubtype( VoidIO );
+VoidIO.documentation = 'Type for which there is no instance, usually to mark functions without a return value';
 
-  return tandemNamespace.register( 'VoidIO', VoidIO );
-} );
+/**
+ * We sometimes use VoidIO as a workaround to indicate that an argument is passed in the simulation side, but
+ * that it shouldn't be leaked to the PhET-iO client.
+ *
+ * @override
+ * @public
+ */
+VoidIO.validator = { isValidValue: () => true };
+VoidIO.typeName = 'VoidIO';
+ObjectIO.validateSubtype( VoidIO );
+
+tandemNamespace.register( 'VoidIO', VoidIO );
+export default VoidIO;

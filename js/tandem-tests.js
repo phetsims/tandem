@@ -5,20 +5,14 @@
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  require( 'TANDEM/PhetioObjectTests' );
+import './PhetioObjectTests.js';
 
-  // ES6-MIGRATE-ADD if ( phet.chipper.brand === 'phet-io' ) {
-  // ES6-MIGRATE-ADD  import( /* webpackMode: "eager" */ '../../phet-io/js/phetioEngine.js').then( module => {
-  // ES6-MIGRATE-ADD    QUnit.start();
-  // ES6-MIGRATE-ADD  } );
-  // ES6-MIGRATE-ADD }else{
-  // ES6-MIGRATE-ADD   QUnit.start();
-  // ES6-MIGRATE-ADD }
-  // ES6-MIGRATE-DELETE
-  // Since our tests are loaded asynchronously, we must direct QUnit to begin the tests // ES6-MIGRATE-DELETE
-  QUnit.start();// ES6-MIGRATE-DELETE
-} );
+if ( phet.chipper.brand === 'phet-io' ) {
+  import( /* webpackMode: "eager" */ '../../phet-io/js/phetioEngine.js').then( module => {
+    QUnit.start();
+  } );
+}
+else {
+  QUnit.start();
+}

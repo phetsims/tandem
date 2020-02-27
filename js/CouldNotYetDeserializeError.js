@@ -11,13 +11,10 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+import tandemNamespace from './tandemNamespace.js';
 
-  class CouldNotYetDeserializeError extends Error {}
+class CouldNotYetDeserializeError extends Error {}
 
-  return tandemNamespace.register( 'CouldNotYetDeserializeError', CouldNotYetDeserializeError );
-} );
+tandemNamespace.register( 'CouldNotYetDeserializeError', CouldNotYetDeserializeError );
+export default CouldNotYetDeserializeError;

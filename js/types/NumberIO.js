@@ -6,57 +6,54 @@
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
  */
-define( require => {
-  'use strict';
 
-  // modules
-  const ObjectIO = require( 'TANDEM/types/ObjectIO' );
-  const tandemNamespace = require( 'TANDEM/tandemNamespace' );
+import tandemNamespace from '../tandemNamespace.js';
+import ObjectIO from './ObjectIO.js';
 
-  class NumberIO extends ObjectIO {
-    constructor() {
-      assert && assert( false, 'should never be called' );
-      super();
-    }
-
-    /**
-     * Encodes a number to a state (which also happens to be a number).
-     * @param {Object} value
-     * @returns {Object}
-     * @override
-     */
-    static toStateObject( value ) {
-      assert && assert( typeof value === 'number', 'value should be number' );
-      if ( value === Number.POSITIVE_INFINITY ) {
-        return 'POSITIVE_INFINITY';
-      }
-      else if ( value === Number.NEGATIVE_INFINITY ) {
-        return 'NEGATIVE_INFINITY';
-      }
-      return value;
-    }
-
-    /**
-     * Decode a number from a state, which is already a number.
-     * @param {Object} stateObject
-     * @returns {Object}
-     * @override
-     */
-    static fromStateObject( stateObject ) {
-      if ( stateObject === 'POSITIVE_INFINITY' ) {
-        return Number.POSITIVE_INFINITY;
-      }
-      else if ( stateObject === 'NEGATIVE_INFINITY' ) {
-        return Number.NEGATIVE_INFINITY;
-      }
-      return stateObject;
-    }
+class NumberIO extends ObjectIO {
+  constructor() {
+    assert && assert( false, 'should never be called' );
+    super();
   }
 
-  NumberIO.documentation = 'Wrapper for the built-in JS number type (floating point, but also represents integers)';
-  NumberIO.validator = { valueType: 'number' };
-  NumberIO.typeName = 'NumberIO';
-  ObjectIO.validateSubtype( NumberIO );
+  /**
+   * Encodes a number to a state (which also happens to be a number).
+   * @param {Object} value
+   * @returns {Object}
+   * @override
+   */
+  static toStateObject( value ) {
+    assert && assert( typeof value === 'number', 'value should be number' );
+    if ( value === Number.POSITIVE_INFINITY ) {
+      return 'POSITIVE_INFINITY';
+    }
+    else if ( value === Number.NEGATIVE_INFINITY ) {
+      return 'NEGATIVE_INFINITY';
+    }
+    return value;
+  }
 
-  return tandemNamespace.register( 'NumberIO', NumberIO );
-} );
+  /**
+   * Decode a number from a state, which is already a number.
+   * @param {Object} stateObject
+   * @returns {Object}
+   * @override
+   */
+  static fromStateObject( stateObject ) {
+    if ( stateObject === 'POSITIVE_INFINITY' ) {
+      return Number.POSITIVE_INFINITY;
+    }
+    else if ( stateObject === 'NEGATIVE_INFINITY' ) {
+      return Number.NEGATIVE_INFINITY;
+    }
+    return stateObject;
+  }
+}
+
+NumberIO.documentation = 'Wrapper for the built-in JS number type (floating point, but also represents integers)';
+NumberIO.validator = { valueType: 'number' };
+NumberIO.typeName = 'NumberIO';
+ObjectIO.validateSubtype( NumberIO );
+
+tandemNamespace.register( 'NumberIO', NumberIO );
+export default NumberIO;
