@@ -1,4 +1,4 @@
-// Copyright 2019, University of Colorado Boulder
+// Copyright 2019-2020, University of Colorado Boulder
 
 /**
  * Error to be thrown if a failure occurs downstream of setting state because another state setting operation needs
