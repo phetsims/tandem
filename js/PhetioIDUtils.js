@@ -21,6 +21,8 @@
   const GROUP_SEPARATOR = '_';
   const GENERAL_COMPONENT_NAME = 'general';
   const GLOBAL_COMPONENT_NAME = 'global';
+  const MODEL_COMPONENT_NAME = 'model';
+  const VIEW_COMPONENT_NAME = 'view';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -193,6 +195,10 @@
      * @constant
      * @public
      */
-    GLOBAL_COMPONENT_NAME: GLOBAL_COMPONENT_NAME
+    GLOBAL_COMPONENT_NAME: GLOBAL_COMPONENT_NAME,
+
+    // TODO: Doc if these should be here, omit and refactor usages in Tandem.js if they should not be here, see https://github.com/phetsims/tandem/issues/108
+    MODEL_COMPONENT_NAME: MODEL_COMPONENT_NAME,
+    VIEW_COMPONENT_NAME: VIEW_COMPONENT_NAME
   };
 } )();
