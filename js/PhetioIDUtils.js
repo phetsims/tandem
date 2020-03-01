@@ -197,8 +197,22 @@
      */
     GLOBAL_COMPONENT_NAME: GLOBAL_COMPONENT_NAME,
 
-    // TODO: Doc if these should be here, omit and refactor usages in Tandem.js if they should not be here, see https://github.com/phetsims/tandem/issues/108
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    /**
+     * The component name for an id section that holds model specific elements.
+     * @type {String}
+     * @constant
+     * @public
+     */
     MODEL_COMPONENT_NAME: MODEL_COMPONENT_NAME,
+
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    /**
+     * The component name for an id section that holds view specific elements.
+     * @type {String}
+     * @constant
+     * @public
+     */
     VIEW_COMPONENT_NAME: VIEW_COMPONENT_NAME
   };
 } )();
