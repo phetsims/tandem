@@ -1,4 +1,4 @@
-// Copyright 2017-2019, University of Colorado Boulder
+// Copyright 2017-2020, University of Colorado Boulder
 
 /**
  * Utilities for creating and manipulating the unique identifiers assigned to instrumented PhET-iO instances, aka
