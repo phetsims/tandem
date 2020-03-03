@@ -13,7 +13,7 @@ import merge from '../../phet-core/js/merge.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // text
-const packageString = JSON.stringify( ( window.phet && phet.chipper ) ? phet.chipper.packageObject : { name: 'placeholder' } );
+const packageString = JSON.stringify( ( window.phet && phet.chipper && phet.chipper.packageObject ) ? phet.chipper.packageObject : { name: 'placeholder' } );
 
 // constants
 const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
