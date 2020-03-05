@@ -14,7 +14,10 @@
 
 import tandemNamespace from './tandemNamespace.js';
 
-class CouldNotYetDeserializeError extends Error {}
-
+class CouldNotYetDeserializeError extends Error {
+  constructor() {
+    super( 'CouldNotYetDeserializeError' );  // Do not change this message without consulting appropriate usages.
+  }
+}
 tandemNamespace.register( 'CouldNotYetDeserializeError', CouldNotYetDeserializeError );
 export default CouldNotYetDeserializeError;
