@@ -17,7 +17,11 @@ define( require => {
   // modules
   const tandemNamespace = require( 'TANDEM/tandemNamespace' );
 
-  class CouldNotYetDeserializeError extends Error {}
+  class CouldNotYetDeserializeError extends Error {
+    constructor() {
+      super( 'CouldNotYetDeserializeError' );  // Do not change this message without consulting appropriate usages.
+    }
+  }
 
   return tandemNamespace.register( 'CouldNotYetDeserializeError', CouldNotYetDeserializeError );
 } );
