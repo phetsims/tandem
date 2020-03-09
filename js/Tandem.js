@@ -9,6 +9,7 @@
  */
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
+import deprecationWarning from '../../phet-core/js/deprecationWarning.js';
 import merge from '../../phet-core/js/merge.js';
 import tandemNamespace from './tandemNamespace.js';
 
@@ -222,10 +223,13 @@ class Tandem {
    * have unique identifiers.
    * @param {string} name
    * @returns {GroupTandem}
-   * @deprecated - use Group instead
+   * @deprecated - use PhetioGroup instead
    * @public
    */
   createGroupTandem( name ) {
+
+    assert && deprecationWarning( 'Tandem.createGroupTandem is deprecated, please use PhetioGroup instead' );
+
     return new GroupTandem( this, name );
   }
 
@@ -293,6 +297,9 @@ class Tandem {
    * @public
    */
   static createFromPhetioID( phetioID ) {
+
+    assert && deprecationWarning( 'Tandem.createFromPhetioID is deprecated, please use tandem.createTandem() instead' );
+
     return phetioID.split( '.' ).reduce( ( tandem, nextComponent ) => {
 
       // first call case where tandem starts as the first string in the list
@@ -437,6 +444,8 @@ class GroupTandem extends Tandem {
    */
   constructor( parentTandem, name ) {
     super( parentTandem, name );
+
+    assert && deprecationWarning( 'GroupTandem is deprecated, please use PhetioGroup instead' );
 
     // @private for generating indices from a pool
     this.groupMemberIndex = 0;
