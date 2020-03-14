@@ -223,7 +223,7 @@ ObjectIO.typeName = 'ObjectIO';
 ObjectIO.validator = { valueType: Object };
 
 /**
- * Most of the time, a typeName should be unique even for parameteric types such that no two different IO types can
+ * Most of the time, a typeName should be unique even for parametric types such that no two different IO types can
  * have the same typename. For some cases this breaks, like when two different Enumerations have the same keys, but are
  * different instances. If defined, this field will act as the Map key when caching IO types to make sure that IOTypes
  * don't overwrite each other in the cache. See the cache in PropertyIO for details and implementation.
