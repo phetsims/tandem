@@ -27,6 +27,7 @@ function FunctionIO( returnType, functionParameterTypes ) {
   }
   assert && assert( returnType, 'return type was not truthy' );
 
+  // REVIEW https://github.com/phetsims/phet-core/issues/79 Why is this different than the typeName later in this file?
   const cacheKey = `${returnType.typeName}.${functionParameterTypes.map( type => type.typeName ).join( ',' )}`;
 
   if ( !cache.hasOwnProperty( cacheKey ) ) {
@@ -44,7 +45,7 @@ function FunctionIO( returnType, functionParameterTypes ) {
  */
 const create = ( returnType, functionParameterTypes ) => {
 
-  const parameterTypes = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
+  const parameterTypesString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
 
   class FunctionIOImpl extends ObjectIO {}
 
@@ -69,7 +70,7 @@ const create = ( returnType, functionParameterTypes ) => {
 
   // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
   FunctionIOImpl.wrapForPhetioCommandProcessor = true;
-  FunctionIOImpl.typeName = `FunctionIO(${parameterTypes})=>${returnType.typeName}`;
+  FunctionIOImpl.typeName = `FunctionIO(${parameterTypesString})=>${returnType.typeName}`;
   FunctionIOImpl.parameterTypes = functionParameterTypes.concat( [ returnType ] );
   ObjectIO.validateSubtype( FunctionIOImpl );
 
