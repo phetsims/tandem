@@ -61,7 +61,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * @param {function(PhetioObject)} listener - this has a single parameter: the dynamic element being created.
+   * @param {function(PhetioObject)} listener - this has a single parameter: the member that was created.
    * @public
    */
   addMemberCreatedListener( listener ) {
@@ -69,7 +69,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * @param {function(PhetioObject)} listener - this has a single parameter: the dynamic element being created.
+   * @param {function(PhetioObject)} listener - this has a single parameter: the member that was created.
    * @public
    */
   removeMemberCreatedListener( listener ) {
@@ -77,7 +77,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * @param {function(PhetioObject)} listener - this has a single parameter: the dynamic element being disposed
+   * @param {function(PhetioObject)} listener - this has a single parameter: the member that was disposed
    * @public
    */
   addMemberDisposedListener( listener ) {
@@ -85,7 +85,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * @param {function(PhetioObject)} listener - this has a single parameter: the dynamic element being disposed
+   * @param {function(PhetioObject)} listener - this has a single parameter: the member that was disposed
    * @public
    */
   removeMemberDisposedListener( listener ) {
@@ -120,7 +120,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   get length() { return this.array.length; }
 
   /**
-   * Returns an array with elements that pass the filter predicate.
+   * Returns an array with members that pass the filter predicate.
    * @param {function(PhetioObject)} predicate
    * @returns {Object[]}
    * @public
@@ -137,13 +137,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Runs the function on each member of the group.
-   * @param {function(PhetioObject)} action - a function with a single parameter: the current dynamic element
+   * @param {function(PhetioObject)} action - a function with a single parameter: the current member
    * @public
    */
   forEach( action ) { this.array.forEach( action ); }
 
   /**
-   * Returns an array with every element mapped to a new one.
+   * Returns an array with every member mapped to a new one.
    * @param {function(PhetioObject})} f
    * @returns {Object[]}
    * @public
