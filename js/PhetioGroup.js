@@ -192,7 +192,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * CreatPrimarily for internal use, clients should usually use createNextMember.
+   * Primarily for internal use, clients should usually use createNextMember.
    * @param {number} index - the number of the individual member
    * @param {Array.<*>} argsForCreateFunction
    * @returns {Object}
