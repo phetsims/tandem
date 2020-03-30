@@ -35,6 +35,7 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
 class PhetioAPIValidation {
@@ -58,7 +59,7 @@ class PhetioAPIValidation {
     this.simHasStarted = false;
 
     // @public (read-only) {boolean} - whether or not validation is enabled.
-    this.enabled = !!( assert && window.phet && window.phet.phetio &&
+    this.enabled = !!( assert && window.phet && Tandem.PHET_IO_ENABLED &&
                        window.phet.phetio.queryParameters.phetioValidateAPI &&
                        window.phet.phetio.phetioElementsOverrides &&
                        window.phet.phetio.phetioElementsBaseline &&
