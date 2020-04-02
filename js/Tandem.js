@@ -19,8 +19,8 @@ const packageString = JSON.stringify( ( window.phet && phet.chipper && phet.chip
 // constants
 const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
 const PHET_IO_ENABLED = _.hasIn( window, 'phet.phetio' );
-const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioPrintMissingTandems;
-const VALIDATE_TANDEMS = PHET_IO_ENABLED && phet.phetio.queryParameters.phetioValidateTandems;
+const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.phetio.preload.queryParameters.phetioPrintMissingTandems;
+const VALIDATE_TANDEMS = PHET_IO_ENABLED && phet.phetio.preload.queryParameters.phetioValidateTandems;
 
 // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
 const missingTandems = {

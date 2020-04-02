@@ -176,7 +176,7 @@ function PhetioObject( options ) {
   // if true, items will be excluded from phetioState. This applies recursively automatically.
   this.phetioIsArchetype = null;
 
-  // @public (phetioEngine) {Object|null} - only non null with phetio.queryParameters.phetioPrintPhetioFiles enabled
+  // @public (phetioEngine) {Object|null} - only non null with phetio.preload.queryParameters.phetioPrintPhetioFiles enabled
   this.phetioBaselineMetadata = null;
 
   // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
@@ -275,7 +275,7 @@ inherit( Object, PhetioObject, {
 
       // Store the full baseline if we are printing out those files or need it for validation. Do this before
       // applying overrides.
-      if ( phet.phetio.queryParameters.phetioPrintPhetioFiles || phetioAPIValidation.enabled ) {
+      if ( phet.phetio.preload.queryParameters.phetioPrintPhetioFiles || phetioAPIValidation.enabled ) {
 
         // not all metadata are passed through via options, so store baseline for these additional properties
         this.phetioBaselineMetadata = PhetioObject.getMetadata( merge( {
@@ -293,8 +293,8 @@ inherit( Object, PhetioObject, {
 
         // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
         // Patch in the desired values from overrides, if any.
-        if ( window.phet.phetio.phetioElementsOverrides ) {
-          const overrides = window.phet.phetio.phetioElementsOverrides[ concretePhetioID ];
+        if ( window.phet.phetio.preload.phetioElementsOverrides ) {
+          const overrides = window.phet.phetio.preload.phetioElementsOverrides[ concretePhetioID ];
           if ( overrides ) {
 
             // No need to make a new object, since this "options" variable was created in the previous merge call above.
@@ -387,7 +387,7 @@ inherit( Object, PhetioObject, {
       if ( this.phetioHighFrequency &&
 
            // Opt out of certain events if queryParameter override is provided
-           _.hasIn( window, 'phet.phetio.queryParameters' ) && !window.phet.phetio.queryParameters.phetioEmitHighFrequencyEvents &&
+           _.hasIn( window, 'phet.phetio.preload.queryParameters' ) && !window.phet.phetio.preload.queryParameters.phetioEmitHighFrequencyEvents &&
 
            // Even for a low frequency data stream, high frequency events can still be emitted when they have a low frequency ancestor.
            !phet.phetIo.dataStream.isEmittingLowFrequencyEvent() ) {
