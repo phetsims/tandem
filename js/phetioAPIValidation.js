@@ -60,11 +60,11 @@ class PhetioAPIValidation {
 
     // @public (read-only) {boolean} - whether or not validation is enabled.
     this.enabled = !!( assert && window.phet && Tandem.PHET_IO_ENABLED &&
-                       window.phet.phetio.preload.queryParameters.phetioValidateAPI &&
-                       window.phet.phetio.preload.phetioElementsOverrides &&
-                       window.phet.phetio.preload.phetioElementsBaseline &&
-                       window.phet.phetio.preload.phetioTypes &&
-                       !phet.phetio.preload.queryParameters.phetioPrintPhetioFiles );
+                       window.phet.preloads.phetio.queryParameters.phetioValidateAPI &&
+                       window.phet.preloads.phetio.phetioElementsOverrides &&
+                       window.phet.preloads.phetio.phetioElementsBaseline &&
+                       window.phet.preloads.phetio.phetioTypes &&
+                       !phet.preloads.phetio.queryParameters.phetioPrintPhetioFiles );
 
     // @private {Object.<typeName:string, function(new:ObjectIO)>} - this must be all phet-io types so that the
     // following would fail:  add a phetioType, then remove it, then add a different one under the same typeName.
@@ -98,11 +98,11 @@ class PhetioAPIValidation {
       // check to make sure all phet-io elements and type entries were used.  If an entry wasn't used, throw an
       // assertion error because the sim is missing something it is supposed to have.
       // Don't check for this when generating the API file from the code.
-      for ( const phetioID in window.phet.phetio.preload.phetioElementsBaseline ) {
+      for ( const phetioID in window.phet.preloads.phetio.phetioElementsBaseline ) {
         if (
-          window.phet.phetio.preload.phetioElementsBaseline.hasOwnProperty( phetioID ) &&
+          window.phet.preloads.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) &&
           !phetioEngine.phetioObjectMap[ phetioID ]
-          && !window.phet.phetio.preload.phetioElementsBaseline[ phetioID ].phetioDynamicElement
+          && !window.phet.preloads.phetio.phetioElementsBaseline[ phetioID ].phetioDynamicElement
         ) {
           this.assertAPIError( {
             phetioID: phetioID,
@@ -112,20 +112,20 @@ class PhetioAPIValidation {
         }
       }
 
-      if ( !_.isEqual( phetioElementsBaseline, window.phet.phetio.preload.phetioElementsBaseline ) ) {
+      if ( !_.isEqual( phetioElementsBaseline, window.phet.preloads.phetio.phetioElementsBaseline ) ) {
         this.assertAPIError( {
           // Note: this breaks rule 2 which may in some cases be rule 3
           ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
           message: 'baseline schema does not match PhetioObject computed baseline metadata',
           phetioElementsBaseline: phetioElementsBaseline,
           stringifiedBaseline: JSON.stringify( window.phet.preloads.phetCore.copyWithSortedKeys( phetioElementsBaseline ), null, 2 ),
-          phetioElementsBaselineFromFile: window.phet.phetio.preload.phetioElementsBaseline
+          phetioElementsBaselineFromFile: window.phet.preloads.phetio.phetioElementsBaseline
         } );
       }
 
-      if ( !_.isEqual( phetioTypes, window.phet.phetio.preload.phetioTypes ) ) {
+      if ( !_.isEqual( phetioTypes, window.phet.preloads.phetio.phetioTypes ) ) {
         const phetioTypesKeys = Object.keys( phetioTypes );
-        const windowPhetioTypesKeys = Object.keys( window.phet.phetio.preload.phetioTypes );
+        const windowPhetioTypesKeys = Object.keys( window.phet.preloads.phetio.phetioTypes );
 
         this.assertAPIError( {
           ruleInViolation: '9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.',
@@ -188,7 +188,7 @@ class PhetioAPIValidation {
          phetioObject.tandem.phetioID.indexOf( '~' ) === -1 ) {
 
       const concretePhetioID = phetioObject.tandem.getConcretePhetioID();
-      const baselineFromFile = window.phet.phetio.preload.phetioElementsBaseline[ concretePhetioID ];
+      const baselineFromFile = window.phet.preloads.phetio.phetioElementsBaseline[ concretePhetioID ];
 
       if ( !baselineFromFile ) {
         this.assertAPIError( {
@@ -223,8 +223,8 @@ class PhetioAPIValidation {
       return;
     }
 
-    for ( const phetioID in window.phet.phetio.preload.phetioElementsOverrides ) {
-      if ( !window.phet.phetio.preload.phetioElementsBaseline.hasOwnProperty( phetioID ) ) {
+    for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
+      if ( !window.phet.preloads.phetio.phetioElementsBaseline.hasOwnProperty( phetioID ) ) {
         this.assertAPIError( {
           phetioID: phetioID,
           ruleInViolation: '7. Any schema entries in the overrides file must exist in the baseline file.',
@@ -233,8 +233,8 @@ class PhetioAPIValidation {
       }
       else {
 
-        const override = window.phet.phetio.preload.phetioElementsOverrides[ phetioID ];
-        const baseline = window.phet.phetio.preload.phetioElementsBaseline[ phetioID ];
+        const override = window.phet.preloads.phetio.phetioElementsOverrides[ phetioID ];
+        const baseline = window.phet.preloads.phetio.phetioElementsBaseline[ phetioID ];
 
         if ( Object.keys( override ).length === 0 ) {
           this.assertAPIError( {
