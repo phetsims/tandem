@@ -19,7 +19,7 @@ import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
-// strings
+// constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 
 class PhetioCapsule extends PhetioDynamicElementContainer {
