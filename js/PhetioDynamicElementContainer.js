@@ -21,6 +21,9 @@ import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
+// constants
+const DEFAULT_CONTAINER_SUFFIX = 'Container';
+
 class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
@@ -46,8 +49,9 @@ class PhetioDynamicElementContainer extends PhetioObject {
       // and note that this is an atypical option.
       supportsDynamicState: true,
 
-      // {string} - The suffix for the container. Used for assertions to make sure that tandems are organized correctly.
-      containerSuffix: 'Container'
+      // {string} The container's tandem name must have this suffix, and the base tandem name for elements in
+      // the container will consist of the group's tandem name with this suffix stripped off.
+      containerSuffix: DEFAULT_CONTAINER_SUFFIX
     }, options );
 
     assert && assert( typeof createElement === 'function', 'createElement should be a function' );
@@ -70,7 +74,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
     // options that depend on other options
     options = merge( {
 
-      // {string} - the PhetioGroup tandem name without the "Container" suffix
+      // {string} - tandem name for elements in the container is the container's tandem name without containerSuffix
       phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - options.containerSuffix.length )
     }, options );
 

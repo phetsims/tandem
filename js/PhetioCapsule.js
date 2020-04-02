@@ -20,7 +20,7 @@ import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // strings
-const capsuleString = 'Capsule';
+const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 
 class PhetioCapsule extends PhetioDynamicElementContainer {
 
@@ -33,7 +33,10 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
 
     options = merge( {
       tandem: Tandem.REQUIRED,
-      containerSuffix: capsuleString
+
+      // {string} The capsule's tandem name must have this suffix, and the base tandem name for its wrapped instance
+      // will consist of the capsule's tandem name with this suffix stripped off.
+      containerSuffix: DEFAULT_CONTAINER_SUFFIX
     }, options );
 
     super( createInstance, defaultArguments, options );

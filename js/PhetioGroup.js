@@ -17,7 +17,7 @@ import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // strings
-const groupString = 'Group';
+const DEFAULT_CONTAINER_SUFFIX = 'Group';
 
 class PhetioGroup extends PhetioDynamicElementContainer {
 
@@ -30,7 +30,10 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     options = merge( {
       tandem: Tandem.REQUIRED,
-      containerSuffix: groupString
+
+      // {string} The group's tandem name must have this suffix, and the base tandem name for elements of
+      // the group will consist of the group's tandem name with this suffix stripped off.
+      containerSuffix: DEFAULT_CONTAINER_SUFFIX
     }, options );
 
     super( createMember, defaultArguments, options );
