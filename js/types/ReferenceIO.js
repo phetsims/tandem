@@ -67,8 +67,8 @@ const create = parameterType => {
      */
     static fromStateObject( referencePhetioID ) {
       assert && assert( typeof referencePhetioID === 'string', 'phetioID should be a string' );
-      if ( phet.phetIo.phetioEngine.hasPhetioObject( referencePhetioID ) ) {
-        const phetioObject = phet.phetIo.phetioEngine.getPhetioObject( referencePhetioID );
+      if ( phet.phetio.phetioEngine.hasPhetioObject( referencePhetioID ) ) {
+        const phetioObject = phet.phetio.phetioEngine.getPhetioObject( referencePhetioID );
 
         // use "this" so that if ReferenceIO is extended, the validator will still be from the subtype.
         validate( phetioObject, this.validator );

@@ -47,7 +47,7 @@ class DynamicTandem extends Tandem {
    */
   getConcretePhetioID() {
     assert && assert( this.parentTandem, 'Group members must be in a Group' );
-    return phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), DYNAMIC_ARCHETYPE_NAME );
+    return window.phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), DYNAMIC_ARCHETYPE_NAME );
   }
 }
 

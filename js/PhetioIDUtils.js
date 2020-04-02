@@ -114,7 +114,7 @@
      * @public
      */
     getGeneralID: function( Client, ...componentNames ) {
-      return phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, ...[ GENERAL_COMPONENT_NAME, ...componentNames ] );
+      return window.phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, ...[ GENERAL_COMPONENT_NAME, ...componentNames ] );
     },
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
@@ -156,9 +156,9 @@
      * @public
      */
     getGroupMemberIndex: function( componentName ) {
-      assert && assert( componentName.indexOf( phetio.PhetioIDUtils.GROUP_SEPARATOR ) >= 0,
+      assert && assert( componentName.indexOf( window.phetio.PhetioIDUtils.GROUP_SEPARATOR ) >= 0,
         'component name for phetioID should have group member syntax' );
-      return parseInt( componentName.split( phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
+      return parseInt( componentName.split( window.phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
     },
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.

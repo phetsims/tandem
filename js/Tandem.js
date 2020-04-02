@@ -62,7 +62,7 @@ class Tandem {
     this.name = name;
 
     // @public (read-only)
-    this.phetioID = this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name )
+    this.phetioID = this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name )
                                       : this.name;
 
     // options (even subtype options) must be stored so they can be passed through to children
@@ -209,7 +209,7 @@ class Tandem {
   getConcretePhetioID() {
 
     // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
-    return this.parentTandem ? phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), this.name ) : this.phetioID;
+    return this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), this.name ) : this.phetioID;
   }
 
   /**
@@ -329,7 +329,7 @@ Tandem.ROOT = new Tandem( null, _.camelCase( packageJSON.name ) );
  * @constant
  * @type {Tandem}
  */
-Tandem.GENERAL = Tandem.ROOT.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
+Tandem.GENERAL = Tandem.ROOT.createTandem( window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
 
 /**
  * Tandem for model simulation elements that are general to all sims.
@@ -338,7 +338,7 @@ Tandem.GENERAL = Tandem.ROOT.createTandem( phetio.PhetioIDUtils.GENERAL_COMPONEN
  * @constant
  * @type {Tandem}
  */
-Tandem.GENERAL_MODEL = Tandem.GENERAL.createTandem( phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
+Tandem.GENERAL_MODEL = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
 
 /**
  * Tandem for view simulation elements that are general to all sims.
@@ -347,7 +347,7 @@ Tandem.GENERAL_MODEL = Tandem.GENERAL.createTandem( phetio.PhetioIDUtils.MODEL_C
  * @constant
  * @type {Tandem}
  */
-Tandem.GENERAL_VIEW = Tandem.GENERAL.createTandem( phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
+Tandem.GENERAL_VIEW = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
 
 /**
  * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
@@ -359,7 +359,7 @@ Tandem.GENERAL_VIEW = Tandem.GENERAL.createTandem( phetio.PhetioIDUtils.VIEW_COM
  * @constant
  * @type {Tandem}
  */
-Tandem.GLOBAL = Tandem.ROOT.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
+Tandem.GLOBAL = Tandem.ROOT.createTandem( window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
 
 /**
  * Model simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
@@ -369,7 +369,7 @@ Tandem.GLOBAL = Tandem.ROOT.createTandem( phetio.PhetioIDUtils.GLOBAL_COMPONENT_
  * @constant
  * @type {Tandem}
  */
-Tandem.GLOBAL_MODEL = Tandem.GLOBAL.createTandem( phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
+Tandem.GLOBAL_MODEL = Tandem.GLOBAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
 
 /**
  * View simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
@@ -379,7 +379,7 @@ Tandem.GLOBAL_MODEL = Tandem.GLOBAL.createTandem( phetio.PhetioIDUtils.MODEL_COM
  * @constant
  * @type {Tandem}
  */
-Tandem.GLOBAL_VIEW = Tandem.GLOBAL.createTandem( phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
+Tandem.GLOBAL_VIEW = Tandem.GLOBAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
 
 /**
  * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not

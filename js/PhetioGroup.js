@@ -171,7 +171,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @public
    */
   createCorrespondingGroupMember( phetioObject, ...argsForCreateFunction ) {
-    const index = phetio.PhetioIDUtils.getGroupMemberIndex( phetioObject.tandem.name );
+    const index = window.phetio.PhetioIDUtils.getGroupMemberIndex( phetioObject.tandem.name );
 
     // If the specified index overlapped with the next available index, bump it up so there is no collision on the
     // next createNextMember
@@ -200,7 +200,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    */
   createIndexedMember( index, argsForCreateFunction ) {
 
-    const componentName = this.phetioDynamicElementName + phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
+    const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
     const groupMember = this.createDynamicElement( componentName, this.createMember,
       argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );

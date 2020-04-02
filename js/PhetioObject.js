@@ -176,7 +176,7 @@ function PhetioObject( options ) {
   // if true, items will be excluded from phetioState. This applies recursively automatically.
   this.phetioIsArchetype = null;
 
-  // @public (phetioEngine) {Object|null} - only non null with phetio.preload.queryParameters.phetioPrintPhetioFiles enabled
+  // @public (phetioEngine) {Object|null} - only non null with phet.preloads.phetio.queryParameters.phetioPrintPhetioFiles enabled
   this.phetioBaselineMetadata = null;
 
   // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
@@ -266,8 +266,8 @@ inherit( Object, PhetioObject, {
     // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
     // phetioEngine itself). This is okay though, as none of these should be marked as dynamic. Store this early
     // because it's a non-option metadata key.
-    this.phetioIsArchetype = !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
-                                 phet.phetIo.phetioEngine.ancestorMatches( options.tandem.phetioID, isDynamicElementArchetypePredicate ) );
+    this.phetioIsArchetype = !!( _.hasIn( window, 'phet.phetio.phetioEngine' ) &&
+                                 phet.phetio.phetioEngine.ancestorMatches( options.tandem.phetioID, isDynamicElementArchetypePredicate ) );
 
     // This block is associated with validating the baseline api and filling in metadata specified in the elements
     // overrides API file. Even when validation is not enabled, overrides should still be applied.
@@ -323,8 +323,8 @@ inherit( Object, PhetioObject, {
                                   // Support phet brand, and phetioEngine doesn't yet exist while registering
                                   // engine-related objects (including phetioEngine itself). This is okay though, as
                                   // none of these should be marked as dynamic.
-                                  !!( _.hasIn( window, 'phet.phetIo.phetioEngine' ) &&
-                                      phet.phetIo.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) ) );
+                                  !!( _.hasIn( window, 'phet.phetio.phetioEngine' ) &&
+                                      phet.phetio.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) ) );
 
     // Patch this in after we have determined if parents are dynamic elements as well.
     if ( this.phetioBaselineMetadata ) {
@@ -390,7 +390,7 @@ inherit( Object, PhetioObject, {
            _.hasIn( window, 'phet.preloads.phetio.queryParameters' ) && !window.phet.preloads.phetio.queryParameters.phetioEmitHighFrequencyEvents &&
 
            // Even for a low frequency data stream, high frequency events can still be emitted when they have a low frequency ancestor.
-           !phet.phetIo.dataStream.isEmittingLowFrequencyEvent() ) {
+           !phet.phetio.dataStream.isEmittingLowFrequencyEvent() ) {
         this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
         return;
       }
@@ -399,7 +399,7 @@ inherit( Object, PhetioObject, {
       const data = options.getData ? options.getData() : options.data;
 
       this.phetioMessageStack.push(
-        phet.phetIo.dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata, this.phetioHighFrequency )
+        phet.phetio.dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata, this.phetioHighFrequency )
       );
     }
   },
@@ -418,7 +418,7 @@ inherit( Object, PhetioObject, {
       if ( topMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
         return;
       }
-      phet.phetIo.dataStream.end( topMessageIndex );
+      phet.phetio.dataStream.end( topMessageIndex );
     }
   },
 
@@ -427,8 +427,8 @@ inherit( Object, PhetioObject, {
    * @private
    */
   propagateDynamicFlagsToChildren: function() {
-    assert && assert( _.hasIn( window, 'phet.phetIo.phetioEngine' ), 'phetioEngine should be defined' );
-    const children = phet.phetIo.phetioEngine.getChildren( this );
+    assert && assert( _.hasIn( window, 'phet.phetio.phetioEngine' ), 'phetioEngine should be defined' );
+    const children = phet.phetio.phetioEngine.getChildren( this );
 
     for ( let i = 0; i < children.length; i++ ) {
       const child = children[ i ];
