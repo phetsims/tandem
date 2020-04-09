@@ -54,7 +54,8 @@ class ObjectIO {
   /**
    * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
    * use ObjectIO type directly to use this implementation. The value returned by this function depends greatly on
-   * what type of serialization an IO Type supports. Please read thoroughly and understand https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#serialization
+   * what type of serialization an IO Type supports. Please read thoroughly and understand
+   * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#serialization
    * before implementing a `fromStateObject` function.
    * @param {*} o - whatever was returned from the toStateObject method
    * @returns {Object} - depends on if using reference-type or data-type serialization.
