@@ -92,8 +92,8 @@ const create = parameterType => {
    * Documentation that appears in PhET-iO Studio, supports HTML markup.
    * @public
    */
-  ReferenceIOImpl.documentation = 'Uses reference identity for toStateObject/fromStateObject and validates based on its parameter IO Type.';
-  ReferenceIOImpl.typeName = 'ReferenceIO';
+  ReferenceIOImpl.documentation = 'Uses reference identity for serializing and deserializing, and validates based on its parameter IO Type.';
+  ReferenceIOImpl.typeName = `ReferenceIO<${parameterType.typeName}>`;
   ObjectIO.validateSubtype( ReferenceIOImpl );
   return ReferenceIOImpl;
 };
