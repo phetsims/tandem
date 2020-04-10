@@ -10,8 +10,6 @@
 import tandemNamespace from '../tandemNamespace.js';
 import ObjectIO from './ObjectIO.js';
 
-const valueTypeObject = { valueType: 'boolean' };
-
 class BooleanIO extends ObjectIO {
   constructor() {
     assert && assert( false, 'should never be called' );
@@ -41,8 +39,8 @@ class BooleanIO extends ObjectIO {
   }
 }
 
-BooleanIO.validator = valueTypeObject;
-BooleanIO.documentation = 'Wrapper for the built-in JS boolean type (true/false)';
+BooleanIO.documentation = 'IO Type for Javascript\'s boolean primitive type';
+BooleanIO.validator = { valueType: 'boolean' };
 BooleanIO.typeName = 'BooleanIO';
 ObjectIO.validateSubtype( BooleanIO );
 

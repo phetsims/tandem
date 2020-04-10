@@ -50,7 +50,7 @@ class NumberIO extends ObjectIO {
   }
 }
 
-NumberIO.documentation = 'Wrapper for the built-in JS number type (floating point, but also represents integers)';
+NumberIO.documentation = 'IO Type for Javascript\'s number primitive type';
 NumberIO.validator = { valueType: 'number' };
 NumberIO.typeName = 'NumberIO';
 ObjectIO.validateSubtype( NumberIO );
