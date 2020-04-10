@@ -114,6 +114,7 @@ class ObjectIO {
    * @public
    */
   static validateSubtype( subtype ) {
+
     const typeName = subtype.typeName;
     assert && assert( typeName.indexOf( '.' ) === -1, 'Dots should not appear in type names' );
 
@@ -125,7 +126,12 @@ class ObjectIO {
     assert && assert( !subtype.prototype.setValue, 'setValue should be a static method, not prototype one.' );
     assert && assert( !subtype.prototype.stateToArgsForConstructor, 'stateToArgsForConstructor should be a static method, not prototype one.' );
 
-    // assert that each method is the correct type
+    // Prevent inheritance of methods, see https://github.com/phetsims/phet-io/issues/1623
+    if ( !subtype.hasOwnProperty( 'methods' ) ) {
+      subtype.methods = {};
+    }
+
+    // assert that each public method adheres to the expected schema
     for ( const method in subtype.methods ) {
       const methodObject = subtype.methods[ method ];
       if ( typeof methodObject === 'object' ) {
