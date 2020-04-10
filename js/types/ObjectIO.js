@@ -118,6 +118,12 @@ class ObjectIO {
     const typeName = subtype.typeName;
     assert && assert( typeName.indexOf( '.' ) === -1, 'Dots should not appear in type names' );
 
+    // Validate that parameteric types look as expected
+    if ( typeName.indexOf( '<' ) >= 0 ) {
+      assert && assert( Array.isArray( subtype.parameterTypes ), 'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
+      subtype.parameterTypes.forEach( parameterType => assert && assert( ObjectIO.isIOType( parameterType ), `parameter type should be an IO Type: ${parameterType}` ) );
+    }
+
     const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
     assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'type name must end with IO' );
 
