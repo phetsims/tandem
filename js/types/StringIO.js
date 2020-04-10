@@ -38,7 +38,7 @@ class StringIO extends ObjectIO {
   }
 }
 
-StringIO.documentation = 'Wrapper for the built-in JS string type';
+StringIO.documentation = 'IO Type for Javascript\'s string primitive type';
 StringIO.validator = { valueType: 'string' };
 StringIO.typeName = 'StringIO';
 ObjectIO.validateSubtype( StringIO );
