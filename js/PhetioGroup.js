@@ -147,7 +147,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Returns an array with every member mapped to a new one.
-   * @param {function(PhetioObject})} f
+   * @param {function(PhetioObject)} f
    * @returns {Object[]}
    * @public
    */
