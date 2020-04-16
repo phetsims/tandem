@@ -27,7 +27,7 @@ function FunctionIO( returnType, functionParameterTypes ) {
   }
   assert && assert( returnType, 'return type was not truthy' );
 
-  // REVIEW https://github.com/phetsims/phet-core/issues/79 Why is this different than the typeName later in this file?
+  // REVIEW https://github.com/phetsims/tandem/issues/169 Why is this different than the typeName later in this file?
   const cacheKey = `${returnType.typeName}.${functionParameterTypes.map( type => type.typeName ).join( ',' )}`;
 
   if ( !cache.hasOwnProperty( cacheKey ) ) {
