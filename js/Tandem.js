@@ -325,12 +325,15 @@ class RootTandem extends Tandem {
    * @returns {Tandem}
    */
   createTandem( name, options ) {
-    const allowedOnRoot = name === window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME ||
-                          name === REQUIRED_TANDEM_NAME ||
-                          name === OPTIONAL_TANDEM_NAME ||
-                          name === window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME ||
-                          _.endsWith( name, 'Screen' );
-    assert && assert( allowedOnRoot, `tandem name not allowed on root: "${name}"; perhaps try putting it under general or global` );
+    if ( VALIDATE_TANDEMS ) {
+      const allowedOnRoot = name === window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME ||
+                            name === REQUIRED_TANDEM_NAME ||
+                            name === OPTIONAL_TANDEM_NAME ||
+                            name === window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME ||
+                            _.endsWith( name, 'Screen' );
+      assert && assert( allowedOnRoot, `tandem name not allowed on root: "${name}"; perhaps try putting it under general or global` );
+    }
+
     return super.createTandem( name, options );
   }
 }
