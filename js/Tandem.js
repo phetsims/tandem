@@ -22,6 +22,10 @@ const PHET_IO_ENABLED = _.hasIn( window, 'phet.preloads.phetio' );
 const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintMissingTandems;
 const VALIDATE_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioValidateTandems;
 
+const REQUIRED_TANDEM_NAME = 'requiredTandem';
+const OPTIONAL_TANDEM_NAME = 'optionalTandem';
+
+
 // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
 const missingTandems = {
   required: [],
@@ -311,6 +315,26 @@ class Tandem {
   }
 }
 
+class RootTandem extends Tandem {
+
+  /**
+   * RootTandems only accept specifically named children.
+   * @override
+   * @param {string} name
+   * @param {Object} [options]
+   * @returns {Tandem}
+   */
+  createTandem( name, options ) {
+    const allowedOnRoot = name === window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME ||
+                          name === REQUIRED_TANDEM_NAME ||
+                          name === OPTIONAL_TANDEM_NAME ||
+                          name === window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME ||
+                          _.endsWith( name, 'Screen' );
+    assert && assert( allowedOnRoot, `tandem name not allowed on root: "${name}"; perhaps try putting it under general or global` );
+    return super.createTandem( name, options );
+  }
+}
+
 // The next few statics are created outside the static block because they instantiate Tandem instances.
 
 /**
@@ -319,7 +343,7 @@ class Tandem {
  * @constant
  * @type {Tandem}
  */
-Tandem.ROOT = new Tandem( null, _.camelCase( packageJSON.name ) );
+Tandem.ROOT = new RootTandem( null, _.camelCase( packageJSON.name ) );
 
 /**
  * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
@@ -388,7 +412,7 @@ Tandem.GLOBAL_VIEW = Tandem.GLOBAL.createTandem( window.phetio.PhetioIDUtils.VIE
  * @constant
  * @type {Tandem}
  */
-Tandem.OPTIONAL = Tandem.ROOT.createTandem( 'optionalTandem', {
+Tandem.OPTIONAL = Tandem.ROOT.createTandem( OPTIONAL_TANDEM_NAME, {
   required: false,
   supplied: false
 } );
@@ -408,7 +432,7 @@ Tandem.OPT_OUT = Tandem.OPTIONAL;
  * @constant
  * @type {Tandem}
  */
-Tandem.REQUIRED = Tandem.ROOT.createTandem( 'requiredTandem', {
+Tandem.REQUIRED = Tandem.ROOT.createTandem( REQUIRED_TANDEM_NAME, {
 
   // let phetioPrintMissingTandems bypass this
   required: VALIDATE_TANDEMS || PRINT_MISSING_TANDEMS,
