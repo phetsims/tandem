@@ -278,7 +278,7 @@ inherit( Object, PhetioObject, {
       if ( phet.preloads.phetio.queryParameters.phetioPrintPhetioFiles || phetioAPIValidation.enabled ) {
 
         // not all metadata are passed through via options, so store baseline for these additional properties
-        this.phetioBaselineMetadata = PhetioObject.getMetadata( merge( {
+        this.phetioBaselineMetadata = this.getMetadata( merge( {
           phetioIsArchetype: this.phetioIsArchetype
         }, options ) );
       }
@@ -563,6 +563,36 @@ inherit( Object, PhetioObject, {
     this.linkedElements.length = 0;
 
     this.isDisposed = true;
+  },
+
+  /**
+   * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
+   * for baseline (before object fully constructed we use object) and after fully constructed
+   * which includes overrides.
+   * @param {Object} [object] - used to get metadata keys, can be a PhetioObject, or an options object
+   *                          (see usage initializePhetioObject). If not provided, will instead use the value of "this"
+   * @returns {Object} - metadata plucked from the passed in parameter
+   * @public
+   */
+  getMetadata: function( object ) {
+    object = object || this;
+    const metadata = {
+      phetioTypeName: object.phetioType.typeName,
+      phetioDocumentation: object.phetioDocumentation,
+      phetioState: object.phetioState,
+      phetioReadOnly: object.phetioReadOnly,
+      phetioEventType: EventType.phetioType.toStateObject( object.phetioEventType ),
+      phetioHighFrequency: object.phetioHighFrequency,
+      phetioPlayback: object.phetioPlayback,
+      phetioStudioControl: object.phetioStudioControl,
+      phetioDynamicElement: object.phetioDynamicElement,
+      phetioIsArchetype: object.phetioIsArchetype,
+      phetioFeatured: object.phetioFeatured
+    };
+    if ( object.phetioArchetypePhetioID ) {
+      metadata.phetioArchetypePhetioID = object.phetioArchetypePhetioID;
+    }
+    return metadata;
   }
 }, {
 
@@ -582,35 +612,6 @@ inherit( Object, PhetioObject, {
 
     // This uses lodash merge instead of PHET_CORE/merge because it merges recursively on all keys, not just *Options keys
     options.phetioComponentOptions = _.merge( defaults, options.phetioComponentOptions );
-  },
-
-  /**
-   * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
-   * for baseline (before object fully constructed we use object) and after fully constructed
-   * which includes overrides.
-   * @param {Object} object - used to get metadata keys, can be a PhetioObject, or an options object
-   *                          (see usage initializePhetioObject)
-   * @returns {Object} - metadata plucked from the passed in parameter
-   * @public
-   */
-  getMetadata: function( object ) {
-    const metadata = {
-      phetioTypeName: object.phetioType.typeName,
-      phetioDocumentation: object.phetioDocumentation,
-      phetioState: object.phetioState,
-      phetioReadOnly: object.phetioReadOnly,
-      phetioEventType: EventType.phetioType.toStateObject( object.phetioEventType ),
-      phetioHighFrequency: object.phetioHighFrequency,
-      phetioPlayback: object.phetioPlayback,
-      phetioStudioControl: object.phetioStudioControl,
-      phetioDynamicElement: object.phetioDynamicElement,
-      phetioIsArchetype: object.phetioIsArchetype,
-      phetioFeatured: object.phetioFeatured
-    };
-    if ( object.phetioArchetypePhetioID ) {
-      metadata.phetioArchetypePhetioID = object.phetioArchetypePhetioID;
-    }
-    return metadata;
   },
 
   DEFAULT_OPTIONS: DEFAULTS // the default options for the phet-io object
@@ -648,6 +649,20 @@ class LinkedElement extends PhetioObject {
 
     // @public (read-only)
     this.element = coreElement;
+  }
+
+  /**
+   * LinkedElements listen to their core elements for phetioFeatured, so to avoid a dependency on overrides metadata
+   * (when the core element's phetioFeatured is specified in the overrides file), ignore phetioFeatured for LinkedElements.
+   * @override
+   * @param {Object} object - used to get metadata keys, can be a PhetioObject, or an options object
+   *                          (see usage initializePhetioObject)
+   * @returns {Object} - metadata plucked from the passed in parameter
+   */
+  getMetadata( object ) {
+    const phetioObjectMetadata = super.getMetadata( object );
+    delete phetioObjectMetadata.phetioFeatured;
+    return phetioObjectMetadata;
   }
 }
 
