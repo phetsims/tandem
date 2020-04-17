@@ -44,16 +44,16 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     // @public (read-only)
     this.array = [];
 
-    // @private
-    this.memberCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
-    this.memberDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+    // @public (read-only)
+    this.elementCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+    this.elementDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
     // @public (only for PhetioGroupIO) - for generating indices from a pool
     this.groupMemberIndex = 0;
 
     // Emit to the data stream on member creation/disposal
-    this.addMemberCreatedListener( member => this.createdEventListener( member ) );
-    this.addMemberDisposedListener( member => this.disposedEventListener( member ) );
+    this.elementCreatedEmitter.addListener( member => this.createdEventListener( member ) );
+    this.elementDisposedEmitter.addListener( member => this.disposedEventListener( member ) );
   }
 
   /**
@@ -64,45 +64,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * @param {function(PhetioObject)} listener - this has a single parameter: the member that was created.
-   * @public
-   */
-  addMemberCreatedListener( listener ) {
-    this.memberCreatedEmitter.addListener( listener );
-  }
-
-  /**
-   * @param {function(PhetioObject)} listener - this has a single parameter: the member that was created.
-   * @public
-   */
-  removeMemberCreatedListener( listener ) {
-    this.memberCreatedEmitter.removeListener( listener );
-  }
-
-  /**
-   * @param {function(PhetioObject)} listener - this has a single parameter: the member that was disposed
-   * @public
-   */
-  addMemberDisposedListener( listener ) {
-    this.memberDisposedEmitter.addListener( listener );
-  }
-
-  /**
-   * @param {function(PhetioObject)} listener - this has a single parameter: the member that was disposed
-   * @public
-   */
-  removeMemberDisposedListener( listener ) {
-    this.memberDisposedEmitter.removeListener( listener );
-  }
-
-  /**
    * Remove an member from this Group, unregistering it from PhET-iO and disposing it.
    * @param member
    * @public
    */
   disposeMember( member ) {
     arrayRemove( this.array, member );
-    this.memberDisposedEmitter.emit( member );
+    this.elementDisposedEmitter.emit( member );
     member.dispose();
   }
 
@@ -209,7 +177,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
       argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
 
     this.array.push( groupMember );
-    this.memberCreatedEmitter.emit( groupMember );
+    this.elementCreatedEmitter.emit( groupMember );
 
     return groupMember;
   }
