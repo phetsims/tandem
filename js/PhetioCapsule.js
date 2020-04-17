@@ -25,11 +25,11 @@ const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 class PhetioCapsule extends PhetioDynamicElementContainer {
 
   /**
-   * @param {function(tandem, ...):PhetioObject} createInstance - function that creates the encapsulated instance
-   * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments - arguments passed to createInstance during API baseline generation
+   * @param {function(tandem, ...):PhetioObject} createElement - function that creates the encapsulated instance
+   * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments - arguments passed to createElement during API baseline generation
    * @param {Object} [options]
    */
-  constructor( createInstance, defaultArguments, options ) {
+  constructor( createElement, defaultArguments, options ) {
 
     options = merge( {
       tandem: Tandem.REQUIRED,
@@ -39,10 +39,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
       containerSuffix: DEFAULT_CONTAINER_SUFFIX
     }, options );
 
-    super( createInstance, defaultArguments, options );
-
-    // @private
-    this.createInstance = createInstance;
+    super( createElement, defaultArguments, options );
 
     // @private
     this.instanceCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
@@ -123,7 +120,6 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
     // create with default state and substructure, details will need to be set by setter methods.
     this.instance = this.createDynamicElement(
       this.phetioDynamicElementName,
-      this.createInstance,
       argsForCreateFunction,
       this.phetioType.parameterTypes[ 0 ]
     );

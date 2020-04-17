@@ -1,7 +1,7 @@
 // Copyright 2019-2020, University of Colorado Boulder
 
 /**
- * Provides a placeholder in the static API for where dynamic members may be created.  Checks that members of the group
+ * Provides a placeholder in the static API for where dynamic elements may be created.  Checks that elements of the group
  * match the approved schema.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -22,11 +22,11 @@ const DEFAULT_CONTAINER_SUFFIX = 'Group';
 class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
-   * @param {function} createMember - function that creates a group member
+   * @param {function} createElement - function that creates a dynamic element for the group.
    * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
    * @param {Object} [options] - describe the Group itself
    */
-  constructor( createMember, defaultArguments, options ) {
+  constructor( createElement, defaultArguments, options ) {
 
     options = merge( {
       tandem: Tandem.REQUIRED,
@@ -36,10 +36,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
       containerSuffix: DEFAULT_CONTAINER_SUFFIX
     }, options );
 
-    super( createMember, defaultArguments, options );
-
-    // @private
-    this.createMember = createMember;
+    super( createElement, defaultArguments, options );
 
     // @public (read-only)
     this.array = [];
@@ -50,11 +47,11 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     this.elementDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
     // @public (only for PhetioGroupIO) - for generating indices from a pool
-    this.groupMemberIndex = 0;
+    this.groupElementIndex = 0;
 
-    // Emit to the data stream on member creation/disposal
-    this.elementCreatedEmitter.addListener( member => this.createdEventListener( member ) );
-    this.elementDisposedEmitter.addListener( member => this.disposedEventListener( member ) );
+    // Emit to the data stream on element creation/disposal
+    this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
+    this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
   }
 
   /**
@@ -65,18 +62,18 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * Remove an member from this Group, unregistering it from PhET-iO and disposing it.
-   * @param member
+   * Remove an element from this Group, unregistering it from PhET-iO and disposing it.
+   * @param element
    * @public
    */
-  disposeMember( member ) {
-    arrayRemove( this.array, member );
-    this.elementDisposedEmitter.emit( member );
-    member.dispose();
+  disposeMember( element ) {
+    arrayRemove( this.array, element );
+    this.elementDisposedEmitter.emit( element );
+    element.dispose();
   }
 
   /**
-   * Returns the member at the specified index
+   * Returns the element at the specified index
    * @param {number} index
    * @returns {Object}
    */
@@ -85,14 +82,14 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * Get number of Group members
+   * Get number of Group elements
    * @returns {number}
    * @public
    */
   get length() { return this.array.length; }
 
   /**
-   * Returns an array with members that pass the filter predicate.
+   * Returns an array with elements that pass the filter predicate.
    * @param {function(PhetioObject)} predicate
    * @returns {Object[]}
    * @public
@@ -101,21 +98,21 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Returns true if the group contains the specified object.
-   * @param {Object} member
+   * @param {Object} element
    * @returns {boolean}
    * @public
    */
-  contains( member ) { return this.array.indexOf( member ) >= 0; }
+  contains( element ) { return this.array.indexOf( element ) >= 0; }
 
   /**
-   * Runs the function on each member of the group.
-   * @param {function(PhetioObject)} action - a function with a single parameter: the current member
+   * Runs the function on each element of the group.
+   * @param {function(PhetioObject)} action - a function with a single parameter: the current element
    * @public
    */
   forEach( action ) { this.array.forEach( action ); }
 
   /**
-   * Returns an array with every member mapped to a new one.
+   * Returns an array with every element mapped to a new one.
    * @param {function(PhetioObject)} f
    * @returns {Object[]}
    * @public
@@ -123,7 +120,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   map( f ) { return this.array.map( f ); }
 
   /**
-   * remove and dispose all registered group members
+   * remove and dispose all registered group elements
    * @public
    */
   clear() {
@@ -131,7 +128,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
       this.disposeMember( this.array[ this.array.length - 1 ] );
     }
 
-    this.groupMemberIndex = 0;
+    this.groupElementIndex = 0;
   }
 
   /**
@@ -147,40 +144,40 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     // If the specified index overlapped with the next available index, bump it up so there is no collision on the
     // next createNextMember
-    if ( this.groupMemberIndex === index ) {
-      this.groupMemberIndex++;
+    if ( this.groupElementIndex === index ) {
+      this.groupElementIndex++;
     }
-    return this.createIndexedMember( index, argsForCreateFunction );
+    return this.createIndexedElement( index, argsForCreateFunction );
   }
 
   /**
-   * Creates the next group member.
+   * Creates the next group element.
    * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateToArgsForConstructor` method
    * @returns {PhetioObject}
    * @public
    */
   createNextMember( ...argsForCreateFunction ) {
-    return this.createIndexedMember( this.groupMemberIndex++, argsForCreateFunction );
+    return this.createIndexedElement( this.groupElementIndex++, argsForCreateFunction );
   }
 
   /**
    * Primarily for internal use, clients should usually use createNextMember.
-   * @param {number} index - the number of the individual member
+   * @param {number} index - the number of the individual element
    * @param {Array.<*>} argsForCreateFunction
    * @returns {Object}
    * @public (PhetioGroupIO)
    */
-  createIndexedMember( index, argsForCreateFunction ) {
+  createIndexedElement( index, argsForCreateFunction ) {
 
     const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
-    const groupMember = this.createDynamicElement( componentName, this.createMember,
+    const groupElement = this.createDynamicElement( componentName,
       argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
 
-    this.array.push( groupMember );
-    this.elementCreatedEmitter.emit( groupMember );
+    this.array.push( groupElement );
+    this.elementCreatedEmitter.emit( groupElement );
 
-    return groupMember;
+    return groupElement;
   }
 }
 

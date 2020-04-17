@@ -86,7 +86,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
     // @protected {string}
     this.phetioDynamicElementName = options.phetioDynamicElementName;
 
-    // @private
+    // @protected
     this.createElement = createElement;
     this.defaultArguments = defaultArguments;
 
@@ -138,18 +138,17 @@ class PhetioDynamicElementContainer extends PhetioObject {
   /**
    * Create a dynamic PhetioObject element for this container
    * @param {string} componentName
-   * @param {function(Tandem[, ...*]):PhetioObject} createFunction
    * @param {Array.<*>} argsForCreateFunction
    * @param {function(new:ObjectIO)} containerParameterType
    * @returns {PhetioObject}
    * @public
    */
-  createDynamicElement( componentName, createFunction, argsForCreateFunction, containerParameterType ) {
+  createDynamicElement( componentName, argsForCreateFunction, containerParameterType ) {
     assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
     // create with default state and substructure, details will need to be set by setter methods.
     const createdObjectTandem = new DynamicTandem( this.tandem, componentName, this.tandem.getExtendedOptions() );
-    const createdObject = createFunction( createdObjectTandem, ...argsForCreateFunction );
+    const createdObject = this.createElement( createdObjectTandem, ...argsForCreateFunction );
 
     // Make sure the new group member matches the schema for members.
     validate( createdObject, containerParameterType.validator );
