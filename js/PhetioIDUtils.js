@@ -151,13 +151,13 @@
      * @param {string} componentName
      * @returns {number}
      * @example
-     * getGroupMemberIndex( 'particle_1' )
+     * getGroupElementIndex( 'particle_1' )
      * --> 1
      * @public
      */
-    getGroupMemberIndex: function( componentName ) {
+    getGroupElementIndex: function( componentName ) {
       assert && assert( componentName.indexOf( window.phetio.PhetioIDUtils.GROUP_SEPARATOR ) >= 0,
-        'component name for phetioID should have group member syntax' );
+        'component name for phetioID should have group element syntax' );
       return parseInt( componentName.split( window.phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
     },
 
@@ -172,7 +172,7 @@
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
-     * The separator used to specify the count of a member in a group.
+     * The separator used to specify the count of a element in a group.
      * @type {String}
      * @constant
      * @public

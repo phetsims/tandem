@@ -35,15 +35,15 @@ class PhetioDynamicElementContainer extends PhetioObject {
   constructor( createElement, defaultArguments, options ) {
 
     options = merge( {
-      phetioState: false, // members are included in state, but the container will exist in the downstream sim.
+      phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
       tandem: Tandem.REQUIRED,
 
       // By default, a PhetioDynamicElementContainer's elements are included in state such that on every setState call,
-      // the members are cleared out by the phetioStateEngine so members in the state can be added to the empty group.
+      // the elements are cleared out by the phetioStateEngine so elements in the state can be added to the empty group.
       // This option is for opting out of that behavior. When false, this container will not have its elements cleared
-      // when beginning to set PhET-iO state. NOTE: Only use when it's guaranteed that all of the members are
+      // when beginning to set PhET-iO state. NOTE: Only use when it's guaranteed that all of the elements are
       // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
-      // is no need for members to support dynamic state. This may seem like a confusing option because you may be
+      // is no need for elements to support dynamic state. This may seem like a confusing option because you may be
       // thinking, "shouldn't all instances of PhetioDynamicElementContainer contain dynamic elements that are added
       // and removed throughout the lifetime of the sim?!?!" Please note the documentation above about the term "dynamic"
       // and note that this is an atypical option.
@@ -150,7 +150,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
     const createdObjectTandem = new DynamicTandem( this.tandem, componentName, this.tandem.getExtendedOptions() );
     const createdObject = this.createElement( createdObjectTandem, ...argsForCreateFunction );
 
-    // Make sure the new group member matches the schema for members.
+    // Make sure the new group element matches the schema for elements.
     validate( createdObject, containerParameterType.validator );
 
     assert && assert( createdObject.phetioType === containerParameterType,
@@ -162,7 +162,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
   }
 
   /**
-   * A dynamic member should be an instrumented PhetioObject with phetioDynamicElement: true
+   * A dynamic element should be an instrumented PhetioObject with phetioDynamicElement: true
    * @param {PhetioObject} phetioObject - object to be validated
    * @private
    */

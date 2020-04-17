@@ -66,7 +66,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @param element
    * @public
    */
-  disposeMember( element ) {
+  disposeElement( element ) {
     arrayRemove( this.array, element );
     this.elementDisposedEmitter.emit( element );
     element.dispose();
@@ -125,7 +125,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    */
   clear() {
     while ( this.array.length > 0 ) {
-      this.disposeMember( this.array[ this.array.length - 1 ] );
+      this.disposeElement( this.array[ this.array.length - 1 ] );
     }
 
     this.groupElementIndex = 0;
@@ -139,11 +139,11 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @returns {PhetioObject}
    * @public
    */
-  createCorrespondingGroupMember( phetioObject, ...argsForCreateFunction ) {
-    const index = window.phetio.PhetioIDUtils.getGroupMemberIndex( phetioObject.tandem.name );
+  createCorrespondingGroupElement( phetioObject, ...argsForCreateFunction ) {
+    const index = window.phetio.PhetioIDUtils.getGroupElementIndex( phetioObject.tandem.name );
 
     // If the specified index overlapped with the next available index, bump it up so there is no collision on the
-    // next createNextMember
+    // next createNextElement
     if ( this.groupElementIndex === index ) {
       this.groupElementIndex++;
     }
@@ -156,12 +156,12 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @returns {PhetioObject}
    * @public
    */
-  createNextMember( ...argsForCreateFunction ) {
+  createNextElement( ...argsForCreateFunction ) {
     return this.createIndexedElement( this.groupElementIndex++, argsForCreateFunction );
   }
 
   /**
-   * Primarily for internal use, clients should usually use createNextMember.
+   * Primarily for internal use, clients should usually use createNextElement.
    * @param {number} index - the number of the individual element
    * @param {Array.<*>} argsForCreateFunction
    * @returns {Object}

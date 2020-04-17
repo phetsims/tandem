@@ -67,7 +67,7 @@ const create = parameterType => {
       const state = parameterType.fromStateObject( stateObject );
       const args = parameterType.stateToArgsForConstructor( state );
 
-      const index = window.phetio.PhetioIDUtils.getGroupMemberIndex( componentName );
+      const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 
       const groupMember = group.createIndexedElement( index, args );
 
