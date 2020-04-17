@@ -45,6 +45,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     this.array = [];
 
     // @public (read-only)
+    // TODO: why validate with stub true? Also is it worth using TinyEmitter? https://github.com/phetsims/tandem/issues/170
     this.elementCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
     this.elementDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
