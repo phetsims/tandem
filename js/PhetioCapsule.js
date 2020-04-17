@@ -41,48 +41,16 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
 
     super( createElement, defaultArguments, options );
 
-    // @private
-    this.instanceCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
-    this.instanceDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+    // @public (read-only)
+    this.elementCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+    this.elementDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
 
     // @public (read-only) {PhetioObject}
     this.instance = null;
 
     // Emit to the data stream on instance creation/disposal
-    this.addInstanceCreatedListener( instance => this.createdEventListener( instance ) );
-    this.addInstanceDisposedListener( instance => this.disposedEventListener( instance ) );
-  }
-
-  /**
-   * @param {function} listener
-   * @public
-   */
-  addInstanceCreatedListener( listener ) {
-    this.instanceCreatedEmitter.addListener( listener );
-  }
-
-  /**
-   * @param {function} listener
-   * @public
-   */
-  removeInstanceCreatedListener( listener ) {
-    this.instanceCreatedEmitter.removeListener( listener );
-  }
-
-  /**
-   * @param {function} listener
-   * @public
-   */
-  addInstanceDisposedListener( listener ) {
-    this.instanceDisposedEmitter.addListener( listener );
-  }
-
-  /**
-   * @param {function} listener
-   * @public
-   */
-  removeInstanceDisposedListener( listener ) {
-    this.instanceDisposedEmitter.removeListener( listener );
+    this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
+    this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
   }
 
   /**
@@ -91,7 +59,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * @public (phet-io)
    */
   disposeInstance() {
-    this.instanceDisposedEmitter.emit( this.instance );
+    this.elementDisposedEmitter.emit( this.instance );
     this.instance.dispose();
     this.instance = null;
   }
@@ -124,7 +92,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
       this.phetioType.parameterTypes[ 0 ]
     );
 
-    this.instanceCreatedEmitter.emit( this.instance );
+    this.elementCreatedEmitter.emit( this.instance );
 
     return this.instance;
   }
