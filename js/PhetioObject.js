@@ -176,7 +176,7 @@ function PhetioObject( options ) {
   // if true, items will be excluded from phetioState. This applies recursively automatically.
   this.phetioIsArchetype = null;
 
-  // @public (phetioEngine) {Object|null} - only non null with phet.preloads.phetio.queryParameters.phetioPrintPhetioFiles enabled
+  // @public (phetioEngine) {Object|null} - only non null with phet.preloads.phetio.queryParameters.phetioPrintAPI enabled
   this.phetioBaselineMetadata = null;
 
   // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
@@ -275,7 +275,7 @@ inherit( Object, PhetioObject, {
 
       // Store the full baseline if we are printing out those files or need it for validation. Do this before
       // applying overrides.
-      if ( phet.preloads.phetio.queryParameters.phetioPrintPhetioFiles || phetioAPIValidation.enabled ) {
+      if ( phet.preloads.phetio.queryParameters.phetioPrintAPI || phetioAPIValidation.enabled ) {
 
         // not all metadata are passed through via options, so store baseline for these additional properties
         this.phetioBaselineMetadata = this.getMetadata( merge( {

@@ -64,7 +64,7 @@ class PhetioAPIValidation {
                        window.phet.preloads.phetio.phetioElementsOverrides &&
                        window.phet.preloads.phetio.phetioElementsBaseline &&
                        window.phet.preloads.phetio.phetioTypes &&
-                       !phet.preloads.phetio.queryParameters.phetioPrintPhetioFiles );
+                       !phet.preloads.phetio.queryParameters.phetioPrintAPI );
 
     // @private {Object.<typeName:string, function(new:ObjectIO)>} - this must be all phet-io types so that the
     // following would fail:  add a phetioType, then remove it, then add a different one under the same typeName.
