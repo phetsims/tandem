@@ -21,6 +21,7 @@
   const GROUP_SEPARATOR = '_';
   const GENERAL_COMPONENT_NAME = 'general';
   const GLOBAL_COMPONENT_NAME = 'global';
+  const HOME_SCREEN_COMPONENT_NAME = 'homeScreen';
   const MODEL_COMPONENT_NAME = 'model';
   const VIEW_COMPONENT_NAME = 'view';
 
@@ -196,6 +197,15 @@
      * @public
      */
     GLOBAL_COMPONENT_NAME: GLOBAL_COMPONENT_NAME,
+
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    /**
+     * The component name for the id section that holds the home screen.
+     * @type {String}
+     * @constant
+     * @public
+     */
+    HOME_SCREEN_COMPONENT_NAME: HOME_SCREEN_COMPONENT_NAME,
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
