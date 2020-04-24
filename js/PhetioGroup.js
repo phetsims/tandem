@@ -4,6 +4,11 @@
  * Provides a placeholder in the static API for where dynamic elements may be created.  Checks that elements of the group
  * match the approved schema.
  *
+ * In general when creating an element, any extra wiring or listeners should not be added. These side effects are a code
+ * smell in the `createElement` parameter. Instead attach a listener for when elements are created, and wire up listeners
+ * there. Further documentation about using PhetioGroup can be found at
+ * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#dynamically-created-phet-io-elements
+ *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
