@@ -51,8 +51,7 @@ const create = parameterType => {
   class PhetioGroupIOImpl extends ObjectIO {
 
     /**
-     * Adds a Track as specified by the phetioID and state.
-     * A Track will create its own ControlPoints
+     * Creates an element of the group
      * @param {PhetioGroup} group
      * @param {string} componentName
      * @param {Object} stateObject
