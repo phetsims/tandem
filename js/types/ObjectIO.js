@@ -84,6 +84,7 @@ class ObjectIO {
    * default (uncustomized) value.
    * @param {PhetioObject} o
    * @param {Object} value - result from fromStateObject
+   * @public
    */
   static setValue( o, value ) {
   }
