@@ -21,6 +21,7 @@ class NumberIO extends ObjectIO {
    * @param {Object} value
    * @returns {Object}
    * @override
+   * @public
    */
   static toStateObject( value ) {
     assert && assert( typeof value === 'number', 'value should be number' );
@@ -38,6 +39,7 @@ class NumberIO extends ObjectIO {
    * @param {Object} stateObject
    * @returns {Object}
    * @override
+   * @public
    */
   static fromStateObject( stateObject ) {
     if ( stateObject === 'POSITIVE_INFINITY' ) {

@@ -53,7 +53,6 @@ const create = parameterType => {
      * @param {Object|null} instance - of type {parameterType|null}
      * @returns {*|null}
      * @public
-     * @static
      * @override
      */
     static toStateObject( instance ) {
@@ -71,7 +70,6 @@ const create = parameterType => {
      * @param {*|null} stateObject
      * @returns {Object|null}
      * @public
-     * @static
      * @override
      */
     static fromStateObject( stateObject ) {

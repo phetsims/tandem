@@ -21,6 +21,7 @@ class BooleanIO extends ObjectIO {
    * @param {boolean} value
    * @returns {boolean}
    * @override
+   * @public
    */
   static toStateObject( value ) {
     assert && assert( typeof value === 'boolean', 'value should be boolean' );
@@ -32,6 +33,7 @@ class BooleanIO extends ObjectIO {
    * @param {boolean} stateObject
    * @returns {boolean}
    * @override
+   * @public
    */
   static fromStateObject( stateObject ) {
     assert && assert( typeof stateObject === 'boolean', 'value should be boolean' );

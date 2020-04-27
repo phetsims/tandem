@@ -21,6 +21,7 @@ class StringIO extends ObjectIO {
    * Encodes a string to a state (which also happens to be a string).
    * @param {Object} value
    * @returns {Object}
+   * @public
    */
   static toStateObject( value ) {
     assert && assert( typeof value === 'string', 'value should be string, but it was ' + ( typeof value ) );
@@ -31,6 +32,7 @@ class StringIO extends ObjectIO {
    * Decode a string from a state, which is already a string.
    * @param {Object} stateObject
    * @returns {Object}
+   * @public
    */
   static fromStateObject( stateObject ) {
     assert && assert( typeof stateObject === 'string', 'value should be string' );

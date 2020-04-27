@@ -11,11 +11,16 @@ import tandemNamespace from '../tandemNamespace.js';
 import ObjectIO from './ObjectIO.js';
 
 class VoidIO extends ObjectIO {
+
   constructor( instance, phetioID ) {
     assert && assert( false, 'should never be called' );
     super( instance, phetioID );
   }
 
+  /**
+   * @returns {undefined}
+   * @public
+   */
   static toStateObject() {
     return undefined;
   }
