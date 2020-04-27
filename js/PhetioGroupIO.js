@@ -69,13 +69,13 @@ const create = parameterType => {
 
       const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 
-      const groupMember = group.createIndexedElement( index, args );
+      const groupElement = group.createIndexedElement( index, args );
 
       // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
-      // no members have been created in the sim, instead they have only been set via state.
+      // no elements have been created in the sim, instead they have only been set via state.
       group.groupElementIndex = Math.max( index + 1, group.groupElementIndex );
 
-      return groupMember;
+      return groupElement;
     }
 
     /**
