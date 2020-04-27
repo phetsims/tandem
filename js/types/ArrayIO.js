@@ -1,7 +1,7 @@
 // Copyright 2018-2020, University of Colorado Boulder
 
 /**
- * IO type for JS's built-in Array type.
+ * IO Type for JS's built-in Array type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -16,8 +16,8 @@ import ObjectIO from './ObjectIO.js';
 const cache = {};
 
 /**
- * Parametric IO type constructor.  Given an element type, this function returns an appropriate array IO type.
- * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
+ * Parametric IO Type constructor.  Given an element type, this function returns an appropriate array IO Type.
+ * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  * @param {function(new:ObjectIO)} parameterType
  * @returns {function(new:ObjectIO)}
  */
