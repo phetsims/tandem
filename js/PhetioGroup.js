@@ -81,6 +81,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * Returns the element at the specified index
    * @param {number} index
    * @returns {Object}
+   * @public
    */
   get( index ) {
     return this.array[ index ];
