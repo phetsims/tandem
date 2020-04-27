@@ -57,6 +57,7 @@ const create = parameterType => {
      * @param {Object} stateObject
      * @returns {PhetioObject}
      * @throws CouldNotYetDeserializeError - if it could not yet deserialize
+     * @public (phet-io state)
      */
     static addChildInstance( group, componentName, stateObject ) {
 
@@ -78,8 +79,8 @@ const create = parameterType => {
     }
 
     /**
-     * @public (phet-io state)
      * @param {PhetioGroup} group
+     * @public (phet-io state)
      */
     static clearChildInstances( group ) {
       group.clear();
