@@ -55,6 +55,7 @@ const create = parameterType => {
      * @param {Object} stateObject
      * @returns {PhetioObject}
      * @throws CouldNotYetDeserializeError - if it could not yet deserialize
+     * @public (phet-io state)
      */
     static addChildInstance( capsule, componentName, stateObject ) {
 
@@ -68,8 +69,8 @@ const create = parameterType => {
     }
 
     /**
-     * @public (phet-io state)
      * @param {PhetioCapsule} capsule
+     * @public (phet-io state)
      */
     static clearChildInstances( capsule ) {
       if ( capsule.instance ) {
