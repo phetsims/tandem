@@ -51,13 +51,13 @@ const create = parameterType => {
   class PhetioGroupIOImpl extends ObjectIO {
 
     /**
-     * Adds a Track as specified by the phetioID and state.
-     * A Track will create its own ControlPoints
+     * Creates an element of the group
      * @param {PhetioGroup} group
      * @param {string} componentName
      * @param {Object} stateObject
      * @returns {PhetioObject}
      * @throws CouldNotYetDeserializeError - if it could not yet deserialize
+     * @public (phet-io state)
      */
     static addChildInstance( group, componentName, stateObject ) {
 
@@ -69,18 +69,18 @@ const create = parameterType => {
 
       const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 
-      const groupMember = group.createIndexedElement( index, args );
+      const groupElement = group.createIndexedElement( index, args );
 
       // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
-      // no members have been created in the sim, instead they have only been set via state.
+      // no elements have been created in the sim, instead they have only been set via state.
       group.groupElementIndex = Math.max( index + 1, group.groupElementIndex );
 
-      return groupMember;
+      return groupElement;
     }
 
     /**
-     * @public (phet-io state)
      * @param {PhetioGroup} group
+     * @public (phet-io state)
      */
     static clearChildInstances( group ) {
       group.clear();

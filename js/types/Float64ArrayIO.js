@@ -1,7 +1,7 @@
 // Copyright 2020, University of Colorado Boulder
 
 /**
- * IO type for JS's built-in Float64Array type
+ * IO Type for JS's built-in Float64Array type
  *
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  * @author Chris Klusendorf

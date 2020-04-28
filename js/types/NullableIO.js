@@ -25,8 +25,8 @@ const cache = {};
 
 /**
  * Parametric type constructor function, do not use `new`
- * @param {function(new:ObjectIO)} parameterType - an IO type (constructor function)
- * @returns {function(new:ObjectIO)} - the IO type that supports null
+ * @param {function(new:ObjectIO)} parameterType - an IO Type (constructor function)
+ * @returns {function(new:ObjectIO)} - the IO Type that supports null
  */
 function NullableIO( parameterType ) {
   assert && assert( parameterType, 'NullableIO needs parameterType' );
@@ -53,7 +53,6 @@ const create = parameterType => {
      * @param {Object|null} instance - of type {parameterType|null}
      * @returns {*|null}
      * @public
-     * @static
      * @override
      */
     static toStateObject( instance ) {
@@ -71,7 +70,6 @@ const create = parameterType => {
      * @param {*|null} stateObject
      * @returns {Object|null}
      * @public
-     * @static
      * @override
      */
     static fromStateObject( stateObject ) {

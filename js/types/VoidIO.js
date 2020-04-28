@@ -1,7 +1,7 @@
 // Copyright 2018-2020, University of Colorado Boulder
 
 /**
- * IO type use to signify a function has no return value.
+ * IO Type use to signify a function has no return value.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -11,11 +11,16 @@ import tandemNamespace from '../tandemNamespace.js';
 import ObjectIO from './ObjectIO.js';
 
 class VoidIO extends ObjectIO {
+
   constructor( instance, phetioID ) {
     assert && assert( false, 'should never be called' );
     super( instance, phetioID );
   }
 
+  /**
+   * @returns {undefined}
+   * @public
+   */
   static toStateObject() {
     return undefined;
   }

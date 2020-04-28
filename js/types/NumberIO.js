@@ -1,7 +1,7 @@
 // Copyright 2018-2020, University of Colorado Boulder
 
 /**
- * IO type for JS's built-in number type.
+ * IO Type for JS's built-in number type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -21,6 +21,7 @@ class NumberIO extends ObjectIO {
    * @param {Object} value
    * @returns {Object}
    * @override
+   * @public
    */
   static toStateObject( value ) {
     assert && assert( typeof value === 'number', 'value should be number' );
@@ -38,6 +39,7 @@ class NumberIO extends ObjectIO {
    * @param {Object} stateObject
    * @returns {Object}
    * @override
+   * @public
    */
   static fromStateObject( stateObject ) {
     if ( stateObject === 'POSITIVE_INFINITY' ) {

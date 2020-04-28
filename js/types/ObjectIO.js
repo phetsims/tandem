@@ -1,7 +1,7 @@
 // Copyright 2018-2020, University of Colorado Boulder
 
 /**
- * ObjectIO is the root of the IO Type hierarchy.  All IO types extend from ObjectIO.  This type can be subtyped or
+ * ObjectIO is the root of the IO Type hierarchy.  All IO Yypes extend from ObjectIO.  This type can be subtyped or
  * used directly for types that only need toStateObject/fromStateObject.
  *
  * This type purposefully does not have a `parametricTypes` static member. The presence of this field marks that it is
@@ -84,12 +84,13 @@ class ObjectIO {
    * default (uncustomized) value.
    * @param {PhetioObject} o
    * @param {Object} value - result from fromStateObject
+   * @public
    */
   static setValue( o, value ) {
   }
 
   /**
-   * Get the supertype of the passed in IO type.
+   * Get the supertype of the passed in IO Type.
    * @example
    * ObjectIO.getSupertype( SliderIO )
    * --> NodeIO
@@ -101,7 +102,7 @@ class ObjectIO {
    * @public
    */
   static getSupertype( typeIO ) {
-    assert && assert( ObjectIO.isIOType( typeIO ), 'IO type expected' );
+    assert && assert( ObjectIO.isIOType( typeIO ), 'IO Type expected' );
 
     // getPrototypeOf get's the typeIO's parent type, because the prototype is for the parent.
     const supertype = Object.getPrototypeOf( typeIO );
@@ -187,7 +188,7 @@ class ObjectIO {
 }
 
 /**
- * Checks if type is an IO type
+ * Checks if type is an IO Type
  * @param {*} type
  * @public
  * @returns {boolean} - true if inherits from ObjectIO or is ObjectIO
@@ -198,8 +199,8 @@ ObjectIO.isIOType = type => type === ObjectIO || type.prototype instanceof Objec
  * @typeDef {Object} MethodObject
  * @property {string} documentation
  * @property {function()} implementation - the function to execute when this method is called
- * @property {function(new:ObjectIO)} returnType - the return IO type of the method
- * @property {Array.<function(new:ObjectIO)>} parameterTypes - the parameter IO types for the method
+ * @property {function(new:ObjectIO)} returnType - the return IO Type of the method
+ * @property {Array.<function(new:ObjectIO)>} parameterTypes - the parameter IO Types for the method
  * @property {boolean} [invocableForReadOnlyElements=true] - by default, all methods are invocable for all elements.
  *    However, for some read-only elements, certain methods should not be invocable. In that case, they are marked as
  *    invocableForReadOnlyElements: false.
@@ -221,7 +222,7 @@ ObjectIO.documentation = 'The root of the wrapper object hierarchy.';
 /**
  * The name that this TypeIO will have in the public PhET-iO API. In general, this should only be word characters,
  * ending in "IO". Parameteric types are a special subset of TypeIOs that include their parameters in their typeName.
- * If a TypeIO's parameters are other IO type(s), then they should be included within angle brackets, like
+ * If a TypeIO's parameters are other IO Type(s), then they should be included within angle brackets, like
  * "PropertyIO<Boolean>". Some other types use a more custom format for displaying their parameter types, in this case
  * the parameter section of the type name (immediately following "IO") should begin with an open paren, "(". Thus the
  * schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`. In most cases, parameterized

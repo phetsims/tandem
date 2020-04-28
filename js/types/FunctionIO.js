@@ -1,7 +1,7 @@
 // Copyright 2018-2020, University of Colorado Boulder
 
 /**
- * IO type for JS's built-in function type.
+ * IO Type for JS's built-in function type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -14,9 +14,9 @@ import ObjectIO from './ObjectIO.js';
 const cache = {};
 
 /**
- * Parametric IO type constructor--given return type and parameter types, this function returns a type wrapper for
+ * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapper for
  * that class of functions.
- * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
+ * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  * @param {function(new:ObjectIO)} returnType - wrapper IO Type of the return type of the wrapped function
  * @param {function(new:ObjectIO)[]} functionParameterTypes - wrapper IO Types for the individual arguments of the
  * wrapped function.
