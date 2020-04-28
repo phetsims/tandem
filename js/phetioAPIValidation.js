@@ -227,10 +227,10 @@ class PhetioAPIValidation {
   validateOverridesFile() {
 
     // import phetioEngine causes a cycle and cannot be used, hence we must use the namespace
-    const baseline = phet.phetio.phetioEngine.getPhetioElementsMetadata();
+    const entireBaseline = phet.phetio.phetioEngine.getPhetioElementsMetadata();
 
     for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
-      if ( !baseline.hasOwnProperty( phetioID ) ) {
+      if ( !entireBaseline.hasOwnProperty( phetioID ) ) {
         this.assertAPIError( {
           phetioID: phetioID,
           ruleInViolation: '7. Any schema entries in the overrides file must exist in the baseline file.',
@@ -240,7 +240,7 @@ class PhetioAPIValidation {
       else {
 
         const override = window.phet.preloads.phetio.phetioElementsOverrides[ phetioID ];
-        const baseline = baseline[ phetioID ];
+        const baseline = entireBaseline[ phetioID ];
 
         if ( Object.keys( override ).length === 0 ) {
           this.assertAPIError( {
