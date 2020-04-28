@@ -144,6 +144,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * Gets the index of the specified element in the underlying array.
    * @param {PhetioObject} element
    * @returns {number} - index, -1 if not found
+   * @public
    */
   indexOf( element ) { return this._array.indexOf( element ); }
 
