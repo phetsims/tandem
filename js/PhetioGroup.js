@@ -43,8 +43,8 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     super( createElement, defaultArguments, options );
 
-    // @public (read-only)
-    this.array = [];
+    // @private {PhetioObject[]} access using getArray or getArrayCopy
+    this._array = [];
 
     // @public (read-only)
     // TODO: why validate with stub true? Also is it worth using TinyEmitter? https://github.com/phetsims/tandem/issues/170
@@ -72,19 +72,49 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @public
    */
   disposeElement( element ) {
-    arrayRemove( this.array, element );
+    arrayRemove( this._array, element );
     this.elementDisposedEmitter.emit( element );
     element.dispose();
+  }
+
+  //TODO https://github.com/phetsims/tandem/issues/172 delete after CT passes
+  get array() {
+    throw new Error( 'replace array with getArray');
+  }
+
+  /**
+   * Gets a reference to the underlying array. DO NOT create/dispose elements while iterating, or otherwise modify
+   * the array.  If you need to modify the array, use getArrayCopy.
+   * @returns {PhetioObject[]}
+   * @public
+   */
+  getArray() {
+    return this._array;
+  }
+
+  /**
+   * Gets a copy of the underlying array. Use this method if you need to create/dispose elements while iterating,
+   * or otherwise modify the group's array.
+   * @returns {PhetioObject[]}
+   * @public
+   */
+  getArrayCopy() {
+    return this._array.slice();
+  }
+
+  //TODO https://github.com/phetsims/tandem/issues/172 delete after CT passes
+  get() {
+    throw new Error( 'replace get with getElement');
   }
 
   /**
    * Returns the element at the specified index
    * @param {number} index
-   * @returns {Object}
+   * @returns {PhetioObject}
    * @public
    */
-  get( index ) {
-    return this.array[ index ];
+  getElement( index ) {
+    return this._array[ index ];
   }
 
   /**
@@ -92,7 +122,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @returns {number}
    * @public
    */
-  get length() { return this.array.length; }
+  get length() { return this._array.length; }
 
   /**
    * Returns an array with elements that pass the filter predicate.
@@ -100,22 +130,29 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @returns {Object[]}
    * @public
    */
-  filter( predicate ) { return this.array.filter( predicate ); }
+  filter( predicate ) { return this._array.filter( predicate ); }
 
   /**
    * Returns true if the group contains the specified object.
-   * @param {Object} element
+   * @param {PhetioObject} element
    * @returns {boolean}
    * @public
    */
-  contains( element ) { return this.array.indexOf( element ) >= 0; }
+  contains( element ) { return this._array.indexOf( element ) >= 0; }
+
+  /**
+   * Gets the index of the specified element in the underlying array.
+   * @param {PhetioObject} element
+   * @returns {number} - index, -1 if not found
+   */
+  indexOf( element ) { return this._array.indexOf( element ); }
 
   /**
    * Runs the function on each element of the group.
    * @param {function(PhetioObject)} action - a function with a single parameter: the current element
    * @public
    */
-  forEach( action ) { this.array.forEach( action ); }
+  forEach( action ) { this._array.forEach( action ); }
 
   /**
    * Returns an array with every element mapped to a new one.
@@ -123,15 +160,15 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @returns {Object[]}
    * @public
    */
-  map( f ) { return this.array.map( f ); }
+  map( f ) { return this._array.map( f ); }
 
   /**
    * remove and dispose all registered group elements
    * @public
    */
   clear() {
-    while ( this.array.length > 0 ) {
-      this.disposeElement( this.array[ this.array.length - 1 ] );
+    while ( this._array.length > 0 ) {
+      this.disposeElement( this._array[ this._array.length - 1 ] );
     }
 
     this.groupElementIndex = 0;
@@ -170,7 +207,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * Primarily for internal use, clients should usually use createNextElement.
    * @param {number} index - the number of the individual element
    * @param {Array.<*>} argsForCreateFunction
-   * @returns {Object}
+   * @returns {PhetioObject}
    * @public (PhetioGroupIO)
    */
   createIndexedElement( index, argsForCreateFunction ) {
@@ -180,7 +217,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     const groupElement = this.createDynamicElement( componentName,
       argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
 
-    this.array.push( groupElement );
+    this._array.push( groupElement );
     this.elementCreatedEmitter.emit( groupElement );
 
     return groupElement;
