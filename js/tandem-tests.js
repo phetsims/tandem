@@ -7,12 +7,6 @@
  */
 
 import './PhetioObjectTests.js';
+import qunitStart from '../../aqua/js/qunitStart.js';
 
-if ( phet.chipper.brand === 'phet-io' ) {
-  import( /* webpackMode: "eager" */ '../../phet-io/js/phetioEngine.js').then( module => {
-    QUnit.start();
-  } );
-}
-else {
-  QUnit.start();
-}
+qunitStart();

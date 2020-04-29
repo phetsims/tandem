@@ -14,11 +14,6 @@
     "requirejsNamespace": "TANDEM"
   },
   "eslintConfig": {
-    "extends": "../chipper/eslint/sim_eslintrc.js",
-    "parser": "../chipper/node_modules/babel-eslint",
-    "parserOptions": {
-      "sourceType": "module",
-      "allowImportExportEverywhere": true
-    }
+    "extends": "../chipper/eslint/sim_eslintrc.js"
   }
 }
