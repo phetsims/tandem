@@ -77,11 +77,6 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     element.dispose();
   }
 
-  //TODO https://github.com/phetsims/tandem/issues/172 delete after CT passes
-  get array() {
-    throw new Error( 'replace array with getArray');
-  }
-
   /**
    * Gets a reference to the underlying array. DO NOT create/dispose elements while iterating, or otherwise modify
    * the array.  If you need to modify the array, use getArrayCopy.
@@ -100,11 +95,6 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    */
   getArrayCopy() {
     return this._array.slice();
-  }
-
-  //TODO https://github.com/phetsims/tandem/issues/172 delete after CT passes
-  get() {
-    throw new Error( 'replace get with getElement');
   }
 
   /**
