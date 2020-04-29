@@ -69,7 +69,7 @@ class PhetioAPIValidation {
 
     // @public (read-only) {boolean} - whether or not validation is enabled. We check the overrides more eagerly to make
     // sure they don't become stale.
-    this.isValidateOverrides = assert && Tandem.PHET_IO_ENABLED;
+    this.isValidateOverrides = assert && Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioGenerateBaseline;
 
     // @private {Object.<typeName:string, function(new:ObjectIO)>} - this must be all phet-io types so that the
     // following would fail:  add a phetioType, then remove it, then add a different one under the same typeName.
@@ -227,7 +227,7 @@ class PhetioAPIValidation {
   validateOverridesFile() {
 
     // import phetioEngine causes a cycle and cannot be used, hence we must use the namespace
-    const entireBaseline = phet.phetio.phetioEngine.getPhetioElementsMetadata();
+    const entireBaseline = phet.phetio.phetioEngine.getPhetioElementsBaseline();
 
     for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
       if ( !entireBaseline.hasOwnProperty( phetioID ) ) {
@@ -256,6 +256,14 @@ class PhetioAPIValidation {
               phetioID: phetioID,
               ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
               message: `phetioID metadata key not found in the baseline: ${metadataKey}`
+            } );
+          }
+
+          if ( override[ metadataKey ] === baseline[ metadataKey ] ) {
+            this.assertAPIError( {
+              phetioID: phetioID,
+              ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+              message: 'phetioID metadata override value is the same as the corresponding metadata value in the baseline.'
             } );
           }
         }

@@ -275,7 +275,9 @@ inherit( Object, PhetioObject, {
 
       // Store the full baseline if we are printing out those files or need it for validation. Do this before
       // applying overrides.
-      if ( phet.preloads.phetio.queryParameters.phetioPrintAPI || phetioAPIValidation.enabled ) {
+      if ( phet.preloads.phetio.queryParameters.phetioPrintAPI ||
+           phetioAPIValidation.enabled ||
+           phet.preloads.phetio.queryParameters.phetioGenerateBaseline ) {
 
         // not all metadata are passed through via options, so store baseline for these additional properties
         this.phetioBaselineMetadata = this.getMetadata( merge( {
