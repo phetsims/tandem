@@ -10,10 +10,16 @@ import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import ObjectIO from './types/ObjectIO.js';
 
-QUnit.module( 'PhetioObject' );
+QUnit.module( 'PhetioObject', {
+  before() {
 
-// launch to make sure tandem registration fires listeners
-Tandem.launch();
+    // launch to make sure tandem registration fires listeners
+    Tandem.launch();
+  },
+  after() {
+    Tandem.unlaunch();
+  }
+} );
 
 class MockTypeIO extends ObjectIO {}
 
@@ -30,7 +36,7 @@ QUnit.test( 'PhetioObject start/start', function( assert ) {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
-    tandem: Tandem.ROOT,
+    tandem: Tandem.GENERAL,
     phetioType: MockTypeIO,
     phetioState: false
   } );
@@ -41,7 +47,7 @@ QUnit.test( 'PhetioObject start/end', function( assert ) {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
-    tandem: Tandem.ROOT.createTandem( 'test1' ),
+    tandem: Tandem.GENERAL.createTandem( 'test1' ),
     phetioType: MockTypeIO,
     phetioState: false
   } );
@@ -53,7 +59,7 @@ QUnit.test( 'PhetioObject end without start', function( assert ) {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
-    tandem: Tandem.ROOT.createTandem( 'test2' ),
+    tandem: Tandem.GENERAL.createTandem( 'test2' ),
     phetioType: MockTypeIO,
     phetioState: false
   } );
@@ -66,7 +72,7 @@ QUnit.test( 'PhetioObject end without start', function( assert ) {
 } );
 
 QUnit.test( 'PhetioObject.isDynamicElement', assert => {
-  const test1 = Tandem.ROOT.createTandem( 'test1' );
+  const test1 = Tandem.GENERAL.createTandem( 'test1' );
   const parentTandem = test1.createTandem( 'parent' );
   const child1Tandem = parentTandem.createTandem( 'child1' );
   const child2Tandem = parentTandem.createTandem( 'child2' );
@@ -117,7 +123,7 @@ QUnit.test( 'archetype bugginess when Tandem is not launched yet', assert => {
 
   assert.ok( true, 'initial test' );
 
-  const object1Tandem = Tandem.ROOT.createTandem( 'object1' );
+  const object1Tandem = Tandem.GENERAL.createTandem( 'object1' );
   const phetioObject1 = new PhetioObject( { tandem: object1Tandem } );
   assert.ok( !phetioObject1.phetioIsArchetype, 'should not be an archetype before marking' );
   phetioObject1.markDynamicElementArchetype();
