@@ -8,6 +8,6 @@
 
 import './PhetioObjectTests.js';
 import './TandemTests.js';
-import qunitStart from '../../aqua/js/qunitStart.js';
+import qunitStart from '../../chipper/js/sim-tests/qunitStart.js';
 
 qunitStart();
