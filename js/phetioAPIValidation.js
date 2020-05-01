@@ -63,7 +63,7 @@ class PhetioAPIValidation {
     this.enabled = assert && Tandem.PHET_IO_ENABLED;
 
     // @private (read-only) {string}
-    this.referenceAPI = window.phet.preloads.phetio.queryParameters.phetioReferenceAPI;
+    this.referenceAPI = this.enabled && window.phet.preloads.phetio.queryParameters.phetioReferenceAPI;
 
     // @private {Object.<typeName:string, function(new:ObjectIO)>} - this must be all phet-io types so that the
     // following would fail:  add a phetioType, then remove it, then add a different one under the same typeName.
