@@ -14,6 +14,7 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
@@ -47,6 +48,17 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     // @public (only for PhetioGroupIO) - for generating indices from a pool
     this.groupElementIndex = 0;
+
+    // @public (read-only)
+    this.countProperty = new NumberProperty( 0, {
+      tandem: options.tandem.createTandem( 'countProperty' ),
+      phetioReadOnly: true,
+      numberType: 'Integer'
+    } );
+
+    assert && this.countProperty.link( count => {
+      assert && assert( this._array.length === count, 'count does not match array length' );
+    } );
   }
 
   /**
@@ -65,6 +77,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   disposeElement( element ) {
     super.disposeElement( element );
     arrayRemove( this._array, element );
+    this.countProperty.value -= 1;
   }
 
   /**
@@ -199,6 +212,8 @@ class PhetioGroup extends PhetioDynamicElementContainer {
       argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
 
     this._array.push( groupElement );
+
+    this.countProperty.value += 1;
 
     // TODO: move to parent, https://github.com/phetsims/tandem/issues/170#issuecomment-622189798
     this.elementCreatedEmitter.emit( groupElement );
