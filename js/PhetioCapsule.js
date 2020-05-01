@@ -60,7 +60,6 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * @param {Array.<*>} [argsForCreateFunction]
    * @returns {Object}
    * @public
-   *
    */
   getElement( ...argsForCreateFunction ) {
     if ( !this.element ) {
@@ -70,7 +69,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   }
 
   /**
-   * Primarily for internal use, clients should usually use getInstance.
+   * Primarily for internal use, clients should usually use getElement.
    * @param {Array.<*>} [argsForCreateFunction]
    * @returns {Object}
    * @public (phet-io)
@@ -85,7 +84,6 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
     );
 
     this.elementCreatedEmitter.emit( this.element );
-
     return this.element;
   }
 }
