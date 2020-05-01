@@ -43,7 +43,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     super( createElement, defaultArguments, options );
 
-    // @private {PhetioObject[]} access using getArray or getArrayCopy
+    // @public (PhetioGroupTests only) {PhetioObject[]} access using getArray or getArrayCopy
     this._array = [];
 
     // @public (only for PhetioGroupIO) - for generating indices from a pool
@@ -71,9 +71,9 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @override
    */
   disposeElement( element ) {
-    super.disposeElement( element );
     arrayRemove( this._array, element );
-    this.countProperty.value -= 1;
+    this.countProperty.value--;
+    super.disposeElement( element );
   }
 
   /**
@@ -209,7 +209,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     this._array.push( groupElement );
 
-    this.countProperty.value += 1;
+    this.countProperty.value++;
 
     // TODO: move to parent, https://github.com/phetsims/tandem/issues/170#issuecomment-622189798
     this.elementCreatedEmitter.emit( groupElement );

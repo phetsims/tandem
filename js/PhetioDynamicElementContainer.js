@@ -119,8 +119,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @protected - should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
    */
   disposeElement( element ) {
-    this.elementDisposedEmitter.emit( element );
     element.dispose();
+    this.elementDisposedEmitter.emit( element );
   }
 
   /**
