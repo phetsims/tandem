@@ -35,6 +35,7 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import DynamicTandem from './DynamicTandem.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
@@ -294,41 +295,50 @@ class PhetioAPIValidation {
     const entireBaseline = phet.phetio.phetioEngine.getPhetioElementsBaseline();
 
     for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
-      if ( !entireBaseline.hasOwnProperty( phetioID ) ) {
-        this.assertAPIError( {
-          phetioID: phetioID,
-          ruleInViolation: '7. Any schema entries in the overrides file must exist in the baseline file.',
-          message: 'phetioID expected in the baseline file but does not exist'
-        } );
+      const generateArchetypes = ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintAPI ) ||
+                                 ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioCreateArchetypes ) ||
+                                 this.enabled;
+      const isArchetype = phetioID.indexOf( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ) >= 0;
+      if ( !generateArchetypes && !entireBaseline.hasOwnProperty( phetioID ) ) {
+        assert && assert( isArchetype, 'phetioID missing from the baseline that was not an archetype: ' + phetioID );
       }
       else {
-
-        const override = window.phet.preloads.phetio.phetioElementsOverrides[ phetioID ];
-        const baseline = entireBaseline[ phetioID ];
-
-        if ( Object.keys( override ).length === 0 ) {
+        if ( !entireBaseline.hasOwnProperty( phetioID ) ) {
           this.assertAPIError( {
             phetioID: phetioID,
-            ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
-            message: 'no metadata keys found for this override.'
+            ruleInViolation: '7. Any schema entries in the overrides file must exist in the baseline file.',
+            message: 'phetioID expected in the baseline file but does not exist'
           } );
         }
+        else {
 
-        for ( const metadataKey in override ) {
-          if ( !baseline.hasOwnProperty( metadataKey ) ) {
+          const override = window.phet.preloads.phetio.phetioElementsOverrides[ phetioID ];
+          const baseline = entireBaseline[ phetioID ];
+
+          if ( Object.keys( override ).length === 0 ) {
             this.assertAPIError( {
               phetioID: phetioID,
               ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
-              message: `phetioID metadata key not found in the baseline: ${metadataKey}`
+              message: 'no metadata keys found for this override.'
             } );
           }
 
-          if ( override[ metadataKey ] === baseline[ metadataKey ] ) {
-            this.assertAPIError( {
-              phetioID: phetioID,
-              ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
-              message: 'phetioID metadata override value is the same as the corresponding metadata value in the baseline.'
-            } );
+          for ( const metadataKey in override ) {
+            if ( !baseline.hasOwnProperty( metadataKey ) ) {
+              this.assertAPIError( {
+                phetioID: phetioID,
+                ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+                message: `phetioID metadata key not found in the baseline: ${metadataKey}`
+              } );
+            }
+
+            if ( override[ metadataKey ] === baseline[ metadataKey ] ) {
+              this.assertAPIError( {
+                phetioID: phetioID,
+                ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+                message: 'phetioID metadata override value is the same as the corresponding metadata value in the baseline.'
+              } );
+            }
           }
         }
       }
