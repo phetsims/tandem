@@ -140,8 +140,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
     // When generating the baseline, output the schema for the archetype
     if ( ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintAPI ) ||
-         ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioCreateArchetypes ) ||
-         phetioAPIValidation.enabled ) {
+         ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioCreateArchetypes ) ) {
       const defaultArgs = Array.isArray( this.defaultArguments ) ? this.defaultArguments : this.defaultArguments();
 
       // The create function takes a tandem plus the default args

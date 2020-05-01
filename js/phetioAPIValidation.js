@@ -59,15 +59,11 @@ class PhetioAPIValidation {
     // @private - keep track of when the sim has started.
     this.simHasStarted = false;
 
-    // @public (read-only) {boolean} - whether or not validation is enabled.
-    this.enabled = assert &&
-                   Tandem.PHET_IO_ENABLED &&
-                   window.phet.preloads.phetio.queryParameters.phetioReferenceAPI !== '' &&
-                   !phet.preloads.phetio.queryParameters.phetioPrintAPI;
+    // @public {boolean}
+    this.enabled = assert && Tandem.PHET_IO_ENABLED;
 
-    // @public (read-only) {boolean} - whether or not validation is enabled. We check the overrides more eagerly to make
-    // sure they don't become stale.
-    this.isValidateOverrides = assert && Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioGenerateBaseline;
+    // @private (read-only) {string}
+    this.referenceAPI = window.phet.preloads.phetio.queryParameters.phetioReferenceAPI;
 
     // @private {Object.<typeName:string, function(new:ObjectIO)>} - this must be all phet-io types so that the
     // following would fail:  add a phetioType, then remove it, then add a different one under the same typeName.
@@ -78,10 +74,12 @@ class PhetioAPIValidation {
     // populated when `this.enabled`.
     this.everyPhetioType = {};
 
-    // {Object|null} if defined, this is the API loaded from a generated API file
-    this.referenceAPI = null;
+    // @private {Object|null} if defined, this is the API loaded from a generated API file
+    this.loadedReferenceAPI = null;
 
-    if ( this.enabled ) {
+    if ( this.enabled && this.referenceAPI ) {
+      assert && assert( phet.preloads.phetio.queryParameters.phetioCreateArchetypes,
+        'archetypes are required to be created in order to validate the whole reference API file' );
 
       // See readFile.js
       const xhr = new XMLHttpRequest();
@@ -89,7 +87,7 @@ class PhetioAPIValidation {
       xhr.send( null );
       xhr.onreadystatechange = () => {
         if ( xhr.readyState === 4 /*done*/ && xhr.status === 200 /*ok*/ ) {
-          this.referenceAPI = JSON.parse( xhr.responseText );
+          this.loadedReferenceAPI = JSON.parse( xhr.responseText );
         }
       };
     }
@@ -101,15 +99,19 @@ class PhetioAPIValidation {
    * @public
    */
   onSimStarted( phetioEngine ) {
-
-    this.isValidateOverrides && this.validateOverridesFile();
-
     if ( !this.enabled ) {
       return;
     }
 
-    const desiredMetadata = this.referenceAPI.phetioElements;
-    const desiredTypes = this.referenceAPI.phetioTypes;
+    this.validateOverridesFile();
+
+    if ( !this.referenceAPI ) {
+      return;
+    }
+    assert && assert( this.loadedReferenceAPI, 'Expected a reference API but it was not loaded: ' + this.loadedReferenceAPI );
+
+    const desiredMetadata = this.loadedReferenceAPI.phetioElements;
+    const desiredTypes = this.loadedReferenceAPI.phetioTypes;
 
     const actualMetadata = phetioEngine.getPhetioElementsMetadata();
     const actualTypes = phetioEngine.getPhetioTypes();
@@ -296,8 +298,7 @@ class PhetioAPIValidation {
 
     for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
       const generateArchetypes = ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintAPI ) ||
-                                 ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioCreateArchetypes ) ||
-                                 this.enabled;
+                                 ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioCreateArchetypes );
       const isArchetype = phetioID.indexOf( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ) >= 0;
       if ( !generateArchetypes && !entireBaseline.hasOwnProperty( phetioID ) ) {
         assert && assert( isArchetype, 'phetioID missing from the baseline that was not an archetype: ' + phetioID );
