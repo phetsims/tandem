@@ -66,6 +66,12 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Remove an element from this Group, unregistering it from PhET-iO and disposing it.
+   * The order is guaranteed to be:
+   * 1. remove from internl array
+   * 2. update countProperty
+   * 3. element.dispose
+   * 4. fire disposeEmitter
+   *
    * @param {PhetioObject} element
    * @public
    * @override
@@ -195,6 +201,12 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Primarily for internal use, clients should usually use createNextElement.
+   * The order is guaranteed to be:
+   * 1. instantiate element
+   * 2. add to internal array
+   * 3. update countProperty
+   * 4. fire elementCreatedEmitter
+   *
    * @param {number} index - the number of the individual element
    * @param {Array.<*>} argsForCreateFunction
    * @returns {PhetioObject}
@@ -203,15 +215,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   createIndexedElement( index, argsForCreateFunction ) {
 
     const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
-
-    const groupElement = this.createDynamicElement( componentName,
-      argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
+    const containerParameterType = this.phetioType.parameterTypes[ 0 ];
+    const groupElement = this.createDynamicElement( componentName, argsForCreateFunction, containerParameterType );
 
     this._array.push( groupElement );
 
     this.countProperty.value++;
 
-    // TODO: move to parent, https://github.com/phetsims/tandem/issues/170#issuecomment-622189798
     this.elementCreatedEmitter.emit( groupElement );
 
     return groupElement;
