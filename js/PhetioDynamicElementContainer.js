@@ -96,9 +96,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
     this.archetype = this.createArchetype();
 
     // @public (read-only)
-    // TODO: why validate with stub true? Also is it worth using TinyEmitter? https://github.com/phetsims/tandem/issues/170
-    this.elementCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
-    this.elementDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+    this.elementCreatedEmitter = new Emitter( { parameters: [ { valueType: PhetioObject } ] } );
+    this.elementDisposedEmitter = new Emitter( { parameters: [ { valueType: PhetioObject } ] } );
 
     // Emit to the data stream on element creation/disposal
     this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
