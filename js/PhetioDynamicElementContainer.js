@@ -169,7 +169,16 @@ class PhetioDynamicElementContainer extends PhetioObject {
     assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
     // create with default state and substructure, details will need to be set by setter methods.
-    const createdObjectTandem = new DynamicTandem( this.tandem, componentName, this.tandem.getExtendedOptions() );
+
+    let createdObjectTandem ;
+    if ( !this.tandem.hasChild( componentName ) ) {
+      createdObjectTandem = new DynamicTandem( this.tandem, componentName, this.tandem.getExtendedOptions() );
+    }
+    else {
+      createdObjectTandem = this.tandem.createTandem( componentName, this.tandem.getExtendedOptions() );
+      assert && assert( createdObjectTandem instanceof DynamicTandem, 'createdObjectTandem should be an instance of DynamicTandem' );
+    }
+
     const createdObject = this.createElement( createdObjectTandem, ...argsForCreateFunction );
 
     // Make sure the new group element matches the schema for elements.
