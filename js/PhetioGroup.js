@@ -173,13 +173,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   /**
    * When creating a view element that corresponds to a specific model element, we match the tandem name index suffix
    * so that electron_0 corresponds to electronNode_0 and so on.
-   * @param {PhetioObject} phetioObject
+   * @param {string} tandemName - the tandem name of the model element
    * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type `stateToArgsForConstructor` method
    * @returns {PhetioObject}
    * @public
    */
-  createCorrespondingGroupElement( phetioObject, ...argsForCreateFunction ) {
-    const index = window.phetio.PhetioIDUtils.getGroupElementIndex( phetioObject.tandem.name );
+  createCorrespondingGroupElement( tandemName, ...argsForCreateFunction ) {
+    const index = window.phetio.PhetioIDUtils.getGroupElementIndex( tandemName );
 
     // If the specified index overlapped with the next available index, bump it up so there is no collision on the
     // next createNextElement
