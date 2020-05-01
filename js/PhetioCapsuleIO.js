@@ -73,8 +73,8 @@ const create = parameterType => {
      * @public (phet-io state)
      */
     static clearChildInstances( capsule ) {
-      if ( capsule.instance ) {
-        capsule.disposeInstance();
+      if ( capsule.element ) {
+        capsule.disposeElement();
       }
     }
   }

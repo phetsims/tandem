@@ -60,6 +60,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * Remove an element from this Group, unregistering it from PhET-iO and disposing it.
    * @param {PhetioObject} element
    * @public
+   * @override
    */
   disposeElement( element ) {
     super.disposeElement( element );

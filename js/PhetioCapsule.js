@@ -4,9 +4,9 @@
  * A PhET-iO class that encapsulates a PhetioObject that is not created during sim startup to provide PhET-iO API
  * validation, API communication (like to view in studio before creation), and to support PhET-iO state if applicable.
  *
- * Constructing a PhetioCapsule creates a container encapsulating a wrapped instance that can be of any type.
+ * Constructing a PhetioCapsule creates a container encapsulating a wrapped element that can be of any type.
  *
- * Clients should use myCapsule.getInstance() instead of storing the instance value itself.
+ * Clients should use myCapsule.getElement() instead of storing the element value itself.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Sam Reid (PhET Interactive Simulations)
@@ -24,7 +24,7 @@ const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 class PhetioCapsule extends PhetioDynamicElementContainer {
 
   /**
-   * @param {function(tandem, ...):PhetioObject} createElement - function that creates the encapsulated instance
+   * @param {function(tandem, ...):PhetioObject} createElement - function that creates the encapsulated element
    * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments - arguments passed to createElement during API baseline generation
    * @param {Object} [options]
    */
@@ -33,39 +33,40 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
     options = merge( {
       tandem: Tandem.REQUIRED,
 
-      // {string} The capsule's tandem name must have this suffix, and the base tandem name for its wrapped instance
+      // {string} The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
       // will consist of the capsule's tandem name with this suffix stripped off.
       containerSuffix: DEFAULT_CONTAINER_SUFFIX
     }, options );
 
     super( createElement, defaultArguments, options );
 
-    // @public (read-only) {PhetioObject}
-    this.instance = null;
+    // @public (read-only PhetioCapsuleIO) {PhetioObject}
+    this.element = null;
   }
 
   /**
-   * Dispose the underlying instance.  Called by the PhetioStateEngine so the capsule instance can be recreated with the
+   * Dispose the underlying element.  Called by the PhetioStateEngine so the capsule element can be recreated with the
    * correct state.
    * @public (phet-io)
-   * TODO: rename to disposeElement, ,https://github.com/phetsims/tandem/issues/170
+   * @override
    */
-  disposeInstance() {
-    super.disposeElement( this.instance );
-    this.instance = null;
+  disposeElement() {
+    super.disposeElement( this.element );
+    this.element = null;
   }
 
   /**
-   * Creates the instance if it has not been created yet, and returns it.
+   * Creates the element if it has not been created yet, and returns it.
    * @param {Array.<*>} [argsForCreateFunction]
    * @returns {Object}
    * @public
+   *
    */
-  getInstance( ...argsForCreateFunction ) {
-    if ( !this.instance ) {
+  getElement( ...argsForCreateFunction ) {
+    if ( !this.element ) {
       this.create( ...argsForCreateFunction );
     }
-    return this.instance;
+    return this.element;
   }
 
   /**
@@ -77,15 +78,15 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   create( ...argsForCreateFunction ) {
 
     // create with default state and substructure, details will need to be set by setter methods.
-    this.instance = this.createDynamicElement(
+    this.element = this.createDynamicElement(
       this.phetioDynamicElementName,
       argsForCreateFunction,
       this.phetioType.parameterTypes[ 0 ]
     );
 
-    this.elementCreatedEmitter.emit( this.instance );
+    this.elementCreatedEmitter.emit( this.element );
 
-    return this.instance;
+    return this.element;
   }
 }
 
