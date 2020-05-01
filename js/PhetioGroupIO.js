@@ -59,7 +59,7 @@ const create = parameterType => {
      * @throws CouldNotYetDeserializeError - if it could not yet deserialize
      * @public (phet-io state)
      */
-    static addChildInstance( group, componentName, stateObject ) {
+    static addChildElement( group, componentName, stateObject ) {
 
       // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
       // element in the state needs to be created first, so we will try again on the next iteration of the state
