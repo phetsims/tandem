@@ -104,8 +104,6 @@ const SUPPORTED_PHET_IO_COMPONENT_OPTIONS = _.keys( DEFAULTS ).concat( [
   'textProperty'
 ] );
 
-const OPTIONS_KEYS = _.keys( DEFAULTS );
-
 // factor these out so that we don't recreate closures for each instance.
 const isDynamicElementPredicate = phetioObject => phetioObject.phetioDynamicElement;
 const isDynamicElementArchetypePredicate = phetioObject => phetioObject.phetioIsArchetype;
@@ -202,21 +200,17 @@ function PhetioObject( options ) {
   }
 }
 
-tandemNamespace.register( 'PhetioObject', PhetioObject );
-
 /**
  * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to
- * _.intersection( _.keys( options ), OPTIONS_KEYS ).length>0 but implemented imperatively to avoid memory or
+ * _.intersection( _.keys( options ), _.keys( DEFAULTS) ).length>0 but implemented imperatively to avoid memory or
  * performance issues.
  * @param {Object} [options]
  * @returns {boolean}
  */
 const specifiesPhetioObjectKey = options => {
   for ( const key in options ) {
-    if ( options.hasOwnProperty( key ) ) {
-      if ( OPTIONS_KEYS.indexOf( key ) >= 0 ) {
-        return true;
-      }
+    if ( options.hasOwnProperty( key ) && DEFAULTS.hasOwnProperty( key ) ) {
+      return true;
     }
   }
   return false;
@@ -227,8 +221,9 @@ inherit( Object, PhetioObject, {
 
   /**
    * Like SCENERY/Node, PhetioObject can be configured during construction or later with a mutate call.
+   * Noop if provided options keys don't intersect with any key in DEFAULTS; baseOptions are ignored for this calculation.
    *
-   * @param {Object} baseOptions - only applied if options keys intersect OPTIONS_KEYS
+   * @param {Object} baseOptions
    * @param {Object} [options]
    * @protected
    */
@@ -670,4 +665,5 @@ class LinkedElement extends PhetioObject {
   }
 }
 
+tandemNamespace.register( 'PhetioObject', PhetioObject );
 export default PhetioObject;
