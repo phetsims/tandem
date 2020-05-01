@@ -13,6 +13,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import Emitter from '../../axon/js/Emitter.js';
 import validate from '../../axon/js/validate.js';
 import merge from '../../phet-core/js/merge.js';
 import DynamicTandem from './DynamicTandem.js';
@@ -93,6 +94,15 @@ class PhetioDynamicElementContainer extends PhetioObject {
     // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes, but otherwise
     // access should not be needed. This will only be non-null when generating the phet-io api, see createArchetype().
     this.archetype = this.createArchetype();
+
+    // @public (read-only)
+    // TODO: why validate with stub true? Also is it worth using TinyEmitter? https://github.com/phetsims/tandem/issues/170
+    this.elementCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+    this.elementDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
+
+    // Emit to the data stream on element creation/disposal
+    this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
+    this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
   }
 
   /**
@@ -102,6 +112,15 @@ class PhetioDynamicElementContainer extends PhetioObject {
     assert && assert( false, 'PhetioDynamicElementContainers are not intended for disposal' );
   }
 
+  /**
+   * Dispose a contained element
+   * @param {PhetioObject} element
+   * @protected - should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
+   */
+  disposeElement( element ) {
+    this.elementDisposedEmitter.emit( element );
+    element.dispose();
+  }
 
   /**
    * Archetypes are created to generate the baseline file, or to validate against an existing baseline file.  They are

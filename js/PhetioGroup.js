@@ -14,7 +14,6 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
-import Emitter from '../../axon/js/Emitter.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
@@ -46,17 +45,8 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     // @private {PhetioObject[]} access using getArray or getArrayCopy
     this._array = [];
 
-    // @public (read-only)
-    // TODO: why validate with stub true? Also is it worth using TinyEmitter? https://github.com/phetsims/tandem/issues/170
-    this.elementCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
-    this.elementDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
-
     // @public (only for PhetioGroupIO) - for generating indices from a pool
     this.groupElementIndex = 0;
-
-    // Emit to the data stream on element creation/disposal
-    this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
-    this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
   }
 
   /**
@@ -68,13 +58,12 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Remove an element from this Group, unregistering it from PhET-iO and disposing it.
-   * @param element
+   * @param {PhetioObject} element
    * @public
    */
   disposeElement( element ) {
+    super.disposeElement( element );
     arrayRemove( this._array, element );
-    this.elementDisposedEmitter.emit( element );
-    element.dispose();
   }
 
   /**
@@ -209,6 +198,8 @@ class PhetioGroup extends PhetioDynamicElementContainer {
       argsForCreateFunction, this.phetioType.parameterTypes[ 0 ] );
 
     this._array.push( groupElement );
+
+    // TODO: move to parent, https://github.com/phetsims/tandem/issues/170#issuecomment-622189798
     this.elementCreatedEmitter.emit( groupElement );
 
     return groupElement;

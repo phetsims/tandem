@@ -13,7 +13,6 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
-import Emitter from '../../axon/js/Emitter.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
 import Tandem from './Tandem.js';
@@ -41,26 +40,18 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
 
     super( createElement, defaultArguments, options );
 
-    // @public (read-only)
-    this.elementCreatedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
-    this.elementDisposedEmitter = new Emitter( { parameters: [ { isValidValue: _.stubTrue } ] } );
-
     // @public (read-only) {PhetioObject}
     this.instance = null;
-
-    // Emit to the data stream on instance creation/disposal
-    this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
-    this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
   }
 
   /**
    * Dispose the underlying instance.  Called by the PhetioStateEngine so the capsule instance can be recreated with the
    * correct state.
    * @public (phet-io)
+   * TODO: rename to disposeElement, ,https://github.com/phetsims/tandem/issues/170
    */
   disposeInstance() {
-    this.elementDisposedEmitter.emit( this.instance );
-    this.instance.dispose();
+    super.disposeElement( this.instance );
     this.instance = null;
   }
 
