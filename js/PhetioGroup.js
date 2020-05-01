@@ -55,10 +55,6 @@ class PhetioGroup extends PhetioDynamicElementContainer {
       phetioReadOnly: true,
       numberType: 'Integer'
     } );
-
-    assert && this.countProperty.link( count => {
-      assert && assert( this._array.length === count, 'count does not match array length' );
-    } );
   }
 
   /**
