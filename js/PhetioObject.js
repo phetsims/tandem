@@ -15,7 +15,6 @@ import inherit from '../../phet-core/js/inherit.js';
 import merge from '../../phet-core/js/merge.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
-import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import ObjectIO from './types/ObjectIO.js';
