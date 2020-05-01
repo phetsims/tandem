@@ -430,20 +430,22 @@ inherit( Object, PhetioObject, {
    */
   propagateDynamicFlagsToChildren: function() {
     assert && assert( _.hasIn( window, 'phet.phetio.phetioEngine' ), 'phetioEngine should be defined' );
-    const children = phet.phetio.phetioEngine.getChildren( this );
+    const phetioEngine = phet.phetio.phetioEngine;
 
-    for ( let i = 0; i < children.length; i++ ) {
-      const child = children[ i ];
+    this.tandem.iterateDescendants( tandem => {
+      if ( phetioEngine.hasPhetioObject( tandem.phetioID ) ) {
+        const phetioObject = phetioEngine.getPhetioObject( tandem.phetioID );
 
-      // Order matters here! The phetioIsArchetype needs to be first to ensure that the phetioDynamicElement
-      // setter can opt out for archetypes.
-      child.phetioIsArchetype = this.phetioIsArchetype;
-      child.setPhetioDynamicElement( this.phetioDynamicElement );
+        // Order matters here! The phetioIsArchetype needs to be first to ensure that the setPhetioDynamicElement
+        // setter can opt out for archetypes.
+        phetioObject.phetioIsArchetype = this.phetioIsArchetype;
+        phetioObject.setPhetioDynamicElement( this.phetioDynamicElement );
 
-      if ( child.phetioBaselineMetadata ) {
-        child.phetioBaselineMetadata.phetioIsArchetype = this.phetioIsArchetype;
+        if ( phetioObject.phetioBaselineMetadata ) {
+          phetioObject.phetioBaselineMetadata.phetioIsArchetype = this.phetioIsArchetype;
+        }
       }
-    }
+    } );
   },
 
   /**

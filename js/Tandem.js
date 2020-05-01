@@ -81,6 +81,14 @@ class Tandem {
       supplied: true
     }, options );
 
+    // @private {Object.<string, Tandem>}
+    this.children = {};
+
+    if ( this.parentTandem ) {
+      assert && assert( !this.parentTandem.hasChild( name ), `parent should not have child: ${name}` );
+      this.parentTandem.addChild( name, this );
+    }
+
     // @private
     this.required = options.required;
 
@@ -169,6 +177,7 @@ class Tandem {
         arrayRemove( bufferedPhetioObjects, phetioObject );
       }
       else {
+        phetioObject.tandem.dispose();
         for ( let i = 0; i < phetioObjectListeners.length; i++ ) {
           phetioObjectListeners[ i ].removePhetioObject( phetioObject );
         }
@@ -193,14 +202,73 @@ class Tandem {
   }
 
   /**
-   * Create a new Tandem by appending the given id
+   * Create a new Tandem by appending the given id. If the child already exists TODO: Doc!
    * @param {string} name
    * @param {Object} [options]
    * @returns {Tandem}
    * @public
    */
   createTandem( name, options ) {
-    return new Tandem( this, name, this.getExtendedOptions( options ) );
+
+    options = this.getExtendedOptions( options );
+
+    // re-use the child if it already exists, but make sure it behaves the same.
+    if ( this.hasChild( name ) ) {
+      const currentChild = this.children[ name ];
+      assert && assert( currentChild.required === options.required );
+      assert && assert( currentChild.supplied === options.supplied );
+      assert && assert( currentChild instanceof Tandem );
+      return currentChild;
+    }
+
+    return new Tandem( this, name, options );
+  }
+
+  /**
+   * @param {string} name
+   * @returns {boolean}
+   * @private
+   */
+  hasChild( name ) {
+    return this.children.hasOwnProperty( name );
+  }
+
+  /**
+   * @param {string} name
+   * @param {Tandem} tandem
+   */
+  addChild( name, tandem ) {
+    assert && assert( !this.hasChild( name ) );
+    this.children[ name ] = tandem;
+  }
+
+  /**
+   * Fire a callback on all descendants of this Tandem
+   * @param {function(Tandem)} callback
+   */
+  iterateDescendants( callback ) {
+    for ( const childName in this.children ) {
+      if ( this.children.hasOwnProperty( childName ) ) {
+        callback( this.children[ childName ] );
+        this.children[ childName ].iterateDescendants( callback );
+      }
+    }
+  }
+
+  /**
+   * @param {string} childName
+   * @private
+   */
+  removeChild( childName ) {
+    assert && assert( this.hasChild( childName ) );
+    delete this.children[ childName ];
+  }
+
+  /**
+   * @private
+   */
+  dispose() {
+    this.parentTandem.removeChild( this.name );
   }
 
   /**
