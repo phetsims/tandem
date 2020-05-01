@@ -108,6 +108,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @public
    */
   dispose() {
+
+    // If hitting this assertion because of nested dynamic element containers, please discuss with a phet-io team member.
     assert && assert( false, 'PhetioDynamicElementContainers are not intended for disposal' );
   }
 
@@ -131,6 +133,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
   createArchetype() {
 
     // Once the sim has started, any archetypes being created are likely done so because they are nested PhetioGroups.
+    // TODO: why do we get this information from phetioAPIValidation? Does recent API file work change this? https://github.com/phetsims/phet-io/issues/1648
     if ( phetioAPIValidation.simHasStarted ) {
       return null;
     }
