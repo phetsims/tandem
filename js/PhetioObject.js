@@ -15,6 +15,7 @@ import inherit from '../../phet-core/js/inherit.js';
 import merge from '../../phet-core/js/merge.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
+import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import ObjectIO from './types/ObjectIO.js';
@@ -267,10 +268,10 @@ inherit( Object, PhetioObject, {
     // overrides API file. Even when validation is not enabled, overrides should still be applied.
     if ( PHET_IO_ENABLED && options.tandem.supplied ) {
 
-      // Store the full baseline if we are printing out those files or need it for validation. Do this before
-      // applying overrides.
-      if ( phet.preloads.phetio.queryParameters.phetioPrintAPI ||
-           phet.preloads.phetio.queryParameters.phetioGenerateBaseline ) {
+      // Store the full baseline for usage in validation or for usage in studio.  Do this before applying overrides. The
+      // baseline is created when a sim is run with assertions to assist in phetioAPIValidation.  However, even when
+      // assertions are disabled, some wrappers such as studio need to generate the baseline anyway.
+      if ( phetioAPIValidation.enabled || phet.preloads.phetio.queryParameters.studio ) {
 
         // not all metadata are passed through via options, so store baseline for these additional properties
         this.phetioBaselineMetadata = this.getMetadata( merge( {

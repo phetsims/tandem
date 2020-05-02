@@ -78,8 +78,7 @@ class PhetioAPIValidation {
     this.loadedReferenceAPI = null;
 
     if ( this.enabled && this.referenceAPI ) {
-      assert && assert( phet.preloads.phetio.queryParameters.phetioCreateArchetypes,
-        'archetypes are required to be created in order to validate the whole reference API file' );
+      assert && assert( phet.preloads.phetio.createArchetypes, 'archetypes are required to be created to validate' );
 
       // See readFile.js
       const xhr = new XMLHttpRequest();
@@ -297,10 +296,8 @@ class PhetioAPIValidation {
     const entireBaseline = phet.phetio.phetioEngine.getPhetioElementsBaseline();
 
     for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
-      const generateArchetypes = ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintAPI ) ||
-                                 ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioCreateArchetypes );
       const isArchetype = phetioID.indexOf( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ) >= 0;
-      if ( !generateArchetypes && !entireBaseline.hasOwnProperty( phetioID ) ) {
+      if ( !phet.preloads.phetio.createArchetypes && !entireBaseline.hasOwnProperty( phetioID ) ) {
         assert && assert( isArchetype, 'phetioID missing from the baseline that was not an archetype: ' + phetioID );
       }
       else {
