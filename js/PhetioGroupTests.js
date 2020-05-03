@@ -17,7 +17,10 @@ QUnit.module( 'PhetioGroup' );
 QUnit.test( 'PhetioGroup creation and disposal', assert => {
 
   const createElement = ( tandem, otherField ) => {
-    const element = new PhetioObject( { tandem: tandem } );
+    const element = new PhetioObject( {
+      tandem: tandem,
+      phetioDynamicElement: true
+    } );
     element.otherField = otherField;
     return element;
   };
