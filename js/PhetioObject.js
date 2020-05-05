@@ -546,10 +546,10 @@ inherit( Object, PhetioObject, {
     // related to the endEvent.  Note this means it is acceptable (and expected) for endEvent() to be called on
     // disposed PhetioObjects.
     //
-    // The phetioEvent stack should resolve by the next clock tick, so that's when we check it.
-    assert && setTimeout( () => { // eslint-disable-line bad-sim-text
+    // The phetioEvent stack should resolve by the next frame, so that's when we check it.
+    assert && phet.joist.sim.runOnNextFrame( () => { // eslint-disable-line bad-sim-text
       assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
-    }, 0 );
+    } );
 
     if ( this.phetioObjectInitialized ) {
       this.tandem.removePhetioObject( this );
