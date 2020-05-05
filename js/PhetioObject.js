@@ -547,7 +547,7 @@ inherit( Object, PhetioObject, {
     // disposed PhetioObjects.
     //
     // The phetioEvent stack should resolve by the next frame, so that's when we check it.
-    assert && phet.joist.sim.runOnNextFrame( () => { // eslint-disable-line bad-sim-text
+    assert && window.phet && phet.joist && phet.joist.sim && phet.joist.sim.runOnNextFrame( () => { // eslint-disable-line bad-sim-text
       assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
     } );
 
