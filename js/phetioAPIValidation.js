@@ -358,4 +358,6 @@ class PhetioAPIValidation {
   }
 }
 
-export default tandemNamespace.register( 'phetioAPIValidation', new PhetioAPIValidation() );
+const phetioAPIValidation = new PhetioAPIValidation();
+tandemNamespace.register( 'phetioAPIValidation', phetioAPIValidation );
+export default phetioAPIValidation;
