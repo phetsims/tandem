@@ -221,18 +221,18 @@ inherit( Object, PhetioObject, {
 
   /**
    * Like SCENERY/Node, PhetioObject can be configured during construction or later with a mutate call.
-   * Noop if provided options keys don't intersect with any key in DEFAULTS; baseOptions are ignored for this calculation.
+   * Noop if provided config keys don't intersect with any key in DEFAULTS; baseOptions are ignored for this calculation.
    *
    * @param {Object} baseOptions
-   * @param {Object} [options]
+   * @param {Object} config
    * @protected
    */
-  initializePhetioObject: function( baseOptions, options ) {
-    assert && assert( options, 'initializePhetioObject must be called with options' );
+  initializePhetioObject: function( baseOptions, config ) {
+    assert && assert( config, 'initializePhetioObject must be called with config' );
 
-    // No PhetioObject options were provided. If not yet initialized, perhaps they will be provided in a subsequent
+    // No PhetioObject config were provided. If not yet initialized, perhaps they will be provided in a subsequent
     // Node.mutate() call.
-    if ( !specifiesPhetioObjectKey( options ) ) {
+    if ( !specifiesPhetioObjectKey( config ) ) {
       return;
     }
 
@@ -240,52 +240,52 @@ inherit( Object, PhetioObject, {
     // `new Node( {tandem: tandem}).mutate({})`
     assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
-    validate( options.tandem, { valueType: Tandem } );
+    validate( config.tandem, { valueType: Tandem } );
 
-    options = merge( {}, DEFAULTS, baseOptions, options );
+    config = merge( {}, DEFAULTS, baseOptions, config );
 
-    // validate options before assigning to properties
-    validate( options.phetioType, IO_TYPE_VALIDATOR );
-    validate( options.phetioState, BOOLEAN_VALIDATOR );
-    validate( options.phetioReadOnly, BOOLEAN_VALIDATOR );
-    validate( options.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR );
-    validate( options.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR );
-    validate( options.phetioHighFrequency, BOOLEAN_VALIDATOR );
-    validate( options.phetioPlayback, BOOLEAN_VALIDATOR );
-    validate( options.phetioStudioControl, BOOLEAN_VALIDATOR );
-    validate( options.phetioComponentOptions, PHET_IO_COMPONENT_OPTIONS_VALIDATOR );
-    validate( options.phetioFeatured, BOOLEAN_VALIDATOR );
-    validate( options.phetioEventMetadata, OBJECT_VALIDATOR );
-    validate( options.phetioDynamicElement, BOOLEAN_VALIDATOR );
+    // validate config before assigning to properties
+    validate( config.phetioType, IO_TYPE_VALIDATOR );
+    validate( config.phetioState, BOOLEAN_VALIDATOR );
+    validate( config.phetioReadOnly, BOOLEAN_VALIDATOR );
+    validate( config.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR );
+    validate( config.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR );
+    validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR );
+    validate( config.phetioPlayback, BOOLEAN_VALIDATOR );
+    validate( config.phetioStudioControl, BOOLEAN_VALIDATOR );
+    validate( config.phetioComponentOptions, PHET_IO_COMPONENT_OPTIONS_VALIDATOR );
+    validate( config.phetioFeatured, BOOLEAN_VALIDATOR );
+    validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
+    validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
 
     // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
     // phetioEngine itself). This is okay though, as none of these should be marked as dynamic. Store this early
     // because it's a non-option metadata key.
     this.phetioIsArchetype = !!( _.hasIn( window, 'phet.phetio.phetioEngine' ) &&
-                                 phet.phetio.phetioEngine.ancestorMatches( options.tandem.phetioID, isDynamicElementArchetypePredicate ) );
+                                 phet.phetio.phetioEngine.ancestorMatches( config.tandem.phetioID, isDynamicElementArchetypePredicate ) );
 
     // This block is associated with validating the baseline api and filling in metadata specified in the elements
     // overrides API file. Even when validation is not enabled, overrides should still be applied.
-    if ( PHET_IO_ENABLED && options.tandem.supplied ) {
+    if ( PHET_IO_ENABLED && config.tandem.supplied ) {
 
       // Store the full baseline for usage in validation or for usage in studio.  Do this before applying overrides. The
       // baseline is created when a sim is run with assertions to assist in phetioAPIValidation.  However, even when
       // assertions are disabled, some wrappers such as studio need to generate the baseline anyway.
       if ( phetioAPIValidation.enabled || phet.preloads.phetio.queryParameters.studio ) {
 
-        // not all metadata are passed through via options, so store baseline for these additional properties
+        // not all metadata are passed through via config, so store baseline for these additional properties
         this.phetioBaselineMetadata = this.getMetadata( merge( {
           phetioIsArchetype: this.phetioIsArchetype
-        }, options ) );
+        }, config ) );
       }
 
       // If not a deprecated dynamic element
       // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
-      if ( options.tandem.phetioID.indexOf( '~' ) === -1 ) {
+      if ( config.tandem.phetioID.indexOf( '~' ) === -1 ) {
 
         // Dynamic elements should compare to their "concrete" counterparts.  For example, this means that a Particle
         // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
-        const concretePhetioID = options.tandem.getConcretePhetioID();
+        const concretePhetioID = config.tandem.getConcretePhetioID();
 
         // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
         // Patch in the desired values from overrides, if any.
@@ -293,28 +293,28 @@ inherit( Object, PhetioObject, {
           const overrides = window.phet.preloads.phetio.phetioElementsOverrides[ concretePhetioID ];
           if ( overrides ) {
 
-            // No need to make a new object, since this "options" variable was created in the previous merge call above.
-            options = merge( options, overrides );
+            // No need to make a new object, since this "config" variable was created in the previous merge call above.
+            config = merge( config, overrides );
           }
         }
       }
     }
 
-    // Unpack options to properties
-    this.tandem = options.tandem;
-    this.phetioType = options.phetioType;
-    this.phetioState = options.phetioState;
-    this.phetioReadOnly = options.phetioReadOnly;
-    this.phetioEventType = options.phetioEventType;
-    this.phetioDocumentation = options.phetioDocumentation;
-    this.phetioHighFrequency = options.phetioHighFrequency;
-    this.phetioPlayback = options.phetioPlayback;
-    this.phetioStudioControl = options.phetioStudioControl;
-    this.phetioComponentOptions = options.phetioComponentOptions;
-    this.phetioFeatured = options.phetioFeatured;
-    this.phetioEventMetadata = options.phetioEventMetadata;
+    // Unpack config to properties
+    this.tandem = config.tandem;
+    this.phetioType = config.phetioType;
+    this.phetioState = config.phetioState;
+    this.phetioReadOnly = config.phetioReadOnly;
+    this.phetioEventType = config.phetioEventType;
+    this.phetioDocumentation = config.phetioDocumentation;
+    this.phetioHighFrequency = config.phetioHighFrequency;
+    this.phetioPlayback = config.phetioPlayback;
+    this.phetioStudioControl = config.phetioStudioControl;
+    this.phetioComponentOptions = config.phetioComponentOptions;
+    this.phetioFeatured = config.phetioFeatured;
+    this.phetioEventMetadata = config.phetioEventMetadata;
 
-    this.setPhetioDynamicElement( options.phetioDynamicElement ||
+    this.setPhetioDynamicElement( config.phetioDynamicElement ||
 
                                   // Support phet brand, and phetioEngine doesn't yet exist while registering
                                   // engine-related objects (including phetioEngine itself). This is okay though, as
@@ -345,8 +345,8 @@ inherit( Object, PhetioObject, {
       this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
 
       // Any children that have been created thus far should be now marked as phetioDynamicElement.
-      // Get this value from options because this only needs to be done on the root dynamic element
-      options.phetioDynamicElement && this.propagateDynamicFlagsToChildren();
+      // Get this value from config because this only needs to be done on the root dynamic element
+      config.phetioDynamicElement && this.propagateDynamicFlagsToChildren();
     }
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
