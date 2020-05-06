@@ -53,6 +53,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     this.countProperty = new NumberProperty( 0, {
       tandem: options.tandem.createTandem( 'countProperty' ),
       phetioReadOnly: true,
+      phetioFeatured: true,
       numberType: 'Integer'
     } );
   }
@@ -70,7 +71,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * 1. remove from internl array
    * 2. update countProperty
    * 3. element.dispose
-   * 4. fire disposeEmitter
+   * 4. fire elementDisposedEmitter
    *
    * @param {PhetioObject} element
    * @public
