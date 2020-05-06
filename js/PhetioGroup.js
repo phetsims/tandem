@@ -118,7 +118,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @returns {number}
    * @public
    */
-  get length() { return this._array.length; }
+  get count() { return this.countProperty.value; }
 
   /**
    * Returns an array with elements that pass the filter predicate.
