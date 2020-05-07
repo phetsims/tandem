@@ -115,7 +115,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 
   /**
-   * Get number of Group elements
+   * Gets the number of elements in the group.
    * @returns {number}
    * @public
    */
