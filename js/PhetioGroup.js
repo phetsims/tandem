@@ -52,6 +52,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     // @public (read-only)
     this.countProperty = new NumberProperty( 0, {
       tandem: options.tandem.createTandem( 'countProperty' ),
+      phetioDocumentation: 'the number of elements in the group',
       phetioReadOnly: true,
       phetioFeatured: true,
       numberType: 'Integer'
