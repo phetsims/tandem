@@ -302,6 +302,9 @@ class Tandem {
 
     assert && deprecationWarning( 'Tandem.createGroupTandem is deprecated, please use PhetioGroup instead' );
 
+    if ( this.children[ name ] ) {
+      return this.children[ name ];
+    }
     return new GroupTandem( this, name );
   }
 
@@ -376,7 +379,7 @@ class Tandem {
 
       // first call case where tandem starts as the first string in the list
       if ( typeof tandem === 'string' ) {
-        tandem = new Tandem( null, tandem );
+        tandem = Tandem.ROOT;
       }
       return tandem.createTandem( nextComponent );
     } );
@@ -542,6 +545,9 @@ class GroupTandem extends Tandem {
 
     assert && deprecationWarning( 'GroupTandem is deprecated, please use PhetioGroup instead' );
 
+    // @private
+    this.groupName = name;
+
     // @private for generating indices from a pool
     this.groupMemberIndex = 0;
   }
@@ -552,7 +558,7 @@ class GroupTandem extends Tandem {
    * @public
    */
   createNextTandem() {
-    return Tandem.createFromPhetioID( this.phetioID + '~' + ( this.groupMemberIndex++ ) );
+    return this.parentTandem.createTandem( this.groupName + '~' + ( this.groupMemberIndex++ ) );
   }
 }
 
