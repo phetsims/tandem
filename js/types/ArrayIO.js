@@ -44,6 +44,7 @@ const create = parameterType => {
      * @param {Object[]} array
      * @returns {Array}
      * @override
+     * @public
      */
     static toStateObject( array ) {
       assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
@@ -61,6 +62,7 @@ const create = parameterType => {
      * @param {Array} stateObject - from toStateObject
      * @returns {Object[]}
      * @override
+     * @public
      */
     static fromStateObject( stateObject ) {
       const array = [];
@@ -76,6 +78,7 @@ const create = parameterType => {
      * default (uncustomized) value.
      * @public
      * @override
+     * @public
      */
     static setValue( array, fromStateObject ) {
       assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );

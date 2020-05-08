@@ -14,6 +14,8 @@ class LinkedElementIO extends ObjectIO {
   /**
    * @param {LinkedElement} linkedElement
    * @returns {Object}
+   * @override
+   * @public
    */
   static toStateObject( linkedElement ) {
     assert && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
@@ -23,6 +25,8 @@ class LinkedElementIO extends ObjectIO {
   /**
    * @param {Object} stateObject
    * @returns {Object}
+   * @override
+   * @public
    */
   static fromStateObject( stateObject ) {
     return {};

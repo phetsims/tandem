@@ -656,6 +656,7 @@ class LinkedElement extends PhetioObject {
    * @param {Object} object - used to get metadata keys, can be a PhetioObject, or an options object
    *                          (see usage initializePhetioObject)
    * @returns {Object} - metadata plucked from the passed in parameter
+   * @public
    */
   getMetadata( object ) {
     const phetioObjectMetadata = super.getMetadata( object );

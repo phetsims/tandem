@@ -236,6 +236,7 @@ class Tandem {
   /**
    * @param {string} name
    * @param {Tandem} tandem
+   * @public
    */
   addChild( name, tandem ) {
     assert && assert( !this.hasChild( name ) );
@@ -245,6 +246,7 @@ class Tandem {
   /**
    * Fire a callback on all descendants of this Tandem
    * @param {function(Tandem)} callback
+   * @public
    */
   iterateDescendants( callback ) {
     for ( const childName in this.children ) {
@@ -394,6 +396,7 @@ class RootTandem extends Tandem {
    * @param {string} name
    * @param {Object} [options]
    * @returns {Tandem}
+   * @public
    */
   createTandem( name, options ) {
     if ( VALIDATE_TANDEMS ) {
