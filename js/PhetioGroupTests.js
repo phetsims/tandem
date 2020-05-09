@@ -57,4 +57,50 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
   assert.ok( phetioGroup.countProperty.value === 3, 'added three' );
   phetioGroup.createNextElement( 'disposeMe!' );
   assert.ok( phetioGroup.countProperty.value === 3, 'new element should be immediately disposed' );
+
+  window.assert && assert.throws( () => {
+    phetioGroup.dispose();
+  }, 'cannot dispose phetioGroup' );
+} );
+
+QUnit.test( 'PhetioGroup deferring notifications', assert => {
+
+  const createElement = tandem => {
+    return new PhetioObject( {
+      tandem: tandem,
+      phetioDynamicElement: true
+    } );
+  };
+  const myPhetioGroup = new PhetioGroup( createElement, [], {
+    tandem: Tandem.GENERAL.createTandem( 'myPhetioGroup' ),
+    phetioType: PhetioGroupIO( ObjectIO )
+  } );
+
+  let creationCount = 0;
+  myPhetioGroup.elementCreatedEmitter.addListener( element => creationCount++ );
+  let disposedCount = 0;
+  myPhetioGroup.elementDisposedEmitter.addListener( element => disposedCount++ );
+
+  const first = myPhetioGroup.createNextElement();
+  assert.ok( creationCount === 1, 'increment one from a single usage' );
+  myPhetioGroup.disposeElement( first );
+  assert.ok( disposedCount === 1, 'disposed one' );
+
+  myPhetioGroup.setNotificationsDeferred( true );
+  const second = myPhetioGroup.createNextElement();
+  assert.ok( creationCount === 1, 'deferred, so should not increment' );
+  myPhetioGroup.disposeElement( second );
+  assert.ok( disposedCount === 1, 'deferred, so should not increment disposed' );
+
+  const third = myPhetioGroup.createNextElement();
+  assert.ok( creationCount === 1, 'still deferred, so should not increment' );
+  myPhetioGroup.notifyElementCreatedWhileDeferred( third );
+  assert.ok( creationCount === 2, 'notification for third went through' );
+  myPhetioGroup.disposeElement( third );
+  assert.ok( disposedCount === 1, 'still deferred, so should not increment disposed' );
+
+  myPhetioGroup.setNotificationsDeferred( false );
+  assert.ok( creationCount === 3, 'only one was flushed' );
+  assert.ok( disposedCount === 3, 'two notifications flushed' );
+
 } );

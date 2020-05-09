@@ -224,7 +224,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     this.countProperty.value++;
 
-    this.elementCreatedEmitter.emit( groupElement );
+    this.notifyElementCreated( groupElement );
 
     return groupElement;
   }

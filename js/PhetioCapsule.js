@@ -83,7 +83,8 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
       this.phetioType.parameterTypes[ 0 ]
     );
 
-    this.elementCreatedEmitter.emit( this.element );
+    this.notifyElementCreated( this.element );
+
     return this.element;
   }
 }

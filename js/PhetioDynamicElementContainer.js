@@ -15,6 +15,7 @@
 
 import Emitter from '../../axon/js/Emitter.js';
 import validate from '../../axon/js/validate.js';
+import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import DynamicTandem from './DynamicTandem.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
@@ -104,25 +105,14 @@ class PhetioDynamicElementContainer extends PhetioObject {
     // Emit to the data stream on element creation/disposal
     this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
     this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
-  }
 
-  /**
-   * @public
-   */
-  dispose() {
+    // @private {boolean} - a way to delay creation notifications to a later time, for phet-io state engine support
+    this.notificationsDeferred = false;
 
-    // If hitting this assertion because of nested dynamic element containers, please discuss with a phet-io team member.
-    assert && assert( false, 'PhetioDynamicElementContainers are not intended for disposal' );
-  }
-
-  /**
-   * Dispose a contained element
-   * @param {PhetioObject} element
-   * @protected - should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
-   */
-  disposeElement( element ) {
-    element.dispose();
-    this.elementDisposedEmitter.emit( element );
+    // @private {PhetioObject} - lists to keep track of the created and disposed elements when notifications are deferred.
+    // These are used to then flush notifications when they are set to no longer be deferred.
+    this.deferredCreations = [];
+    this.deferredDisposals = [];
   }
 
   /**
@@ -241,6 +231,95 @@ class PhetioDynamicElementContainer extends PhetioObject {
    */
   disposedEventListener( dynamicElement ) {
     this.emitDataStreamEvent( dynamicElement, 'disposed' );
+  }
+
+  /**
+   * @public
+   */
+  dispose() {
+
+    // If hitting this assertion because of nested dynamic element containers, please discuss with a phet-io team member.
+    assert && assert( false, 'PhetioDynamicElementContainers are not intended for disposal' );
+  }
+
+  /**
+   * Dispose a contained element
+   * @param {PhetioObject} element
+   * @protected - should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
+   */
+  disposeElement( element ) {
+    element.dispose();
+
+    if ( this.notificationsDeferred ) {
+      this.deferredDisposals.push( element );
+    }
+    else {
+      this.elementDisposedEmitter.emit( element );
+    }
+  }
+
+  /**
+   * Flush a single element from the list of deferred disposals that have not yet notified about the disposal. This
+   * should never be called publicly, instead see `disposeElement`
+   * @private
+   * @param {PhetioObject} disposedElement
+   */
+  notifyElementDisposedWhileDeferred( disposedElement ) {
+    assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
+    assert && assert( this.deferredDisposals.indexOf( disposedElement ) >= 0, 'disposedElement should not have been already notified' );
+    this.elementDisposedEmitter.emit( disposedElement );
+    arrayRemove( this.deferredDisposals, disposedElement );
+  }
+
+  /**
+   * Should be called by subtypes upon element creation, see PhetioGroup as an example.
+   * @protected
+   * @param {PhetioObject} createdElement
+   */
+  notifyElementCreated( createdElement ) {
+    if ( this.notificationsDeferred ) {
+      this.deferredCreations.push( createdElement );
+    }
+    else {
+      this.elementCreatedEmitter.emit( createdElement );
+    }
+  }
+
+  /**
+   * Flush a single element from the list of deferred creations that have not yet notified about the disposal. This
+   * is only public to support specifc order dependencies in the PhetioStateEngine, otherwise see `this.notifyElementCreated()`
+   * @public (PhetioGroupTests, phet-io) - only the PhetioStateEngine should notifiy individual elements created.
+   * @param {PhetioObject} createdElement
+   */
+  notifyElementCreatedWhileDeferred( createdElement ) {
+    assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
+    assert && assert( this.deferredCreations.indexOf( createdElement ) >= 0, 'createdElement should not have been already notified' );
+    this.elementCreatedEmitter.emit( createdElement );
+    arrayRemove( this.deferredCreations, createdElement );
+  }
+
+  /**
+   * When set to true, creation and disposal notifications will be deferred until set to false. When set to false,
+   * this function will flush all of the notifications for created and disposed elements (in that order) that occurred
+   * while this container was deferring its notifications.
+   * @public
+   * @param {boolean} notificationsDeferred
+   */
+  setNotificationsDeferred( notificationsDeferred ) {
+    assert && assert( notificationsDeferred !== this.notificationsDeferred, 'should not be the same as current value' );
+
+    // Flush all notifications when setting to be no longer deferred
+    if ( !notificationsDeferred ) {
+      while ( this.deferredCreations.length > 0 ) {
+        this.notifyElementCreatedWhileDeferred( this.deferredCreations[ 0 ] );
+      }
+      while ( this.deferredDisposals.length > 0 ) {
+        this.notifyElementDisposedWhileDeferred( this.deferredDisposals[ 0 ] );
+      }
+    }
+    assert && assert( this.deferredCreations.length === 0, 'creations should be clear' );
+    assert && assert( this.deferredDisposals.length === 0, 'disposals should be clear' );
+    this.notificationsDeferred = notificationsDeferred;
   }
 }
 
