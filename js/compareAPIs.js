@@ -53,5 +53,5 @@ const compareAPIs = ( referenceAPI, api ) => {
   return report;
 };
 
-tandemNamespace.register( 'compareAPI', compareAPIs );
+tandemNamespace.register( 'compareAPIs', compareAPIs );
 export default compareAPIs;
