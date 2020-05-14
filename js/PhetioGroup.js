@@ -57,6 +57,8 @@ class PhetioGroup extends PhetioDynamicElementContainer {
       phetioFeatured: true,
       numberType: 'Integer'
     } );
+
+    assert && this.countProperty.link( count => assert( count === this._array.length, 'countProperty should match array length.' ) );
   }
 
   /**
@@ -80,7 +82,11 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    */
   disposeElement( element ) {
     arrayRemove( this._array, element );
-    this.countProperty.value--;
+
+    // countProperty handles its own state
+    if ( !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+      this.countProperty.value--;
+    }
     super.disposeElement( element );
   }
 
@@ -222,7 +228,10 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     this._array.push( groupElement );
 
-    this.countProperty.value++;
+    // countProperty handles its own state
+    if ( !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+      this.countProperty.value++;
+    }
 
     this.notifyElementCreated( groupElement );
 
