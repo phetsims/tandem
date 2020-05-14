@@ -83,10 +83,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   disposeElement( element ) {
     arrayRemove( this._array, element );
 
-    // countProperty handles its own state
-    if ( !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+    const simDefined = _.hasIn( window, 'phet.joist.sim' );
+
+    // support non-sim usages like unit tests and note that countProperty handles its own state
+    if ( !simDefined || ( simDefined && !phet.joist.sim.isSettingPhetioStateProperty.value ) ) {
       this.countProperty.value--;
     }
+
     super.disposeElement( element );
   }
 
@@ -228,8 +231,10 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     this._array.push( groupElement );
 
-    // countProperty handles its own state
-    if ( !phet.joist.sim.isSettingPhetioStateProperty.value ) {
+    const simDefined = _.hasIn( window, 'phet.joist.sim' );
+
+    // support non-sim usages like unit tests and note that countProperty handles its own state
+    if ( !simDefined || ( simDefined && !phet.joist.sim.isSettingPhetioStateProperty.value ) ) {
       this.countProperty.value++;
     }
 
