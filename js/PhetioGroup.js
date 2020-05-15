@@ -173,6 +173,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   /**
    * remove and dispose all registered group elements
    * @public
+   * @override
    */
   clear() {
     while ( this._array.length > 0 ) {

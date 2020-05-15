@@ -67,16 +67,6 @@ const create = parameterType => {
 
       return capsule.create( ...args );
     }
-
-    /**
-     * @param {PhetioCapsule} capsule
-     * @public (phet-io state)
-     */
-    static clearChildInstances( capsule ) {
-      if ( capsule.element ) {
-        capsule.disposeElement();
-      }
-    }
   }
 
   PhetioCapsuleIOImpl.documentation = 'An array that sends notifications when its values have changed.';

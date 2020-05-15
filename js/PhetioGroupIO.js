@@ -77,14 +77,6 @@ const create = parameterType => {
 
       return groupElement;
     }
-
-    /**
-     * @param {PhetioGroup} group
-     * @public (phet-io state)
-     */
-    static clearChildInstances( group ) {
-      group.clear();
-    }
   }
 
   PhetioGroupIOImpl.documentation = 'An array that sends notifications when its values have changed.';

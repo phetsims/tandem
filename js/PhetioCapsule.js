@@ -69,6 +69,16 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   }
 
   /**
+   * @public
+   * @override
+   */
+  clear() {
+    if ( this.element ) {
+      this.disposeElement();
+    }
+  }
+
+  /**
    * Primarily for internal use, clients should usually use getElement.
    * @param {Array.<*>} [argsForCreateFunction]
    * @returns {Object}

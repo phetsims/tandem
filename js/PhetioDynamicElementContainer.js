@@ -43,12 +43,9 @@ class PhetioDynamicElementContainer extends PhetioObject {
       // By default, a PhetioDynamicElementContainer's elements are included in state such that on every setState call,
       // the elements are cleared out by the phetioStateEngine so elements in the state can be added to the empty group.
       // This option is for opting out of that behavior. When false, this container will not have its elements cleared
-      // when beginning to set PhET-iO state. NOTE: Only use when it's guaranteed that all of the elements are
-      // created on startup, and never at any point later during the sim's lifetime. When this is set to false, there
-      // is no need for elements to support dynamic state. This may seem like a confusing option because you may be
-      // thinking, "shouldn't all instances of PhetioDynamicElementContainer contain dynamic elements that are added
-      // and removed throughout the lifetime of the sim?!?!" Please note the documentation above about the term "dynamic"
-      // and note that this is an atypical option.
+      // when beginning to set PhET-iO state. Furthermore, view elements following the "only the models are stateful"
+      // pattern must mark this as true, otherwise the state engine will try to create these elements instead of letting
+      // the model notifications handle this.
       supportsDynamicState: true,
 
       // {string} The container's tandem name must have this suffix, and the base tandem name for elements in
@@ -113,6 +110,58 @@ class PhetioDynamicElementContainer extends PhetioObject {
     // These are used to then flush notifications when they are set to no longer be deferred.
     this.deferredCreations = [];
     this.deferredDisposals = [];
+
+    if ( Tandem.PHET_IO_ENABLED ) {
+      const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
+
+      // On state start, clear out the container and set to defer notifications.
+      phetioStateEngine.onBeforeStateSet.addListener( phetioIDsToSet => {
+        for ( let i = 0; i < phetioIDsToSet.length; i++ ) {
+          const phetioID = phetioIDsToSet[ i ];
+          if ( _.startsWith( phetioID, this.tandem.phetioID ) ) {
+            this.clear();
+            this.setNotificationsDeferred( true );
+            return;
+          }
+        }
+      } );
+
+      // done with state setting
+      phetioStateEngine.stateSetEmitter.addListener( () => {
+        if ( this.notificationsDeferred ) {
+          this.setNotificationsDeferred( false );
+        }
+      } );
+
+      phetioStateEngine.addStateProcessor( ( state, completedIDs ) => {
+        let creationNotified = false;
+
+        while ( this.deferredCreations.length > 0 ) {
+          const deferredCreatedElement = this.deferredCreations[ 0 ];
+          if ( this.allChildrenSetForState( state, completedIDs ) ) {
+            this.notifyElementCreatedWhileDeferred( deferredCreatedElement );
+            creationNotified = true;
+          }
+        }
+        return creationNotified;
+      } );
+    }
+  }
+
+  /**
+   * @param {Object.<phetioID:string, *>} state
+   * @param {string[]} completedIDs - list of ids that have already had their state set
+   * @returns {boolean} - true if all children of this container (based on phetioID) have had their state set already.
+   */
+  allChildrenSetForState( state, completedIDs ) {
+    const allIDsToSet = Object.keys( state );
+    for ( let i = 0; i < allIDsToSet.length; i++ ) {
+      const phetioID = allIDsToSet[ i ];
+      if ( _.startsWith( phetioID, this.tandem.phetioID ) && !completedIDs.indexOf( phetioID ) ) {
+        return false;
+      }
+    }
+    return true; // No elements in state that aren't in the completed list
   }
 
   /**
@@ -256,6 +305,14 @@ class PhetioDynamicElementContainer extends PhetioObject {
     else {
       this.elementDisposedEmitter.emit( element );
     }
+  }
+
+  /**
+   * @public
+   * @abstract
+   */
+  clear() {
+    throw new Error( 'clear() is abstract and should be implemented by subTypes' );
   }
 
   /**
