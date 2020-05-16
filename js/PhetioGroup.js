@@ -58,13 +58,17 @@ class PhetioGroup extends PhetioDynamicElementContainer {
       numberType: 'Integer'
     } );
 
-    // When setting state, dynamic element creation will increment the countProperty, so make sure to set countProperty
-    // after all dynamic elements have been recreated,
-    if ( Tandem.PHET_IO_ENABLED ) {
-      phet.phetio.phetioEngine.phetioStateEngine.setObjectStateLast( this.countProperty.tandem.phetioID );
-    }
-
     assert && this.countProperty.link( count => assert( count === this._array.length, 'countProperty should match array length.' ) );
+
+    // countProperty can be overwritten during state set, see PhetioGroup.createIndexedELement(), and so this assertion
+    // makes sure that the final length of the elements array matches the expected count from the state.
+    assert && Tandem.PHET_IO_ENABLED && phet.phetio.phetioEngine.phetioStateEngine.stateSetEmitter.addListener( state => {
+
+      // This supports cases when only partial state is being set
+      if ( state[ this.countProperty.tandem.phetioID ] ) {
+        assert( state[ this.countProperty.tandem.phetioID ].value === this._array.length, 'countProperty should match array length.' );
+      }
+    } );
   }
 
   /**
@@ -89,7 +93,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   disposeElement( element ) {
     arrayRemove( this._array, element );
 
-    this.countProperty.value--;
+    this.countProperty.value = this._array.length;
 
     super.disposeElement( element );
   }
@@ -233,7 +237,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     this._array.push( groupElement );
 
-    this.countProperty.value++;
+    this.countProperty.value = this._array.length;
 
     this.notifyElementCreated( groupElement );
 
