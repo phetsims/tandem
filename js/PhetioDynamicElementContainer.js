@@ -44,7 +44,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
       // the elements are cleared out by the phetioStateEngine so elements in the state can be added to the empty group.
       // This option is for opting out of that behavior. When false, this container will not have its elements cleared
       // when beginning to set PhET-iO state. Furthermore, view elements following the "only the models are stateful"
-      // pattern must mark this as true, otherwise the state engine will try to create these elements instead of letting
+      // pattern must mark this as false, otherwise the state engine will try to create these elements instead of letting
       // the model notifications handle this.
       supportsDynamicState: true,
 
@@ -111,7 +111,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
     this.deferredCreations = [];
     this.deferredDisposals = [];
 
-    if ( Tandem.PHET_IO_ENABLED ) {
+    if ( Tandem.PHET_IO_ENABLED && this.supportsDynamicState ) {
       const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
 
       // On state start, clear out the container and set to defer notifications.
