@@ -272,7 +272,7 @@ class PhetioAPIValidation {
 
       // Here we need to kick this validation to the next frame to support construction in any order. Parent first, or
       // child first. Use namespace to avoid because timer is a PhetioObject.
-      phet.axon.timer.setTimeout( () => {
+      phet.axon.timer.runOnNextFrame( () => {
 
         // Everything in the baseline was created on startup, but the archetypes mark dynamic elements' non-dynamic
         // counterparts. The only instances that it's OK to create after startup are "dynamic instances" which are
@@ -283,7 +283,7 @@ class PhetioAPIValidation {
             ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
           } );
         }
-      }, 0 );
+      } );
     }
   }
 
