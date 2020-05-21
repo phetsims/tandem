@@ -365,8 +365,7 @@ inherit( Object, PhetioObject, {
    */
   phetioStartEvent: function( event, options ) {
 
-    // hasIn check to support modules like unit tests, see https://github.com/phetsims/utterance-queue/issues/12
-    if ( PHET_IO_ENABLED && this.isPhetioInstrumented() && _.hasIn( window, 'phet.phetio.dataStream' ) ) {
+    if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
       // only one or the other can be provided
       assert && assertMutuallyExclusiveOptions( options, [ 'data' ], [ 'getData' ] );
@@ -411,7 +410,7 @@ inherit( Object, PhetioObject, {
    * @public
    */
   phetioEndEvent: function() {
-    if ( PHET_IO_ENABLED && this.isPhetioInstrumented() && _.hasIn( window, 'phet.phetio.dataStream' ) ) {
+    if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
       const topMessageIndex = this.phetioMessageStack.pop();
 
