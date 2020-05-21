@@ -111,7 +111,10 @@ class PhetioDynamicElementContainer extends PhetioObject {
     this.deferredCreations = [];
     this.deferredDisposals = [];
 
-    if ( Tandem.PHET_IO_ENABLED && this.supportsDynamicState ) {
+    // provide a way to opt out of containers clearing dynamic state, useful if group elements exist for the
+    // lifetime of the sim, see https://github.com/phetsims/tandem/issues/132
+    if ( Tandem.PHET_IO_ENABLED && this.supportsDynamicState &&
+         !this .phetioIsArchetype ) { // don't clear archetypes because they are static.
       const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
 
       // On state start, clear out the container and set to defer notifications.
