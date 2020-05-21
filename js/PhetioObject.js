@@ -184,6 +184,9 @@ function PhetioObject( options ) {
   // @private {LinkedElement[]} - keep track of LinkedElements for disposal
   this.linkedElements = [];
 
+  // @public (phet-io) set to true when this PhetioObject has been sent over to the parent.
+  this.phetioNotifiedObjectCreated = false;
+
   if ( options ) {
     this.initializePhetioObject( {}, options );
   }
@@ -450,6 +453,7 @@ inherit( Object, PhetioObject, {
    * @param {boolean} phetioDynamicElement
    */
   setPhetioDynamicElement( phetioDynamicElement ) {
+    assert && assert( !this.phetioNotifiedObjectCreated, 'should not change dynamic element flags after notifying this PhetioObject\'s creation.' );
 
     //If this element is a archetype, it is not a dynamic element.
     if ( this.phetioIsArchetype ) {
@@ -479,6 +483,8 @@ inherit( Object, PhetioObject, {
    * @public
    */
   markDynamicElementArchetype: function() {
+    assert && assert( !this.phetioNotifiedObjectCreated, 'should not change dynamic element flags after notifying this PhetioObject\'s creation.' );
+
     this.phetioIsArchetype = true;
     this.setPhetioDynamicElement( false ); // because archetypes aren't dynamic elements
 
