@@ -26,6 +26,7 @@ const BREAKING_API_KEYS = [
  * @param {Object.<phetioID:string, phetioObjectMetadata:Object>} referenceAPI
  * @param {Object.<phetioID:string, phetioObjectMetadata:Object>} api
  * @returns {string[]} - list of reported errors
+ * TODO: Use this for all phet-io API comparisons, see https://github.com/phetsims/phet-io/issues/1523
  */
 const compareAPIs = ( referenceAPI, api ) => {
 
