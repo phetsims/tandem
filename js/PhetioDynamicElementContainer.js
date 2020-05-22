@@ -136,7 +136,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
         }
       } );
 
-      phetioStateEngine.addStateProcessor( ( state, completedIDs ) => {
+      phetioStateEngine.addSetStateHelper( ( state, completedIDs ) => {
         let creationNotified = false;
 
         while ( this.deferredCreations.length > 0 ) {
