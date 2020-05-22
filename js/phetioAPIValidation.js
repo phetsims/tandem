@@ -17,6 +17,7 @@
  * 7. Any schema entries in the overrides file must exist in the baseline file
  * 8. Any schema entries in the overrides file must be different from its baseline counterpart
  * 9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.
+ * 10. Dynamic elements should not appear in the API.
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
@@ -38,6 +39,9 @@
 import DynamicTandem from './DynamicTandem.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
+
+// constants
+const KEYS_TO_CHECK = [ 'phetioDynamicElement', 'phetioEventType', 'phetioIsArchetype', 'phetioPlayback', 'phetioReadOnly', 'phetioState', 'phetioTypeName' ];
 
 class PhetioAPIValidation {
 
@@ -67,7 +71,7 @@ class PhetioAPIValidation {
 
     // @private {Object.<typeName:string, function(new:ObjectIO)>} - this must be all phet-io types so that the
     // following would fail:  add a phetioType, then remove it, then add a different one under the same typeName.
-    // A Note about memory: Every TypeIO that is loaded through requirejs is already loaded on the namespace. Therefore
+    // A Note about memory: Every TypeIO that is loaded as a module is already loaded on the namespace. Therefore
     // this map doesn't add any memory by storing these. The exception to this is parametric TypeIOs. It should be
     // double checked that anything being passed into a parametric type is memory safe. As of this writing, only TypeIOs
     // are passed to parametric TypeIOs, so this pattern remains memory leak free. Furthermore, this list is only
@@ -117,22 +121,64 @@ class PhetioAPIValidation {
 
     // When screen-related query parameters are specified, there will be many things in the baseline file but not
     // in the sim. Those will not be validated.
+    // TODO: Use homeScreen's defaultValue from its schema, see https://github.com/phetsims/chipper/issues/936
     if ( phet.chipper.queryParameters.screens === null && phet.chipper.queryParameters.homeScreen ) {
 
       // check to make sure all phet-io elements and type entries were used.  If an entry wasn't used, throw an
       // assertion error because the sim is missing something it is supposed to have.
       // Don't check for this when generating the API file from the code.
       for ( const phetioID in desiredMetadata ) {
-        if (
-          desiredMetadata.hasOwnProperty( phetioID ) &&
-          !actualMetadata.hasOwnProperty( phetioID ) &&
-          !desiredMetadata[ phetioID ].phetioDynamicElement // TODO: https://github.com/phetsims/phet-io/issues/1648 are these marked in the file?
-        ) {
-          this.assertAPIError( {
-            phetioID: phetioID,
-            ruleInViolation: '5. When the sim is finished starting up, all non-dynamic schema entries must be registered.',
-            message: 'phetioID expected but does not exist'
-          } );
+        if ( desiredMetadata.hasOwnProperty( phetioID ) ) {
+          if ( desiredMetadata[ phetioID ].phetioDynamicElement ) {
+            this.assertAPIError( {
+              phetioID: phetioID,
+              ruleInViolation: '10. Dynamic elements should not appear in the API.',
+              message: 'dynamic phetioID not expected but found'
+            } );
+          }
+          if ( !actualMetadata.hasOwnProperty( phetioID ) ) {
+            this.assertAPIError( {
+              phetioID: phetioID,
+              ruleInViolation: '5. When the sim is finished starting up, all non-dynamic schema entries must be registered.',
+              message: 'phetioID expected but does not exist'
+            } );
+          }
+
+          // Compare PhET-iO Elements for compatibility
+          for ( let i = 0; i < KEYS_TO_CHECK.length; i++ ) {
+            const key = KEYS_TO_CHECK[ i ];
+            if ( desiredMetadata[ phetioID ][ key ] !== actualMetadata[ phetioID ][ key ] ) {
+              this.assertAPIError( {
+                ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
+                phetioID: phetioID,
+                message: `Incompatible value for ${key}, desired=${desiredMetadata[ phetioID ][ key ]}, actual=${actualMetadata[ phetioID ][ key ]}`
+              } );
+            }
+          }
+        }
+      }
+
+      // Compare IO Types for compatibility
+      for ( const type in desiredTypes ) {
+        if ( desiredTypes.hasOwnProperty( type ) ) {
+
+          // make sure we have the desired type
+          if ( !actualTypes.hasOwnProperty( type ) ) {
+            this.assertAPIError( {
+              ruleInViolation: 'Desired type missing: ' + type.typeName
+            } );
+          }
+          else {
+
+            // make sure we have all of the methods
+            const desiredMethods = desiredTypes[ type ].methods;
+            const actualMethods = actualTypes[ type ].methods;
+            for ( const method in desiredMethods ) {
+              if ( !actualMethods.hasOwnProperty( method ) ) {
+                this.assertAPIError( { ruleInViolation: `Missing method, type=${type}, method=${method}` } );
+              }
+            }
+          }
         }
       }
 
@@ -160,51 +206,6 @@ class PhetioAPIValidation {
             typesNotInSim: windowPhetioTypesKeys.filter( x => !phetioTypesKeys.includes( x ) ),
             typesNotInFile: phetioTypesKeys.filter( x => !windowPhetioTypesKeys.includes( x ) )
           } );
-        }
-      }
-      else {
-
-        // TODO: https://github.com/phetsims/phet-io/issues/1648 should we always check these first, even if exact check is requested?
-        // Compare PhET-iO Elements for compatibility
-        for ( const phetioID in desiredMetadata ) {
-          if ( desiredMetadata.hasOwnProperty( phetioID ) ) {
-
-            const keysToCheck = [ 'phetioDynamicElement', 'phetioEventType', 'phetioIsArchetype', 'phetioPlayback', 'phetioReadOnly', 'phetioState', 'phetioTypeName' ];
-            for ( let i = 0; i < keysToCheck.length; i++ ) {
-              const key = keysToCheck[ i ];
-              if ( desiredMetadata[ phetioID ][ key ] !== actualMetadata[ phetioID ][ key ] ) {
-                this.assertAPIError( {
-                  ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
-                  phetioID: phetioID,
-                  message: `Incompatible value for ${key}, desired=${desiredMetadata[ phetioID ][ key ]}, actual=${actualMetadata[ phetioID ][ key ]}`
-                } );
-              }
-            }
-          }
-        }
-
-        // Compare IO Types for compatibility
-        for ( const type in desiredTypes ) {
-          if ( desiredTypes.hasOwnProperty( type ) ) {
-
-            // make sure we have the desired type
-            if ( !actualTypes.hasOwnProperty( type ) ) {
-              this.assertAPIError( {
-                ruleInViolation: 'Desired type missing: ' + type.typeName
-              } );
-            }
-            else {
-
-              // make sure we have all of the methods
-              const desiredMethods = desiredTypes[ type ].methods;
-              const actualMethods = actualTypes[ type ].methods;
-              for ( const method in desiredMethods ) {
-                if ( !actualMethods.hasOwnProperty( method ) ) {
-                  this.assertAPIError( { ruleInViolation: `Missing method, type=${type}, method=${method}` } );
-                }
-              }
-            }
-          }
         }
       }
     }
