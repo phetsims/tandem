@@ -118,6 +118,7 @@ class PhetioAPIValidation {
 
     // When screen-related query parameters are specified, there will be many things in the baseline file but not
     // in the sim. Those will not be validated.
+    // TODO: Use homeScreen's defaultValue from its schema, see https://github.com/phetsims/chipper/issues/936
     if ( phet.chipper.queryParameters.screens === null && phet.chipper.queryParameters.homeScreen ) {
 
       // check to make sure all phet-io elements and type entries were used.  If an entry wasn't used, throw an
