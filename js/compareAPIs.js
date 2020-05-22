@@ -2,7 +2,7 @@
 
 /**
  * Function to compare an api against a reference API.
- * TODO: documentation, https://github.com/phetsims/phet-io/issues/1648
+ * TODO: documentation, https://github.com/phetsims/phet-io/issues/1657
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -47,7 +47,7 @@ const compareAPIs = ( referenceAPI, api ) => {
     }
   }
 
-  // TODO: compare types too, https://github.com/phetsims/phet-io/issues/1648
+  // TODO: compare types too, https://github.com/phetsims/phet-io/issues/1657
   // TODO: Factor out keysToCheck so it can be reused in different tests.
 
   return report;
