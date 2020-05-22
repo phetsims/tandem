@@ -13,8 +13,8 @@
 ( function() {
   'use strict';
 
-  // define the phet global
-  window.phetio = window.phetio || {};
+  // define the phetio global
+window.phetio = window.phetio || {};
 
   // constants
   const SEPARATOR = '.';
