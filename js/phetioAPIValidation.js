@@ -40,6 +40,9 @@ import DynamicTandem from './DynamicTandem.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
+// constants
+const KEYS_TO_CHECK = [ 'phetioDynamicElement', 'phetioEventType', 'phetioIsArchetype', 'phetioPlayback', 'phetioReadOnly', 'phetioState', 'phetioTypeName' ];
+
 class PhetioAPIValidation {
 
   constructor() {
@@ -140,6 +143,42 @@ class PhetioAPIValidation {
               message: 'phetioID expected but does not exist'
             } );
           }
+
+          // Compare PhET-iO Elements for compatibility
+          for ( let i = 0; i < KEYS_TO_CHECK.length; i++ ) {
+            const key = KEYS_TO_CHECK[ i ];
+            if ( desiredMetadata[ phetioID ][ key ] !== actualMetadata[ phetioID ][ key ] ) {
+              this.assertAPIError( {
+                ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
+                phetioID: phetioID,
+                message: `Incompatible value for ${key}, desired=${desiredMetadata[ phetioID ][ key ]}, actual=${actualMetadata[ phetioID ][ key ]}`
+              } );
+            }
+          }
+        }
+      }
+
+      // Compare IO Types for compatibility
+      for ( const type in desiredTypes ) {
+        if ( desiredTypes.hasOwnProperty( type ) ) {
+
+          // make sure we have the desired type
+          if ( !actualTypes.hasOwnProperty( type ) ) {
+            this.assertAPIError( {
+              ruleInViolation: 'Desired type missing: ' + type.typeName
+            } );
+          }
+          else {
+
+            // make sure we have all of the methods
+            const desiredMethods = desiredTypes[ type ].methods;
+            const actualMethods = actualTypes[ type ].methods;
+            for ( const method in desiredMethods ) {
+              if ( !actualMethods.hasOwnProperty( method ) ) {
+                this.assertAPIError( { ruleInViolation: `Missing method, type=${type}, method=${method}` } );
+              }
+            }
+          }
         }
       }
 
@@ -167,51 +206,6 @@ class PhetioAPIValidation {
             typesNotInSim: windowPhetioTypesKeys.filter( x => !phetioTypesKeys.includes( x ) ),
             typesNotInFile: phetioTypesKeys.filter( x => !windowPhetioTypesKeys.includes( x ) )
           } );
-        }
-      }
-      else {
-
-        // TODO: https://github.com/phetsims/phet-io/issues/1648 should we always check these first, even if exact check is requested?
-        // Compare PhET-iO Elements for compatibility
-        for ( const phetioID in desiredMetadata ) {
-          if ( desiredMetadata.hasOwnProperty( phetioID ) ) {
-
-            const keysToCheck = [ 'phetioDynamicElement', 'phetioEventType', 'phetioIsArchetype', 'phetioPlayback', 'phetioReadOnly', 'phetioState', 'phetioTypeName' ];
-            for ( let i = 0; i < keysToCheck.length; i++ ) {
-              const key = keysToCheck[ i ];
-              if ( desiredMetadata[ phetioID ][ key ] !== actualMetadata[ phetioID ][ key ] ) {
-                this.assertAPIError( {
-                  ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
-                  phetioID: phetioID,
-                  message: `Incompatible value for ${key}, desired=${desiredMetadata[ phetioID ][ key ]}, actual=${actualMetadata[ phetioID ][ key ]}`
-                } );
-              }
-            }
-          }
-        }
-
-        // Compare IO Types for compatibility
-        for ( const type in desiredTypes ) {
-          if ( desiredTypes.hasOwnProperty( type ) ) {
-
-            // make sure we have the desired type
-            if ( !actualTypes.hasOwnProperty( type ) ) {
-              this.assertAPIError( {
-                ruleInViolation: 'Desired type missing: ' + type.typeName
-              } );
-            }
-            else {
-
-              // make sure we have all of the methods
-              const desiredMethods = desiredTypes[ type ].methods;
-              const actualMethods = actualTypes[ type ].methods;
-              for ( const method in desiredMethods ) {
-                if ( !actualMethods.hasOwnProperty( method ) ) {
-                  this.assertAPIError( { ruleInViolation: `Missing method, type=${type}, method=${method}` } );
-                }
-              }
-            }
-          }
         }
       }
     }
