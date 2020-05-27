@@ -140,12 +140,12 @@ class PhetioDynamicElementContainer extends PhetioObject {
         }
       } );
 
-      phetioStateEngine.addSetStateHelper( ( state, completedIDs ) => {
+      phetioStateEngine.addSetStateHelper( ( state, stillToSetIDs ) => {
         let creationNotified = false;
 
         while ( this.deferredCreations.length > 0 ) {
           const deferredCreatedElement = this.deferredCreations[ 0 ];
-          if ( this.allChildrenSetForState( state, completedIDs ) ) {
+          if ( this.allChildrenSetForState( deferredCreatedElement.tandem.phetioID, stillToSetIDs ) ) {
             this.notifyElementCreatedWhileDeferred( deferredCreatedElement );
             creationNotified = true;
           }
@@ -156,15 +156,14 @@ class PhetioDynamicElementContainer extends PhetioObject {
   }
 
   /**
-   * @param {Object.<phetioID:string, *>} state
-   * @param {string[]} completedIDs - list of ids that have already had their state set
+   * @param {string} childID
+   * @param {string[]} stillToSetIDs
    * @returns {boolean} - true if all children of this container (based on phetioID) have had their state set already.
    */
-  allChildrenSetForState( state, completedIDs ) {
-    const allIDsToSet = Object.keys( state );
-    for ( let i = 0; i < allIDsToSet.length; i++ ) {
-      const phetioID = allIDsToSet[ i ];
-      if ( _.startsWith( phetioID, this.tandem.phetioID ) && !completedIDs.indexOf( phetioID ) ) {
+  allChildrenSetForState( childID, stillToSetIDs ) {
+    for ( let i = 0; i < stillToSetIDs.length; i++ ) {
+      const phetioID = stillToSetIDs[ i ];
+      if ( phetioID.indexOf( childID ) === 0 ) {
         return false;
       }
     }
