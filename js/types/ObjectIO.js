@@ -42,7 +42,7 @@ class ObjectIO {
    * Return the serialized form of the wrapped PhetioObject. Most often this looks like a JSON object that holds the
    * data about the PhetioObject instance.  This can be overridden by subclasses, or types can use ObjectIO type directly
    * to use this implementation.
-   * @param {PhetioObject} o
+   * @param {*} o
    * @returns {*}
    * @public
    */
@@ -58,7 +58,7 @@ class ObjectIO {
    * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#serialization
    * before implementing a `fromStateObject` function.
    * @param {*} o - whatever was returned from the toStateObject method
-   * @returns {Object} - depends on if using reference-type or data-type serialization.
+   * @returns {*} - depends on if using reference-type or data-type serialization.
    * @public
    */
   static fromStateObject( o ) {

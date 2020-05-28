@@ -18,8 +18,8 @@ class NumberIO extends ObjectIO {
 
   /**
    * Encodes a number to a state (which also happens to be a number).
-   * @param {Object} value
-   * @returns {Object}
+   * @param {number} value
+   * @returns {string|number}
    * @override
    * @public
    */
@@ -36,8 +36,8 @@ class NumberIO extends ObjectIO {
 
   /**
    * Decode a number from a state, which is already a number.
-   * @param {Object} stateObject
-   * @returns {Object}
+   * @param {string|number} stateObject
+   * @returns {number}
    * @override
    * @public
    */
