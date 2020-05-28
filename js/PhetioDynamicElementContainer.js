@@ -126,7 +126,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
         for ( let i = 0; i < phetioIDsToSet.length; i++ ) {
           const phetioID = phetioIDsToSet[ i ];
           if ( _.startsWith( phetioID, this.tandem.phetioID ) ) {
-            this.clear();
+            this.clear( true ); // specify that this is from state setting
             this.setNotificationsDeferred( true );
             return;
           }
@@ -300,10 +300,15 @@ class PhetioDynamicElementContainer extends PhetioObject {
   /**
    * Dispose a contained element
    * @param {PhetioObject} element
+   * @param {boolean} [fromStateSetting] - used for validation during state setting.
    * @protected - should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
    */
-  disposeElement( element ) {
+  disposeElement( element, fromStateSetting ) {
     element.dispose();
+
+    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
+    phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
+      'should not dispose a dynamic element while setting phet-io state' );
 
     if ( this.notificationsDeferred ) {
       this.deferredDisposals.push( element );

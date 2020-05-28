@@ -47,11 +47,12 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   /**
    * Dispose the underlying element.  Called by the PhetioStateEngine so the capsule element can be recreated with the
    * correct state.
+   * @param {boolean} [fromStateSetting] - used for validation during state setting.
    * @public (phet-io)
    * @override
    */
-  disposeElement() {
-    super.disposeElement( this.element );
+  disposeElement( fromStateSetting ) {
+    super.disposeElement( this.element, fromStateSetting );
     this.element = null;
   }
 
@@ -63,7 +64,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    */
   getElement( ...argsForCreateFunction ) {
     if ( !this.element ) {
-      this.create( ...argsForCreateFunction );
+      this.create( argsForCreateFunction );
     }
     return this.element;
   }
@@ -72,19 +73,24 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * @public
    * @override
    */
-  clear() {
+  clear( fromStateSetting ) {
     if ( this.element ) {
-      this.disposeElement();
+      this.disposeElement( fromStateSetting );
     }
   }
 
   /**
    * Primarily for internal use, clients should usually use getElement.
-   * @param {Array.<*>} [argsForCreateFunction]
+   * @param {Array.<*>} argsForCreateFunction
+   * @param {boolean} [fromStateSetting] - used for validation during state setting.
    * @returns {Object}
    * @public (phet-io)
    */
-  create( ...argsForCreateFunction ) {
+  create( argsForCreateFunction, fromStateSetting ) {
+
+    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
+    phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
+      'dynamic elements should only be created by the state engine when setting state.' );
 
     // create with default state and substructure, details will need to be set by setter methods.
     this.element = this.createDynamicElement(
