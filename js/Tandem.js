@@ -220,8 +220,9 @@ class Tandem {
       assert && assert( currentChild instanceof Tandem );
       return currentChild;
     }
-
-    return new Tandem( this, name, options );
+    else {
+      return new Tandem( this, name, options );
+    }
   }
 
   /**
