@@ -355,8 +355,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
    * Flush a single element from the list of deferred creations that have not yet notified about the disposal. This
-   * is only public to support specifc order dependencies in the PhetioStateEngine, otherwise see `this.notifyElementCreated()`
-   * @public (PhetioGroupTests, phet-io) - only the PhetioStateEngine should notifiy individual elements created.
+   * is only public to support specific order dependencies in the PhetioStateEngine, otherwise see `this.notifyElementCreated()`
+   * @public (PhetioGroupTests, phet-io) - only the PhetioStateEngine should notify individual elements created.
    * @param {PhetioObject} createdElement
    */
   notifyElementCreatedWhileDeferred( createdElement ) {
