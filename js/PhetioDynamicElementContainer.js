@@ -145,7 +145,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
         while ( this.deferredCreations.length > 0 ) {
           const deferredCreatedElement = this.deferredCreations[ 0 ];
-          if ( this.allChildrenSetForState( deferredCreatedElement.tandem.phetioID, stillToSetIDs ) ) {
+          if ( this.stateSetOnAllChildrenOfDynamicElement( deferredCreatedElement.tandem.phetioID, stillToSetIDs ) ) {
             this.notifyElementCreatedWhileDeferred( deferredCreatedElement );
             creationNotified = true;
           }
@@ -156,14 +156,14 @@ class PhetioDynamicElementContainer extends PhetioObject {
   }
 
   /**
-   * @param {string} childID
+   * @param {string} dynamicElementID
    * @param {string[]} stillToSetIDs
-   * @returns {boolean} - true if all children of this container (based on phetioID) have had their state set already.
+   * @returns {boolean} - true if all children of a single dynamic element (based on phetioID) have had their state set already.
    */
-  allChildrenSetForState( childID, stillToSetIDs ) {
+  stateSetOnAllChildrenOfDynamicElement( dynamicElementID, stillToSetIDs ) {
     for ( let i = 0; i < stillToSetIDs.length; i++ ) {
       const phetioID = stillToSetIDs[ i ];
-      if ( phetioID.indexOf( childID ) === 0 ) {
+      if ( phetioID.indexOf( dynamicElementID ) === 0 ) {
         return false;
       }
     }
