@@ -202,7 +202,7 @@ class Tandem {
   }
 
   /**
-   * Create a new Tandem by appending the given id. If the child already exists TODO: Doc!
+   * Create a new Tandem by appending the given id, or if the child Tandem already exists, return it instead.
    * @param {string} name
    * @param {Object} [options]
    * @returns {Tandem}
