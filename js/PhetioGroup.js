@@ -87,15 +87,16 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * 4. fire elementDisposedEmitter
    *
    * @param {PhetioObject} element
+   * @param {boolean} [fromStateSetting] - used for validation during state setting.
    * @public
    * @override
    */
-  disposeElement( element ) {
+  disposeElement( element, fromStateSetting ) {
     arrayRemove( this._array, element );
 
     this.countProperty.value = this._array.length;
 
-    super.disposeElement( element );
+    super.disposeElement( element, fromStateSetting );
   }
 
   /**
@@ -176,12 +177,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * remove and dispose all registered group elements
+   * @param {boolean} [fromStateSetting] - used for validation during state setting.
    * @public
    * @override
    */
-  clear() {
+  clear( fromStateSetting ) {
     while ( this._array.length > 0 ) {
-      this.disposeElement( this._array[ this._array.length - 1 ] );
+      this.disposeElement( this._array[ this._array.length - 1 ], fromStateSetting );
     }
 
     this.groupElementIndex = 0;
@@ -226,10 +228,15 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    *
    * @param {number} index - the number of the individual element
    * @param {Array.<*>} argsForCreateFunction
+   * @param {boolean} [fromStateSetting] - used for validation during state setting.
    * @returns {PhetioObject}
    * @public (PhetioGroupIO)
    */
-  createIndexedElement( index, argsForCreateFunction ) {
+  createIndexedElement( index, argsForCreateFunction, fromStateSetting ) {
+
+    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
+    phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
+      'dynamic elements should only be created by the state engine when setting state.' );
 
     const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
     const containerParameterType = this.phetioType.parameterTypes[ 0 ];

@@ -126,7 +126,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
         for ( let i = 0; i < phetioIDsToSet.length; i++ ) {
           const phetioID = phetioIDsToSet[ i ];
           if ( _.startsWith( phetioID, this.tandem.phetioID ) ) {
-            this.clear();
+            this.clear( true ); // specify that this is from state setting
             this.setNotificationsDeferred( true );
             return;
           }
@@ -145,7 +145,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
         while ( this.deferredCreations.length > 0 ) {
           const deferredCreatedElement = this.deferredCreations[ 0 ];
-          if ( this.allChildrenSetForState( deferredCreatedElement.tandem.phetioID, stillToSetIDs ) ) {
+          if ( this.stateSetOnAllChildrenOfDynamicElement( deferredCreatedElement.tandem.phetioID, stillToSetIDs ) ) {
             this.notifyElementCreatedWhileDeferred( deferredCreatedElement );
             creationNotified = true;
           }
@@ -156,14 +156,14 @@ class PhetioDynamicElementContainer extends PhetioObject {
   }
 
   /**
-   * @param {string} childID
+   * @param {string} dynamicElementID
    * @param {string[]} stillToSetIDs
-   * @returns {boolean} - true if all children of this container (based on phetioID) have had their state set already.
+   * @returns {boolean} - true if all children of a single dynamic element (based on phetioID) have had their state set already.
    */
-  allChildrenSetForState( childID, stillToSetIDs ) {
+  stateSetOnAllChildrenOfDynamicElement( dynamicElementID, stillToSetIDs ) {
     for ( let i = 0; i < stillToSetIDs.length; i++ ) {
       const phetioID = stillToSetIDs[ i ];
-      if ( phetioID.indexOf( childID ) === 0 ) {
+      if ( phetioID.indexOf( dynamicElementID ) === 0 ) {
         return false;
       }
     }
@@ -300,10 +300,15 @@ class PhetioDynamicElementContainer extends PhetioObject {
   /**
    * Dispose a contained element
    * @param {PhetioObject} element
+   * @param {boolean} [fromStateSetting] - used for validation during state setting.
    * @protected - should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
    */
-  disposeElement( element ) {
+  disposeElement( element, fromStateSetting ) {
     element.dispose();
+
+    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
+    phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
+      'should not dispose a dynamic element while setting phet-io state' );
 
     if ( this.notificationsDeferred ) {
       this.deferredDisposals.push( element );

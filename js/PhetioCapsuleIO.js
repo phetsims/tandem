@@ -65,7 +65,7 @@ const create = parameterType => {
       const state = parameterType.fromStateObject( stateObject );
       const args = parameterType.stateToArgsForConstructor( state );
 
-      return capsule.create( ...args );
+      return capsule.create( args, true );
     }
   }
 
