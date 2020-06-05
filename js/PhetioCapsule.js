@@ -87,6 +87,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * @public (phet-io)
    */
   create( argsForCreateFunction, fromStateSetting ) {
+    assert && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioCapsules? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
     phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
