@@ -105,10 +105,6 @@ const SUPPORTED_PHET_IO_COMPONENT_OPTIONS = _.keys( DEFAULTS ).concat( [
   'textProperty'
 ] );
 
-// factor these out so that we don't recreate closures for each instance.
-const isDynamicElementPredicate = phetioObject => phetioObject.phetioDynamicElement;
-const isDynamicElementArchetypePredicate = phetioObject => phetioObject.phetioIsArchetype;
-
 /**
  * @param {Object} [options]
  * @constructor
@@ -142,8 +138,8 @@ function PhetioObject( options ) {
   // @private {boolean} - see docs at DEFAULTS declaration
   this.phetioStudioControl = DEFAULTS.phetioStudioControl;
 
-  // @private {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to children
-  // the setPhetioDynamicElement() function must be used instead of setting this attribute directly
+  // @public (PhetioEngine) {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to
+  // children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
   this.phetioDynamicElement = DEFAULTS.phetioDynamicElement;
 
   // @public (read-only) {boolean} - see docs at DEFAULTS declaration
@@ -170,8 +166,9 @@ function PhetioObject( options ) {
   // @public (read-only) {boolean} - has it been disposed?
   this.isDisposed = false;
 
-  // @public (read-only) {boolean} optional - indicates that an object is a archetype for a dynamic class. Settable by classes that create
-  // dynamic elements when creating their archetype (like PhetioGroup), see PhetioObject.markDynamicElementArchetype().
+  // @public {boolean} optional - Indicates that an object is a archetype for a dynamic class. Settable only by
+  // PhetioEngine and by classes that create dynamic elements when creating their archetype (like PhetioGroup) through
+  // PhetioObject.markDynamicElementArchetype().
   // if true, items will be excluded from phetioState. This applies recursively automatically.
   this.phetioIsArchetype = null;
 
@@ -264,12 +261,6 @@ inherit( Object, PhetioObject, {
     validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
     validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
 
-    // Support phet brand, and phetioEngine doesn't yet exist while registering engine-related objects (including
-    // phetioEngine itself). This is okay though, as none of these should be marked as dynamic. Store this early
-    // because it's a non-option metadata key.
-    this.phetioIsArchetype = !!( _.hasIn( window, 'phet.phetio.phetioEngine' ) &&
-                                 phet.phetio.phetioEngine.ancestorMatches( config.tandem.phetioID, isDynamicElementArchetypePredicate ) );
-
     // This block is associated with validating the baseline api and filling in metadata specified in the elements
     // overrides API file. Even when validation is not enabled, overrides should still be applied.
     if ( PHET_IO_ENABLED && config.tandem.supplied ) {
@@ -319,19 +310,7 @@ inherit( Object, PhetioObject, {
     this.phetioComponentOptions = config.phetioComponentOptions;
     this.phetioFeatured = config.phetioFeatured;
     this.phetioEventMetadata = config.phetioEventMetadata;
-
-    this.setPhetioDynamicElement( config.phetioDynamicElement ||
-
-                                  // Support phet brand, and phetioEngine doesn't yet exist while registering
-                                  // engine-related objects (including phetioEngine itself). This is okay though, as
-                                  // none of these should be marked as dynamic.
-                                  !!( _.hasIn( window, 'phet.phetio.phetioEngine' ) &&
-                                      phet.phetio.phetioEngine.ancestorMatches( this.tandem.phetioID, isDynamicElementPredicate ) ) );
-
-    // Patch this in after we have determined if parents are dynamic elements as well.
-    if ( this.phetioBaselineMetadata ) {
-      this.phetioBaselineMetadata.phetioDynamicElement = this.phetioDynamicElement;
-    }
+    this.phetioDynamicElement = config.phetioDynamicElement;
 
     // Make sure playback shows in the phetioEventMetadata
     if ( this.phetioPlayback ) {
@@ -349,10 +328,6 @@ inherit( Object, PhetioObject, {
 
       // @public (read-only phet-io-internal)
       this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
-
-      // Any children that have been created thus far should be now marked as phetioDynamicElement.
-      // Get this value from config because this only needs to be done on the root dynamic element
-      config.phetioDynamicElement && this.propagateDynamicFlagsToChildren();
     }
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
@@ -425,11 +400,12 @@ inherit( Object, PhetioObject, {
   },
 
   /**
-   * Set any instrumented children of this PhetioObject to the same value as this.phetioDynamicElement.
+   * Set any instrumented descendants of this PhetioObject to the same value as this.phetioDynamicElement.
    * @private
    */
-  propagateDynamicFlagsToChildren: function() {
-    assert && assert( _.hasIn( window, 'phet.phetio.phetioEngine' ), 'phetioEngine should be defined' );
+  propagateDynamicFlagsToDescendants: function() {
+    assert && assert( Tandem.PHET_IO_ENABLED, 'phet-io should be enabled' );
+    assert && assert( phet.phetio && phet.phetio.phetioEngine, 'Dynamic elements cannot be created statically before phetioEngine exists.' );
     const phetioEngine = phet.phetio.phetioEngine;
 
     this.tandem.iterateDescendants( tandem => {
@@ -449,33 +425,22 @@ inherit( Object, PhetioObject, {
   },
 
   /**
-   * Should not be set outside of this file!
-   * @private
    * @param {boolean} phetioDynamicElement
+   * @public (PhetioEngine)
    */
   setPhetioDynamicElement( phetioDynamicElement ) {
     assert && assert( !this.phetioNotifiedObjectCreated, 'should not change dynamic element flags after notifying this PhetioObject\'s creation.' );
 
-    //If this element is a archetype, it is not a dynamic element.
-    if ( this.phetioIsArchetype ) {
-      this.phetioDynamicElement = false;
-    }
-    else {
-      this.phetioDynamicElement = phetioDynamicElement;
-    }
+    // If this element is a archetype, it is not a dynamic element.
+    this.phetioDynamicElement = this.phetioIsArchetype ? false : phetioDynamicElement;
 
-    // keep baseline metadata in sync too
+    // For dynamic elements, indicate the corresponding archetype element so that clients like Studio can leverage
+    // the archetype metadata. Static elements don't have archetypes.
+    this.phetioArchetypePhetioID = phetioDynamicElement ? this.tandem.getConcretePhetioID() : null;
+
+    // Keep the baseline metadata in sync.
     if ( this.phetioBaselineMetadata ) {
       this.phetioBaselineMetadata.phetioDynamicElement = this.phetioDynamicElement;
-    }
-
-    // For dynamic elements, indicate the corresponding archetype element, so that clients like Studio can leverage
-    // the archetype metadata.
-    if ( phetioDynamicElement ) {
-      this.phetioArchetypePhetioID = this.tandem.getConcretePhetioID();
-    }
-    else {
-      this.phetioArchetypePhetioID = null; // Only dynamic elements have archetypes
     }
   },
 
@@ -494,7 +459,7 @@ inherit( Object, PhetioObject, {
     }
 
     // recompute for children also, but only if phet-io is enabled
-    Tandem.PHET_IO_ENABLED && this.propagateDynamicFlagsToChildren();
+    Tandem.PHET_IO_ENABLED && this.propagateDynamicFlagsToDescendants();
   },
 
   /**
