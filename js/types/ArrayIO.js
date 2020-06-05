@@ -73,9 +73,8 @@ const create = parameterType => {
     }
 
     /**
-     * Applies the deserialized value to the object.  This is only called when setting the entire state of the simulation,
-     * and hence also sets the initial values, so resets will return to the customized value instead of the simulation
-     * default (uncustomized) value.
+     * Most of the time this should not be used. Instead just set fromStateObject as the deserialized value. This may
+     * be helpful in some performance situations.
      * @public
      * @override
      * @public
