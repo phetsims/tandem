@@ -181,7 +181,8 @@ function PhetioObject( options ) {
   // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
   this.phetioArchetypePhetioID = null;
 
-  // @private {LinkedElement[]} - keep track of LinkedElements for disposal
+  // @private {LinkedElement[]|null} - keep track of LinkedElements for disposal. Null out to support asserting on
+  // edge error cases, see this.addLinkedElement()
   this.linkedElements = [];
 
   // @public (phet-io) set to true when this PhetioObject has been sent over to the parent.
@@ -207,13 +208,13 @@ function PhetioObject( options ) {
 /**
  * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to
  * _.intersection( _.keys( options ), _.keys( DEFAULTS) ).length>0 but implemented imperatively to avoid memory or
- * performance issues.
+ * performance issues. Also handles options.tandem differently.
  * @param {Object} [options]
  * @returns {boolean}
  */
-const specifiesPhetioObjectKey = options => {
+const specifiesNonTandemPhetioObjectKey = options => {
   for ( const key in options ) {
-    if ( options.hasOwnProperty( key ) && DEFAULTS.hasOwnProperty( key ) ) {
+    if ( key !== 'tandem' && options.hasOwnProperty( key ) && DEFAULTS.hasOwnProperty( key ) ) {
       return true;
     }
   }
@@ -234,9 +235,10 @@ inherit( Object, PhetioObject, {
   initializePhetioObject: function( baseOptions, config ) {
     assert && assert( config, 'initializePhetioObject must be called with config' );
 
-    // No PhetioObject config were provided. If not yet initialized, perhaps they will be provided in a subsequent
-    // Node.mutate() call.
-    if ( !specifiesPhetioObjectKey( config ) ) {
+    // The presence of `tandem` indicates if this PhetioObject can be intiialized. If not yet initialized, perhaps
+    // it will be initialized later on, as in Node.mutate().
+    if ( !( config.tandem && config.tandem.supplied ) ) {
+      assert && !config.tandem && assert( !specifiesNonTandemPhetioObjectKey( config ), 'only specify metadata when providing a Tandem' );
       return;
     }
 
@@ -516,14 +518,20 @@ inherit( Object, PhetioObject, {
    * @public
    */
   addLinkedElement: function( element, options ) {
+    if ( !this.isPhetioInstrumented() ) {
+
+      // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrumented
+      // it afterwards.
+      this.linkedElements = null;
+      return;
+    }
+
     assert && assert( element instanceof PhetioObject, 'element must be of type PhetioObject' );
-    assert && assert( this.phetioObjectInitialized,
-      'cannot add linked element to an item that hasn\'t called PhetioObject.initializePhetioObject, (make sure to ' +
-      'call this after mutate).' );
 
     // In some cases, UI components need to be wired up to a private (internal) Property which should neither be
     // instrumented nor linked.
-    if ( PHET_IO_ENABLED && this.isPhetioInstrumented() && element.isPhetioInstrumented() ) {
+    if ( PHET_IO_ENABLED && element.isPhetioInstrumented() ) {
+      assert && assert( Array.isArray( this.linkedElements ), 'linkedElements should be an array' );
       this.linkedElements.push( new LinkedElement( element, options ) );
     }
   },
@@ -564,8 +572,10 @@ inherit( Object, PhetioObject, {
     }
 
     // Dispose LinkedElements
-    this.linkedElements.forEach( linkedElement => linkedElement.dispose() );
-    this.linkedElements.length = 0;
+    if ( this.linkedElements ) {
+      this.linkedElements.forEach( linkedElement => linkedElement.dispose() );
+      this.linkedElements.length = 0;
+    }
 
     this.isDisposed = true;
   },
