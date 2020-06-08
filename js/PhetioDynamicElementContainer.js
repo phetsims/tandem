@@ -159,6 +159,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @param {string} dynamicElementID
    * @param {string[]} stillToSetIDs
    * @returns {boolean} - true if all children of a single dynamic element (based on phetioID) have had their state set already.
+   * @private
    */
   stateSetOnAllChildrenOfDynamicElement( dynamicElementID, stillToSetIDs ) {
     for ( let i = 0; i < stillToSetIDs.length; i++ ) {
