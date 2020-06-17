@@ -63,7 +63,7 @@ class PhetioAPIValidation {
     // @private - keep track of when the sim has started.
     this.simHasStarted = false;
 
-    // @public {boolean}
+    // @public {boolean} - settable by phetioAPITest.js
     this.enabled = assert && Tandem.PHET_IO_ENABLED;
 
     // @private (read-only) {string}

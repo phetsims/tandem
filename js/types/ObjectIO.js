@@ -239,6 +239,17 @@ ObjectIO.typeName = 'ObjectIO';
  */
 ObjectIO.validator = { valueType: Object };
 
+// TODO: support cyclic dependency for phetioEventType (PhetioObject-> ObjectIO -> EventType -> Enumeration -> EnumerationIO -> PhetioObject, https://github.com/phetsims/phet-io/issues/1657
+ObjectIO.api = {
+  phetioType: ObjectIO,
+  phetioState: true,
+  phetioReadOnly: false,
+  phetioPlayback: false,
+  phetioFeatured: false,
+  phetioDynamicElement: false,
+  phetioIsArchetype: false
+};
+
 ObjectIO.validateSubtype( ObjectIO );
 
 tandemNamespace.register( 'ObjectIO', ObjectIO );
