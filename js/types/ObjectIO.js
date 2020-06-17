@@ -86,7 +86,7 @@ class ObjectIO {
    * @param {Object} value - result from fromStateObject
    * @public
    */
-  static setValue( o, value ) {
+  static applyState( o, value ) {
   }
 
   /**
@@ -130,7 +130,7 @@ class ObjectIO {
 
     assert && assert( !subtype.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
     assert && assert( !subtype.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
-    assert && assert( !subtype.prototype.setValue, 'setValue should be a static method, not prototype one.' );
+    assert && assert( !subtype.prototype.applyState, 'applyState should be a static method, not prototype one.' );
     assert && assert( !subtype.prototype.stateToArgsForConstructor, 'stateToArgsForConstructor should be a static method, not prototype one.' );
 
     // Prevent inheritance of methods, see https://github.com/phetsims/phet-io/issues/1623

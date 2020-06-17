@@ -48,7 +48,7 @@ class Float64ArrayIO extends ObjectIO {
    * @param {Float64Array} array
    * @param {Float64Array} stateObject
    */
-  static setValue( array, stateObject ) {
+  static applyState( array, stateObject ) {
     assert && assert( array instanceof Float64Array, 'Float64ArrayIO should wrap array instances' );
     array.set( stateObject );
   }

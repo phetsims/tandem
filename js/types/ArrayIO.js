@@ -79,7 +79,7 @@ const create = parameterType => {
      * @override
      * @public
      */
-    static setValue( array, fromStateObject ) {
+    static applyState( array, fromStateObject ) {
       assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
       array.length = 0;
       array.push.apply( array, fromStateObject );
