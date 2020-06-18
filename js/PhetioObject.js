@@ -236,6 +236,10 @@ inherit( Object, PhetioObject, {
     // it will be initialized later on, as in Node.mutate().
     if ( !( config.tandem && config.tandem.supplied ) ) {
       assert && !config.tandem && assert( !specifiesNonTandemPhetioObjectKey( config ), 'only specify metadata when providing a Tandem' );
+
+      if ( config.tandem ) {
+        this.tandem = config.tandem;
+      }
       return;
     }
 
