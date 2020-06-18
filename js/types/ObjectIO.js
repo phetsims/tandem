@@ -170,6 +170,11 @@ class ObjectIO {
       assert && assert( subtype.methods[ methodName ], 'methodName not in public methods: ' + methodName );
     } );
 
+    if ( subtype.hasOwnProperty( 'api' ) ) {
+      assert && assert( subtype.api instanceof Object, 'Object expected for api' );
+      assert && assert( Object.getPrototypeOf( subtype.api ) === Object.prototype, 'no extra prototype allowed on API object' );
+    }
+
     // TODO make this check recursive, see https://github.com/phetsims/phet-io/issues/1371
     // const supertype = ObjectIO.getSupertype( subtype );
     // const superEvents = [];
