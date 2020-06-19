@@ -330,6 +330,8 @@ inherit( Object, PhetioObject, {
       // TODO: If so, this assertion should be elsewhere, see https://github.com/phetsims/phet-io/issues/1409
       // assert && assert( this.phetioDocumentation, 'phetioDocumentation is required for: ' + this.tandem.phetioID );
 
+      assert && assert( !this.phetioType.uninstrumented, 'cannot instantiate a phetioType that should not be instrumented' );
+
       // @public (read-only phet-io-internal)
       this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
     }
@@ -598,7 +600,23 @@ inherit( Object, PhetioObject, {
     options.phetioComponentOptions = _.merge( defaults, options.phetioComponentOptions );
   },
 
-  DEFAULT_OPTIONS: DEFAULTS // the default options for the phet-io object
+  DEFAULT_OPTIONS: DEFAULTS, // the default options for the phet-io object
+
+  // THe keys that constitute the publicly available PHET-iO metadata for the PhetioObject.
+  METADATA_KEYS: [
+    'phetioTypeName',
+    'phetioDocumentation',
+    'phetioState',
+    'phetioReadOnly',
+    'phetioEventType',
+    'phetioHighFrequency',
+    'phetioPlayback',
+    'phetioStudioControl',
+    'phetioDynamicElement',
+    'phetioIsArchetype',
+    'phetioFeatured',
+    'phetioArchetypePhetioID'
+  ]
 } );
 
 /**

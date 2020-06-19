@@ -11,6 +11,7 @@
  */
 
 import phetioAPIValidation from './phetioAPIValidation.js';
+import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import ObjectIO from './types/ObjectIO.js';
@@ -32,47 +33,67 @@ const phetioAPITest = ( assert, IOType, componentName, createPhetioObject ) => {
     const wasEnabled = phetioAPIValidation.enabled;
     phetioAPIValidation.enabled = false; // This prevents errors when trying to dispose static elements.
 
-    const auxiliaryTandemRegistery = {};
+    const auxiliaryTandemRegistry = {};
+
+    const phetioIDs = [];
 
     // TODO: remove this listener once the test is done.
     Tandem.addPhetioObjectListener( {
       addPhetioObject: phetioObject => {
-        window.assert && window.assert( !auxiliaryTandemRegistery.hasOwnProperty( phetioObject.tandem.phetioID ),
+        window.assert && window.assert( !auxiliaryTandemRegistry.hasOwnProperty( phetioObject.tandem.phetioID ),
           `phetioObject registered twice: ${phetioObject.tandem.phetioID}` );
-        auxiliaryTandemRegistery[ phetioObject.tandem.phetioID ] = phetioObject;
+        auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] = phetioObject;
+        phetioIDs.push( phetioObject.tandem.phetioID );
       },
       removePhetioObject: phetioObject => {
-        delete auxiliaryTandemRegistery[ phetioObject.tandem.phetioID ];
+        delete auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ];
       }
     } );
 
-    const phetioObject = createPhetioObject( Tandem.GENERAL.createTandem( componentName ) );
+    const expectedComponentTandem = Tandem.GENERAL.createTandem( componentName );
+    const phetioObject = createPhetioObject( expectedComponentTandem );
 
-    const validate = ( phetioID, api ) => {
+    const visit = ( phetioID, api ) => {
+      window.assert && window.assert( typeof phetioID === 'string' );
+      window.assert && window.assert( api instanceof Object, 'Object expected for api' );
+      window.assert && window.assert( Object.getPrototypeOf( api ) === Object.prototype, 'no extra prototype allowed on API object' );
+
+
       let metadata = {};
       let phetioObject = null;
 
       // phetioType is a proxy for an "instrumented PhetioObject", we may change that in the future to be any metadata key
-      if ( api.hasOwnProperty( 'phetioType' ) ) {
-        phetioObject = auxiliaryTandemRegistery[ phetioID ];
+      // TODO: what if SliderIO is instrumented, but doesn't provide phetioType? https://github.com/phetsims/phet-io/issues/1657
+      if ( api.hasOwnProperty( 'phetioType' ) && !api.phetioType.uninstrumented ) {
+
+        phetioObject = auxiliaryTandemRegistry[ phetioID ];
         assert.ok( phetioObject, `no phetioObject for phetioID: ${phetioID}, for phetioType: ${IOType.typeName}` );
+        assert.ok( phetioObject.tandem.phetioID === phetioID,
+          `PhetioObject should be registered with the expected phetioID:  ${expectedComponentTandem.phetioID}` );
         metadata = phetioObject.getMetadata();
         assert.equal( phetioObject.phetioType, api.phetioType, `Expected phetioType differs for for phetioID: ${phetioID}, phetioType: ${IOType.typeName}` );
       }
+      else {
+
+        // Synthetic elements don't have phetioObjects, but should have children, so make sure that at least one was created.
+        assert.ok( phetioIDs.filter( anyPhetioID => anyPhetioID.startsWith( phetioID ) ).length > 0, `synthetic phetioID expected ${phetioID}` );
+      }
 
       for ( const key in api ) {
-        if ( metadata.hasOwnProperty( key ) ) {
+        if ( PhetioObject.METADATA_KEYS.includes( key ) ) {
           assert.equal( metadata[ key ], api[ key ], `metadata key: ${key} doesn't match desired metadata for phetioID: ${phetioID}` );
         }
         else if ( key !== 'phetioType' ) {
-          validate( window.phetio.PhetioIDUtils.append( phetioID, key ), api[ key ] );
+          visit( window.phetio.PhetioIDUtils.append( phetioID, key ), api[ key ] );
         }
       }
     };
 
-    assert.ok( auxiliaryTandemRegistery[ phetioObject.tandem.phetioID ] === phetioObject,
-      `PhetioObject should be registered: ${phetioObject.tandem.phetioID} for phetioType: ${IOType.typeName}` );
-    validate( phetioObject.tandem.phetioID, IOType.api );
+    if ( !IOType.uninstrumented ) {
+      assert.ok( auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] === phetioObject,
+        `PhetioObject should be registered: ${phetioObject.tandem.phetioID} for phetioType: ${IOType.typeName}` );
+    }
+    visit( expectedComponentTandem.phetioID, IOType.api );
 
     phetioObject.dispose();
     phetioAPIValidation.enabled = wasEnabled;
