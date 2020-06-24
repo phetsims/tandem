@@ -177,16 +177,24 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * remove and dispose all registered group elements
-   * @param {boolean} [fromStateSetting] - used for validation during state setting.
+   * @param {object} [options]
    * @public
    * @override
    */
-  clear( fromStateSetting ) {
+  clear( options ) {
+
+    options = merge( {
+      fromStateSetting: false, // used for validation during state setting (phet-io internal)
+      resetIndex: true // whether the group's index is reset to 0 for the next element created
+    }, options );
+
     while ( this._array.length > 0 ) {
-      this.disposeElement( this._array[ this._array.length - 1 ], fromStateSetting );
+      this.disposeElement( this._array[ this._array.length - 1 ], options.fromStateSetting );
     }
 
-    this.groupElementIndex = 0;
+    if ( options.resetIndex ) {
+      this.groupElementIndex = 0;
+    }
   }
 
   /**
