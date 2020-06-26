@@ -21,7 +21,7 @@ class VoidIO extends ObjectIO {
    * @returns {undefined}
    * @public
    */
-  static toStateObject() {
+  static toStateObject( object ) {
     return undefined;
   }
 }
