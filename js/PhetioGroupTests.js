@@ -30,12 +30,12 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
   } );
 
   phetioGroup.elementCreatedEmitter.addListener( element => {
-    assert.ok( phetioGroup.contains( element ), 'element should be in container data structure' );
+    assert.ok( phetioGroup.includes( element ), 'element should be in container data structure' );
     assert.ok( phetioGroup.countProperty.value === phetioGroup._array.length, 'element should be in container data structure' );
   } );
   phetioGroup.elementDisposedEmitter.addListener( element => {
     assert.ok( element.isDisposed, 'should be disposed' );
-    assert.ok( !phetioGroup.contains( element ), 'should not be in array' );
+    assert.ok( !phetioGroup.includes( element ), 'should not be in array' );
   } );
 
   const one = phetioGroup.createNextElement( '' );
