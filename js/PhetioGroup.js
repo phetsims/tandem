@@ -144,16 +144,6 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    */
   filter( predicate ) { return this._array.filter( predicate ); }
 
-  //TODO https://github.com/phetsims/axon/issues/306 delete this method
-  /**
-   * Returns true if the group contains the specified object.
-   * @param {PhetioObject} element
-   * @returns {boolean}
-   * @public
-   * @deprecated use includes
-   */
-  contains( element ) { return this._array.indexOf( element ) >= 0; }
-
   /**
    * Does the group include the specified element?
    * @param {PhetioObject} element
