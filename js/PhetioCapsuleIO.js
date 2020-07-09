@@ -55,7 +55,7 @@ const create = parameterType => {
      * @param {Object} stateObject
      * @returns {PhetioObject}
      * @throws CouldNotYetDeserializeError - if it could not yet deserialize
-     * @public (phet-io state)
+     * @public (PhetioStateEngine)
      */
     static addChildElement( capsule, componentName, stateObject ) {
 
