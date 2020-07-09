@@ -125,7 +125,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
       phetioStateEngine.onBeforeStateSetEmitter.addListener( phetioIDsToSet => {
         for ( let i = 0; i < phetioIDsToSet.length; i++ ) {
           const phetioID = phetioIDsToSet[ i ];
-          if ( _.startsWith( phetioID, this.tandem.phetioID ) ) {
+          if ( phetioID.startsWith( this.tandem.phetioID ) ) {
 
             // specify that this is from state setting
             this.clear( { fromStateSetting: true } );
