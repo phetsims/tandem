@@ -4,7 +4,7 @@
  * This singleton is responsible for ensuring that the phet-io api is correct through the lifetime of the simulation.
  * The phet-io api is defined through multiple preloaded files. The "elements baseline" file holds an exact match of
  * what PhetioObject instances/metadata the sim should create on startup, where the "elements overrides" file is a
- * sparse list that can overwrite metadata without changing the code. See `grunt generate-phet-io-elements-files` for
+ * sparse list that can overwrite metadata without changing the code. See `grunt generate-phet-io-api` for
  * more information. The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453 and
  * is as follows:
  *
