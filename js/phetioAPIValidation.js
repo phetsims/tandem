@@ -36,6 +36,7 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import copyWithSortedKeys from '../../phet-core/js/copyWithSortedKeys.js';
 import DynamicTandem from './DynamicTandem.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -190,7 +191,7 @@ class PhetioAPIValidation {
             ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
             message: 'baseline schema does not match PhetioObject computed baseline metadata',
             phetioElementsBaseline: desiredMetadata,
-            stringifiedBaseline: JSON.stringify( window.phet.preloads.phetCore.copyWithSortedKeys( desiredMetadata ), null, 2 ),
+            stringifiedBaseline: JSON.stringify( copyWithSortedKeys( desiredMetadata ), null, 2 ),
             phetioElementsBaselineFromFile: desiredMetadata
           } );
         }
