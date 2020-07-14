@@ -437,7 +437,7 @@ inherit( Object, PhetioObject, {
   setPhetioDynamicElement( phetioDynamicElement ) {
     assert && assert( !this.phetioNotifiedObjectCreated, 'should not change dynamic element flags after notifying this PhetioObject\'s creation.' );
 
-    // If this element is a archetype, it is not a dynamic element.
+    // All archetypes are static (non-dynamic)
     this.phetioDynamicElement = this.phetioIsArchetype ? false : phetioDynamicElement;
 
     // For dynamic elements, indicate the corresponding archetype element so that clients like Studio can leverage
@@ -451,7 +451,7 @@ inherit( Object, PhetioObject, {
   },
 
   /**
-   * Mark this PhetioObject as a archetype for a dynamic element.
+   * Mark this PhetioObject as an archetype for dynamic elements.
    * @public
    */
   markDynamicElementArchetype: function() {
