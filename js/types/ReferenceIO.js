@@ -60,15 +60,15 @@ const create = parameterType => {
     /**
      * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
      * use ReferenceIO type directly to use this implementation.
-     * @param {string} referencePhetioID
+     * @param {string} stateObject
      * @returns {PhetioObject}
      * @throws CouldNotYetDeserializeError
      * @public
      */
-    static fromStateObject( referencePhetioID ) {
-      assert && assert( typeof referencePhetioID === 'string', 'phetioID should be a string' );
-      if ( phet.phetio.phetioEngine.hasPhetioObject( referencePhetioID ) ) {
-        const phetioObject = phet.phetio.phetioEngine.getPhetioObject( referencePhetioID );
+    static fromStateObject( stateObject ) {
+      assert && assert( typeof stateObject === 'string', 'phetioID should be a string' );
+      if ( phet.phetio.phetioEngine.hasPhetioObject( stateObject ) ) {
+        const phetioObject = phet.phetio.phetioEngine.getPhetioObject( stateObject );
 
         // use "this" so that if ReferenceIO is extended, the validator will still be from the subtype.
         validate( phetioObject, this.validator );
