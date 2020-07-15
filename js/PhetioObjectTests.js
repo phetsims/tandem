@@ -6,7 +6,6 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import phetioAPITest from './phetioAPITest.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import ObjectIO from './types/ObjectIO.js';
@@ -140,8 +139,10 @@ QUnit.test( 'archetype bugginess when Tandem is not launched yet', assert => {
   // assert.ok( phetioObject1Child.phetioIsArchetype, 'should be an archetype now that tandem is launched' );
 } );
 
-QUnit.test( 'PhetioObject PhET-iO API validation', assert => {
-  phetioAPITest( assert, ObjectIO, 'phetioObject', tandem => new PhetioObject( {
-    tandem: tandem
-  } ) );
-} );
+// TODO: support with ObjectAPI.js pattern https://github.com/phetsims/phet-io/issues/1657
+// QUnit.test( 'PhetioObject PhET-iO API validation', assert => {
+//
+  // phetioAPITest( assert, ObjectIO, 'phetioObject', tandem => new PhetioObject( {
+  //   tandem: tandem
+  // } ) );
+// } );

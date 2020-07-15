@@ -14,17 +14,16 @@ import phetioAPIValidation from './phetioAPIValidation.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
-import ObjectIO from './types/ObjectIO.js';
 
 /**
  * @param {Object} assert - from QUnit
- * @param {function(new:ObjectIO)} IOType - must have an `api` defined.
+ * @param {ObjectAPI} API - must have an `api` defined.
  * @param {string} componentName
  * @param {function():PhetioObject} createPhetioObject
  */
-const phetioAPITest = ( assert, IOType, componentName, createPhetioObject ) => {
+const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
   if ( Tandem.PHET_IO_ENABLED ) {
-    window.assert && window.assert( ObjectIO.isIOType( IOType ), 'IO Type expected' );
+    // window.assert && window.assert( ObjectIO.isIOType( IOType ), 'IO Type expected' );
 
     // TODO: remove me when no longer needed, see https://github.com/phetsims/tandem/issues/187
     Tandem.unlaunch();
@@ -54,24 +53,23 @@ const phetioAPITest = ( assert, IOType, componentName, createPhetioObject ) => {
     const phetioObject = createPhetioObject( expectedComponentTandem );
 
     const visit = ( phetioID, api ) => {
+
       window.assert && window.assert( typeof phetioID === 'string' );
       window.assert && window.assert( api instanceof Object, 'Object expected for api' );
-      window.assert && window.assert( Object.getPrototypeOf( api ) === Object.prototype, 'no extra prototype allowed on API object' );
-
 
       let metadata = {};
       let phetioObject = null;
 
       // phetioType is a proxy for an "instrumented PhetioObject", we may change that in the future to be any metadata key
-      // TODO: what if SliderIO is instrumented, but doesn't provide phetioType? https://github.com/phetsims/phet-io/issues/1657
-      if ( api.hasOwnProperty( 'phetioType' ) && !api.phetioType.uninstrumented ) {
+      // TODO: what if SliderIO/SliderAPI is instrumented, but doesn't provide phetioType? https://github.com/phetsims/phet-io/issues/1657
+      if ( api.options && api.options.hasOwnProperty( 'phetioType' ) ) {
 
         phetioObject = auxiliaryTandemRegistry[ phetioID ];
-        assert.ok( phetioObject, `no phetioObject for phetioID: ${phetioID}, for phetioType: ${IOType.typeName}` );
+        assert.ok( phetioObject, `no phetioObject for phetioID: ${phetioID}, for phetioType: ${componentName}` );
         assert.ok( phetioObject.tandem.phetioID === phetioID,
           `PhetioObject should be registered with the expected phetioID:  ${expectedComponentTandem.phetioID}` );
         metadata = phetioObject.getMetadata();
-        assert.equal( phetioObject.phetioType, api.phetioType, `Expected phetioType differs for for phetioID: ${phetioID}, phetioType: ${IOType.typeName}` );
+        assert.equal( phetioObject.phetioType, api.options.phetioType, `Expected phetioType differs for for phetioID: ${phetioID}, phetioType: ${componentName}` );
       }
       else {
 
@@ -79,21 +77,25 @@ const phetioAPITest = ( assert, IOType, componentName, createPhetioObject ) => {
         assert.ok( phetioIDs.filter( anyPhetioID => anyPhetioID.startsWith( phetioID ) ).length > 0, `synthetic phetioID expected ${phetioID}` );
       }
 
-      for ( const key in api ) {
+      for ( const key in api.options ) {
+
         if ( PhetioObject.METADATA_KEYS.includes( key ) ) {
           assert.equal( metadata[ key ], api[ key ], `metadata key: ${key} doesn't match desired metadata for phetioID: ${phetioID}` );
         }
-        else if ( key !== 'phetioType' ) {
-          visit( window.phetio.PhetioIDUtils.append( phetioID, key ), api[ key ] );
+      }
+
+      for ( const subKey in api ) {
+        if ( subKey !== 'options' ) {
+          visit( window.phetio.PhetioIDUtils.append( phetioID, subKey ), api[ subKey ] );
         }
       }
     };
 
-    if ( !IOType.uninstrumented ) {
+    if ( auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] ) {
       assert.ok( auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] === phetioObject,
-        `PhetioObject should be registered: ${phetioObject.tandem.phetioID} for phetioType: ${IOType.typeName}` );
+        `Registered PhetioObject should be the same: ${phetioObject.tandem.phetioID} for phetioType: ${componentName}` );
     }
-    visit( expectedComponentTandem.phetioID, IOType.api );
+    visit( expectedComponentTandem.phetioID, API );
 
     phetioObject.dispose();
     phetioAPIValidation.enabled = wasEnabled;

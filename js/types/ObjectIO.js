@@ -86,8 +86,7 @@ class ObjectIO {
    * @param {Object} value - result from fromStateObject
    * @public
    */
-  static applyState( o, value ) {
-  }
+  static applyState( o, value ) { }
 
   /**
    * Get the supertype of the passed in IO Type.
@@ -253,6 +252,7 @@ ObjectIO.validator = { valueType: Object };
 ObjectIO.uninstrumented = false;
 
 // TODO: support cyclic dependency for phetioEventType (PhetioObject-> ObjectIO -> EventType -> Enumeration -> EnumerationIO -> PhetioObject, https://github.com/phetsims/phet-io/issues/1657
+// TODO: experimental, do not use without consulting https://github.com/phetsims/phet-io/issues/1657
 ObjectIO.api = {
   phetioType: ObjectIO,
   phetioState: true,
