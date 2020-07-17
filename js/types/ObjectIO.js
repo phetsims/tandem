@@ -243,26 +243,6 @@ ObjectIO.typeName = 'ObjectIO';
  */
 ObjectIO.validator = { valueType: Object };
 
-/**
- * Some IOTypes are not meant to be used for the phetioType for a PhetioObject, but instead hold an api that defines
- * the expected api for an uninstrumented element's instrumented children (like PressListenerIO).
- * @public (read-only)
- * @type {boolean}
- */
-ObjectIO.uninstrumented = false;
-
-// TODO: support cyclic dependency for phetioEventType (PhetioObject-> ObjectIO -> EventType -> Enumeration -> EnumerationIO -> PhetioObject, https://github.com/phetsims/phet-io/issues/1657
-// TODO: experimental, do not use without consulting https://github.com/phetsims/phet-io/issues/1657
-ObjectIO.api = {
-  phetioType: ObjectIO,
-  phetioState: true,
-  phetioReadOnly: false,
-  phetioPlayback: false,
-  phetioFeatured: false,
-  phetioDynamicElement: false,
-  phetioIsArchetype: false
-};
-
 ObjectIO.validateSubtype( ObjectIO );
 
 tandemNamespace.register( 'ObjectIO', ObjectIO );

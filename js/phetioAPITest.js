@@ -15,10 +15,13 @@ import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
+// constants
+const METADATA_KEYS_WITH_PHET_IO_TYPE = PhetioObject.METADATA_KEYS.concat( [ 'phetioType' ] );
+
 /**
  * @param {Object} assert - from QUnit
  * @param {ObjectAPI} API - must have an `api` defined.
- * @param {string} componentName
+ * @param {string} componentName - name of component that is being tested, largely for error messages
  * @param {function():PhetioObject} createPhetioObject
  */
 const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
@@ -52,46 +55,46 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
     const expectedComponentTandem = Tandem.GENERAL.createTandem( componentName );
     const phetioObject = createPhetioObject( expectedComponentTandem );
 
-    const visit = ( phetioID, api ) => {
-
+    const visit = ( phetioID, componentAPI ) => {
       window.assert && window.assert( typeof phetioID === 'string' );
-      window.assert && window.assert( api instanceof Object, 'Object expected for api' );
 
-      let metadata = {};
-      let phetioObject = null;
+      for ( const key in componentAPI ) {
+        if ( componentAPI.hasOwnProperty( key ) ) {
+          if ( METADATA_KEYS_WITH_PHET_IO_TYPE.includes( key ) ) {
 
-      // phetioType is a proxy for an "instrumented PhetioObject", we may change that in the future to be any metadata key
-      // TODO: what if SliderIO/SliderAPI is instrumented, but doesn't provide phetioType? https://github.com/phetsims/phet-io/issues/1657
-      if ( api.options && api.options.hasOwnProperty( 'phetioType' ) ) {
+            // Existence of any metadata key indicates the object must be instrumented (and not just an empty
+            // intermediate phetioID)
+            const phetioObject = auxiliaryTandemRegistry[ phetioID ];
+            assert.ok( phetioObject, `missing phetioObject for phetioID: ${phetioID}, for component test: ${componentName}` );
 
-        phetioObject = auxiliaryTandemRegistry[ phetioID ];
-        assert.ok( phetioObject, `no phetioObject for phetioID: ${phetioID}, for phetioType: ${componentName}` );
-        assert.ok( phetioObject.tandem.phetioID === phetioID,
-          `PhetioObject should be registered with the expected phetioID:  ${expectedComponentTandem.phetioID}` );
-        metadata = phetioObject.getMetadata();
-        assert.equal( phetioObject.phetioType, api.options.phetioType, `Expected phetioType differs for for phetioID: ${phetioID}, phetioType: ${componentName}` );
-      }
-      else {
+            if ( key === 'phetioType' ) {
 
-        // Synthetic elements don't have phetioObjects, but should have children, so make sure that at least one was created.
-        assert.ok( phetioIDs.filter( anyPhetioID => anyPhetioID.startsWith( phetioID ) ).length > 0, `synthetic phetioID expected ${phetioID}` );
-      }
+              // Check for exact type match but also allow subtypes: ChildClass.prototype instanceof ParentClass
+              // https://stackoverflow.com/questions/14486110/how-to-check-if-a-javascript-class-inherits-another-without-creating-an-obj
+              const actualIOType = phetioObject.phetioType;
+              const expectedIOType = componentAPI.phetioType;
+              assert.ok( actualIOType === expectedIOType || actualIOType.prototype instanceof expectedIOType, 'phetioType must be subtype' );
+              if ( expectedIOType.parameterTypes || actualIOType.parameterTypes ) {
+                assert.ok( expectedIOType.parameterTypes === actualIOType.parameterTypes, 'Parameter types should match exactly' );
+              }
+            }
+            else {
 
-      for ( const key in api.options ) {
+              // Presence of a metadataKey indicates it is an instrumented instance
+              assert.equal( phetioObject[ key ], componentAPI[ key ], 'mismatch for ' + phetioID + ':' + key );
+            }
+          }
+          else {
 
-        if ( PhetioObject.METADATA_KEYS.includes( key ) ) {
-          assert.equal( metadata[ key ], api[ key ], `metadata key: ${key} doesn't match desired metadata for phetioID: ${phetioID}` );
-        }
-      }
-
-      for ( const subKey in api ) {
-        if ( subKey !== 'options' ) {
-          visit( window.phetio.PhetioIDUtils.append( phetioID, subKey ), api[ subKey ] );
+            // Descend to the next level of the componentAPI fragment
+            visit( window.phetio.PhetioIDUtils.append( phetioID, key ), componentAPI[ key ] );
+          }
         }
       }
     };
 
-    if ( auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] ) {
+    // Some APIs are of type UninstrumentedAPI, marked as such because they don't have an entry in the tandem registry
+    if ( !API.uninstrumented && auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] ) {
       assert.ok( auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] === phetioObject,
         `Registered PhetioObject should be the same: ${phetioObject.tandem.phetioID} for phetioType: ${componentName}` );
     }
