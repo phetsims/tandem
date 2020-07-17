@@ -10,6 +10,7 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
@@ -20,13 +21,12 @@ const METADATA_KEYS_WITH_PHET_IO_TYPE = PhetioObject.METADATA_KEYS.concat( [ 'ph
 
 /**
  * @param {Object} assert - from QUnit
- * @param {ObjectAPI} API - must have an `api` defined.
+ * @param {PhetioObjectAPI|UninstrumentedAPI} API
  * @param {string} componentName - name of component that is being tested, largely for error messages
  * @param {function():PhetioObject} createPhetioObject
  */
 const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
   if ( Tandem.PHET_IO_ENABLED ) {
-    // window.assert && window.assert( ObjectIO.isIOType( IOType ), 'IO Type expected' );
 
     // TODO: remove me when no longer needed, see https://github.com/phetsims/tandem/issues/187
     Tandem.unlaunch();
@@ -37,15 +37,12 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
 
     const auxiliaryTandemRegistry = {};
 
-    const phetioIDs = [];
-
-    // TODO: remove this listener once the test is done.
+    // TODO: remove this listener once the test is done. https://github.com/phetsims/phet-io/issues/1657
     Tandem.addPhetioObjectListener( {
       addPhetioObject: phetioObject => {
         window.assert && window.assert( !auxiliaryTandemRegistry.hasOwnProperty( phetioObject.tandem.phetioID ),
           `phetioObject registered twice: ${phetioObject.tandem.phetioID}` );
         auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] = phetioObject;
-        phetioIDs.push( phetioObject.tandem.phetioID );
       },
       removePhetioObject: phetioObject => {
         delete auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ];
@@ -53,10 +50,22 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
     } );
 
     const expectedComponentTandem = Tandem.GENERAL.createTandem( componentName );
-    const phetioObject = createPhetioObject( expectedComponentTandem );
+    const expectedComponentPhetioObject = createPhetioObject( expectedComponentTandem );
 
     const visit = ( phetioID, componentAPI ) => {
       window.assert && window.assert( typeof phetioID === 'string' );
+
+      let phetioObject = auxiliaryTandemRegistry[ phetioID ];
+
+      // Some APIs are of type UninstrumentedAPI, marked as such because they don't have an entry in the tandem registry
+      if ( componentAPI.uninstrumented ) {
+        assert.ok( !auxiliaryTandemRegistry.hasOwnProperty( phetioID ),
+          `Uninstrumented API spec should not have an instrumented instance in the registry: ${phetioID}` );
+      }
+      else {
+        assert.ok( auxiliaryTandemRegistry[ phetioID ] === phetioObject,
+          `Registered PhetioObject should be the same: ${phetioID} for phetioType: ${componentName}` );
+      }
 
       for ( const key in componentAPI ) {
         if ( componentAPI.hasOwnProperty( key ) ) {
@@ -64,24 +73,30 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
 
             // Existence of any metadata key indicates the object must be instrumented (and not just an empty
             // intermediate phetioID)
-            const phetioObject = auxiliaryTandemRegistry[ phetioID ];
             assert.ok( phetioObject, `missing phetioObject for phetioID: ${phetioID}, for component test: ${componentName}` );
+
+            // forward the LinkedElementIO onto the element that is linked to, since it should be validated as if it
+            // was the linked element.
+            if ( phetioObject.phetioType === LinkedElementIO ) {
+              phetioObject = phetioObject.element;
+            }
 
             if ( key === 'phetioType' ) {
 
-              // Check for exact type match but also allow subtypes: ChildClass.prototype instanceof ParentClass
-              // https://stackoverflow.com/questions/14486110/how-to-check-if-a-javascript-class-inherits-another-without-creating-an-obj
               const actualIOType = phetioObject.phetioType;
               const expectedIOType = componentAPI.phetioType;
+
+              // Check for exact type match but also allow subtypes: ChildClass.prototype instanceof ParentClass
+              // https://stackoverflow.com/questions/14486110/how-to-check-if-a-javascript-class-inherits-another-without-creating-an-obj
               assert.ok( actualIOType === expectedIOType || actualIOType.prototype instanceof expectedIOType, 'phetioType must be subtype' );
               if ( expectedIOType.parameterTypes || actualIOType.parameterTypes ) {
-                assert.ok( expectedIOType.parameterTypes === actualIOType.parameterTypes, 'Parameter types should match exactly' );
+                assert.equal( expectedIOType.parameterTypes, actualIOType.parameterTypes, 'Parameter types should match exactly' );
               }
             }
             else {
 
               // Presence of a metadataKey indicates it is an instrumented instance
-              assert.equal( phetioObject[ key ], componentAPI[ key ], 'mismatch for ' + phetioID + ':' + key );
+              assert.equal( phetioObject[ key ], componentAPI[ key ], `metadata mismatch for ${phetioID}:${key}` );
             }
           }
           else {
@@ -93,14 +108,9 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
       }
     };
 
-    // Some APIs are of type UninstrumentedAPI, marked as such because they don't have an entry in the tandem registry
-    if ( !API.uninstrumented && auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] ) {
-      assert.ok( auxiliaryTandemRegistry[ phetioObject.tandem.phetioID ] === phetioObject,
-        `Registered PhetioObject should be the same: ${phetioObject.tandem.phetioID} for phetioType: ${componentName}` );
-    }
     visit( expectedComponentTandem.phetioID, API );
 
-    phetioObject.dispose();
+    expectedComponentPhetioObject.dispose();
     phetioAPIValidation.enabled = wasEnabled;
 
     // TODO: remove me when no longer needed, see https://github.com/phetsims/tandem/issues/187
