@@ -11,7 +11,10 @@
   },
   "phet": {
     "generatedUnitTests": true,
-    "requirejsNamespace": "TANDEM"
+    "requirejsNamespace": "TANDEM",
+    "phet-io": {
+      "validation": false
+    }
   },
   "eslintConfig": {
     "extends": "../chipper/eslint/sim_eslintrc.js"
