@@ -6,6 +6,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import ObjectIO from './types/ObjectIO.js';
 
@@ -18,7 +19,7 @@ class LinkedElementIO extends ObjectIO {
    * @public
    */
   static toStateObject( linkedElement ) {
-    assert && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
+    assert && Tandem.VALIDATION && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
     return { elementID: linkedElement.element.tandem.phetioID };
   }
 

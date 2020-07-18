@@ -247,7 +247,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @private
    */
   assertDynamicPhetioObject( phetioObject ) {
-    if ( Tandem.PHET_IO_ENABLED ) {
+    if ( Tandem.VALIDATION ) {
       assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
       assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
       assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );

@@ -62,7 +62,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
     // countProperty can be overwritten during state set, see PhetioGroup.createIndexedELement(), and so this assertion
     // makes sure that the final length of the elements array matches the expected count from the state.
-    assert && Tandem.PHET_IO_ENABLED && phet.phetio.phetioEngine.phetioStateEngine.stateSetEmitter.addListener( state => {
+    assert && Tandem.VALIDATION && phet.phetio.phetioEngine.phetioStateEngine.stateSetEmitter.addListener( state => {
 
       // This supports cases when only partial state is being set
       if ( state[ this.countProperty.tandem.phetioID ] ) {
@@ -241,7 +241,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @public (PhetioGroupIO)
    */
   createIndexedElement( index, argsForCreateFunction, fromStateSetting ) {
-    assert && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
+    assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
     phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,

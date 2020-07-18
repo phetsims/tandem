@@ -65,7 +65,7 @@ class PhetioAPIValidation {
     this.simHasStarted = false;
 
     // @public {boolean} - settable by phetioAPITest.js
-    this.enabled = assert && Tandem.PHET_IO_ENABLED;
+    this.enabled = assert && Tandem.VALIDATION;
 
     // @private (read-only) {string}
     this.referenceAPI = this.enabled && window.phet.preloads.phetio.queryParameters.phetioReferenceAPI;
