@@ -38,7 +38,7 @@ QUnit.test( 'Tandem validation on ROOT', assert => {
   assert.ok( p.isPhetioInstrumented(), 'should be instrumented' );
 
   // Only specific tandems allowed on root when validating tandems
-  window.assert && Tandem.errorOnFailedValidation() && assert.throws( () => {
+  window.assert && Tandem.VALIDATION && assert.throws( () => {
     p = new Property( 0, {
       tandem: Tandem.GENERAL.createTandem( 'property' )
     } );
