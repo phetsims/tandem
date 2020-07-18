@@ -20,11 +20,22 @@ const packageString = JSON.stringify( ( window.phet && phet.chipper && phet.chip
 const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
 const PHET_IO_ENABLED = _.hasIn( window, 'phet.preloads.phetio' );
 const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintMissingTandems;
-const VALIDATE_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioValidateTandems;
+
+if ( PHET_IO_ENABLED ) {
+  assert && assert( packageJSON.phet[ 'phet-io' ], 'phet-io is a required attribute in package.json for brand=phet-io' );
+  assert && assert( packageJSON.phet[ 'phet-io' ].hasOwnProperty( 'validation' ), 'phet-io.validation is a required attribute for brand=phet-io' );
+}
+
+// By default, package.json's value for "phet"."phet-io"."validation" determines whether validation is enabled,
+// but this can be overridden with a query parameter ?phetioValidation={true|false}.
+const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = QueryStringMachine.containsKey( 'phetioValidation' );
+const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? phet.preloads.phetio.queryParameters.phetioValidation :
+                                ( PHET_IO_ENABLED && packageJSON.phet[ 'phet-io' ].validation );
+
+const VALIDATION = PHET_IO_ENABLED && IS_VALIDATION_SPECIFIED && !PRINT_MISSING_TANDEMS;
 
 const REQUIRED_TANDEM_NAME = 'requiredTandem';
 const OPTIONAL_TANDEM_NAME = 'optionalTandem';
-
 
 // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
 const missingTandems = {
@@ -121,9 +132,7 @@ class Tandem {
     if ( PHET_IO_ENABLED ) {
 
       // Throw an error if the tandem is required but not supplied
-      if ( Tandem.errorOnFailedValidation() ) {
-        assert && assert( !( this.required && !this.supplied ), 'Tandem was required but not supplied' );
-      }
+      assert && Tandem.VALIDATION && assert( !( this.required && !this.supplied ), 'Tandem was required but not supplied' );
 
       // When the query parameter phetioPrintMissingTandems is true, report tandems that are required but not supplied
       if ( PRINT_MISSING_TANDEMS && ( this.required && !this.supplied ) ) {
@@ -355,17 +364,6 @@ class Tandem {
   }
 
   /**
-   * Determine whether or not tandem validation failures should throw errors. If we are printing the missing tandems,
-   * then no error should be thrown so that all problems are printed.
-   * @returns {boolean} If tandems are being validated or not.
-   * @public
-   * @static
-   */
-  static errorOnFailedValidation() {
-    return VALIDATE_TANDEMS && !PRINT_MISSING_TANDEMS;
-  }
-
-  /**
    * Given a phetioID, recursively create the Tandem structure needed to return a {Tandem} with the given phetioID.
    * This method is mostly to support a deprecated way of handling groups and state, please see @zepumph or @samreid
    * before using.
@@ -400,7 +398,7 @@ class RootTandem extends Tandem {
    * @public
    */
   createTandem( name, options ) {
-    if ( VALIDATE_TANDEMS ) {
+    if ( Tandem.VALIDATION ) {
       const allowedOnRoot = name === window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME ||
                             name === REQUIRED_TANDEM_NAME ||
                             name === OPTIONAL_TANDEM_NAME ||
@@ -513,7 +511,7 @@ Tandem.OPT_OUT = Tandem.OPTIONAL;
 Tandem.REQUIRED = Tandem.ROOT.createTandem( REQUIRED_TANDEM_NAME, {
 
   // let phetioPrintMissingTandems bypass this
-  required: VALIDATE_TANDEMS || PRINT_MISSING_TANDEMS,
+  required: VALIDATION || PRINT_MISSING_TANDEMS,
   supplied: false
 } );
 
@@ -530,6 +528,13 @@ Tandem.missingTandems = missingTandems;
  * @type {boolean}
  */
 Tandem.PHET_IO_ENABLED = PHET_IO_ENABLED;
+
+/**
+ * If PhET-iO is running with validation enabled.
+ * @public
+ * @type {boolean}
+ */
+Tandem.VALIDATION = VALIDATION;
 
 /**
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
