@@ -87,7 +87,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * 4. fire elementDisposedEmitter
    *
    * @param {PhetioObject} element
-   * @param {boolean} [fromStateSetting] - used for validation during state setting.
+   * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    * @public
    * @override
    */
@@ -182,10 +182,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @override
    */
   clear( options ) {
-
     options = merge( {
-      fromStateSetting: false, // used for validation during state setting (phet-io internal)
-      resetIndex: true // whether the group's index is reset to 0 for the next element created
+
+      // used for validation during state setting (phet-io internal), see PhetioDynamicElementContainer.disposeElement for documentation
+      fromStateSetting: false,
+
+      // whether the group's index is reset to 0 for the next element created
+      resetIndex: true
     }, options );
 
     while ( this._array.length > 0 ) {
@@ -236,7 +239,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    *
    * @param {number} index - the number of the individual element
    * @param {Array.<*>} argsForCreateFunction
-   * @param {boolean} [fromStateSetting] - used for validation during state setting.
+   * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    * @returns {PhetioObject}
    * @public (PhetioGroupIO)
    */

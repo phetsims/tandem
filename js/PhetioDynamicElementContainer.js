@@ -303,7 +303,17 @@ class PhetioDynamicElementContainer extends PhetioObject {
   /**
    * Dispose a contained element
    * @param {PhetioObject} element
-   * @param {boolean} [fromStateSetting] - used for validation during state setting.
+   * @param {boolean} [fromStateSetting] - Used for validation during state setting. This should only be true when this
+   * function is being called from setting PhET-iO state in PhetioStateEngine.js. This flag is used purely for validation.
+   * If this function is called during PhET-iO state setting, but not from the state engine, then it is from sim-specifc,
+   * non-phet-io code, and will most likely be buggy. As an example let's think about this in terms of PhetioGroup. If
+   * the state to be set has {3} elements, and sets modelProperty to be `X`, then that is because the upstream sim is in
+   * that state. If modelProperty's listener responds to the setting of it by deleting an element (in the downstream sim),
+   * then this flag will throw an error, because it would yield only {2} elements in the downstream sim after state set.
+   * The solution to this error would be to guard modelProperty's listener by making sure it only deletes an element when
+   * the listener is changed because of a force that isn't the PhET-iO state engine (see Sim.isSettingPhetioStateProperty
+   * and its usages). This helps catch complicated an obfuscated state bugs in an easy way. After reading this, it
+   * should go without saying that sim code should NOT set this flag to be true!
    * @protected - should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
    */
   disposeElement( element, fromStateSetting ) {
@@ -324,8 +334,10 @@ class PhetioDynamicElementContainer extends PhetioObject {
   /**
    * @public
    * @abstract
+   * @param {Object} [options]
+   * @param {boolean} options.fromStateSetting -  Used for validation during state setting. See this.disposeElement() for documentation
    */
-  clear() {
+  clear( options ) {
     throw new Error( 'clear() is abstract and should be implemented by subTypes' );
   }
 

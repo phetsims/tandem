@@ -47,7 +47,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   /**
    * Dispose the underlying element.  Called by the PhetioStateEngine so the capsule element can be recreated with the
    * correct state.
-   * @param {boolean} [fromStateSetting] - used for validation during state setting.
+   * @param {boolean} [fromStateSetting] - Used for validation during state setting, see PhetioDynamicElementContainer.disposeElement()
    * @public (phet-io)
    * @override
    */
@@ -72,17 +72,24 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   /**
    * @public
    * @override
+   * @param {object} [options]
    */
-  clear( fromStateSetting ) {
+  clear( options ) {
+    options = merge( {
+
+      // Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
+      fromStateSetting: false
+    }, options );
+
     if ( this.element ) {
-      this.disposeElement( fromStateSetting );
+      this.disposeElement( options.fromStateSetting );
     }
   }
 
   /**
    * Primarily for internal use, clients should usually use getElement.
    * @param {Array.<*>} argsForCreateFunction
-   * @param {boolean} [fromStateSetting] - used for validation during state setting.
+   * @param {boolean} [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
    * @returns {Object}
    * @public (phet-io)
    */
