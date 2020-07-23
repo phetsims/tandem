@@ -52,7 +52,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * @override
    */
   disposeElement( fromStateSetting ) {
-    super.disposeElement( this.element, fromStateSetting );
+    this.element && super.disposeElement( this.element, fromStateSetting );
     this.element = null;
   }
 
