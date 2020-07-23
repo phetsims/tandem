@@ -232,7 +232,12 @@ inherit( Object, PhetioObject, {
   initializePhetioObject: function( baseOptions, config ) {
     assert && assert( config, 'initializePhetioObject must be called with config' );
 
-    // The presence of `tandem` indicates if this PhetioObject can be intiialized. If not yet initialized, perhaps
+    // Make sure that required tandems are supplied
+    if ( Tandem.VALIDATION && config.tandem && config.tandem.required ) {
+      assert && assert( config.tandem.supplied, 'required tandems must be supplied' );
+    }
+
+    // The presence of `tandem` indicates if this PhetioObject can be initialized. If not yet initialized, perhaps
     // it will be initialized later on, as in Node.mutate().
     if ( !( config.tandem && config.tandem.supplied ) ) {
       assert && !config.tandem && assert( !specifiesNonTandemPhetioObjectKey( config ), 'only specify metadata when providing a Tandem' );
