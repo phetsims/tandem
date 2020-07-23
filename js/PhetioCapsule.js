@@ -52,6 +52,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * @override
    */
   disposeElement( fromStateSetting ) {
+    assert && assert( this.element, 'cannot dispose if element is not defined' );
     super.disposeElement( this.element, fromStateSetting );
     this.element = null;
   }
