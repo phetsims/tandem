@@ -28,7 +28,7 @@ if ( PHET_IO_ENABLED ) {
 
 // By default, package.json's value for "phet"."phet-io"."validation" determines whether validation is enabled,
 // but this can be overridden with a query parameter ?phetioValidation={true|false}.
-const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = QueryStringMachine.containsKey( 'phetioValidation' );
+const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = window.QueryStringMachine && QueryStringMachine.containsKey( 'phetioValidation' );
 const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? phet.preloads.phetio.queryParameters.phetioValidation :
                                 ( PHET_IO_ENABLED && packageJSON.phet[ 'phet-io' ].validation );
 
