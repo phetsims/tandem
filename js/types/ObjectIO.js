@@ -70,11 +70,11 @@ class ObjectIO {
    * Note that other non-serialized args (not dealt with here) may be supplied as closure variables. This function
    * only needs to be implemented on IO Types that are phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule
    * members.
-   * @param {Object} state - from a `fromStateObject` method
+   * @param {Object} stateObject - from a corresponding`toStateObject` method
    * @returns {Array.<*>} - the array of arguments to be passed to the `create` function in the PhetioGroup element type schema.
    * @public
    */
-  static stateToArgsForConstructor( state ) {
+  static stateToArgsForConstructor( stateObject ) {
     return [];
   }
 

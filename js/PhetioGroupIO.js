@@ -64,8 +64,7 @@ const create = parameterType => {
       // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
       // element in the state needs to be created first, so we will try again on the next iteration of the state
       // setting engine.
-      const state = parameterType.fromStateObject( stateObject );
-      const args = parameterType.stateToArgsForConstructor( state );
+      const args = parameterType.stateToArgsForConstructor( stateObject );
 
       const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 
