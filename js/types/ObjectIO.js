@@ -1,8 +1,8 @@
 // Copyright 2018-2020, University of Colorado Boulder
 
 /**
- * ObjectIO is the root of the IO Type hierarchy.  All IO Yypes extend from ObjectIO.  This type can be subtyped or
- * used directly for types that only need toStateObject/fromStateObject.
+ * ObjectIO is the root of the IO Type hierarchy.  All IO Types extend from ObjectIO.  This type can be subtyped or
+ * used directly for types that only need basic serialization static methods.
  *
  * This type purposefully does not have a `parametricTypes` static member. The presence of this field marks that it is
  * a parametric type. ObjectIO is not.
@@ -39,9 +39,9 @@ class ObjectIO {
   }
 
   /**
-   * Return the serialized form of the wrapped PhetioObject. Most often this looks like a JSON object that holds the
+   * Return the serialized form of the wrapped PhetioObject. Most often this looks like an object literal that holds the
    * data about the PhetioObject instance.  This can be overridden by subclasses, or types can use ObjectIO type directly
-   * to use this implementation.
+   * to use this implementation. This implementation should call `validate()` on the parameter with its `validator` field.
    * @param {*} o
    * @returns {*}
    * @public
@@ -52,13 +52,10 @@ class ObjectIO {
   }
 
   /**
-   * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
-   * use ObjectIO type directly to use this implementation. The value returned by this function depends greatly on
-   * what type of serialization an IO Type supports. Please read thoroughly and understand
-   * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#serialization
-   * before implementing a `fromStateObject` function.
+   * For data-type serialization. Decodes the object from a state into an instance. This can be overridden by subclasses,
+   * or types can use ObjectIO type directly to use this implementation.
    * @param {*} o - whatever was returned from the toStateObject method
-   * @returns {*} - depends on if using reference-type or data-type serialization.
+   * @returns {*} - the deserialized instance of the same type that the toStateObject was provided as a parameter
    * @public
    */
   static fromStateObject( o ) {
@@ -66,12 +63,12 @@ class ObjectIO {
   }
 
   /**
-   * Map the state (obtained by fromStateObject) to arguments that are passed to the `create` function in PhetioGroup.js.
-   * Note that other non-serialized args (not dealt with here) may be supplied as closure variables. This function
-   * only needs to be implemented on IO Types that are phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule
-   * members.
+   * Map the stateObject to arguments that are passed to the `create` function in PhetioGroup.js (or other
+   * `PhetioDynamicElementContainer` creation functions). Note that other non-serialized args (not dealt with here) may
+   * be supplied as closure variables. This function only needs to be implemented on IO Types that are
+   * phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule elements.
    * @param {Object} stateObject - from a corresponding`toStateObject` method
-   * @returns {Array.<*>} - the array of arguments to be passed to the `create` function in the PhetioGroup element type schema.
+   * @returns {Array.<*>} - the array of arguments to be passed to creation functions like PhetioGroup.create() or PhetioCapsule.getElement().
    * @public
    */
   static stateToArgsForConstructor( stateObject ) {
@@ -79,11 +76,11 @@ class ObjectIO {
   }
 
   /**
-   * Applies the deserialized value to the object.  This is only called when setting the entire state of the simulation,
-   * and hence also sets the initial values, so resets will return to the customized value instead of the simulation
-   * default (uncustomized) value.
+   * For reference-type serialization. Applies the stateObject value to the object. When setting PhET-iO state, this
+   * function will be called on an instrumented instance to set the stateObject's value to it.
+   * For more understanding, please read https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#three-types-of-deserialization
    * @param {PhetioObject} o
-   * @param {Object} value - result from fromStateObject
+   * @param {Object} value - result from toStateObject
    * @public
    */
   static applyState( o, value ) { }
