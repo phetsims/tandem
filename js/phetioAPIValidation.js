@@ -65,7 +65,10 @@ class PhetioAPIValidation {
     this.simHasStarted = false;
 
     // @public {boolean} - settable by phetioAPITest.js
-    this.enabled = assert && Tandem.VALIDATION;
+    this.enabled = assert &&
+                   Tandem.VALIDATION &&
+                   phet.chipper.queryParameters.screens === null &&
+                   phet.chipper.queryParameters.homeScreen;
 
     // @private (read-only) {string}
     this.referenceAPI = this.enabled && window.phet.preloads.phetio.queryParameters.phetioReferenceAPI;
@@ -108,7 +111,7 @@ class PhetioAPIValidation {
 
     // Validation only runs when enabled and all screens are present
     // TODO: Use homeScreen's defaultValue from its schema, see https://github.com/phetsims/chipper/issues/936
-    if ( this.enabled && phet.chipper.queryParameters.screens === null && phet.chipper.queryParameters.homeScreen ) {
+    if ( this.enabled ) {
       this.validateOverridesFile();
 
       if ( this.referenceAPI ) {
@@ -256,25 +259,12 @@ class PhetioAPIValidation {
          // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
          phetioObject.tandem.phetioID.indexOf( '~' ) === -1 ) {
 
-      const concretePhetioID = phetioObject.tandem.getConcretePhetioID();
-      const baselineFromFile = window.phet.preloads.phetio.phetioElementsBaseline[ concretePhetioID ];
-
-      if ( !baselineFromFile ) {
-        this.assertAPIError( {
-          phetioID: phetioObject.tandem.phetioID,
-          ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.',
-          message: 'element\'s concrete phetioID was not in the baseline file after being created after startup.'
-        } );
-      }
-
       // Here we need to kick this validation to the next frame to support construction in any order. Parent first, or
       // child first. Use namespace to avoid because timer is a PhetioObject.
       phet.axon.timer.runOnNextFrame( () => {
 
-        // Everything in the baseline was created on startup, but the archetypes mark dynamic elements' non-dynamic
-        // counterparts. The only instances that it's OK to create after startup are "dynamic instances" which are
-        // marked as such.
-        if ( !( baselineFromFile.phetioIsArchetype && phetioObject.phetioDynamicElement ) ) {
+        // The only instances that it's OK to create after startup are "dynamic instances" which are marked as such.
+        if ( !phetioObject.phetioDynamicElement ) {
           this.assertAPIError( {
             phetioID: phetioObject.tandem.phetioID,
             ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
