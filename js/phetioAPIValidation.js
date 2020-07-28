@@ -64,7 +64,8 @@ class PhetioAPIValidation {
     // @private - keep track of when the sim has started.
     this.simHasStarted = false;
 
-    // @public {boolean} - settable by phetioAPITest.js
+    // @public {boolean} - settable by phetioAPITest.js. Validation is only enabled when all screens are present.
+    // TODO: Use screens's defaultValue from its schema, see https://github.com/phetsims/chipper/issues/936
     this.enabled = assert &&
                    Tandem.VALIDATION &&
                    phet.chipper.queryParameters.screens === null &&
@@ -109,8 +110,6 @@ class PhetioAPIValidation {
 
     this.simHasStarted = true;
 
-    // Validation only runs when enabled and all screens are present
-    // TODO: Use homeScreen's defaultValue from its schema, see https://github.com/phetsims/chipper/issues/936
     if ( this.enabled ) {
       this.validateOverridesFile();
 
