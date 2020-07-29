@@ -41,7 +41,8 @@ class Float64ArrayIO extends ObjectIO {
   }
 
   /**
-   * Sets the value of the entire typed array.
+   * Float64ArrayIO is a data type, and uses the toStateObject/fromStateObject exclusively for data type serialization.
+   * Sites that use Float64ArrayIO as a reference type can use this method to update the state of an existing Float64Arary.
    * @public
    * @override
    *

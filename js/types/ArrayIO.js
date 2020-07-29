@@ -7,6 +7,7 @@
  * @author Andrew Adare (PhET Interactive Simulations)
  */
 
+import validate from '../../../axon/js/validate.js';
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
 import ObjectIO from './ObjectIO.js';
@@ -47,14 +48,8 @@ const create = parameterType => {
      * @public
      */
     static toStateObject( array ) {
-      assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
-      assert && assert( parameterType.toStateObject, parameterType.typeName + ' does not have a toStateObject method.' );
-
-      const json = [];
-      for ( let i = 0; i < array.length; i++ ) {
-        json.push( parameterType.toStateObject( array[ i ] ) );
-      }
-      return json;
+      validate( array, ArrayIOImpl.validator );
+      return array.map( parameterType.toStateObject );
     }
 
     /**
@@ -65,24 +60,23 @@ const create = parameterType => {
      * @public
      */
     static fromStateObject( stateObject ) {
-      const array = [];
-      for ( let i = 0; i < stateObject.length; i++ ) {
-        array.push( parameterType.fromStateObject( stateObject[ i ] ) );
-      }
-      return array;
+      validate( stateObject, ArrayIOImpl.validator );
+      return stateObject.map( parameterType.fromStateObject );
     }
 
     /**
-     * Most of the time this should not be used. Instead just set fromStateObject as the deserialized value. This may
-     * be helpful in some performance situations.
+     * Float64ArrayIO is a data type, and uses the toStateObject/fromStateObject exclusively for data type serialization.
+     * Sites that use Float64ArrayIO as a reference type can use this method to update the state of an existing Float64Arary.
      * @public
      * @override
-     * @public
+     *
+     * @param {Array} array
+     * @param {Array} stateObject
      */
-    static applyState( array, fromStateObject ) {
+    static applyState( array, stateObject ) {
       assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
       array.length = 0;
-      array.push.apply( array, fromStateObject );
+      array.push.apply( array, stateObject );
     }
   }
 
