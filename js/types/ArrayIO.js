@@ -63,21 +63,6 @@ const create = parameterType => {
       validate( stateObject, ArrayIOImpl.validator );
       return stateObject.map( parameterType.fromStateObject );
     }
-
-    /**
-     * Float64ArrayIO is a data type, and uses the toStateObject/fromStateObject exclusively for data type serialization.
-     * Sites that use Float64ArrayIO as a reference type can use this method to update the state of an existing Float64Arary.
-     * @public
-     * @override
-     *
-     * @param {Array} array
-     * @param {Array} stateObject
-     */
-    static applyState( array, stateObject ) {
-      assert && assert( Array.isArray( array ), 'ArrayIO should wrap array instances' );
-      array.length = 0;
-      array.push.apply( array, stateObject );
-    }
   }
 
   ArrayIOImpl.documentation = 'A wrapper for the built-in JS array type, with the element type specified.';
