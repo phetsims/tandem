@@ -81,7 +81,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   /**
    * Remove an element from this Group, unregistering it from PhET-iO and disposing it.
    * The order is guaranteed to be:
-   * 1. remove from internl array
+   * 1. remove from internal array
    * 2. update countProperty
    * 3. element.dispose
    * 4. fire elementDisposedEmitter
