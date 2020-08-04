@@ -60,8 +60,9 @@ const create = parameterType => {
      * @public
      */
     static fromStateObject( stateObject ) {
-      validate( stateObject, ArrayIOImpl.validator );
-      return stateObject.map( parameterType.fromStateObject );
+      const result = stateObject.map( parameterType.fromStateObject );
+      validate( result, ArrayIOImpl.validator );
+      return result;
     }
   }
 
