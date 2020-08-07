@@ -13,11 +13,10 @@ import deprecationWarning from '../../phet-core/js/deprecationWarning.js';
 import merge from '../../phet-core/js/merge.js';
 import tandemNamespace from './tandemNamespace.js';
 
-// text
-const packageString = JSON.stringify( ( window.phet && phet.chipper && phet.chipper.packageObject ) ? phet.chipper.packageObject : { name: 'placeholder' } );
-
 // constants
-const packageJSON = JSON.parse( packageString ); // Tandem can't depend on joist, so cannot use packageJSON module
+// Tandem can't depend on joist, so cannot use packageJSON module
+const packageJSON = _.hasIn( window, 'phet.chipper.packageObject' ) ? phet.chipper.packageObject : { name: 'placeholder' };
+
 const PHET_IO_ENABLED = _.hasIn( window, 'phet.preloads.phetio' );
 const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintMissingTandems;
 
