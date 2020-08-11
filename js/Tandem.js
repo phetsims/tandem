@@ -20,16 +20,18 @@ const packageJSON = _.hasIn( window, 'phet.chipper.packageObject' ) ? phet.chipp
 const PHET_IO_ENABLED = _.hasIn( window, 'phet.preloads.phetio' );
 const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintMissingTandems;
 
-if ( PHET_IO_ENABLED ) {
-  assert && assert( packageJSON.phet[ 'phet-io' ], 'phet-io is a required attribute in package.json for brand=phet-io' );
-  assert && assert( packageJSON.phet[ 'phet-io' ].hasOwnProperty( 'validation' ), 'phet-io.validation is a required attribute for brand=phet-io' );
+// Validation defaults to true, so should only appear in package.json as "validation": false as an opt-out.
+if ( PHET_IO_ENABLED && _.hasIn( packageJSON, 'phet.phet-io.validation' ) ) {
+  assert && assert( packageJSON.phet[ 'phet-io' ].validation === false, 'validation can only be specified as false as an opt-out' );
 }
 
-// By default, package.json's value for "phet"."phet-io"."validation" determines whether validation is enabled,
-// but this can be overridden with a query parameter ?phetioValidation={true|false}.
+// Validation defaults to true, but can be overridden to be false in package.json.
+const IS_VALIDATION_DEFAULT = _.hasIn( packageJSON, 'phet.phet-io.validation' ) ? packageJSON.phet[ 'phet-io' ].validation : true;
+
+// The default value for validation can be overridden with a query parameter ?phetioValidation={true|false}.
 const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = window.QueryStringMachine && QueryStringMachine.containsKey( 'phetioValidation' );
 const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? phet.preloads.phetio.queryParameters.phetioValidation :
-                                ( PHET_IO_ENABLED && packageJSON.phet[ 'phet-io' ].validation );
+                                ( PHET_IO_ENABLED && IS_VALIDATION_DEFAULT );
 
 const VALIDATION = PHET_IO_ENABLED && IS_VALIDATION_SPECIFIED && !PRINT_MISSING_TANDEMS;
 
