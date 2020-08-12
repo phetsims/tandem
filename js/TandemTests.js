@@ -9,16 +9,7 @@
 import NumberProperty from '../../axon/js/NumberProperty.js';
 import Tandem from './Tandem.js';
 
-QUnit.module( 'Tandem', {
-  before() {
-
-    // launch to make sure tandem registration fires listeners
-    Tandem.launch();
-  },
-  after() {
-    Tandem.unlaunch();
-  }
-} );
+QUnit.module( 'Tandem' );
 
 QUnit.test( 'Tandem validation on ROOT', assert => {
 

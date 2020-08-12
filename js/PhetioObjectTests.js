@@ -12,16 +12,7 @@ import PhetioObjectAPI from './PhetioObjectAPI.js';
 import Tandem from './Tandem.js';
 import ObjectIO from './types/ObjectIO.js';
 
-QUnit.module( 'PhetioObject', {
-  before() {
-
-    // launch to make sure tandem registration fires listeners
-    Tandem.launch();
-  },
-  after() {
-    Tandem.unlaunch();
-  }
-} );
+QUnit.module( 'PhetioObject' );
 
 class MockTypeIO extends ObjectIO {}
 
