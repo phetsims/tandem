@@ -390,6 +390,11 @@ inherit( Object, PhetioObject, {
       this.phetioMessageStack.push(
         phet.phetio.dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata, this.phetioHighFrequency )
       );
+
+      // To support PhET-iO playback, any potential playback events downstream of this playback event must be marked as
+      // non playback events. This is to prevent the PhET-iO playback engine from repeating those events. See
+      // https://github.com/phetsims/phet-io/issues/1693
+      this.phetioPlayback && phet.phetio.dataStream.pushNonPlaybackable();
     }
   },
 
@@ -407,6 +412,7 @@ inherit( Object, PhetioObject, {
       if ( topMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
         return;
       }
+      this.phetioPlayback && phet.phetio.dataStream.popNonPlaybackable();
       phet.phetio.dataStream.end( topMessageIndex );
     }
   },
