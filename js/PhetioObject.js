@@ -252,23 +252,24 @@ inherit( Object, PhetioObject, {
     // `new Node( {tandem: tandem}).mutate({})`
     assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
-    validate( config.tandem, { valueType: Tandem } );
+    // Guard validation on assert to avoid calling a large number of no-ops when assertions are disabled, see https://github.com/phetsims/tandem/issues/200
+    assert && validate( config.tandem, { valueType: Tandem } );
 
     config = merge( {}, DEFAULTS, baseOptions, config );
 
     // validate config before assigning to properties
-    validate( config.phetioType, IO_TYPE_VALIDATOR );
-    validate( config.phetioState, BOOLEAN_VALIDATOR );
-    validate( config.phetioReadOnly, BOOLEAN_VALIDATOR );
-    validate( config.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR );
-    validate( config.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR );
-    validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR );
-    validate( config.phetioPlayback, BOOLEAN_VALIDATOR );
-    validate( config.phetioStudioControl, BOOLEAN_VALIDATOR );
-    validate( config.phetioComponentOptions, PHET_IO_COMPONENT_OPTIONS_VALIDATOR );
-    validate( config.phetioFeatured, BOOLEAN_VALIDATOR );
-    validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
-    validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioType, IO_TYPE_VALIDATOR );
+    assert && validate( config.phetioState, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioReadOnly, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR );
+    assert && validate( config.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR );
+    assert && validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioPlayback, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioStudioControl, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioComponentOptions, PHET_IO_COMPONENT_OPTIONS_VALIDATOR );
+    assert && validate( config.phetioFeatured, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
+    assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
 
     // This block is associated with validating the baseline api and filling in metadata specified in the elements
     // overrides API file. Even when validation is not enabled, overrides should still be applied.
