@@ -31,7 +31,7 @@ QUnit.test( 'Tandem validation on ROOT', assert => {
   // Only specific tandems allowed on root when validating tandems
   window.assert && Tandem.VALIDATION && assert.throws( () => {
     p = new NumberProperty( 0, {
-      tandem: Tandem.GENERAL.createTandem( 'aProperty' )
+      tandem: Tandem.ROOT.createTandem( 'aProperty' ) // Should fail because aProperty is not allowed on ROOT Tandem
     } );
   } );
 } );
