@@ -20,11 +20,6 @@ const packageJSON = _.hasIn( window, 'phet.chipper.packageObject' ) ? phet.chipp
 const PHET_IO_ENABLED = _.hasIn( window, 'phet.preloads.phetio' );
 const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintMissingTandems;
 
-// Validation defaults to true, so should only appear in package.json as "validation": false as an opt-out.
-if ( PHET_IO_ENABLED && _.hasIn( packageJSON, 'phet.phet-io.validation' ) ) {
-  assert && assert( packageJSON.phet[ 'phet-io' ].validation === false, 'validation can only be specified as false as an opt-out' );
-}
-
 // Validation defaults to true, but can be overridden to be false in package.json.
 const IS_VALIDATION_DEFAULT = _.hasIn( packageJSON, 'phet.phet-io.validation' ) ? packageJSON.phet[ 'phet-io' ].validation : true;
 
