@@ -165,6 +165,16 @@ class Tandem {
   }
 
   /**
+   * Returns true if this Tandem has the specified ancestor Tandem.
+   * @param ancestor
+   * @returns {boolean}
+   * @public
+   */
+  hasAncestor( ancestor ) {
+    return this.parentTandem === ancestor || ( this.parentTandem && this.parentTandem.hasAncestor( ancestor ) );
+  }
+
+  /**
    * Removes a PhetioObject and signifies to listeners that it has been removed.
    * @param {PhetioObject} phetioObject
    * @public
