@@ -124,10 +124,10 @@ class PhetioDynamicElementContainer extends PhetioObject {
       const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
 
       // On state start, clear out the container and set to defer notifications.
-      phetioStateEngine.onBeforeStateSetEmitter.addListener( ( state, isInStateScope ) => {
+      phetioStateEngine.onBeforeStateSetEmitter.addListener( ( state, scopeTandem ) => {
 
         // Only clear if this PhetioDynamicElementContainer is in scope of the state to be set
-        if ( isInStateScope( this.tandem ) ) {
+        if ( this.tandem.hasAncestor( scopeTandem ) ) {
           this.clear( { fromStateSetting: true } );
           this.setNotificationsDeferred( true );
         }
