@@ -28,7 +28,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * @param {function} createElement - function that creates a dynamic element for the group.
-   * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
+   * @param {Array<*>|function():Array<*>} defaultArguments - arguments passed to createElement when creating the archetype
    * @param {Object} [options] - describe the Group itself
    */
   constructor( createElement, defaultArguments, options ) {
