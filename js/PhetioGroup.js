@@ -27,8 +27,10 @@ const DEFAULT_CONTAINER_SUFFIX = 'Group';
 class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
-   * @param {function} createElement - function that creates a dynamic element for the group.
-   * @param {Array.<*>|function.<[],Array.<*>>} defaultArguments arguments passed to create during API harvest
+   * @param {function(Tandem,...):PhetioObject} createElement - function that creates a dynamic element to be housed in
+   * this container. All of this dynamic element container's elements will be created from this function, including the
+   * archetype.
+   * @param {Array<*>|function():Array<*>} defaultArguments - arguments passed to createElement when creating the archetype
    * @param {Object} [options] - describe the Group itself
    */
   constructor( createElement, defaultArguments, options ) {
