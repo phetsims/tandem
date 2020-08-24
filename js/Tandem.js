@@ -114,6 +114,32 @@ class Tandem {
   }
 
   /**
+   * If the provided tandem is not supplied, support the ?printMissingTandems query parameter for extra logging during
+   * initial instrumentation.
+   * @public
+   * @param tandem
+   */
+  static onMissingTandem( tandem ) {
+    assert && assert( tandem instanceof Tandem );
+
+    // When the query parameter phetioPrintMissingTandems is true, report tandems that are required but not supplied
+    if ( PRINT_MISSING_TANDEMS && !tandem.supplied ) {
+      const stackTrace = new Error().stack;
+      if ( tandem.required ) {
+        missingTandems.required.push( { phetioID: this.phetioID, stack: stackTrace } );
+      }
+      else {
+
+        // When the query parameter phetioPrintMissingTandems is true, report tandems that are optional but not
+        // supplied, but not for Fonts because they are too numerous.
+        if ( stackTrace.indexOf( 'Font' ) === -1 ) {
+          missingTandems.optional.push( { phetioID: this.phetioID, stack: stackTrace } );
+        }
+      }
+    }
+  }
+
+  /**
    * Adds a PhetioObject.  For example, it could be an axon Property, SCENERY/Node or SUN/RoundPushButton.
    * phetioEngine listens for when PhetioObjects are added and removed to keep track of them for PhET-iO.
    * @param {PhetioObject} phetioObject
@@ -130,24 +156,8 @@ class Tandem {
       // Throw an error if the tandem is required but not supplied
       assert && Tandem.VALIDATION && assert( !( this.required && !this.supplied ), 'Tandem was required but not supplied' );
 
-      // When the query parameter phetioPrintMissingTandems is true, report tandems that are required but not supplied
-      if ( PRINT_MISSING_TANDEMS && ( this.required && !this.supplied ) ) {
-        missingTandems.required.push( { phetioID: this.phetioID, stack: new Error().stack } );
-        return;
-      }
-
       // If tandem is optional and not supplied, then ignore it.
       if ( !this.required && !this.supplied ) {
-        if ( PRINT_MISSING_TANDEMS ) {
-          const stackTrace = new Error().stack;
-
-          // When the query parameter phetioPrintMissingTandems is true, report tandems that are optional but not
-          // supplied, but not for Fonts because they are too numerous.
-          if ( stackTrace.indexOf( 'Font' ) === -1 ) {
-            missingTandems.optional.push( { phetioID: this.phetioID, stack: stackTrace } );
-            return;
-          }
-        }
 
         // Optionally instrumented types without tandems are not added.
         return;

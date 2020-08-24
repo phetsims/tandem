@@ -232,6 +232,9 @@ inherit( Object, PhetioObject, {
   initializePhetioObject: function( baseOptions, config ) {
     assert && assert( config, 'initializePhetioObject must be called with config' );
 
+    // call before we exit early to support logging unsupplied Tandems.
+    config.tandem && Tandem.onMissingTandem( config.tandem );
+
     // Make sure that required tandems are supplied
     if ( Tandem.VALIDATION && config.tandem && config.tandem.required ) {
       assert && assert( config.tandem.supplied, 'required tandems must be supplied' );
