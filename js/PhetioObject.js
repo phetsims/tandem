@@ -684,5 +684,71 @@ class LinkedElement extends PhetioObject {
   }
 }
 
+/**
+ * Function that creates an IO type associated with a core type. Methods are forwarded to the core type.
+ * @param {function} CoreType, e.g., Bunny
+ * @param {string} typeName, e.g., BunnyIO
+ * @param {string} documentation, e.g., "Animal that has a genotype (genetic blueprint) and a phenotype (appearance)."
+ * @param {Object} [options]
+ * @returns {IOType}
+ */
+PhetioObject.createIOType = ( CoreType, typeName, documentation, options ) => {
+
+  options = merge( {
+    methods: null // {null|Object} - key/value pairs with methods, see PhetioEngineIO for an example
+  }, options );
+
+  class IOType extends ObjectIO {
+
+    /**
+     * @param {PhetioObject} phetioObject
+     * @returns {Object}
+     * @public
+     * @override
+     */
+    static toStateObject( phetioObject ) {
+      validate( phetioObject, this.validator );
+      return phetioObject.toStateObject();
+    }
+
+    // @public
+    static fromStateObject( stateObject ) {
+      return CoreType.fromStateObject( stateObject );
+    }
+
+    /**
+     * @param state
+     * @returns {Object[]}
+     * @public
+     * @override
+     */
+    static stateToArgsForConstructor( state ) {
+      return CoreType.stateToArgsForConstructor( state );
+    }
+
+    /**
+     * Restores CoreType state after instantiation.
+     * @param {PhetioObject} phetioObject
+     * @param {Object} state
+     * @public
+     * @override
+     */
+    static applyState( phetioObject, state ) {
+      validate( phetioObject, this.validator );
+      phetioObject.applyState( state );
+    }
+  }
+
+  IOType.documentation = documentation;
+  IOType.validator = { valueType: CoreType };
+  IOType.typeName = typeName;
+  if ( options.methods ) {
+    IOType.methods = options.methods;
+  }
+  ObjectIO.validateSubtype( IOType );
+
+  return IOType;
+};
+
 tandemNamespace.register( 'PhetioObject', PhetioObject );
 export default PhetioObject;
