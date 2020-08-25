@@ -51,7 +51,7 @@ const create = parameterType => {
   class PhetioGroupIOImpl extends ObjectIO {
 
     /**
-     * Creates an element of the group
+     * Creates an element and adds it to the group
      * @param {PhetioGroup} group
      * @param {string} componentName
      * @param {Object} stateObject
