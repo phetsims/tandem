@@ -688,13 +688,13 @@ class LinkedElement extends PhetioObject {
  * Function that creates an IO type associated with a core type. Methods are forwarded to the core type.
  * @param {function} CoreType, e.g., Bunny
  * @param {string} typeName, e.g., BunnyIO
- * @param {string} documentation, e.g., "Animal that has a genotype (genetic blueprint) and a phenotype (appearance)."
  * @param {Object} [options]
  * @returns {IOType}
  */
-PhetioObject.createIOType = ( CoreType, typeName, documentation, options ) => {
+PhetioObject.createIOType = ( CoreType, typeName, options ) => {
 
   options = merge( {
+    documentation: '', // {string} e.g., "Animal that has a genotype (genetic blueprint) and a phenotype (appearance)."
     methods: null // {null|Object} - key/value pairs with methods, see PhetioEngineIO for an example
   }, options );
 
@@ -739,7 +739,7 @@ PhetioObject.createIOType = ( CoreType, typeName, documentation, options ) => {
     }
   }
 
-  IOType.documentation = documentation;
+  IOType.documentation = options.documentation;
   IOType.validator = { valueType: CoreType };
   IOType.typeName = typeName;
   if ( options.methods ) {
