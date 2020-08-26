@@ -18,6 +18,7 @@
  * 8. Any schema entries in the overrides file must be different from its baseline counterpart
  * 9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.
  * 10. Dynamic elements should not appear in the API.
+ * 11. Dynamic element metadata should match the archetype in the API.
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
@@ -263,6 +264,27 @@ class PhetioAPIValidation {
           this.assertAPIError( {
             phetioID: phetioObject.tandem.phetioID,
             ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
+          } );
+        }
+        else {
+
+          const archetypeID = phetioObject.tandem.getConcretePhetioID();
+          const archetypeMetadata = this.loadedReferenceAPI.phetioElements[ archetypeID ];
+          const actualMetadata = phetioObject.getMetadata();
+
+          KEYS_TO_CHECK.forEach( key => {
+
+            // These attributes are different for archetype vs actual
+            if ( key !== 'phetioDynamicElement' && key !== 'phetioArchetypePhetioID' && key !== 'phetioIsArchetype' ) {
+
+              if ( archetypeMetadata[ key ] !== actualMetadata[ key ] ) {
+                this.assertAPIError( {
+                  phetioID: phetioObject.tandem.phetioID,
+                  ruleInViolation: '11. Dynamic element metadata should match the archetype in the API.',
+                  message: 'mismatched metadata: ' + key
+                } );
+              }
+            }
           } );
         }
       } );
