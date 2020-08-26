@@ -266,8 +266,9 @@ class PhetioAPIValidation {
             ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
           } );
         }
-        else {
+        else if ( this.loadedReferenceAPI ) {
 
+          // Compare the dynamic element to the archetype in to the loaded reference API, if specified
           const archetypeID = phetioObject.tandem.getConcretePhetioID();
           const archetypeMetadata = this.loadedReferenceAPI.phetioElements[ archetypeID ];
           const actualMetadata = phetioObject.getMetadata();
