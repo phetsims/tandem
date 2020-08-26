@@ -177,12 +177,13 @@ class Tandem {
         arrayRemove( bufferedPhetioObjects, phetioObject );
       }
       else {
-        phetioObject.tandem.dispose();
         for ( let i = 0; i < phetioObjectListeners.length; i++ ) {
           phetioObjectListeners[ i ].removePhetioObject( phetioObject );
         }
       }
     }
+
+    phetioObject.tandem.dispose();
   }
 
   /**
