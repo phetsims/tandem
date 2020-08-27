@@ -43,7 +43,16 @@ import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // constants
-const KEYS_TO_CHECK = [ 'phetioDynamicElement', 'phetioEventType', 'phetioIsArchetype', 'phetioPlayback', 'phetioReadOnly', 'phetioState', 'phetioTypeName' ];
+// The api-tracked and validated metadata keys
+const KEYS_TO_CHECK = [
+  'phetioDynamicElement',
+  'phetioEventType',
+  'phetioIsArchetype',
+  'phetioPlayback',
+  'phetioReadOnly',
+  'phetioState',
+  'phetioTypeName'
+];
 
 class PhetioAPIValidation {
 
