@@ -62,13 +62,13 @@ class PhetioDynamicElementContainer extends PhetioObject {
       assert && assert( createElement.length === defaultArguments.length + 1, 'mismatched number of arguments' );
     }
 
-    assert && assert( !!options.phetioType, 'phetioType must be supplied' );
-    assert && assert( Array.isArray( options.phetioType.parameterTypes ), 'phetioType must supply its parameter types' );
-    assert && assert( options.phetioType.parameterTypes.length === 1,
+    assert && Tandem.VALIDATION && assert( !!options.phetioType, 'phetioType must be supplied' );
+    assert && Tandem.VALIDATION && assert( Array.isArray( options.phetioType.parameterTypes ), 'phetioType must supply its parameter types' );
+    assert && Tandem.VALIDATION && assert( options.phetioType.parameterTypes.length === 1,
       'PhetioDynamicElementContainer\'s phetioType must have exactly one parameter type' );
-    assert && assert( !!options.phetioType.parameterTypes[ 0 ],
+    assert && Tandem.VALIDATION && assert( !!options.phetioType.parameterTypes[ 0 ],
       'PhetioDynamicElementContainer\'s phetioType\'s parameterType must be truthy' );
-    assert && assert( options.tandem.name.endsWith( options.containerSuffix ),
+    assert && Tandem.VALIDATION && assert( options.tandem.name.endsWith( options.containerSuffix ),
       'PhetioDynamicElementContainer tandems should end with options.containerSuffix' );
 
     // options that depend on other options
