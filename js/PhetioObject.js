@@ -688,19 +688,22 @@ class LinkedElement extends PhetioObject {
  * Function that creates an IO type associated with a core type. Methods are forwarded to the core type.
  * @param {function} CoreType, e.g., Bunny
  * @param {string} typeName, e.g., BunnyIO
- * @param {function} ParentType, e.g., ObjectIO
+ * @param {function} [ParentType], e.g., ObjectIO
  * @param {Object} [options]
  * @returns {IOType}
  */
-PhetioObject.createIOType = ( CoreType, typeName, ParentType, options ) => {
-  assert && assert( typeName.endsWith( 'IO' ), 'IO type name must end with IO' );
+PhetioObject.createIOType = ( CoreType, typeName, ParentType = ObjectIO, options ) => {
+  assert && assert( typeName.endsWith( 'IO' ) || typeName.includes( 'IO<' ), 'IO type name must end with IO' );
   options = merge( {
 
     // {string} e.g., "Animal that has a genotype (genetic blueprint) and a phenotype (appearance)."
     documentation: `IO type for ${typeName.substring( 0, typeName.length - 2 )}`,
 
-    // {null|Object} - key/value pairs with methods, see PhetioEngineIO for an example
-    methods: null
+    // {Object} - key/value pairs with methods, see PhetioEngineIO for an example
+    methods: {},
+
+    events: [],
+    parameterTypes: []
   }, options );
 
   class IOType extends ParentType {
@@ -747,9 +750,9 @@ PhetioObject.createIOType = ( CoreType, typeName, ParentType, options ) => {
   IOType.documentation = options.documentation;
   IOType.validator = { valueType: CoreType };
   IOType.typeName = typeName;
-  if ( options.methods ) {
-    IOType.methods = options.methods;
-  }
+  IOType.events = options.events;
+  IOType.parameterTypes = options.parameterTypes;
+  IOType.methods = options.methods;
   ObjectIO.validateSubtype( IOType );
 
   return IOType;
