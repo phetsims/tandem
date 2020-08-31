@@ -688,17 +688,22 @@ class LinkedElement extends PhetioObject {
  * Function that creates an IO type associated with a core type. Methods are forwarded to the core type.
  * @param {function} CoreType, e.g., Bunny
  * @param {string} typeName, e.g., BunnyIO
+ * @param {function} ParentType, e.g., ObjectIO
  * @param {Object} [options]
  * @returns {IOType}
  */
-PhetioObject.createIOType = ( CoreType, typeName, options ) => {
-
+PhetioObject.createIOType = ( CoreType, typeName, ParentType, options ) => {
+  assert && assert( typeName.endsWith( 'IO' ), 'IO type name must end with IO' );
   options = merge( {
-    documentation: '', // {string} e.g., "Animal that has a genotype (genetic blueprint) and a phenotype (appearance)."
-    methods: null // {null|Object} - key/value pairs with methods, see PhetioEngineIO for an example
+
+    // {string} e.g., "Animal that has a genotype (genetic blueprint) and a phenotype (appearance)."
+    documentation: `IO type for ${typeName.substring( 0, typeName.length - 2 )}`,
+
+    // {null|Object} - key/value pairs with methods, see PhetioEngineIO for an example
+    methods: null
   }, options );
 
-  class IOType extends ObjectIO {
+  class IOType extends ParentType {
 
     /**
      * @param {PhetioObject} phetioObject
