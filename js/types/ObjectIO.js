@@ -47,7 +47,6 @@ class ObjectIO {
    * @public
    */
   static toStateObject( o ) {
-    // assert && assert( o instanceof Object, 'Should be serializing an Object' );
     return o;
   }
 
@@ -238,7 +237,13 @@ ObjectIO.typeName = 'ObjectIO';
  * @public
  * @override
  */
-ObjectIO.validator = { valueType: Object };
+ObjectIO.validator = {
+  isValidValue: value => {
+
+    // It could be a number, string, Object, etc.
+    return value !== undefined;
+  }
+};
 
 ObjectIO.validateSubtype( ObjectIO );
 
