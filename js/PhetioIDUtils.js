@@ -14,7 +14,7 @@
   'use strict';
 
   // define the phetio global
-window.phetio = window.phetio || {};
+  window.phetio = window.phetio || {};
 
   // constants
   const SEPARATOR = '.';
@@ -160,6 +160,27 @@ window.phetio = window.phetio || {};
       assert && assert( componentName.indexOf( window.phetio.PhetioIDUtils.GROUP_SEPARATOR ) >= 0,
         'component name for phetioID should have group element syntax' );
       return parseInt( componentName.split( window.phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
+    },
+
+
+    /**
+     * Returns true if the potential ancestor is indeed an ancestor of the potential descendant, but not the same phetioID
+     * @param {string} potentialAncestorPhetioID
+     * @param {string} potentialDescendantPhetioID
+     * @returns {boolean}
+     * @public
+     */
+    isAncestor: function( potentialAncestorPhetioID, potentialDescendantPhetioID ) {
+      const ancestorComponents = potentialAncestorPhetioID.split( SEPARATOR );
+      const descendantComponents = potentialDescendantPhetioID.split( SEPARATOR );
+      for ( let i = 0; i < ancestorComponents.length; i++ ) {
+        if ( ancestorComponents[ i ] !== descendantComponents[ i ] ) {
+          return false;
+        }
+      }
+
+      // not the same child
+      return potentialDescendantPhetioID !== potentialAncestorPhetioID;
     },
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
