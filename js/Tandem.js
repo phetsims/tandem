@@ -555,7 +555,7 @@ Tandem.VALIDATION = VALIDATION;
 
 /**
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
- * TODO: Replace GroupTandem usages with DynamicTandem, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
+ * TODO: Replace GroupTandem usages with DynamicTandem, see https://github.com/phetsims/tandem/issues/87
  */
 class GroupTandem extends Tandem {
 

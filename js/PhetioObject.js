@@ -290,7 +290,7 @@ inherit( Object, PhetioObject, {
       }
 
       // If not a deprecated dynamic element
-      // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87 and https://github.com/phetsims/phet-io/issues/1409
+      // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
       if ( config.tandem.phetioID.indexOf( '~' ) === -1 ) {
 
         // Dynamic elements should compare to their "concrete" counterparts.  For example, this means that a Particle
@@ -334,10 +334,6 @@ inherit( Object, PhetioObject, {
 
     // Instantiate the wrapper instance which is used for PhET-iO communication
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
-      // this assertion should be enabled for new phet-io sim publications
-      // TODO: are we really going to add phetioDocumentation to every PhetioObject?, see https://github.com/phetsims/phet-io/issues/1409
-      // TODO: If so, this assertion should be elsewhere, see https://github.com/phetsims/phet-io/issues/1409
-      // assert && assert( this.phetioDocumentation, 'phetioDocumentation is required for: ' + this.tandem.phetioID );
 
       assert && Tandem.VALIDATION && assert( !this.phetioType.uninstrumented, 'cannot instantiate a phetioType that should not be instrumented' );
 
