@@ -1,7 +1,7 @@
 // Copyright 2019-2020, University of Colorado Boulder
 
 /**
- * IO type for PhetioCapsule.
+ * IO Type for PhetioCapsule.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
@@ -22,8 +22,8 @@ const GROUP_VALIDATOR = {
 const cache = {};
 
 /**
- * Parametric IO type constructor.  Given an element type, this function returns a PhetioCapsule IO type.
- * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
+ * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
+ * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  * @param {function(new:ObjectIO)} parameterType
  * @returns {function(new:ObjectIO)}
  * @constructor

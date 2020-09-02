@@ -1,7 +1,7 @@
 // Copyright 2018-2020, University of Colorado Boulder
 
 /**
- * IO type for LinkedElement
+ * IO Type for LinkedElement
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */

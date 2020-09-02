@@ -151,7 +151,7 @@ function PhetioObject( options ) {
   // @public (read-only) {Object} - see docs at DEFAULTS declaration
   this.phetioComponentOptions = DEFAULTS.phetioComponentOptions;
 
-  // @public (read-only) {ObjectIO|null} - assigned in initializePhetioObject - the instantiated IO type. The phetioWrapper
+  // @public (read-only) {ObjectIO|null} - assigned in initializePhetioObject - the instantiated IO Type. The phetioWrapper
   // is the API layer between the wrapper and the phetioObject. It's used to call methods on this phetioObject from
   // the wrapper frame. Will be null if this PhetioObject is never instrumented.
   this.phetioWrapper = null;

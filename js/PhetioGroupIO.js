@@ -1,7 +1,7 @@
 // Copyright 2019-2020, University of Colorado Boulder
 
 /**
- * IO type for PhetioGroup.
+ * IO Type for PhetioGroup.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
@@ -24,7 +24,7 @@ const GROUP_VALIDATOR = {
 const cache = {};
 
 /**
- * Parametric IO type constructor.  Given an element type, this function returns a PhetioGroup IO type.
+ * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
  * @param {function(new:ObjectIO)} parameterType
  * @returns {function(new:ObjectIO)}
  * @constructor
@@ -42,7 +42,7 @@ function PhetioGroupIO( parameterType ) {
 
 /**
  * Creates a PhetioGroupIOImpl
- * This caching implementation should be kept in sync with the other parametric IO type caching implementations.
+ * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  * @param {function(new:ObjectIO)} parameterType
  * @returns {function(new:ObjectIO)}
  */
