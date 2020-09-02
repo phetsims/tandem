@@ -122,7 +122,7 @@ class ObjectIO {
     }
 
     const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
-    assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'type name must end with IO' );
+    assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'IO Type name must end with IO' );
 
     assert && assert( !subtype.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
     assert && assert( !subtype.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
@@ -249,7 +249,7 @@ ObjectIO.validator = {
 ObjectIO.validateSubtype( ObjectIO );
 
 /**
- * Function that creates an IO type associated with a core type. Methods are forwarded to the core type.
+ * Function that creates an IO Type associated with a core type. Methods are forwarded to the core type.
  * @param {function} CoreType, e.g., Bunny
  * @param {string} typeName, e.g., BunnyIO
  * @param {function} [ParentIOType] IO Type of CoreType's parent class
@@ -257,11 +257,11 @@ ObjectIO.validateSubtype( ObjectIO );
  * @returns {IOType}
  */
 ObjectIO.createIOType = ( CoreType, typeName, ParentIOType = ObjectIO, options ) => {
-  assert && assert( typeName.endsWith( 'IO' ) || typeName.includes( 'IO<' ), 'IO type name must end with IO' );
+  assert && assert( typeName.endsWith( 'IO' ) || typeName.includes( 'IO<' ), 'IO Type name must end with IO' );
   options = merge( {
 
     // {string} e.g., "Animal that has a genotype (genetic blueprint) and a phenotype (appearance)."
-    documentation: `IO type for ${typeName.substring( 0, typeName.length - 2 )}`,
+    documentation: `IO Type for ${typeName.substring( 0, typeName.length - 2 )}`,
 
     // {Object} - key/value pairs with methods, see PhetioEngineIO for an example
     methods: {},
