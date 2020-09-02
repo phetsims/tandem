@@ -405,6 +405,7 @@ inherit( Object, PhetioObject, {
   phetioEndEvent: function() {
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
+      assert && assert( this.phetioMessageStack.length > 0, 'Must have messages to pop' );
       const topMessageIndex = this.phetioMessageStack.pop();
 
       // The message was started as a high frequency event to be skipped, so the end is a no-op
