@@ -38,16 +38,16 @@ class DynamicTandem extends Tandem {
   }
 
   /**
-   * See Tandem.getConcretePhetioID, in this case, look up the corresponding archetype.
+   * See Tandem.getArchetypalPhetioID, in this case, look up the corresponding archetype.
    * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
    * This method looks up the corresponding archetype like..'sim.screen1.particles.archetype.visibleProperty'
    * @returns {string}
    * @public
    * @override
    */
-  getConcretePhetioID() {
+  getArchetypalPhetioID() {
     assert && assert( this.parentTandem, 'Group elements must be in a Group' );
-    return window.phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), DYNAMIC_ARCHETYPE_NAME );
+    return window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), DYNAMIC_ARCHETYPE_NAME );
   }
 }
 

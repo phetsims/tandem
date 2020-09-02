@@ -293,14 +293,14 @@ inherit( Object, PhetioObject, {
       // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
       if ( config.tandem.phetioID.indexOf( '~' ) === -1 ) {
 
-        // Dynamic elements should compare to their "concrete" counterparts.  For example, this means that a Particle
+        // Dynamic elements should compare to their "archetypal" counterparts.  For example, this means that a Particle
         // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
-        const concretePhetioID = config.tandem.getConcretePhetioID();
+        const archetypalPhetioID = config.tandem.getArchetypalPhetioID();
 
         // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
         // Patch in the desired values from overrides, if any.
         if ( window.phet.preloads.phetio.phetioElementsOverrides ) {
-          const overrides = window.phet.preloads.phetio.phetioElementsOverrides[ concretePhetioID ];
+          const overrides = window.phet.preloads.phetio.phetioElementsOverrides[ archetypalPhetioID ];
           if ( overrides ) {
 
             // No need to make a new object, since this "config" variable was created in the previous merge call above.
@@ -453,7 +453,7 @@ inherit( Object, PhetioObject, {
 
     // For dynamic elements, indicate the corresponding archetype element so that clients like Studio can leverage
     // the archetype metadata. Static elements don't have archetypes.
-    this.phetioArchetypePhetioID = phetioDynamicElement ? this.tandem.getConcretePhetioID() : null;
+    this.phetioArchetypePhetioID = phetioDynamicElement ? this.tandem.getArchetypalPhetioID() : null;
 
     // Keep the baseline metadata in sync.
     if ( this.phetioBaselineMetadata ) {

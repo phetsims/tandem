@@ -302,15 +302,14 @@ class Tandem {
 
   /**
    * For API validation, each PhetioObject has a corresponding concrete PhetioObject for comparison. Non-dynamic
-   * PhetioObjects have the trivial case where its concrete phetioID is the same as its phetioID.
-   *
+   * PhetioObjects have the trivial case where its archetypal phetioID is the same as its phetioID.
    * @returns {string}
    * @public
    */
-  getConcretePhetioID() {
+  getArchetypalPhetioID() {
 
     // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
-    return this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getConcretePhetioID(), this.name ) : this.phetioID;
+    return this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), this.name ) : this.phetioID;
   }
 
   /**

@@ -278,7 +278,7 @@ class PhetioAPIValidation {
         else if ( this.loadedReferenceAPI ) {
 
           // Compare the dynamic element to the archetype in to the loaded reference API, if specified
-          const archetypeID = phetioObject.tandem.getConcretePhetioID();
+          const archetypeID = phetioObject.tandem.getArchetypalPhetioID();
           const archetypeMetadata = this.loadedReferenceAPI.phetioElements[ archetypeID ];
           const actualMetadata = phetioObject.getMetadata();
 
