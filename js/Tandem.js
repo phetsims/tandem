@@ -176,7 +176,7 @@ class Tandem {
 
   /**
    * Returns true if this Tandem has the specified ancestor Tandem.
-   * @param ancestor
+   * @param {Tandem} ancestor
    * @returns {boolean}
    * @public
    */
