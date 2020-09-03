@@ -250,12 +250,12 @@ ObjectIO.validateSubtype( ObjectIO );
 
 /**
  * Function that creates an IO Type associated with a core type. Methods are forwarded to the core type.
- * @param {function} CoreType, e.g., Bunny
+ * @param {function} coreType, e.g., Bunny
  * @param {string} typeName, e.g., BunnyIO
  * @param {Object} [options]
  * @returns {IOType}
  */
-ObjectIO.createIOType = ( CoreType, typeName, options ) => {
+ObjectIO.createIOType = ( coreType, typeName, options ) => {
   assert && assert( typeName.endsWith( 'IO' ) || typeName.includes( 'IO<' ), 'IO Type name must end with IO' );
   options = merge( {
 
@@ -288,7 +288,7 @@ ObjectIO.createIOType = ( CoreType, typeName, options ) => {
 
     // @public
     static fromStateObject( stateObject ) {
-      return CoreType.fromStateObject( stateObject );
+      return coreType.fromStateObject( stateObject );
     }
 
     /**
@@ -298,11 +298,11 @@ ObjectIO.createIOType = ( CoreType, typeName, options ) => {
      * @override
      */
     static stateToArgsForConstructor( state ) {
-      return CoreType.stateToArgsForConstructor( state );
+      return coreType.stateToArgsForConstructor( state );
     }
 
     /**
-     * Restores CoreType state after instantiation.
+     * Restores coreType state after instantiation.
      * @param {PhetioObject} phetioObject
      * @param {Object} state
      * @public
@@ -315,7 +315,7 @@ ObjectIO.createIOType = ( CoreType, typeName, options ) => {
   }
 
   IOType.documentation = options.documentation;
-  IOType.validator = { valueType: CoreType };
+  IOType.validator = { valueType: coreType };
   IOType.typeName = typeName;
   IOType.events = options.events;
   IOType.parameterTypes = options.parameterTypes;
