@@ -54,12 +54,12 @@ class ObjectIO {
   /**
    * For data-type serialization. Decodes the object from a state into an instance. This can be overridden by subclasses,
    * or types can use ObjectIO type directly to use this implementation.
-   * @param {*} o - whatever was returned from the toStateObject method
+   * @param {*} stateObject - whatever was returned from the toStateObject method
    * @returns {*} - the deserialized instance of the same type that the toStateObject was provided as a parameter
    * @public
    */
-  static fromStateObject( o ) {
-    return o;
+  static fromStateObject( stateObject ) {
+    return stateObject;
   }
 
   /**
@@ -292,25 +292,25 @@ ObjectIO.createIOType = ( coreType, typeName, options ) => {
     }
 
     /**
-     * @param state
+     * @param {Object} stateObject
      * @returns {Object[]}
      * @public
      * @override
      */
-    static stateToArgsForConstructor( state ) {
-      return coreType.stateToArgsForConstructor( state );
+    static stateToArgsForConstructor( stateObject ) {
+      return coreType.stateToArgsForConstructor( stateObject );
     }
 
     /**
      * Restores coreType state after instantiation.
      * @param {PhetioObject} phetioObject
-     * @param {Object} state
+     * @param {Object} stateObject
      * @public
      * @override
      */
-    static applyState( phetioObject, state ) {
+    static applyState( phetioObject, stateObject ) {
       validate( phetioObject, this.validator );
-      phetioObject.applyState( state );
+      phetioObject.applyState( stateObject );
     }
   }
 
