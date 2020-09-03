@@ -252,13 +252,16 @@ ObjectIO.validateSubtype( ObjectIO );
  * Function that creates an IO Type associated with a core type. Methods are forwarded to the core type.
  * @param {function} CoreType, e.g., Bunny
  * @param {string} typeName, e.g., BunnyIO
- * @param {function} [ParentIOType] IO Type of CoreType's parent class
  * @param {Object} [options]
  * @returns {IOType}
  */
-ObjectIO.createIOType = ( CoreType, typeName, ParentIOType = ObjectIO, options ) => {
+ObjectIO.createIOType = ( CoreType, typeName, options ) => {
   assert && assert( typeName.endsWith( 'IO' ) || typeName.includes( 'IO<' ), 'IO Type name must end with IO' );
   options = merge( {
+
+    // The parent IO Type, which will have standard 'class extends' inheritance, and inherit methods, events, etc.
+    // and be shown as a parent type in Studio + API docs
+    parentIOType: ObjectIO,
 
     // {string} e.g., "Animal that has a genotype (genetic blueprint) and a phenotype (appearance)."
     documentation: `IO Type for ${typeName.substring( 0, typeName.length - 2 )}`,
@@ -270,7 +273,7 @@ ObjectIO.createIOType = ( CoreType, typeName, ParentIOType = ObjectIO, options )
     parameterTypes: []
   }, options );
 
-  class IOType extends ParentIOType {
+  class IOType extends options.parentIOType {
 
     /**
      * @param {PhetioObject} phetioObject
