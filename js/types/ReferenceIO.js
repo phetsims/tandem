@@ -17,7 +17,7 @@ import ObjectIO from './ObjectIO.js';
 const cache = new Map();
 
 /**
- * @param {function(new:ObjectIO)} parameterType
+ * @param {IOType} parameterType
  * @returns {function(new:ObjectIO)}
  */
 function ReferenceIO( parameterType ) {
