@@ -144,24 +144,12 @@ class ObjectIO {
 
     const supertype = ObjectIO.getSupertype( subtype );
 
-    if ( supertype ) {
-
-      // If the subtype didn't describe its own method order, then it should have [], since methodOrder is at each level
-      // of the type hierarchy.
-      if ( subtype.methodOrder === supertype.methodOrder ) {
-        subtype.methodOrder = [];
-      }
-
-      // If the subtype didn't describe its own events, then it should have [], since events is at each level of the type hierarchy.
-      if ( subtype.events === supertype.events ) {
-        subtype.events = [];
-      }
-
-      // Prevent inheritance of methods, see https://github.com/phetsims/phet-io/issues/1623
-      if ( subtype.methods === supertype.methods ) {
-        subtype.methods = {};
-      }
-    }
+    // Prevent inheritance of static attributes, which only pertain to each level of the hierarchy, see https://github.com/phetsims/phet-io/issues/1623
+    if ( !subtype.hasOwnProperty( 'events' ) ) { subtype.events = []; }
+    if ( !subtype.hasOwnProperty( 'methods' ) ) { subtype.methods = {}; }
+    if ( !subtype.hasOwnProperty( 'documentation' ) ) { subtype.documentation = {}; }
+    if ( !subtype.hasOwnProperty( 'typeName' ) ) { subtype.typeName = {}; }
+    if ( !subtype.hasOwnProperty( 'methodOrder' ) ) { subtype.methodOrder = []; }
 
     // assert that each public method adheres to the expected schema
     for ( const method in subtype.methods ) {
