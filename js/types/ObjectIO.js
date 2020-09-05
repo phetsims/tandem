@@ -233,6 +233,18 @@ ObjectIO.documentation = 'The root of the wrapper object hierarchy.';
 ObjectIO.typeName = 'ObjectIO';
 
 /**
+ * IO Types can specify the order that methods appear in the documentation by putting their names in this list.
+ * Be aware that subtypes do not automatically inherit the order from their parent types, they must
+ * decide whether to go before or after the parentType.methodOrder (or intersperse).
+ *
+ * After the methodOrder specified, the methods follow in the order declared in the implementation (which
+ * isn't necessarily stable).
+ * @type {string[]}
+ * @public
+ */
+ObjectIO.methodOrder = [];
+
+/**
  * A validator object to be used to validate the core types that IOTypes wrap.
  * @type {ValidatorDef}
  * @public
