@@ -127,10 +127,10 @@ class ObjectIO {
   static validateSubtype( subtype ) {
 
     const typeName = subtype.typeName;
-    assert && assert( typeName.indexOf( '.' ) === -1, 'Dots should not appear in type names' );
+    assert && assert( !typeName.includes( '.' ), 'Dots should not appear in type names' );
 
     // Validate that parametric types look as expected
-    if ( typeName.indexOf( '<' ) >= 0 ) {
+    if ( typeName.includes( '<' ) ) {
       assert && assert( Array.isArray( subtype.parameterTypes ), 'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
       subtype.parameterTypes.forEach( parameterType => assert && assert( ObjectIO.isIOType( parameterType ), `parameter type should be an IO Type: ${parameterType}` ) );
     }
@@ -145,6 +145,7 @@ class ObjectIO {
     const supertype = ObjectIO.getSupertype( subtype );
 
     // Prevent inheritance of static attributes, which only pertain to each level of the hierarchy, see https://github.com/phetsims/phet-io/issues/1623
+    // Note that parameterTypes do inherit
     if ( !subtype.hasOwnProperty( 'events' ) ) { subtype.events = []; }
     if ( !subtype.hasOwnProperty( 'methods' ) ) { subtype.methods = {}; }
     if ( !subtype.hasOwnProperty( 'documentation' ) ) { subtype.documentation = {}; }
@@ -258,6 +259,13 @@ ObjectIO.typeName = 'ObjectIO';
  * @public
  */
 ObjectIO.methodOrder = [];
+
+/**
+ * For parametric types, they must indicate the types of the parameters here. 0 if nonparametric.
+ * @type {function(new:ObjectIO)[]}
+ * @public
+ */
+ObjectIO.parameterTypes = [];
 
 /**
  * A validator object to be used to validate the core types that IOTypes wrap.
