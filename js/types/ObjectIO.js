@@ -106,6 +106,20 @@ class ObjectIO {
   }
 
   /**
+   * Returns the type hierarchy for the IO Type, from subtypiest to supertypiest
+   * @param {function(new:ObjectIO)} typeIO
+   * @public
+   */
+  static getTypeHierarchy( typeIO ) {
+    const array = [];
+    while ( typeIO !== null ) {
+      array.push( typeIO );
+      typeIO = ObjectIO.getSupertype( typeIO );
+    }
+    return array;
+  }
+
+  /**
    * Make sure the ObjectIO subtype has all the required attributes.
    * @param {function(new:ObjectIO)} subtype - class to check
    * @public
@@ -123,23 +137,30 @@ class ObjectIO {
 
     const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
     assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'IO Type name must end with IO' );
-
     assert && assert( !subtype.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
     assert && assert( !subtype.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
     assert && assert( !subtype.prototype.applyState, 'applyState should be a static method, not prototype one.' );
     assert && assert( !subtype.prototype.stateToArgsForConstructor, 'stateToArgsForConstructor should be a static method, not prototype one.' );
 
-    // Prevent inheritance of methods, see https://github.com/phetsims/phet-io/issues/1623
-    if ( !subtype.hasOwnProperty( 'methods' ) ) {
-      subtype.methods = {};
-    }
-
     const supertype = ObjectIO.getSupertype( subtype );
 
-    // If the subtype didn't describe its own method order, then it should have [], since methodOrder is at each level
-    // of the type hierarchy..
-    if ( supertype && subtype.methodOrder === supertype.methodOrder ) {
-      subtype.methodOrder = [];
+    if ( supertype ) {
+
+      // If the subtype didn't describe its own method order, then it should have [], since methodOrder is at each level
+      // of the type hierarchy.
+      if ( subtype.methodOrder === supertype.methodOrder ) {
+        subtype.methodOrder = [];
+      }
+
+      // If the subtype didn't describe its own events, then it should have [], since events is at each level of the type hierarchy.
+      if ( subtype.events === supertype.events ) {
+        subtype.events = [];
+      }
+
+      // Prevent inheritance of methods, see https://github.com/phetsims/phet-io/issues/1623
+      if ( subtype.methods === supertype.methods ) {
+        subtype.methods = {};
+      }
     }
 
     // assert that each public method adheres to the expected schema
@@ -170,7 +191,7 @@ class ObjectIO {
     assert && assert( subtype.documentation, 'documentation must be provided' );
     assert && ValidatorDef.validateValidator( subtype.validator );
 
-    subtype.hasOwnProperty( 'methodOrder' ) && subtype.methodOrder.forEach( function( methodName ) {
+    subtype.hasOwnProperty( 'methodOrder' ) && subtype.methodOrder.forEach( methodName => {
       assert && assert( subtype.methods[ methodName ], 'methodName not in public methods: ' + methodName );
     } );
 
@@ -179,20 +200,12 @@ class ObjectIO {
       assert && assert( Object.getPrototypeOf( subtype.api ) === Object.prototype, 'no extra prototype allowed on API object' );
     }
 
-    // TODO make this check recursive, see https://github.com/phetsims/phet-io/issues/1371
-    // const supertype = ObjectIO.getSupertype( subtype );
-    // const superEvents = [];
-    // const getEvents = type => {
-    //   if ( type.events ) {
-    //     type.events.forEach( e => superEvents.push( e ) );
-    //   }
-    //   ObjectIO.getSupertype( type ) && getEvents( ObjectIO.getSupertype( type ) );
-    // };
-    // getEvents( supertype );
-    //
-    // assert && subtype.events && subtype.events.forEach( function( event ) {
-    //   assert( superEvents.indexOf( event ) < 0, 'subtype should not declare event that parent also has.' );
-    // } );
+    // Make sure events are not listed again in the subtype
+    const typeHierarchy = ObjectIO.getTypeHierarchy( supertype );
+    assert && subtype.events && subtype.events.forEach( event => {
+      const has = _.some( typeHierarchy, t => t.events.includes( event ) );
+      assert( !has, 'subtype should not declare event that parent also has: ' + event );
+    } );
   }
 }
 
@@ -221,6 +234,13 @@ ObjectIO.isIOType = type => type === ObjectIO || type.prototype instanceof Objec
  * @type {Object.<string, MethodObject>}
  */
 ObjectIO.methods = {};
+
+/**
+ * The list of events that can be emitted at this level (does not include events from supertypes).
+ * @type {string[]}
+ * @public
+ */
+ObjectIO.events = [];
 
 /**
  * Documentation that appears in PhET-iO Studio, supports HTML markup.
