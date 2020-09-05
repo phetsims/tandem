@@ -134,6 +134,14 @@ class ObjectIO {
       subtype.methods = {};
     }
 
+    const supertype = ObjectIO.getSupertype( subtype );
+
+    // If the subtype didn't describe its own method order, then it should have [], since methodOrder is at each level
+    // of the type hierarchy..
+    if ( supertype && subtype.methodOrder === supertype.methodOrder ) {
+      subtype.methodOrder = [];
+    }
+
     // assert that each public method adheres to the expected schema
     for ( const method in subtype.methods ) {
       const methodObject = subtype.methods[ method ];
