@@ -246,6 +246,7 @@ ObjectIO.documentation = 'The root of the wrapper object hierarchy.';
  * schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`. In most cases, parameterized
  * types should also include a `parameterTypes` field on the TypeIO.
  * @type {string}
+ * @public
  */
 ObjectIO.typeName = 'ObjectIO';
 
@@ -271,7 +272,6 @@ ObjectIO.parameterTypes = [];
  * A validator object to be used to validate the core types that IOTypes wrap.
  * @type {ValidatorDef}
  * @public
- * @override
  */
 ObjectIO.validator = {
   isValidValue: value => {
@@ -289,6 +289,7 @@ ObjectIO.validateSubtype( ObjectIO );
  * @param {string} typeName, e.g., BunnyIO
  * @param {Object} [options]
  * @returns {IOType}
+ * @public
  */
 ObjectIO.createIOType = ( coreType, typeName, options ) => {
   assert && assert( typeName.endsWith( 'IO' ) || typeName.includes( 'IO<' ), 'IO Type name must end with IO' );
