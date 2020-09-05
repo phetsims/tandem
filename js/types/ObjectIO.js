@@ -234,8 +234,7 @@ ObjectIO.typeName = 'ObjectIO';
 
 /**
  * IO Types can specify the order that methods appear in the documentation by putting their names in this list.
- * Be aware that subtypes do not automatically inherit the order from their parent types, they must
- * decide whether to go before or after the parentType.methodOrder (or intersperse).
+ * This list is only for the methods defined at this level in the type hierarchy.
  *
  * After the methodOrder specified, the methods follow in the order declared in the implementation (which
  * isn't necessarily stable).
