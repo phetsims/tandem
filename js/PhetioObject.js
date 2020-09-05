@@ -9,7 +9,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import timer from '../../axon/js/timer.js';
+import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 import validate from '../../axon/js/validate.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import inherit from '../../phet-core/js/inherit.js';
@@ -548,7 +548,7 @@ inherit( Object, PhetioObject, {
     // disposed PhetioObjects.
     //
     // The phetioEvent stack should resolve by the next frame, so that's when we check it.
-    assert && timer.runOnNextFrame( () => {
+    assert && animationFrameTimer.runOnNextFrame( () => {
       assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
     } );
 
