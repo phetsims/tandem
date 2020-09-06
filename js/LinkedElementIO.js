@@ -37,7 +37,7 @@ class LinkedElementIO extends ObjectIO {
 LinkedElementIO.documentation = 'A LinkedElement';
 LinkedElementIO.validator = { isValidValue: () => true };
 LinkedElementIO.typeName = 'LinkedElementIO';
-ObjectIO.validateSubtype( LinkedElementIO );
+ObjectIO.validateIOType( LinkedElementIO );
 
 tandemNamespace.register( 'LinkedElementIO', LinkedElementIO );
 export default LinkedElementIO;

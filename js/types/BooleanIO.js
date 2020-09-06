@@ -44,7 +44,7 @@ class BooleanIO extends ObjectIO {
 BooleanIO.documentation = 'IO Type for Javascript\'s boolean primitive type';
 BooleanIO.validator = { valueType: 'boolean' };
 BooleanIO.typeName = 'BooleanIO';
-ObjectIO.validateSubtype( BooleanIO );
+ObjectIO.validateIOType( BooleanIO );
 
 tandemNamespace.register( 'BooleanIO', BooleanIO );
 export default BooleanIO;

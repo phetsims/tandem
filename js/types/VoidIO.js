@@ -37,7 +37,7 @@ VoidIO.documentation = 'Type for which there is no instance, usually to mark fun
  */
 VoidIO.validator = { isValidValue: () => true };
 VoidIO.typeName = 'VoidIO';
-ObjectIO.validateSubtype( VoidIO );
+ObjectIO.validateIOType( VoidIO );
 
 tandemNamespace.register( 'VoidIO', VoidIO );
 export default VoidIO;

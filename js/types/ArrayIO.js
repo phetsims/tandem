@@ -75,7 +75,7 @@ const create = parameterType => {
   };
   ArrayIOImpl.typeName = `ArrayIO<${parameterType.typeName}>`;
   ArrayIOImpl.parameterTypes = [ parameterType ];
-  ObjectIO.validateSubtype( ArrayIOImpl );
+  ObjectIO.validateIOType( ArrayIOImpl );
 
   return ArrayIOImpl;
 };

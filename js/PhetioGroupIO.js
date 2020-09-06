@@ -82,7 +82,7 @@ const create = parameterType => {
   PhetioGroupIOImpl.validator = GROUP_VALIDATOR;
   PhetioGroupIOImpl.typeName = `PhetioGroupIO<${parameterType.typeName}>`;
   PhetioGroupIOImpl.parameterTypes = [ parameterType ];
-  ObjectIO.validateSubtype( PhetioGroupIOImpl );
+  ObjectIO.validateIOType( PhetioGroupIOImpl );
 
   return PhetioGroupIOImpl;
 };

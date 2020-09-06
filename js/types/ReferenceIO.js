@@ -95,7 +95,7 @@ const create = parameterType => {
   ReferenceIOImpl.documentation = 'Uses reference identity for serializing and deserializing, and validates based on its parameter IO Type.';
   ReferenceIOImpl.typeName = `ReferenceIO<${parameterType.typeName}>`;
   ReferenceIOImpl.parameterTypes = [ parameterType ];
-  ObjectIO.validateSubtype( ReferenceIOImpl );
+  ObjectIO.validateIOType( ReferenceIOImpl );
   return ReferenceIOImpl;
 };
 

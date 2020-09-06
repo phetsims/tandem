@@ -120,42 +120,42 @@ class ObjectIO {
   }
 
   /**
-   * Make sure the ObjectIO subtype has all the required attributes.
-   * @param {function(new:ObjectIO)} subtype - class to check
+   * Make sure the IO Type has all the required attributes.
+   * @param {function(new:ObjectIO)} ioType - class to check
    * @public
    */
-  static validateSubtype( subtype ) {
+  static validateIOType( ioType ) {
 
-    const typeName = subtype.typeName;
+    const typeName = ioType.typeName;
     assert && assert( !typeName.includes( '.' ), 'Dots should not appear in type names' );
 
     // Validate that parametric types look as expected
     if ( typeName.includes( '<' ) ) {
-      assert && assert( Array.isArray( subtype.parameterTypes ), 'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
-      subtype.parameterTypes.forEach( parameterType => assert && assert( ObjectIO.isIOType( parameterType ), `parameter type should be an IO Type: ${parameterType}` ) );
+      assert && assert( Array.isArray( ioType.parameterTypes ), 'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
+      ioType.parameterTypes.forEach( parameterType => assert && assert( ObjectIO.isIOType( parameterType ), `parameter type should be an IO Type: ${parameterType}` ) );
     }
 
     const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
     assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'IO Type name must end with IO' );
-    assert && assert( !subtype.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
-    assert && assert( !subtype.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
-    assert && assert( !subtype.prototype.applyState, 'applyState should be a static method, not prototype one.' );
-    assert && assert( !subtype.prototype.stateToArgsForConstructor, 'stateToArgsForConstructor should be a static method, not prototype one.' );
+    assert && assert( !ioType.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
+    assert && assert( !ioType.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
+    assert && assert( !ioType.prototype.applyState, 'applyState should be a static method, not prototype one.' );
+    assert && assert( !ioType.prototype.stateToArgsForConstructor, 'stateToArgsForConstructor should be a static method, not prototype one.' );
 
-    const supertype = ObjectIO.getSupertype( subtype );
+    const supertype = ObjectIO.getSupertype( ioType );
 
-    assert && assert( subtype.hasOwnProperty( 'typeName' ), 'typeName is required' );
+    assert && assert( ioType.hasOwnProperty( 'typeName' ), 'typeName is required' );
 
     // Prevent inheritance of static attributes, which only pertain to each level of the hierarchy, see https://github.com/phetsims/phet-io/issues/1623
     // Note that parameterTypes do inherit
-    if ( !subtype.hasOwnProperty( 'events' ) ) { subtype.events = []; }
-    if ( !subtype.hasOwnProperty( 'methods' ) ) { subtype.methods = {}; }
-    if ( !subtype.hasOwnProperty( 'documentation' ) ) { subtype.documentation = {}; }
-    if ( !subtype.hasOwnProperty( 'methodOrder' ) ) { subtype.methodOrder = []; }
+    if ( !ioType.hasOwnProperty( 'events' ) ) { ioType.events = []; }
+    if ( !ioType.hasOwnProperty( 'methods' ) ) { ioType.methods = {}; }
+    if ( !ioType.hasOwnProperty( 'documentation' ) ) { ioType.documentation = {}; }
+    if ( !ioType.hasOwnProperty( 'methodOrder' ) ) { ioType.methodOrder = []; }
 
     // assert that each public method adheres to the expected schema
-    for ( const method in subtype.methods ) {
-      const methodObject = subtype.methods[ method ];
+    for ( const method in ioType.methods ) {
+      const methodObject = ioType.methods[ method ];
       if ( typeof methodObject === 'object' ) {
         assert && assert( ObjectIO.isIOType( methodObject.returnType ), 'return type must be of type IO: ' + methodObject.returnType );
 
@@ -177,24 +177,24 @@ class ObjectIO {
       }
     }
 
-    assert && assert( subtype.validator, 'validator must be provided' );
-    assert && assert( subtype.documentation, 'documentation must be provided' );
-    assert && ValidatorDef.validateValidator( subtype.validator );
+    assert && assert( ioType.validator, 'validator must be provided' );
+    assert && assert( ioType.documentation, 'documentation must be provided' );
+    assert && ValidatorDef.validateValidator( ioType.validator );
 
-    subtype.hasOwnProperty( 'methodOrder' ) && subtype.methodOrder.forEach( methodName => {
-      assert && assert( subtype.methods[ methodName ], 'methodName not in public methods: ' + methodName );
+    ioType.hasOwnProperty( 'methodOrder' ) && ioType.methodOrder.forEach( methodName => {
+      assert && assert( ioType.methods[ methodName ], 'methodName not in public methods: ' + methodName );
     } );
 
-    if ( subtype.hasOwnProperty( 'api' ) ) {
-      assert && assert( subtype.api instanceof Object, 'Object expected for api' );
-      assert && assert( Object.getPrototypeOf( subtype.api ) === Object.prototype, 'no extra prototype allowed on API object' );
+    if ( ioType.hasOwnProperty( 'api' ) ) {
+      assert && assert( ioType.api instanceof Object, 'Object expected for api' );
+      assert && assert( Object.getPrototypeOf( ioType.api ) === Object.prototype, 'no extra prototype allowed on API object' );
     }
 
-    // Make sure events are not listed again in the subtype
+    // Make sure events are not listed again in the ioType
     const typeHierarchy = ObjectIO.getTypeHierarchy( supertype );
-    assert && subtype.events && subtype.events.forEach( event => {
+    assert && ioType.events && ioType.events.forEach( event => {
       const has = _.some( typeHierarchy, t => t.events.includes( event ) );
-      assert( !has, 'subtype should not declare event that parent also has: ' + event );
+      assert( !has, 'ioType should not declare event that parent also has: ' + event );
     } );
   }
 }
@@ -282,7 +282,7 @@ ObjectIO.validator = {
   }
 };
 
-ObjectIO.validateSubtype( ObjectIO );
+ObjectIO.validateIOType( ObjectIO );
 
 /**
  * Function that creates an IO Type associated with a core type. Methods are forwarded to the core type.
@@ -357,7 +357,7 @@ ObjectIO.createIOType = ( coreType, typeName, options ) => {
   IOType.events = options.events;
   IOType.parameterTypes = options.parameterTypes;
   IOType.methods = options.methods;
-  ObjectIO.validateSubtype( IOType );
+  ObjectIO.validateIOType( IOType );
 
   return IOType;
 };

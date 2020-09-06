@@ -89,7 +89,7 @@ const create = parameterType => {
   NullableIOImpl.typeName = `NullableIO<${parameterType.typeName}>`;
   NullableIOImpl.parameterTypes = [ parameterType ];
 
-  ObjectIO.validateSubtype( NullableIOImpl );
+  ObjectIO.validateIOType( NullableIOImpl );
 
   return NullableIOImpl;
 };

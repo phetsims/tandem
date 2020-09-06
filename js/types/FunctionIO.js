@@ -72,7 +72,7 @@ const create = ( returnType, functionParameterTypes ) => {
   FunctionIOImpl.wrapForPhetioCommandProcessor = true;
   FunctionIOImpl.typeName = `FunctionIO(${parameterTypesString})=>${returnType.typeName}`;
   FunctionIOImpl.parameterTypes = functionParameterTypes.concat( [ returnType ] );
-  ObjectIO.validateSubtype( FunctionIOImpl );
+  ObjectIO.validateIOType( FunctionIOImpl );
 
   return FunctionIOImpl;
 };

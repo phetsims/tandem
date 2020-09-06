@@ -43,7 +43,7 @@ class StringIO extends ObjectIO {
 StringIO.documentation = 'IO Type for Javascript\'s string primitive type';
 StringIO.validator = { valueType: 'string' };
 StringIO.typeName = 'StringIO';
-ObjectIO.validateSubtype( StringIO );
+ObjectIO.validateIOType( StringIO );
 
 tandemNamespace.register( 'StringIO', StringIO );
 export default StringIO;

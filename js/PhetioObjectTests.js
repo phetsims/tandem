@@ -22,7 +22,7 @@ MockTypeIO.documentation = 'mock type';
 MockTypeIO.methods = {};
 MockTypeIO.supertype = null;
 MockTypeIO.validator = { isValidValue: () => true };
-ObjectIO.validateSubtype( MockTypeIO );
+ObjectIO.validateIOType( MockTypeIO );
 
 QUnit.test( 'PhetioObject start/start', function( assert ) {
   assert.ok( true, 'initial test' );

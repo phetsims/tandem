@@ -72,7 +72,7 @@ const create = parameterType => {
   PhetioCapsuleIOImpl.validator = GROUP_VALIDATOR;
   PhetioCapsuleIOImpl.typeName = `PhetioCapsuleIO<${parameterType.typeName}>`;
   PhetioCapsuleIOImpl.parameterTypes = [ parameterType ];
-  ObjectIO.validateSubtype( PhetioCapsuleIOImpl );
+  ObjectIO.validateIOType( PhetioCapsuleIOImpl );
 
   return PhetioCapsuleIOImpl;
 };

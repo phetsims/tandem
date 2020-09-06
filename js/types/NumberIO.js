@@ -55,7 +55,7 @@ class NumberIO extends ObjectIO {
 NumberIO.documentation = 'IO Type for Javascript\'s number primitive type';
 NumberIO.validator = { valueType: 'number' };
 NumberIO.typeName = 'NumberIO';
-ObjectIO.validateSubtype( NumberIO );
+ObjectIO.validateIOType( NumberIO );
 
 tandemNamespace.register( 'NumberIO', NumberIO );
 export default NumberIO;
