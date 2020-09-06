@@ -93,28 +93,28 @@ class ObjectIO {
    * ObjectIO.getSupertype( ObjectIO )
    * --> null
    *
-   * @param {function(new:ObjectIO)} typeIO
-   * @returns {function(new:ObjectIO)|null} - null if `typeIO` is ObjectIO, because that is the root of the IO hierarchy
+   * @param {function(new:ObjectIO)} ioType
+   * @returns {function(new:ObjectIO)|null} - null if `ioType` is ObjectIO, because that is the root of the IO hierarchy
    * @public
    */
-  static getSupertype( typeIO ) {
-    assert && assert( ObjectIO.isIOType( typeIO ), 'IO Type expected' );
+  static getSupertype( ioType ) {
+    assert && assert( ObjectIO.isIOType( ioType ), 'IO Type expected' );
 
-    // getPrototypeOf get's the typeIO's parent type, because the prototype is for the parent.
-    const supertype = Object.getPrototypeOf( typeIO );
+    // getPrototypeOf gets the IO Type's parent type, because the prototype is for the parent.
+    const supertype = Object.getPrototypeOf( ioType );
     return supertype === Object.getPrototypeOf( window.Object ) ? null : supertype;
   }
 
   /**
    * Returns the type hierarchy for the IO Type, from subtypiest to supertypiest
-   * @param {function(new:ObjectIO)} typeIO
+   * @param {function(new:ObjectIO)} ioType
    * @public
    */
-  static getTypeHierarchy( typeIO ) {
+  static getTypeHierarchy( ioType ) {
     const array = [];
-    while ( typeIO !== null ) {
-      array.push( typeIO );
-      typeIO = ObjectIO.getSupertype( typeIO );
+    while ( ioType !== null ) {
+      array.push( ioType );
+      ioType = ObjectIO.getSupertype( ioType );
     }
     return array;
   }
