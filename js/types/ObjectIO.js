@@ -136,7 +136,7 @@ class ObjectIO {
     }
 
     const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
-    assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'IO Type name must end with IO' );
+    assert && assert( splitOnParameters.endsWith( ObjectIO.IO_TYPE_SUFFIX ), 'IO Type name must end with IO' );
     assert && assert( !ioType.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
     assert && assert( !ioType.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
     assert && assert( !ioType.prototype.applyState, 'applyState should be a static method, not prototype one.' );
@@ -296,7 +296,7 @@ ObjectIO.validateIOType( ObjectIO );
  * @public
  */
 ObjectIO.createIOType = ( coreType, typeName, options ) => {
-  assert && assert( typeName.endsWith( 'IO' ) || typeName.includes( 'IO<' ), 'IO Type name must end with IO' );
+  assert && assert( typeName.endsWith( ObjectIO.IO_TYPE_SUFFIX ) || typeName.includes( `${ObjectIO.IO_TYPE_SUFFIX}<` ), 'IO Type name must end with IO' );
   options = merge( {
 
     // The parent IO Type, which will have standard 'class extends' inheritance, and inherit methods, events, etc.
