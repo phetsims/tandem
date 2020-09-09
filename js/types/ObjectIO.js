@@ -199,6 +199,9 @@ class ObjectIO {
   }
 }
 
+// Suffix that is required for all IO Type class names
+ObjectIO.IO_TYPE_SUFFIX = 'IO';
+
 /**
  * Checks if type is an IO Type
  * @param {*} type
