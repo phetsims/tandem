@@ -164,8 +164,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    */
   stateSetOnAllChildrenOfDynamicElement( dynamicElementID, stillToSetIDs ) {
     for ( let i = 0; i < stillToSetIDs.length; i++ ) {
-      const phetioID = stillToSetIDs[ i ];
-      if ( phetioID.indexOf( dynamicElementID ) === 0 ) {
+      if ( phetio.PhetioIDUtils.isAncestor( dynamicElementID, stillToSetIDs[ i ] ) ) {
         return false;
       }
     }
