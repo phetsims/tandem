@@ -365,5 +365,28 @@ ObjectIO.createIOType = ( coreType, typeName, options ) => {
   return IOType;
 };
 
+/**
+ * Fills in the boilerplate for static fields of an IO Type.
+ * @param {function} ioType - an IO Type
+ * @param ioTypeName - classname of IOType
+ * @param coreType - the corresponding Core Type
+ * @param {Object} [options]
+ */
+ObjectIO.setIOTypeFields = ( ioType, ioTypeName, coreType, options ) => {
+
+  options = merge( {
+    documentation: null // {string} if not provided, default is defined below
+  }, options );
+
+  // Fill in static fields in the IO Type.
+  ioType.typeName = ioTypeName;
+  ioType.documentation = options.documentation ||
+                         `IO Type for ${ioTypeName.substring( 0, ioTypeName.length - ObjectIO.IO_TYPE_SUFFIX.length )}`;
+  ioType.validator = { valueType: coreType };
+
+  // Verify that the IO Type is valid.
+  ObjectIO.validateIOType( ioType );
+};
+
 tandemNamespace.register( 'ObjectIO', ObjectIO );
 export default ObjectIO;
