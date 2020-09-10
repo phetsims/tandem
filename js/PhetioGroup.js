@@ -252,7 +252,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   createIndexedElement( index, argsForCreateFunction, fromStateSetting ) {
     assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
 
-    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
+    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
     assert && phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
       'dynamic elements should only be created by the state engine when setting state.' );
 
