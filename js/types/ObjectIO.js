@@ -136,7 +136,7 @@ class ObjectIO {
     }
 
     const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
-    assert && assert( splitOnParameters.indexOf( 'IO' ) === splitOnParameters.length - 'IO'.length, 'IO Type name must end with IO' );
+    assert && assert( splitOnParameters.endsWith( ObjectIO.IO_TYPE_SUFFIX ), 'IO Type name must end with IO' );
     assert && assert( !ioType.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
     assert && assert( !ioType.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
     assert && assert( !ioType.prototype.applyState, 'applyState should be a static method, not prototype one.' );
@@ -198,6 +198,9 @@ class ObjectIO {
     } );
   }
 }
+
+// Suffix that is required for all IO Type class names
+ObjectIO.IO_TYPE_SUFFIX = 'IO';
 
 /**
  * Checks if type is an IO Type
@@ -293,7 +296,7 @@ ObjectIO.validateIOType( ObjectIO );
  * @public
  */
 ObjectIO.createIOType = ( coreType, typeName, options ) => {
-  assert && assert( typeName.endsWith( 'IO' ) || typeName.includes( 'IO<' ), 'IO Type name must end with IO' );
+  assert && assert( typeName.endsWith( ObjectIO.IO_TYPE_SUFFIX ) || typeName.includes( `${ObjectIO.IO_TYPE_SUFFIX}<` ), 'IO Type name must end with IO' );
   options = merge( {
 
     // The parent IO Type, which will have standard 'class extends' inheritance, and inherit methods, events, etc.
@@ -360,6 +363,29 @@ ObjectIO.createIOType = ( coreType, typeName, options ) => {
   ObjectIO.validateIOType( IOType );
 
   return IOType;
+};
+
+/**
+ * Fills in the boilerplate for static fields of an IO Type.
+ * @param {function} ioType - an IO Type
+ * @param ioTypeName - classname of IOType
+ * @param coreType - the corresponding Core Type
+ * @param {Object} [options]
+ */
+ObjectIO.setIOTypeFields = ( ioType, ioTypeName, coreType, options ) => {
+
+  options = merge( {
+    documentation: null // {string} if not provided, default is defined below
+  }, options );
+
+  // Fill in static fields in the IO Type.
+  ioType.typeName = ioTypeName;
+  ioType.documentation = options.documentation ||
+                         `IO Type for ${ioTypeName.substring( 0, ioTypeName.length - ObjectIO.IO_TYPE_SUFFIX.length )}`;
+  ioType.validator = { valueType: coreType };
+
+  // Verify that the IO Type is valid.
+  ObjectIO.validateIOType( ioType );
 };
 
 tandemNamespace.register( 'ObjectIO', ObjectIO );
