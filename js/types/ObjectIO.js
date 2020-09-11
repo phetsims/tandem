@@ -15,6 +15,7 @@
 import validate from '../../../axon/js/validate.js';
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import merge from '../../../phet-core/js/merge.js';
+import PhetioConstants from '../PhetioConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 
 /**
@@ -136,7 +137,7 @@ class ObjectIO {
     }
 
     const splitOnParameters = typeName.split( /[<(]/ )[ 0 ];
-    assert && assert( splitOnParameters.endsWith( ObjectIO.IO_TYPE_SUFFIX ), 'IO Type name must end with IO' );
+    assert && assert( splitOnParameters.endsWith( PhetioConstants.IO_TYPE_SUFFIX ), 'IO Type name must end with IO' );
     assert && assert( !ioType.prototype.toStateObject, 'toStateObject should be a static method, not prototype one.' );
     assert && assert( !ioType.prototype.fromStateObject, 'fromStateObject should be a static method, not prototype one.' );
     assert && assert( !ioType.prototype.applyState, 'applyState should be a static method, not prototype one.' );
@@ -198,9 +199,6 @@ class ObjectIO {
     } );
   }
 }
-
-// Suffix that is required for all IO Type class names
-ObjectIO.IO_TYPE_SUFFIX = 'IO';
 
 /**
  * Checks if type is an IO Type
@@ -296,7 +294,7 @@ ObjectIO.validateIOType( ObjectIO );
  * @public
  */
 ObjectIO.createIOType = ( coreType, typeName, options ) => {
-  assert && assert( typeName.endsWith( ObjectIO.IO_TYPE_SUFFIX ) || typeName.includes( `${ObjectIO.IO_TYPE_SUFFIX}<` ), 'IO Type name must end with IO' );
+  assert && assert( typeName.endsWith( PhetioConstants.IO_TYPE_SUFFIX ) || typeName.includes( `${PhetioConstants.IO_TYPE_SUFFIX}<` ), 'IO Type name must end with IO' );
   options = merge( {
 
     // The parent IO Type, which will have standard 'class extends' inheritance, and inherit methods, events, etc.
@@ -381,7 +379,7 @@ ObjectIO.setIOTypeFields = ( ioType, ioTypeName, coreType, options ) => {
   // Fill in static fields in the IO Type.
   ioType.typeName = ioTypeName;
   ioType.documentation = options.documentation ||
-                         `IO Type for ${ioTypeName.substring( 0, ioTypeName.length - ObjectIO.IO_TYPE_SUFFIX.length )}`;
+                         `IO Type for ${ioTypeName.substring( 0, ioTypeName.length - PhetioConstants.IO_TYPE_SUFFIX.length )}`;
   ioType.validator = { valueType: coreType };
 
   // Verify that the IO Type is valid.
