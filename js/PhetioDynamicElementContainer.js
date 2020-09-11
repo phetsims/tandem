@@ -317,7 +317,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
   disposeElement( element, fromStateSetting ) {
     element.dispose();
 
-    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
+    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
     phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
       'should not dispose a dynamic element while setting phet-io state' );
 
