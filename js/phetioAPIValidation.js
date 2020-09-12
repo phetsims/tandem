@@ -266,7 +266,7 @@ class PhetioAPIValidation {
 
       // Here we need to kick this validation to the next frame to support construction in any order. Parent first, or
       // child first. Use namespace to avoid because timer is a PhetioObject.
-      phet.axon.animationFrameTimer.runOnNextFrame( () => {
+      phet.axon.animationFrameTimer.runOnNextTick( () => {
 
         // The only instances that it's OK to create after startup are "dynamic instances" which are marked as such.
         if ( !phetioObject.phetioDynamicElement ) {

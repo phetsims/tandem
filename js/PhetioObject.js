@@ -545,7 +545,7 @@ inherit( Object, PhetioObject, {
     // disposed PhetioObjects.
     //
     // The phetioEvent stack should resolve by the next frame, so that's when we check it.
-    assert && animationFrameTimer.runOnNextFrame( () => {
+    assert && animationFrameTimer.runOnNextTick( () => {
       assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
     } );
 
