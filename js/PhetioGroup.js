@@ -96,6 +96,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @override
    */
   disposeElement( element, fromStateSetting ) {
+    assert && assert( !element.isDisposed, 'element already disposed');
     arrayRemove( this._array, element );
 
     this.countProperty.value = this._array.length;
