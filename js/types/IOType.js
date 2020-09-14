@@ -19,13 +19,13 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 class IOType {
 
   /**
-   * @param {string} ioTypeName - The name that this TypeIO will have in the public PhET-iO API. In general, this should
-   *    only be word characters, ending in "IO". Parametric types are a special subset of TypeIOs that include their
-   *    parameters in their typeName. If a TypeIO's parameters are other IO Type(s), then they should be included within
+   * @param {string} ioTypeName - The name that this IOType will have in the public PhET-iO API. In general, this should
+   *    only be word characters, ending in "IO". Parametric types are a special subset of IOTypes that include their
+   *    parameters in their typeName. If an IOType's parameters are other IO Type(s), then they should be included within
    *    angle brackets, like "PropertyIO<Boolean>". Some other types use a more custom format for displaying their
    *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
    *    with an open paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
-   *    In most cases, parameterized types should also include a `parameterTypes` field on the TypeIO.
+   *    In most cases, parameterized types should also include a `parameterTypes` field on the IOType.
    * @param {IOType|null} supertype
    * @param {Object} config
    */
