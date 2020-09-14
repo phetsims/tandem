@@ -22,10 +22,10 @@ class IOType {
    * @param {string} ioTypeName - The name that this TypeIO will have in the public PhET-iO API. In general, this should
    *    only be word characters, ending in "IO". Parameteric types are a special subset of TypeIOs that include their
    *    parameters in their typeName. If a TypeIO's parameters are other IO Type(s), then they should be included within
-   *    angle brackets, like "PropertyIO<Boolean>". Some other types use a more custom format for displaying their parameter
-   *    types, in this case the parameter section of the type name (immediately following "IO") should begin with an open
-   *    paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`. In most
-   *    cases, parameterized types should also include a `parameterTypes` field on the TypeIO.
+   *    angle brackets, like "PropertyIO<Boolean>". Some other types use a more custom format for displaying their
+   *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
+   *    with an open paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
+   *    In most cases, parameterized types should also include a `parameterTypes` field on the TypeIO.
    * @param {IOType|null} supertype
    * @param {Object} config
    */
@@ -46,9 +46,9 @@ class IOType {
       // {string[]} The list of events that can be emitted at this level (does not include events from supertypes).
       events: [],
 
-      // {string} IO Types can specify the order that methods appear in the documentation by putting their names in this list.
-      // This list is only for the methods defined at this level in the type hierarchy. After the methodOrder specified,
-      // the methods follow in the order declared in the implementation (which isn't necessarily stable).
+      // {string} IO Types can specify the order that methods appear in the documentation by putting their names in this
+      // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
+      // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
       methodOrder: [],
 
       // {IOType[]} For parametric types, they must indicate the types of the parameters here. 0 if nonparametric.
@@ -59,21 +59,23 @@ class IOType {
 
       /**** STATE ****/
 
-      // {function(coreObject:*):*)} Serialize the core object. Most often this looks like an object literal that holds data about
-      // the PhetioObject instance.
+      // {function(coreObject:*):*)} Serialize the core object. Most often this looks like an object literal that holds
+      // data about the PhetioObject instance.
       toStateObject: supertype && supertype.toStateObject,
 
-      // {function(stateObject:*):*} For Data Type Deserialization. Decodes the object from a state (see toStateObject) into an instance.
+      // {function(stateObject:*):*} For Data Type Deserialization. Decodes the object from a state (see toStateObject)
+      // into an instance.
       fromStateObject: supertype && supertype.fromStateObject,
 
-      // {function(stateObject:*):Array[*]} For Dynamic Element Deserialization: converts the state object to a `create` function in
-      // PhetioGroup or other PhetioDynamicElementContainer creation function. Note that other non-serialized args (not
-      // dealt with here) may be supplied as closure variables. This function only needs to be implemented on IO Types
-      // that are phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule elements.
+      // {function(stateObject:*):Array[*]} For Dynamic Element Deserialization: converts the state object to a `create`
+      // function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that other non-serialized
+      // args (not dealt with here) may be supplied as closure variables. This function only needs to be implemented on
+      // IO Types that are phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule elements.
       stateToArgsForConstructor: supertype && supertype.stateToArgsForConstructor,
 
-      // {function(coreObject:*,stateObject:*)} For Reference Type Deserialization:  Applies the stateObject value to the object. When setting
-      // PhET-iO state, this function will be called on an instrumented instance to set the stateObject's value to it.
+      // {function(coreObject:*,stateObject:*)} For Reference Type Deserialization:  Applies the stateObject value to
+      // the object. When setting PhET-iO state, this function will be called on an instrumented instance to set the
+      // stateObject's value to it.
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState
     }, config );
