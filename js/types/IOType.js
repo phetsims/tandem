@@ -16,6 +16,9 @@ import tandemNamespace from '../tandemNamespace.js';
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
+// Defined at the bottom of this file
+let ObjectIO = null;
+
 class IOType {
 
   /**
@@ -26,10 +29,15 @@ class IOType {
    *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
    *    with an open paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
    *    In most cases, parameterized types should also include a `parameterTypes` field on the IOType.
-   * @param {IOType|null} supertype
    * @param {Object} config
    */
-  constructor( ioTypeName, supertype, config ) {
+  constructor( ioTypeName, config ) {
+
+    assert && assert( !!config, 'config is required' );
+
+    // For reference in the config
+    const supertype = config.supertype;
+
     config = merge( {
 
       /***** REQUIRED ****/
@@ -37,6 +45,8 @@ class IOType {
       // a validator, such as isValidValue | valueType | validValues
 
       /***** OPTIONAL ****/
+
+      supertype: ObjectIO,
 
       // {Object<string,MethodObject>} The public methods available for this IO Type. Each method is not just a function,
       // but a collection of metadata about the method to be able to serialize parameters and return types and provide
@@ -159,6 +169,17 @@ class IOType {
     return array;
   }
 }
+
+// @private
+ObjectIO = new IOType( 'ObjectIO', {
+  isValidValue: () => true,
+  supertype: null,
+  documentation: 'The root of the IO Type hierarchy',
+  toStateObject: coreObject => coreObject,
+  fromStateObject: stateObject => stateObject,
+  stateToArgsForConstructor: stateObject => [],
+  applyState: ( coreObject, stateObject ) => { }
+} );
 
 tandemNamespace.register( 'IOType', IOType );
 export default IOType;
