@@ -152,6 +152,14 @@ class IOType {
         assert( !has, 'this should not declare event that parent also has: ' + event );
       } );
     }
+    else {
+
+      // The root IOType must supply all 4 state methods.
+      assert && assert( typeof config.toStateObject === 'function', 'toStateObject must be defined' );
+      assert && assert( typeof config.fromStateObject === 'function', 'fromStateObject must be defined' );
+      assert && assert( typeof config.stateToArgsForConstructor === 'function', 'stateToArgsForConstructor must be defined' );
+      assert && assert( typeof config.applyState === 'function', 'applyState must be defined' );
+    }
   }
 
   /**
