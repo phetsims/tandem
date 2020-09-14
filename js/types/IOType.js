@@ -103,7 +103,8 @@ class IOType {
 
     // Validate that parametric types look as expected
     if ( this.typeName.includes( '<' ) ) {
-      assert && assert( Array.isArray( this.parameterTypes.length > 0 ), 'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
+      assert && assert( Array.isArray( this.parameterTypes.length > 0 ),
+        'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
     }
 
     const splitOnParameters = this.typeName.split( /[<(]/ )[ 0 ];
@@ -116,7 +117,8 @@ class IOType {
         assert && assert( Array.isArray( methodObject.parameterTypes ), 'parameter types must be an array: ' + methodObject.parameterTypes );
         assert && assert( typeof methodObject.implementation === 'function', 'implementation must be of type function: ' + methodObject.implementation );
         assert && assert( typeof methodObject.documentation === 'string', 'documentation must be of type string: ' + methodObject.documentation );
-        assert && methodObject.invocableForReadOnlyElements && assert( typeof methodObject.invocableForReadOnlyElements === 'boolean', 'invocableForReadOnlyElements must be of type boolean: ' + methodObject.invocableForReadOnlyElements );
+        assert && methodObject.invocableForReadOnlyElements && assert( typeof methodObject.invocableForReadOnlyElements === 'boolean',
+          'invocableForReadOnlyElements must be of type boolean: ' + methodObject.invocableForReadOnlyElements );
       }
     } );
     assert && assert( this.documentation, 'documentation must be provided' );
