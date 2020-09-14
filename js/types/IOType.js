@@ -107,7 +107,7 @@ class IOType {
     }
 
     const splitOnParameters = this.typeName.split( /[<(]/ )[ 0 ];
-    assert && assert( splitOnParameters.endsWith( PhetioConstants.IO_TYPE_SUFFIX ), 'IO Type name must end with IO' );
+    assert && assert( splitOnParameters.endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IO Type name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
     assert && assert( this.hasOwnProperty( 'typeName' ), 'this.typeName is required' );
 
     // assert that each public method adheres to the expected schema
