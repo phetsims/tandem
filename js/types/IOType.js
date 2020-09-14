@@ -20,7 +20,7 @@ class IOType {
 
   /**
    * @param {string} ioTypeName - The name that this TypeIO will have in the public PhET-iO API. In general, this should
-   *    only be word characters, ending in "IO". Parameteric types are a special subset of TypeIOs that include their
+   *    only be word characters, ending in "IO". Parametric types are a special subset of TypeIOs that include their
    *    parameters in their typeName. If a TypeIO's parameters are other IO Type(s), then they should be included within
    *    angle brackets, like "PropertyIO<Boolean>". Some other types use a more custom format for displaying their
    *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
