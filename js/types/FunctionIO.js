@@ -49,10 +49,6 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
       documentation: 'Wrapper for the built-in JS function type.<br>' +
                      '<strong>Arguments:</strong> ' + argsString + '<br>' +
                      '<strong>Return Type:</strong> ' + returnType.typeName
-
-      // TODO: https://github.com/phetsims/tandem/issues/211
-      // FunctionIOImpl.returnType = returnType;
-      // FunctionIOImpl.functionParameterTypes = functionParameterTypes;
     } );
   }
 
