@@ -43,7 +43,7 @@ const PhetioGroupIO = parameterType => {
        * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError - if it could not yet deserialize
        * @public (PhetioStateEngine)
-       */ // TODO https://github.com/phetsims/tandem/issues/211
+       */
       addChildElement( group, componentName, stateObject ) {
 
         // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
