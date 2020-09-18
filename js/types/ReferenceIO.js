@@ -8,10 +8,10 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import validate from '../../../axon/js/validate.js';
+import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
 import tandemNamespace from '../tandemNamespace.js';
-import ObjectIO from './ObjectIO.js';
+import IOType from './IOType.js';
 
 // {Map.<cacheKey:string|*, function(new:ObjectIO)>} - Cache each parameterized ReferenceIO so that it is only created once
 const cache = new Map();
@@ -20,83 +20,45 @@ const cache = new Map();
  * @param {IOType} parameterType
  * @returns {function(new:ObjectIO)}
  */
-function ReferenceIO( parameterType ) {
+const ReferenceIO = parameterType => {
   assert && assert( parameterType, 'ReferenceIO needs parameterType' );
 
   const cacheKey = parameterType;
 
   if ( !cache.has( cacheKey ) ) {
-    cache.set( cacheKey, create( parameterType ) );
+
+    assert && assert( typeof parameterType.typeName === 'string', 'type name should be a string' );
+    cache.set( cacheKey, new IOType( `ReferenceIO<${parameterType.typeName}>`, {
+      isValidValue: value => ValidatorDef.isValueValid( value, parameterType.validator ),
+      documentation: 'Uses reference identity for serializing and deserializing, and validates based on its parameter IO Type.',
+      parameterTypes: [ parameterType ],
+      /**
+       * Return the json that ReferenceIO is wrapping.  This can be overridden by subclasses, or types can use ReferenceIO type
+       * directly to use this implementation.
+       */
+      toStateObject: phetioObject => phetioObject.tandem.phetioID,
+
+      /**
+       * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
+       * use ReferenceIO type directly to use this implementation.
+       * @param {string} stateObject
+       * @returns {PhetioObject}
+       * @throws CouldNotYetDeserializeError
+       * @public
+       */
+      fromStateObject( stateObject ) {
+        assert && assert( typeof stateObject === 'string', 'phetioID should be a string' );
+        if ( phet.phetio.phetioEngine.hasPhetioObject( stateObject ) ) {
+          return phet.phetio.phetioEngine.getPhetioObject( stateObject );
+        }
+        else {
+          throw new CouldNotYetDeserializeError();
+        }
+      }
+    } ) );
   }
 
   return cache.get( cacheKey );
-}
-
-
-/**
- * Creates a ReferenceIOImpl
- * @param {function(new:ObjectIO)} parameterType
- * @returns {function(new:ObjectIO)}
- */
-const create = parameterType => {
-
-  class ReferenceIOImpl extends ObjectIO {
-
-    /**
-     * Return the json that ReferenceIO is wrapping.  This can be overridden by subclasses, or types can use ReferenceIO type
-     * directly to use this implementation.
-     * @param {PhetioObject} phetioObject
-     * @returns {string} - the phetioID
-     * @public
-     */
-    static toStateObject( phetioObject ) {
-
-      // use "this" so that if ReferenceIO is extended, the validator will still be from the subtype.
-      validate( phetioObject, this.validator );
-
-      return phetioObject.tandem.phetioID;
-    }
-
-    /**
-     * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
-     * use ReferenceIO type directly to use this implementation.
-     * @param {string} stateObject
-     * @returns {PhetioObject}
-     * @throws CouldNotYetDeserializeError
-     * @public
-     */
-    static fromStateObject( stateObject ) {
-      assert && assert( typeof stateObject === 'string', 'phetioID should be a string' );
-      if ( phet.phetio.phetioEngine.hasPhetioObject( stateObject ) ) {
-        const phetioObject = phet.phetio.phetioEngine.getPhetioObject( stateObject );
-
-        // use "this" so that if ReferenceIO is extended, the validator will still be from the subtype.
-        validate( phetioObject, this.validator );
-        return phetioObject;
-      }
-      else {
-        throw new CouldNotYetDeserializeError();
-      }
-    }
-  }
-
-  /**
-   * A validator object to be used to validate the core types that IOTypes wrap.
-   * @type {ValidatorDef}
-   * @public
-   * @override
-   */
-  ReferenceIOImpl.validator = parameterType.validator;
-
-  /**
-   * Documentation that appears in PhET-iO Studio, supports HTML markup.
-   * @public
-   */
-  ReferenceIOImpl.documentation = 'Uses reference identity for serializing and deserializing, and validates based on its parameter IO Type.';
-  ReferenceIOImpl.typeName = `ReferenceIO<${parameterType.typeName}>`;
-  ReferenceIOImpl.parameterTypes = [ parameterType ];
-  ObjectIO.validateIOType( ReferenceIOImpl );
-  return ReferenceIOImpl;
 };
 
 tandemNamespace.register( 'ReferenceIO', ReferenceIO );

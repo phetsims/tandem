@@ -7,10 +7,9 @@
  * @author Andrew Adare (PhET Interactive Simulations)
  */
 
-import validate from '../../../axon/js/validate.js';
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
-import ObjectIO from './ObjectIO.js';
+import IOType from './IOType.js';
 
 // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized PropertyIO so that it is
 // only created once.
@@ -22,62 +21,22 @@ const cache = {};
  * @param {function(new:ObjectIO)} parameterType
  * @returns {function(new:ObjectIO)}
  */
-function ArrayIO( parameterType ) {
+const ArrayIO = parameterType => {
   assert && assert( !!parameterType, 'parameterType should be defined' );
   if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-    cache[ parameterType.typeName ] = create( parameterType );
+    cache[ parameterType.typeName ] = new IOType( `ArrayIO<${parameterType.typeName}>`, {
+      valueType: Array,
+      isValidValue: array => {
+        return _.every( array, element => ValidatorDef.isValueValid( element, parameterType.validator ) );
+      },
+      parameterTypes: [ parameterType ],
+      toStateObject: array => array.map( parameterType.toStateObject ),
+      fromStateObject: stateObject => stateObject.map( parameterType.fromStateObject ),
+      documentation: 'A wrapper for the built-in JS array type, with the element type specified.'
+    } );
   }
 
   return cache[ parameterType.typeName ];
-}
-
-/**
- * Creates a ArrayIOImpl
- * @param {function(new:ObjectIO)} parameterType
- * @returns {function(new:ObjectIO)}
- */
-const create = parameterType => {
-
-  class ArrayIOImpl extends ObjectIO {
-
-    /**
-     * Serialize an array by serializing each element
-     * @param {Object[]} array
-     * @returns {Array}
-     * @override
-     * @public
-     */
-    static toStateObject( array ) {
-      validate( array, ArrayIOImpl.validator );
-      return array.map( parameterType.toStateObject );
-    }
-
-    /**
-     * Deserialize from a serialized state.
-     * @param {Array} stateObject - from toStateObject
-     * @returns {Object[]}
-     * @override
-     * @public
-     */
-    static fromStateObject( stateObject ) {
-      const result = stateObject.map( parameterType.fromStateObject );
-      validate( result, ArrayIOImpl.validator );
-      return result;
-    }
-  }
-
-  ArrayIOImpl.documentation = 'A wrapper for the built-in JS array type, with the element type specified.';
-  ArrayIOImpl.validator = {
-    valueType: Array,
-    isValidValue: array => {
-      return _.every( array, element => ValidatorDef.isValueValid( element, parameterType.validator ) );
-    }
-  };
-  ArrayIOImpl.typeName = `ArrayIO<${parameterType.typeName}>`;
-  ArrayIOImpl.parameterTypes = [ parameterType ];
-  ObjectIO.validateIOType( ArrayIOImpl );
-
-  return ArrayIOImpl;
 };
 
 tandemNamespace.register( 'ArrayIO', ArrayIO );

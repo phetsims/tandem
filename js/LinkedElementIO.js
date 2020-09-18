@@ -8,36 +8,21 @@
 
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
-import ObjectIO from './types/ObjectIO.js';
+import IOType from './types/IOType.js';
 
-class LinkedElementIO extends ObjectIO {
+const LinkedElementIO = new IOType( 'LinkedElementIO', {
+  isValidValue: () => true,
+  documentation: 'A LinkedElement',
 
-  /**
-   * @param {LinkedElement} linkedElement
-   * @returns {Object}
-   * @override
-   * @public
-   */
-  static toStateObject( linkedElement ) {
+  // TODO: https://github.com/phetsims/tandem/issues/211 Arrowify
+  toStateObject( linkedElement ) {
     assert && Tandem.VALIDATION && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
     return { elementID: linkedElement.element.tandem.phetioID };
-  }
-
-  /**
-   * @param {Object} stateObject
-   * @returns {Object}
-   * @override
-   * @public
-   */
-  static fromStateObject( stateObject ) {
+  },
+  fromStateObject( stateObject ) {
     return {};
   }
-}
-
-LinkedElementIO.documentation = 'A LinkedElement';
-LinkedElementIO.validator = { isValidValue: () => true };
-LinkedElementIO.typeName = 'LinkedElementIO';
-ObjectIO.validateIOType( LinkedElementIO );
+} );
 
 tandemNamespace.register( 'LinkedElementIO', LinkedElementIO );
 export default LinkedElementIO;

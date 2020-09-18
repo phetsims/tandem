@@ -10,19 +10,15 @@ import phetioAPITest from './phetioAPITest.js';
 import PhetioObject from './PhetioObject.js';
 import PhetioObjectAPI from './PhetioObjectAPI.js';
 import Tandem from './Tandem.js';
-import ObjectIO from './types/ObjectIO.js';
+import IOType from './types/IOType.js';
 
 QUnit.module( 'PhetioObject' );
 
-class MockTypeIO extends ObjectIO {}
-
-MockTypeIO.typeName = 'MockTypeIO';
-MockTypeIO.events = [ 'hello' ];
-MockTypeIO.documentation = 'mock type';
-MockTypeIO.methods = {};
-MockTypeIO.supertype = null;
-MockTypeIO.validator = { isValidValue: () => true };
-ObjectIO.validateIOType( MockTypeIO );
+const MockTypeIO = new IOType( 'MockTypeIO', {
+  isValidValue: () => true,
+  documentation: 'mock type',
+  events: [ 'hello' ]
+} );
 
 QUnit.test( 'PhetioObject start/start', function( assert ) {
   assert.ok( true, 'initial test' );

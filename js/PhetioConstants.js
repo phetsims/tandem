@@ -4,7 +4,7 @@ import tandemNamespace from './tandemNamespace.js';
 
 /**
  * Constants used in PhET-iO. Defined in the tandem repo since they need to be accessed in non-private code, like
- * ObjectIO.
+ * IOType.ObjectIO.
  * @author Sam Reid (PhET Interactive Simulations)
  */
 const PhetioConstants = {

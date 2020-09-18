@@ -36,7 +36,7 @@ class IOType {
     assert && assert( !!config, 'config is required' );
 
     // For reference in the config
-    const supertype = config.supertype;
+    const supertype = config.supertype || ObjectIO;
 
     config = merge( {
 
@@ -67,6 +67,16 @@ class IOType {
       // {string} Documentation that appears in PhET-iO Studio, supports HTML markup.
       documentation: `IO Type for ${ioTypeName.substring( 0, ioTypeName.length - PhetioConstants.IO_TYPE_SUFFIX.length )}`,
 
+      // TODO: https://github.com/phetsims/tandem/issues/211 documentation
+      wrapForPhetioCommandProcessor: false,
+
+      createWrapper: supertype ? supertype.createWrapper : ( phetioObject, phetioID ) => {
+        return {
+          phetioObject: phetioObject,
+          phetioID: phetioID
+        };
+      },
+
       /**** STATE ****/
 
       // {function(coreObject:*):*)} Serialize the core object. Most often this looks like an object literal that holds
@@ -87,7 +97,10 @@ class IOType {
       // the object. When setting PhET-iO state, this function will be called on an instrumented instance to set the
       // stateObject's value to it.
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#three-types-of-deserialization
-      applyState: supertype && supertype.applyState
+      applyState: supertype && supertype.applyState,
+
+      // For dynamic containers
+      addChildElement: supertype && supertype.addChildElement
     }, config );
 
     assert && assert( ValidatorDef.containsValidatorKey( config ), 'Validator is required' );
@@ -100,24 +113,30 @@ class IOType {
     this.events = config.events;
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
+    this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
+    this.createWrapper = config.createWrapper;
     this.toStateObject = coreObject => {
-      validate( coreObject, config, VALIDATE_OPTIONS_FALSE );
+      validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
       return config.toStateObject( coreObject );
     };
     this.fromStateObject = config.fromStateObject;
     this.stateToArgsForConstructor = config.stateToArgsForConstructor;
     this.applyState = ( coreObject, stateObject ) => {
-      validate( coreObject, config, VALIDATE_OPTIONS_FALSE );
+      validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
       config.applyState( coreObject, stateObject );
     };
+    this.wrapForPhetioCommandProcessor = config.wrapForPhetioCommandProcessor;
+    this.addChildElement = config.addChildElement;
+
     assert && assert( supertype || this.typeName === 'ObjectIO', 'supertype is required' );
     assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
 
     // Validate that parametric types look as expected
-    if ( this.typeName.includes( '<' ) ) {
-      assert && assert( Array.isArray( this.parameterTypes.length > 0 ),
-        'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
-    }
+    // TODO: What about EmitterIO<> that has no parameter types?  See https://github.com/phetsims/tandem/issues/211
+    // if ( this.typeName.includes( '<' ) ) {
+    //   assert && assert( this.parameterTypes.length > 0,
+    //     'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
+    // }
 
     const splitOnParameters = this.typeName.split( /[<(]/ )[ 0 ];
     assert && assert( splitOnParameters.endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IO Type name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
@@ -188,6 +207,8 @@ ObjectIO = new IOType( 'ObjectIO', {
   stateToArgsForConstructor: stateObject => [],
   applyState: ( coreObject, stateObject ) => { }
 } );
+
+IOType.ObjectIO = ObjectIO;
 
 tandemNamespace.register( 'IOType', IOType );
 export default IOType;

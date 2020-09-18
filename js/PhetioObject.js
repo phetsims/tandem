@@ -19,11 +19,11 @@ import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
-import ObjectIO from './types/ObjectIO.js';
+import IOType from './types/IOType.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
-const IO_TYPE_VALIDATOR = { isValidValue: ObjectIO.isIOType };
+const IO_TYPE_VALIDATOR = { valueType: IOType };
 const BOOLEAN_VALIDATOR = { valueType: 'boolean' };
 
 // use "<br>" instead of newlines
@@ -47,7 +47,7 @@ const DEFAULTS = {
   tandem: Tandem.OPTIONAL,
 
   // Defines API methods, events and serialization
-  phetioType: ObjectIO,
+  phetioType: IOType.ObjectIO,
 
   // {string} Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper. It's an html
   // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio
@@ -338,7 +338,7 @@ inherit( Object, PhetioObject, {
       assert && Tandem.VALIDATION && assert( !this.phetioType.uninstrumented, 'cannot instantiate a phetioType that should not be instrumented' );
 
       // @public (read-only phet-io-internal)
-      this.phetioWrapper = new this.phetioType( this, this.tandem.phetioID );
+      this.phetioWrapper = this.phetioType.createWrapper( this, this.tandem.phetioID );
     }
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;

@@ -8,22 +8,12 @@
  */
 
 import tandemNamespace from '../tandemNamespace.js';
-import ObjectIO from './ObjectIO.js';
+import IOType from './IOType.js';
 
-class NumberIO extends ObjectIO {
-  constructor() {
-    assert && assert( false, 'should never be called' );
-    super();
-  }
-
-  /**
-   * Encodes a number to a state (which also happens to be a number).
-   * @param {number} value
-   * @returns {string|number}
-   * @override
-   * @public
-   */
-  static toStateObject( value ) {
+const NumberIO = new IOType( 'NumberIO', {
+  valueType: 'number',
+  documentation: 'IO Type for Javascript\'s number primitive type',
+  toStateObject( value ) {
     assert && assert( typeof value === 'number', 'value should be number' );
     if ( value === Number.POSITIVE_INFINITY ) {
       return 'POSITIVE_INFINITY';
@@ -32,16 +22,8 @@ class NumberIO extends ObjectIO {
       return 'NEGATIVE_INFINITY';
     }
     return value;
-  }
-
-  /**
-   * Decode a number from a state, which is already a number.
-   * @param {string|number} stateObject
-   * @returns {number}
-   * @override
-   * @public
-   */
-  static fromStateObject( stateObject ) {
+  },
+  fromStateObject( stateObject ) {
     if ( stateObject === 'POSITIVE_INFINITY' ) {
       return Number.POSITIVE_INFINITY;
     }
@@ -50,12 +32,7 @@ class NumberIO extends ObjectIO {
     }
     return stateObject;
   }
-}
-
-NumberIO.documentation = 'IO Type for Javascript\'s number primitive type';
-NumberIO.validator = { valueType: 'number' };
-NumberIO.typeName = 'NumberIO';
-ObjectIO.validateIOType( NumberIO );
+} );
 
 tandemNamespace.register( 'NumberIO', NumberIO );
 export default NumberIO;

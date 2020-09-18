@@ -8,25 +8,7 @@
  */
 
 import tandemNamespace from '../tandemNamespace.js';
-import ObjectIO from './ObjectIO.js';
-
-class VoidIO extends ObjectIO {
-
-  constructor( instance, phetioID ) {
-    assert && assert( false, 'should never be called' );
-    super( instance, phetioID );
-  }
-
-  /**
-   * @returns {undefined}
-   * @public
-   */
-  static toStateObject( object ) {
-    return undefined;
-  }
-}
-
-VoidIO.documentation = 'Type for which there is no instance, usually to mark functions without a return value';
+import IOType from './IOType.js';
 
 /**
  * We sometimes use VoidIO as a workaround to indicate that an argument is passed in the simulation side, but
@@ -35,9 +17,13 @@ VoidIO.documentation = 'Type for which there is no instance, usually to mark fun
  * @override
  * @public
  */
-VoidIO.validator = { isValidValue: () => true };
-VoidIO.typeName = 'VoidIO';
-ObjectIO.validateIOType( VoidIO );
+const VoidIO = new IOType( 'VoidIO', {
+  isValidValue: () => true,
+  documentation: 'Type for which there is no instance, usually to mark functions without a return value',
+  toStateObject( object ) {
+    return undefined;
+  }
+} );
 
 tandemNamespace.register( 'VoidIO', VoidIO );
 export default VoidIO;

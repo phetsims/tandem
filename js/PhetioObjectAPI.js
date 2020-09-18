@@ -12,7 +12,7 @@ import merge from '../../phet-core/js/merge.js';
 import tandemNamespace from './tandemNamespace.js';
 import EventType from './EventType.js';
 import PhetioObject from './PhetioObject.js';
-import ObjectIO from './types/ObjectIO.js';
+import IOType from './types/IOType.js';
 
 // constants -  phetioType is not a metadata key, as it is exchanged for just its typeName, see PhetioObject
 const METADATA_KEYS_WITH_PHET_IO_TYPE = PhetioObject.METADATA_KEYS.concat( [ 'phetioType' ] );
@@ -26,7 +26,7 @@ class PhetioObjectAPI {
 
     // Purposefully duplicated from PhetioObject to provide a declarative base API for PhetioObject Metadata.
     options = merge( {}, {
-      phetioType: ObjectIO,
+      phetioType: IOType.ObjectIO,
 
       // @samreid and @zepumph decided that this was too specific, and we don't want to have to duplicate this in API files.
       // phetioDocumentation: '',

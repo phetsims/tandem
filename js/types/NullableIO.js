@@ -18,7 +18,7 @@
 
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
-import ObjectIO from './ObjectIO.js';
+import IOType from './IOType.js';
 
 // {Object.<parameterTypeName:string, function(new:ObjectIO)>} - Cache each parameterized NullableIO so that it is only created once
 const cache = {};
@@ -28,72 +28,25 @@ const cache = {};
  * @param {function(new:ObjectIO)} parameterType - an IO Type (constructor function)
  * @returns {function(new:ObjectIO)} - the IO Type that supports null
  */
-function NullableIO( parameterType ) {
+const NullableIO = parameterType => {
   assert && assert( parameterType, 'NullableIO needs parameterType' );
 
   if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-    cache[ parameterType.typeName ] = create( parameterType );
+    cache[ parameterType.typeName ] = new IOType( `NullableIO<${parameterType.typeName}>`, {
+      documentation: 'A wrapper to wrap another IOType, adding support for null.',
+      isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, parameterType.validator ),
+      parameterTypes: [ parameterType ],
+
+      // If the argument is null, returns null. Otherwise converts the instance to a state object for serialization.
+      toStateObject: instance => instance === null ? null : parameterType.toStateObject( instance ),
+
+      // If the argument is null, returns null. Otherwise converts a state object to an instance of the underlying type.
+      fromStateObject: stateObject => stateObject === null ? null : parameterType.fromStateObject( stateObject )
+    } );
   }
 
   return cache[ parameterType.typeName ];
-}
-
-/**
- * Creates a NullableIOImpl
- * @param {function(new:ObjectIO)} parameterType
- * @returns {function(new:ObjectIO)}
- */
-const create = parameterType => {
-
-  class NullableIOImpl extends ObjectIO {
-
-    /**
-     * If the argument is null, returns null.
-     * Otherwise converts the instance to a state object for serialization.
-     * @param {Object|null} instance - of type {parameterType|null}
-     * @returns {*|null}
-     * @public
-     * @override
-     */
-    static toStateObject( instance ) {
-      if ( instance === null ) {
-        return null;
-      }
-      else {
-        return parameterType.toStateObject( instance );
-      }
-    }
-
-    /**
-     * If the argument is null, returns null.
-     * Otherwise converts a state object to an instance of the underlying type.
-     * @param {*|null} stateObject
-     * @returns {Object|null}
-     * @public
-     * @override
-     */
-    static fromStateObject( stateObject ) {
-      if ( stateObject === null ) {
-        return null;
-      }
-      else {
-        return parameterType.fromStateObject( stateObject );
-      }
-    }
-  }
-
-  NullableIOImpl.documentation = 'A wrapper to wrap another IOType, adding support for null.';
-  NullableIOImpl.validator = {
-    isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, parameterType.validator )
-  };
-  NullableIOImpl.typeName = `NullableIO<${parameterType.typeName}>`;
-  NullableIOImpl.parameterTypes = [ parameterType ];
-
-  ObjectIO.validateIOType( NullableIOImpl );
-
-  return NullableIOImpl;
 };
 
 tandemNamespace.register( 'NullableIO', NullableIO );
-
 export default NullableIO;
