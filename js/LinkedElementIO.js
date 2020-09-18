@@ -13,15 +13,11 @@ import IOType from './types/IOType.js';
 const LinkedElementIO = new IOType( 'LinkedElementIO', {
   isValidValue: () => true,
   documentation: 'A LinkedElement',
-
-  // TODO: https://github.com/phetsims/tandem/issues/211 Arrowify
-  toStateObject( linkedElement ) {
+  toStateObject: linkedElement => {
     assert && Tandem.VALIDATION && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
     return { elementID: linkedElement.element.tandem.phetioID };
   },
-  fromStateObject( stateObject ) {
-    return {};
-  }
+  fromStateObject: stateObject => ( {} )
 } );
 
 tandemNamespace.register( 'LinkedElementIO', LinkedElementIO );

@@ -20,9 +20,7 @@ import IOType from './IOType.js';
 const VoidIO = new IOType( 'VoidIO', {
   isValidValue: () => true,
   documentation: 'Type for which there is no instance, usually to mark functions without a return value',
-  toStateObject( object ) {
-    return undefined;
-  }
+  toStateObject: object => undefined
 } );
 
 tandemNamespace.register( 'VoidIO', VoidIO );

@@ -13,7 +13,7 @@ import IOType from './IOType.js';
 const NumberIO = new IOType( 'NumberIO', {
   valueType: 'number',
   documentation: 'IO Type for Javascript\'s number primitive type',
-  toStateObject( value ) {
+  toStateObject:  value => {
     assert && assert( typeof value === 'number', 'value should be number' );
     if ( value === Number.POSITIVE_INFINITY ) {
       return 'POSITIVE_INFINITY';
@@ -23,7 +23,7 @@ const NumberIO = new IOType( 'NumberIO', {
     }
     return value;
   },
-  fromStateObject( stateObject ) {
+  fromStateObject: stateObject => {
     if ( stateObject === 'POSITIVE_INFINITY' ) {
       return Number.POSITIVE_INFINITY;
     }
