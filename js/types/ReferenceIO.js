@@ -41,15 +41,15 @@ const ReferenceIO = parameterType => {
       /**
        * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
        * use ReferenceIO type directly to use this implementation.
-       * @param {string} stateObject
+       * @param {string} phetioID - from toStateObject
        * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError
        * @public
        */
-      fromStateObject( stateObject ) {
-        assert && assert( typeof stateObject === 'string', 'phetioID should be a string' );
-        if ( phet.phetio.phetioEngine.hasPhetioObject( stateObject ) ) {
-          return phet.phetio.phetioEngine.getPhetioObject( stateObject );
+      fromStateObject( phetioID ) {
+        assert && assert( typeof phetioID === 'string', 'phetioID should be a string' );
+        if ( phet.phetio.phetioEngine.hasPhetioObject( phetioID ) ) {
+          return phet.phetio.phetioEngine.getPhetioObject( phetioID );
         }
         else {
           throw new CouldNotYetDeserializeError();
