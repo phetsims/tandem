@@ -197,7 +197,6 @@ class IOType {
   }
 }
 
-// @private
 ObjectIO = new IOType( 'ObjectIO', {
   isValidValue: () => true,
   supertype: null,
@@ -208,6 +207,7 @@ ObjectIO = new IOType( 'ObjectIO', {
   applyState: ( coreObject, stateObject ) => { }
 } );
 
+// @public
 IOType.ObjectIO = ObjectIO;
 
 tandemNamespace.register( 'IOType', IOType );
