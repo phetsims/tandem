@@ -31,7 +31,6 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
 
   if ( !cache.hasOwnProperty( cacheKey ) ) {
 
-
     // gather a list of argument names for the documentation string
     let argsString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ', ' );
     if ( argsString === '' ) {
@@ -42,8 +41,12 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
     cache[ cacheKey ] = new IOType( `FunctionIO(${parameterTypesString})=>${returnType.typeName}`, {
       valueType: 'function',
 
-      // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
       wrapForPhetioCommandProcessor: true,
+
+      // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
+      // NOTE: the order is very important, for instance phetioCommandProcessor relies on the parameters being before
+      // the return type.  If we decide this is too brittle, perhaps we should subclass IOType to FunctionIOType, and it
+      // can track its functionParameterTypes separately from the returnType.
       parameterTypes: functionParameterTypes.concat( [ returnType ] ),
       documentation: 'Wrapper for the built-in JS function type.<br>' +
                      '<strong>Arguments:</strong> ' + argsString + '<br>' +
