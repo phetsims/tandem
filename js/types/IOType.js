@@ -67,7 +67,7 @@ class IOType {
       // {string} Documentation that appears in PhET-iO Studio, supports HTML markup.
       documentation: `IO Type for ${ioTypeName.substring( 0, ioTypeName.length - PhetioConstants.IO_TYPE_SUFFIX.length )}`,
 
-      // TODO: https://github.com/phetsims/tandem/issues/211 documentation
+      // Functions cannot be sent from one iframe to another, so must be wrapped.  See phetioCommandProcessor.wrapFunction
       wrapForPhetioCommandProcessor: false,
 
       createWrapper: supertype ? supertype.createWrapper : ( phetioObject, phetioID ) => {
