@@ -18,7 +18,7 @@ const cache = new Map();
 
 /**
  * @param {IOType} parameterType
- * @returns {function(new:ObjectIO)}
+ * @returns {IOType}
  */
 const ReferenceIO = parameterType => {
   assert && assert( parameterType, 'ReferenceIO needs parameterType' );

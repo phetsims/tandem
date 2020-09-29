@@ -217,8 +217,8 @@ export default IOType;
  * @typeDef {Object} MethodObject
  * @property {string} documentation
  * @property {function()} implementation - the function to execute when this method is called
- * @property {function(new:ObjectIO)} returnType - the return IO Type of the method
- * @property {Array.<function(new:ObjectIO)>} parameterTypes - the parameter IO Types for the method
+ * @property {IOType} returnType - the return IO Type of the method
+ * @property {IOType[]} parameterTypes - the parameter IO Types for the method
  * @property {boolean} [invocableForReadOnlyElements=true] - by default, all methods are invocable for all elements.
  *    However, for some read-only elements, certain methods should not be invocable. In that case, they are marked as
  *    invocableForReadOnlyElements: false.

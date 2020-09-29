@@ -18,7 +18,7 @@ const cache = {};
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
  * @param {IOType} parameterType
- * @returns {function(new:ObjectIO)}
+ * @returns {IOType}
  * @constructor
  */
 const PhetioGroupIO = parameterType => {

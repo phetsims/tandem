@@ -17,9 +17,8 @@ const cache = {};
  * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapper for
  * that class of functions.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {function(new:ObjectIO)} returnType - wrapper IO Type of the return type of the wrapped function
- * @param {function(new:ObjectIO)[]} functionParameterTypes - wrapper IO Types for the individual arguments of the
- * wrapped function.
+ * @param {IOType} returnType - wrapper IO Type of the return type of the wrapped function
+ * @param {IOType[]} functionParameterTypes - wrapper IO Types for the individual arguments of the wrapped function.
  */
 const FunctionIO = ( returnType, functionParameterTypes ) => {
   for ( let i = 0; i < functionParameterTypes.length; i++ ) {

@@ -16,8 +16,8 @@ const cache = {};
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {function(new:ObjectIO)} parameterType
- * @returns {function(new:ObjectIO)}
+ * @param {IOType} parameterType
+ * @returns {IOType}
  * @constructor
  */
 function PhetioCapsuleIO( parameterType ) {

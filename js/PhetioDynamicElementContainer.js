@@ -208,7 +208,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * Create a dynamic PhetioObject element for this container
    * @param {string} componentName
    * @param {Array.<*>} argsForCreateFunction
-   * @param {function(new:ObjectIO)} containerParameterType
+   * @param {IOType} containerParameterType
    * @returns {PhetioObject}
    * @public
    */

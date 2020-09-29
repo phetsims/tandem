@@ -25,8 +25,8 @@ const cache = {};
 
 /**
  * Parametric type constructor function, do not use `new`
- * @param {function(new:ObjectIO)} parameterType - an IO Type (constructor function)
- * @returns {function(new:ObjectIO)} - the IO Type that supports null
+ * @param {IOType} parameterType - an IO Type
+ * @returns {IOType} - the IO Type that supports null
  */
 const NullableIO = parameterType => {
   assert && assert( parameterType, 'NullableIO needs parameterType' );
