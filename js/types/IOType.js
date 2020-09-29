@@ -132,7 +132,7 @@ class IOType {
     assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
 
     // Validate that parametric types look as expected
-    // REVIEW: What about EmitterIO<> that has no parameter types?  See https://github.com/phetsims/tandem/issues/211
+    // REVIEW: What about EmitterIO<> that has no parameter types?  See https://github.com/phetsims/tandem/issues/216
     // if ( this.typeName.includes( '<' ) ) {
     //   assert && assert( this.parameterTypes.length > 0,
     //     'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
