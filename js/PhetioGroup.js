@@ -98,7 +98,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @override
    */
   disposeElement( element, fromStateSetting ) {
-    assert && assert( !element.isDisposed, 'element already disposed');
+    assert && assert( !element.isDisposed, 'element already disposed' );
     arrayRemove( this._array, element );
 
     this.countProperty.value = this._array.length;
@@ -199,7 +199,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     }, options );
 
     while ( this._array.length > 0 ) {
-      this.disposeElement( this._array[ this._array.length - 1 ], options.fromStateSetting );
+
+      // An earlier draft removed elements from the end (First In, Last Out). However, listeners that observe this list
+      // often need to run arrayRemove for corresponding elements, which is based on indexOf and causes an O(N^2) behavior
+      // by default (since the first removal requires skimming over the entire list). Hence we prefer First In, First
+      // Out, so that listeners will have O(n) behavior for removal from associated lists.
+      // See https://github.com/phetsims/natural-selection/issues/252
+      this.disposeElement( this._array[ 0 ], options.fromStateSetting );
     }
 
     if ( options.resetIndex ) {
