@@ -10,7 +10,7 @@
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 
-// {Object.<parameterTypeName:string, function(new:ObjectIO)>} - cache each parameterized PropertyIO so that it is only created once
+// {Object.<parameterTypeName:string, IOType>} - cache each parameterized PropertyIO so that it is only created once
 const cache = {};
 
 /**

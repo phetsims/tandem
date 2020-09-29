@@ -13,7 +13,7 @@ import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 
-// {Map.<cacheKey:string|*, function(new:ObjectIO)>} - Cache each parameterized ReferenceIO so that it is only created once
+// {Map.<cacheKey:string|*, IOType>} - Cache each parameterized ReferenceIO so that it is only created once
 const cache = new Map();
 
 /**

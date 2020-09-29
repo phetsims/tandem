@@ -80,8 +80,8 @@ class PhetioAPIValidation {
     // @private (read-only) {string}
     this.referenceAPI = this.enabled && window.phet.preloads.phetio.queryParameters.phetioReferenceAPI;
 
-    // @private {Object.<typeName:string, function(new:ObjectIO)>} - this must be all phet-io types so that the
-    // following would fail:  add a phetioType, then remove it, then add a different one under the same typeName.
+    // @private {Object.<typeName:string, IOType>} - this must be all phet-io types so that the
+    // following would fail: add a phetioType, then remove it, then add a different one under the same typeName.
     // A Note about memory: Every TypeIO that is loaded as a module is already loaded on the namespace. Therefore
     // this map doesn't add any memory by storing these. The exception to this is parametric TypeIOs. It should be
     // double checked that anything being passed into a parametric type is memory safe. As of this writing, only TypeIOs
