@@ -7,7 +7,6 @@
  */
 
 import PhetioGroup from './PhetioGroup.js';
-import PhetioGroupIO from './PhetioGroupIO.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import IOType from './types/IOType.js';
@@ -26,7 +25,7 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
   };
   const phetioGroup = new PhetioGroup( createElement, [ '' ], {
     tandem: Tandem.GENERAL.createTandem( 'phetioGroup' ),
-    phetioType: PhetioGroupIO( IOType.ObjectIO )
+    phetioType: PhetioGroup.PhetioGroupIO( IOType.ObjectIO )
   } );
 
   phetioGroup.elementCreatedEmitter.addListener( element => {
@@ -73,7 +72,7 @@ QUnit.test( 'PhetioGroup deferring notifications', assert => {
   };
   const myPhetioGroup = new PhetioGroup( createElement, [], {
     tandem: Tandem.GENERAL.createTandem( 'myPhetioGroup' ),
-    phetioType: PhetioGroupIO( IOType.ObjectIO )
+    phetioType: PhetioGroup.PhetioGroupIO( IOType.ObjectIO )
   } );
 
   let creationCount = 0;
