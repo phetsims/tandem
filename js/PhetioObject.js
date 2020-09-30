@@ -35,8 +35,8 @@ const PHET_IO_COMPONENT_OPTIONS_VALIDATOR = {
 };
 const OBJECT_VALIDATOR = { valueType: [ Object, null ] };
 
-// Indicates a high frequency message was skipped.
-const SKIPPING_HIGH_FREQUENCY_MESSAGE = -1;
+// When an event is suppressed from the data stream, we keep track of it with this token.
+const SKIPPING_MESSAGE = -1;
 
 // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
 const EMPTY_OBJECT = {};
@@ -376,14 +376,15 @@ inherit( Object, PhetioObject, {
       assert && options.getData && assert( typeof options.getData === 'function' );
       assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
 
-      if ( this.phetioHighFrequency &&
+      // Opt out of certain events if queryParameter override is provided. Even for a low frequency data stream, high
+      // frequency events can still be emitted when they have a low frequency ancestor.
+      const skipHighFrequencyEvent = this.phetioHighFrequency &&
+                                     _.hasIn( window, 'phet.preloads.phetio.queryParameters' ) &&
+                                     !window.phet.preloads.phetio.queryParameters.phetioEmitHighFrequencyEvents &&
+                                     !phet.phetio.dataStream.isEmittingLowFrequencyEvent();
 
-           // Opt out of certain events if queryParameter override is provided
-           _.hasIn( window, 'phet.preloads.phetio.queryParameters' ) && !window.phet.preloads.phetio.queryParameters.phetioEmitHighFrequencyEvents &&
-
-           // Even for a low frequency data stream, high frequency events can still be emitted when they have a low frequency ancestor.
-           !phet.phetio.dataStream.isEmittingLowFrequencyEvent() ) {
-        this.phetioMessageStack.push( SKIPPING_HIGH_FREQUENCY_MESSAGE );
+      if ( skipHighFrequencyEvent || this.phetioEventType === EventType.OPT_OUT ) {
+        this.phetioMessageStack.push( SKIPPING_MESSAGE );
         return;
       }
 
@@ -412,7 +413,7 @@ inherit( Object, PhetioObject, {
       const topMessageIndex = this.phetioMessageStack.pop();
 
       // The message was started as a high frequency event to be skipped, so the end is a no-op
-      if ( topMessageIndex === SKIPPING_HIGH_FREQUENCY_MESSAGE ) {
+      if ( topMessageIndex === SKIPPING_MESSAGE ) {
         return;
       }
       this.phetioPlayback && phet.phetio.dataStream.popNonPlaybackable();
