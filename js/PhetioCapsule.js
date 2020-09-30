@@ -17,6 +17,7 @@ import merge from '../../phet-core/js/merge.js';
 import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
+import IOType from './types/IOType.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
@@ -113,6 +114,39 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
     return this.element;
   }
 }
+
+// {Object.<parameterTypeName:string, IOType>} - cache each parameterized PropertyIO so that it is only created once.
+const cache = {};
+
+/**
+ * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
+ * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
+ * @param {IOType} parameterType
+ * @returns {IOType}
+ * @constructor
+ */
+PhetioCapsule.PhetioCapsuleIO = parameterType => {
+
+  assert && assert( parameterType instanceof IOType, 'element type should be an IO Type' );
+
+  if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
+    cache[ parameterType.typeName ] = new IOType( `PhetioCapsuleIO<${parameterType.typeName}>`, {
+      valueType: PhetioCapsule,
+      documentation: 'An array that sends notifications when its values have changed.',
+      parameterTypes: [ parameterType ],
+      addChildElement( capsule, componentName, stateObject ) {
+
+        // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
+        // element in the state needs to be created first, so we will try again on the next iteration of the state
+        // setting engine.
+        const args = parameterType.stateToArgsForConstructor( stateObject );
+        return capsule.create( args, true );
+      }
+    } );
+  }
+
+  return cache[ parameterType.typeName ];
+};
 
 tandemNamespace.register( 'PhetioCapsule', PhetioCapsule );
 export default PhetioCapsule;
