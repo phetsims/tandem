@@ -87,10 +87,10 @@ class IOType {
       // into an instance.
       fromStateObject: supertype && supertype.fromStateObject,
 
-      // {function(stateObject:*):Array[*]} For Dynamic Element Deserialization: converts the state object to a `create`
-      // function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that other non-serialized
-      // args (not dealt with here) may be supplied as closure variables. This function only needs to be implemented on
-      // IO Types that are phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule elements.
+      // {function(stateObject:*):Array[*]} For Dynamic Element Deserialization: converts the state object to arguments
+      // for a `create` function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that
+      // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
+      // to be implemented on IO Types that are phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule elements.
       stateToArgsForConstructor: supertype && supertype.stateToArgsForConstructor,
 
       // {function(coreObject:*,stateObject:*)} For Reference Type Deserialization:  Applies the stateObject value to
