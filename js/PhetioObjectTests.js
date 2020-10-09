@@ -59,6 +59,17 @@ QUnit.test( 'PhetioObject end without start', function( assert ) {
   }
 } );
 
+Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instrumentation', assert => {
+  const obj = new PhetioObject();
+  obj.addLinkedElement( new PhetioObject() );
+
+  window.assert && assert.throws( function() {
+    obj.initializePhetioObject( {
+      tandem: Tandem.GENERAL.createTandem( 'myObject' )
+    } );
+  }, 'Should throw an assertion because you should not link elements before instrumentation' );
+} );
+
 QUnit.test( 'PhetioObject.isDynamicElement', assert => {
   const test1 = Tandem.GENERAL.createTandem( 'test1' );
   const parentTandem = test1.createTandem( 'parent' );
