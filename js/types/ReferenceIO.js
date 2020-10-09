@@ -32,24 +32,29 @@ const ReferenceIO = parameterType => {
       isValidValue: value => ValidatorDef.isValueValid( value, parameterType.validator ),
       documentation: 'Uses reference identity for serializing and deserializing, and validates based on its parameter IO Type.',
       parameterTypes: [ parameterType ],
+
       /**
        * Return the json that ReferenceIO is wrapping.  This can be overridden by subclasses, or types can use ReferenceIO type
        * directly to use this implementation.
        */
-      toStateObject: phetioObject => phetioObject.tandem.phetioID,
+      toStateObject( phetioObject ) {
+        return {
+          phetioID: phetioObject.tandem.phetioID
+        };
+      },
 
       /**
        * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
        * use ReferenceIO type directly to use this implementation.
-       * @param {string} phetioID - from toStateObject
+       * @param {{phetioID:string}} stateObject
        * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError
        * @public
        */
-      fromStateObject( phetioID ) {
-        assert && assert( typeof phetioID === 'string', 'phetioID should be a string' );
-        if ( phet.phetio.phetioEngine.hasPhetioObject( phetioID ) ) {
-          return phet.phetio.phetioEngine.getPhetioObject( phetioID );
+      fromStateObject( stateObject ) {
+        assert && assert( stateObject && typeof stateObject.phetioID === 'string', 'phetioID should be a string' );
+        if ( phet.phetio.phetioEngine.hasPhetioObject( stateObject.phetioID ) ) {
+          return phet.phetio.phetioEngine.getPhetioObject( stateObject.phetioID );
         }
         else {
           throw new CouldNotYetDeserializeError();
