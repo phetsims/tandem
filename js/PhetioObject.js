@@ -11,6 +11,7 @@
 
 import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 import validate from '../../axon/js/validate.js';
+import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import inherit from '../../phet-core/js/inherit.js';
 import merge from '../../phet-core/js/merge.js';
@@ -517,6 +518,26 @@ inherit( Object, PhetioObject, {
     if ( PHET_IO_ENABLED && element.isPhetioInstrumented() ) {
       assert && assert( Array.isArray( this.linkedElements ), 'linkedElements should be an array' );
       this.linkedElements.push( new LinkedElement( element, options ) );
+    }
+  },
+
+  /**
+   * Remove all linked elements linking to the provided PhetioObject. This will dispose all removed LinkedElements. This
+   * will be graceful, and doesn't assume or assert that the provided PhetioObject has LinkedElement(s), it will just
+   * remove them if they are there.
+   * @param {PhetioObject} potentiallyLinkedElement
+   * @public
+   */
+  removeLinkedElements: function( potentiallyLinkedElement ) {
+    if ( this.isPhetioInstrumented() && this.linkedElements ) {
+      assert && assert( potentiallyLinkedElement instanceof PhetioObject );
+      assert && assert( potentiallyLinkedElement.isPhetioInstrumented() );
+
+      const toRemove = this.linkedElements.filter( linkedElement => linkedElement.element === potentiallyLinkedElement );
+      toRemove.forEach( linkedElement => {
+        linkedElement.dispose();
+        arrayRemove( this.linkedElements, linkedElement );
+      } );
     }
   },
 
