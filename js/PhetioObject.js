@@ -42,6 +42,9 @@ const SKIPPING_MESSAGE = -1;
 // Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
 const EMPTY_OBJECT = {};
 
+// This is to help guard against setting addLinkedElement before initializingPhetioObject.
+const LINKED_ELEMENT_PLACEHOLDER = null;
+
 const DEFAULTS = {
 
   // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
@@ -275,6 +278,8 @@ inherit( Object, PhetioObject, {
     assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
     assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
 
+    assert && assert( this.linkedElements !== LINKED_ELEMENT_PLACEHOLDER, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
+
     // This block is associated with validating the baseline api and filling in metadata specified in the elements
     // overrides API file. Even when validation is not enabled, overrides should still be applied.
     if ( PHET_IO_ENABLED && config.tandem.supplied ) {
@@ -507,7 +512,7 @@ inherit( Object, PhetioObject, {
 
       // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrumented
       // it afterwards.
-      this.linkedElements = null;
+      this.linkedElements = LINKED_ELEMENT_PLACEHOLDER;
       return;
     }
 
@@ -529,7 +534,7 @@ inherit( Object, PhetioObject, {
    * @public
    */
   removeLinkedElements: function( potentiallyLinkedElement ) {
-    if ( this.isPhetioInstrumented() && this.linkedElements ) {
+    if ( this.isPhetioInstrumented() && this.linkedElements !== LINKED_ELEMENT_PLACEHOLDER ) {
       assert && assert( potentiallyLinkedElement instanceof PhetioObject );
       assert && assert( potentiallyLinkedElement.isPhetioInstrumented() );
 
