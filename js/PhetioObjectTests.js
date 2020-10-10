@@ -60,6 +60,8 @@ QUnit.test( 'PhetioObject end without start', function( assert ) {
 } );
 
 Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instrumentation', assert => {
+  assert.ok( true, 'always run one test' );
+
   const obj = new PhetioObject();
   obj.addLinkedElement( new PhetioObject() );
 
