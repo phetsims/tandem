@@ -42,11 +42,6 @@ const missingTandems = {
 // Listeners that will be notified when items are registered/deregistered. See doc in addPhetioObjectListener
 const phetioObjectListeners = [];
 
-// variables
-// Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called and
-// buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
-let launched = false;
-
 // {PhetioObject[]} - PhetioObjects that have been added before listeners are ready.
 const bufferedPhetioObjects = [];
 
@@ -163,7 +158,7 @@ class Tandem {
         return;
       }
 
-      if ( !launched ) {
+      if ( !Tandem.launched ) {
         bufferedPhetioObjects.push( phetioObject );
       }
       else {
@@ -197,7 +192,7 @@ class Tandem {
 
     // Only active when running as phet-io
     if ( PHET_IO_ENABLED ) {
-      if ( !launched ) {
+      if ( !Tandem.launched ) {
         assert && assert( bufferedPhetioObjects.indexOf( phetioObject ) >= 0, 'should contain item' );
         arrayRemove( bufferedPhetioObjects, phetioObject );
       }
@@ -360,8 +355,8 @@ class Tandem {
    * @static
    */
   static launch() {
-    assert && assert( !launched, 'Tandem cannot be launched twice' );
-    launched = true;
+    assert && assert( !Tandem.launched, 'Tandem cannot be launched twice' );
+    Tandem.launched = true;
     while ( bufferedPhetioObjects.length > 0 ) {
       const phetioObject = bufferedPhetioObjects.shift();
       phetioObject.tandem.addPhetioObject( phetioObject );
@@ -375,7 +370,7 @@ class Tandem {
    * @public (tests only)
    */
   static unlaunch() {
-    launched = false;
+    Tandem.launched = false;
     bufferedPhetioObjects.length = 0;
   }
 
@@ -586,6 +581,11 @@ class GroupTandem extends Tandem {
     return this.parentTandem.createTandem( this.groupName + '~' + ( this.groupMemberIndex++ ) );
   }
 }
+
+// @public (read-only) Before listeners are wired up, tandems are buffered.  When listeners are wired up,
+// Tandem.launch() is called and buffered tandems are flushed, then subsequent tandems are delivered to listeners
+// directly
+Tandem.launched = false;
 
 tandemNamespace.register( 'Tandem', Tandem );
 export default Tandem;
