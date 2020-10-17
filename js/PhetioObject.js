@@ -30,17 +30,10 @@ const BOOLEAN_VALIDATOR = { valueType: 'boolean' };
 // use "<br>" instead of newlines
 const PHET_IO_DOCUMENTATION_VALIDATOR = { valueType: 'string', isValidValue: doc => doc.indexOf( '\n' ) === -1 };
 const PHET_IO_EVENT_TYPE_VALIDATOR = { valueType: EventType };
-const PHET_IO_COMPONENT_OPTIONS_VALIDATOR = {
-  isValidValue: options =>
-    _.every( _.keys( options ), key => SUPPORTED_PHET_IO_COMPONENT_OPTIONS.indexOf( key ) >= 0 )
-};
 const OBJECT_VALIDATOR = { valueType: [ Object, null ] };
 
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
-
-// Factor out to reduce memory footprint, see https://github.com/phetsims/tandem/issues/71
-const EMPTY_OBJECT = {};
 
 // This is to help guard against setting addLinkedElement before initializingPhetioObject.
 const LINKED_ELEMENT_PLACEHOLDER = null;
@@ -57,8 +50,8 @@ const DEFAULTS = {
   // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio
   phetioDocumentation: '',
 
-  // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, may require
-  // phetioComponentOptions for Nodes or other types)
+  // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, must be specified for
+  // children explicitly)
   phetioState: true,
 
   // This option controls how PhET-iO wrappers can interface with this PhetioObject. Predominately this occurs via
@@ -79,12 +72,6 @@ const DEFAULTS = {
   // When true, Studio is allowed to create a control for this PhetioObject (if it knows how)
   phetioStudioControl: true,
 
-  // For propagating phetio options to sub-components, see SUPPORTED_PHET_IO_COMPONENT_OPTIONS. Since supported
-  // components most often don't end in "Options", `merge` doesn't support defaults and overwriting as expected. As a
-  // result, types that want to specify default component options must use `PhetioObject.mergePhetioComponentOptions
-  // to make sure that component options are properly sent up to PhetioObject.
-  phetioComponentOptions: EMPTY_OBJECT,
-
   // When true, this is categorized as an important "featured" element in Studio.
   phetioFeatured: false,
 
@@ -97,17 +84,6 @@ const DEFAULTS = {
   // false even if explicitly provided as true, as archetypes cannot be dynamic.
   phetioDynamicElement: false
 };
-
-// phetioComponentOptions can specify either (a) the name of the specific subcomponent to target or (b) use a key from
-// DEFAULTS to apply to all subcomponents
-const SUPPORTED_PHET_IO_COMPONENT_OPTIONS = _.keys( DEFAULTS ).concat( [
-
-  // NodeIO
-  'visibleProperty', 'pickableProperty', 'opacityProperty',
-
-  // TextIO
-  'textProperty'
-] );
 
 /**
  * @param {Object} [options]
@@ -151,9 +127,6 @@ function PhetioObject( options ) {
 
   // @private {Object|null}
   this.phetioEventMetadata = DEFAULTS.phetioEventMetadata;
-
-  // @public (read-only) {Object} - see docs at DEFAULTS declaration
-  this.phetioComponentOptions = DEFAULTS.phetioComponentOptions;
 
   // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
   // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
@@ -268,7 +241,6 @@ inherit( Object, PhetioObject, {
     assert && validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR );
     assert && validate( config.phetioPlayback, BOOLEAN_VALIDATOR );
     assert && validate( config.phetioStudioControl, BOOLEAN_VALIDATOR );
-    assert && validate( config.phetioComponentOptions, PHET_IO_COMPONENT_OPTIONS_VALIDATOR );
     assert && validate( config.phetioFeatured, BOOLEAN_VALIDATOR );
     assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
     assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
@@ -321,7 +293,6 @@ inherit( Object, PhetioObject, {
     this.phetioHighFrequency = config.phetioHighFrequency;
     this.phetioPlayback = config.phetioPlayback;
     this.phetioStudioControl = config.phetioStudioControl;
-    this.phetioComponentOptions = config.phetioComponentOptions;
     this.phetioFeatured = config.phetioFeatured;
     this.phetioEventMetadata = config.phetioEventMetadata;
     this.phetioDynamicElement = config.phetioDynamicElement;
@@ -610,24 +581,6 @@ inherit( Object, PhetioObject, {
     return metadata;
   }
 }, {
-
-  /**
-   * Convenience function which assigns phetioComponentOptions based on a merge, and performs basic sanity checks.
-   * @public
-   * @param {Object} defaults
-   * @param {Object} [options] - mutated to included merged phetioComponentOptions
-   */
-  mergePhetioComponentOptions: function( defaults, options ) {
-    if ( assert && options.phetioComponentOptions ) {
-      assert( options.phetioComponentOptions instanceof Object );
-      assert( !options.phetioComponentOptions.tandem, 'tandem not supported in phetioComponentOptions' );
-      assert( !options.phetioComponentOptions.phetioType, 'phetioType not supported in phetioComponentOptions' );
-      assert( !options.phetioComponentOptions.phetioEventType, 'phetioEventType not supported in phetioComponentOptions' );
-    }
-
-    // This uses lodash merge instead of PHET_CORE/merge because it merges recursively on all keys, not just *Options keys
-    options.phetioComponentOptions = _.merge( defaults, options.phetioComponentOptions );
-  },
 
   DEFAULT_OPTIONS: DEFAULTS, // the default options for the phet-io object
 
