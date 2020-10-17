@@ -70,13 +70,6 @@ class IOType {
       // Functions cannot be sent from one iframe to another, so must be wrapped.  See phetioCommandProcessor.wrapFunction
       wrapForPhetioCommandProcessor: false,
 
-      createWrapper: supertype ? supertype.createWrapper : ( phetioObject, phetioID ) => {
-        return {
-          phetioObject: phetioObject,
-          phetioID: phetioID
-        };
-      },
-
       /**** STATE ****/
 
       // {function(coreObject:*):*)} Serialize the core object. Most often this looks like an object literal that holds
@@ -114,7 +107,6 @@ class IOType {
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
-    this.createWrapper = config.createWrapper;
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
       return config.toStateObject( coreObject );

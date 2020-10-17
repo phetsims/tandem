@@ -155,11 +155,6 @@ function PhetioObject( options ) {
   // @public (read-only) {Object} - see docs at DEFAULTS declaration
   this.phetioComponentOptions = DEFAULTS.phetioComponentOptions;
 
-  // @public (read-only) {ObjectIO|null} - assigned in initializePhetioObject - the instantiated IO Type. The phetioWrapper
-  // is the API layer between the wrapper and the phetioObject. It's used to call methods on this phetioObject from
-  // the wrapper frame. Will be null if this PhetioObject is never instrumented.
-  this.phetioWrapper = null;
-
   // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
   // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
   this.phetioObjectInitialized = false;
@@ -340,11 +335,7 @@ inherit( Object, PhetioObject, {
 
     // Instantiate the wrapper instance which is used for PhET-iO communication
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
-
       assert && Tandem.VALIDATION && assert( !this.phetioType.uninstrumented, 'cannot instantiate a phetioType that should not be instrumented' );
-
-      // @public (read-only phet-io-internal)
-      this.phetioWrapper = this.phetioType.createWrapper( this, this.tandem.phetioID );
     }
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
@@ -578,7 +569,6 @@ inherit( Object, PhetioObject, {
 
     if ( this.phetioObjectInitialized ) {
       this.tandem.removePhetioObject( this );
-      this.phetioWrapper && this.phetioWrapper.dispose && this.phetioWrapper.dispose();
     }
 
     // Dispose LinkedElements
