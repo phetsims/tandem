@@ -1,7 +1,7 @@
 // Copyright 2018-2020, University of Colorado Boulder
 
 /**
- * Parametric IO Type wrapper that adds support for null values in toStateObject/fromStateObject. This type is to
+ * Parametric IO Type that adds support for null values in toStateObject/fromStateObject. This type is to
  * prevent the propagation of null handling, mainly in to/fromStateObject, in each type. This also makes null
  * explicit for phet-io.
  *
@@ -33,7 +33,7 @@ const NullableIO = parameterType => {
 
   if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
     cache[ parameterType.typeName ] = new IOType( `NullableIO<${parameterType.typeName}>`, {
-      documentation: 'A wrapper to wrap another IOType, adding support for null.',
+      documentation: 'An IOType adding support for null in addition to the behavior of its parameter.',
       isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, parameterType.validator ),
       parameterTypes: [ parameterType ],
 

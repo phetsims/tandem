@@ -14,11 +14,11 @@ import IOType from './IOType.js';
 const cache = {};
 
 /**
- * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapper for
- * that class of functions.
+ * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapped IO Type for
+ * that "class" of functions. "Class" here refers to the supported parameter and return IO Types.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {IOType} returnType - wrapper IO Type of the return type of the wrapped function
- * @param {IOType[]} functionParameterTypes - wrapper IO Types for the individual arguments of the wrapped function.
+ * @param {IOType} returnType - IO Type of the return type of the function that can support cross-frame serialization
+ * @param {IOType[]} functionParameterTypes - IO Types for the individual arguments of the function.
  */
 const FunctionIO = ( returnType, functionParameterTypes ) => {
   for ( let i = 0; i < functionParameterTypes.length; i++ ) {

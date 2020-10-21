@@ -31,7 +31,7 @@ const ArrayIO = parameterType => {
       parameterTypes: [ parameterType ],
       toStateObject: array => array.map( parameterType.toStateObject ),
       fromStateObject: stateObject => stateObject.map( parameterType.fromStateObject ),
-      documentation: 'A wrapper for the built-in JS array type, with the element type specified.'
+      documentation: 'IO Type for the built-in JS array type, with the element type specified.'
     } );
   }
 

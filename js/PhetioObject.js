@@ -304,10 +304,11 @@ inherit( Object, PhetioObject, {
       this.phetioEventMetadata.playback = true;
     }
 
-    // Instantiate the wrapper instance which is used for PhET-iO communication
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
       assert && Tandem.VALIDATION && assert( !this.phetioType.uninstrumented, 'cannot instantiate a phetioType that should not be instrumented' );
     }
+
+    // Alert that this PhetioObject is ready for cross-frame communication (thus becoming a "PhET-iO element" on the wrapper side.
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
   },
