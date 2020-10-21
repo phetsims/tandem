@@ -82,10 +82,10 @@ class PhetioAPIValidation {
 
     // @private {Object.<typeName:string, IOType>} - this must be all phet-io types so that the
     // following would fail: add a phetioType, then remove it, then add a different one under the same typeName.
-    // A Note about memory: Every TypeIO that is loaded as a module is already loaded on the namespace. Therefore
-    // this map doesn't add any memory by storing these. The exception to this is parametric TypeIOs. It should be
-    // double checked that anything being passed into a parametric type is memory safe. As of this writing, only TypeIOs
-    // are passed to parametric TypeIOs, so this pattern remains memory leak free. Furthermore, this list is only
+    // A Note about memory: Every IOType that is loaded as a module is already loaded on the namespace. Therefore
+    // this map doesn't add any memory by storing these. The exception to this is parametric IOTypes. It should be
+    // double checked that anything being passed into a parametric type is memory safe. As of this writing, only IOTypes
+    // are passed to parametric IOTypes, so this pattern remains memory leak free. Furthermore, this list is only
     // populated when `this.enabled`.
     this.everyPhetioType = {};
 
