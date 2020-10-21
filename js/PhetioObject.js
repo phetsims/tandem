@@ -35,9 +35,6 @@ const OBJECT_VALIDATOR = { valueType: [ Object, null ] };
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
 
-// This is to help guard against setting addLinkedElement before initializingPhetioObject.
-const LINKED_ELEMENT_PLACEHOLDER = null;
-
 const DEFAULTS = {
 
   // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
@@ -245,7 +242,7 @@ inherit( Object, PhetioObject, {
     assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
     assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
 
-    assert && assert( this.linkedElements !== LINKED_ELEMENT_PLACEHOLDER, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
+    assert && assert( this.linkedElements !== null, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
 
     // This block is associated with validating the baseline api and filling in metadata specified in the elements
     // overrides API file. Even when validation is not enabled, overrides should still be applied.
@@ -473,9 +470,9 @@ inherit( Object, PhetioObject, {
   addLinkedElement: function( element, options ) {
     if ( !this.isPhetioInstrumented() ) {
 
-      // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrumented
+      // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrument
       // it afterwards.
-      this.linkedElements = LINKED_ELEMENT_PLACEHOLDER;
+      this.linkedElements = null;
       return;
     }
 
@@ -497,7 +494,7 @@ inherit( Object, PhetioObject, {
    * @public
    */
   removeLinkedElements: function( potentiallyLinkedElement ) {
-    if ( this.isPhetioInstrumented() && this.linkedElements !== LINKED_ELEMENT_PLACEHOLDER ) {
+    if ( this.isPhetioInstrumented() && this.linkedElements ) {
       assert && assert( potentiallyLinkedElement instanceof PhetioObject );
       assert && assert( potentiallyLinkedElement.isPhetioInstrumented() );
 
