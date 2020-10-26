@@ -1,7 +1,8 @@
 // Copyright 2020, University of Colorado Boulder
 
 /**
- * IO Types form a synthetic type system used to describe PhET-iO Elements, including their documentation, methods,
+ * IO Types form a synthetic type system used to describe PhET-iO Elements. A PhET-iO Element is an instrumented PhetioObject
+ * that is interoperable from the "wrapper" frame (outside the sim frame). An IO Type includes documentation, methods,
  * names, serialization, etc.
  *
  * @author Sam Reid (PhET Interactive Simulations)
@@ -10,6 +11,7 @@
 import validate from '../../../axon/js/validate.js';
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import merge from '../../../phet-core/js/merge.js';
+import required from '../../../phet-core/js/required.js';
 import PhetioConstants from '../PhetioConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 
@@ -25,15 +27,13 @@ class IOType {
    * @param {string} ioTypeName - The name that this IOType will have in the public PhET-iO API. In general, this should
    *    only be word characters, ending in "IO". Parametric types are a special subset of IOTypes that include their
    *    parameters in their typeName. If an IOType's parameters are other IO Type(s), then they should be included within
-   *    angle brackets, like "PropertyIO<Boolean>". Some other types use a more custom format for displaying their
+   *    angle brackets, like "PropertyIO<BooleanIO>". Some other types use a more custom format for displaying their
    *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
    *    with an open paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
-   *    In most cases, parameterized types should also include a `parameterTypes` field on the IOType.
+   *    Parameterized types should also include a `parameterTypes` field on the IOType.
    * @param {Object} config
    */
   constructor( ioTypeName, config ) {
-
-    assert && assert( !!config, 'config is required' );
 
     // For reference in the config
     const supertype = config.supertype || ObjectIO;
@@ -77,24 +77,25 @@ class IOType {
       toStateObject: supertype && supertype.toStateObject,
 
       // {function(stateObject:*):*} For Data Type Deserialization. Decodes the object from a state (see toStateObject)
-      // into an instance.
+      // into an instance of the core type.
       fromStateObject: supertype && supertype.fromStateObject,
 
       // {function(stateObject:*):Array[*]} For Dynamic Element Deserialization: converts the state object to arguments
       // for a `create` function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that
       // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
-      // to be implemented on IO Types that are phetioDynamicElement: true, such as PhetioGroup or PhetioCapsule elements.
+      // to be implemented on IO Types who's core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
+      // elements.
       stateToArgsForConstructor: supertype && supertype.stateToArgsForConstructor,
 
-      // {function(coreObject:*,stateObject:*)} For Reference Type Deserialization:  Applies the stateObject value to
-      // the object. When setting PhET-iO state, this function will be called on an instrumented instance to set the
+      // {function(coreObject:*,stateObject:*)} For Reference Type Deserialization:  Applies the state (see toStateObject)
+      // value to the instance. When setting PhET-iO state, this function will be called on an instrumented instance to set the
       // stateObject's value to it.
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
-      // For dynamic containers
+      // For dynamic element containers, see examples in IOTypes for PhetioDynamicElementContainer classes
       addChildElement: supertype && supertype.addChildElement
-    }, config );
+    }, required( config ) );
 
     assert && assert( ValidatorDef.containsValidatorKey( config ), 'Validator is required' );
 
@@ -124,7 +125,7 @@ class IOType {
     assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
 
     // Validate that parametric types look as expected
-    // REVIEW: What about EmitterIO<> that has no parameter types?  See https://github.com/phetsims/tandem/issues/216
+    // TODO: What about EmitterIO<> that has no parameter types?  See https://github.com/phetsims/tandem/issues/217
     // if ( this.typeName.includes( '<' ) ) {
     //   assert && assert( this.parameterTypes.length > 0,
     //     'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
@@ -144,7 +145,7 @@ class IOType {
           'invocableForReadOnlyElements must be of type boolean: ' + methodObject.invocableForReadOnlyElements );
       }
     } );
-    assert && assert( this.documentation, 'documentation must be provided' );
+    assert && assert( typeof this.documentation === 'string' && this.documentation.length > 0, 'documentation must be provided' );
 
     this.hasOwnProperty( 'methodOrder' ) && this.methodOrder.forEach( methodName => {
       assert && assert( this.methods[ methodName ], 'methodName not in public methods: ' + methodName );
@@ -202,16 +203,17 @@ ObjectIO = new IOType( 'ObjectIO', {
 // @public
 IOType.ObjectIO = ObjectIO;
 
-tandemNamespace.register( 'IOType', IOType );
-export default IOType;
-
 /**
- * @typeDef {Object} MethodObject
+ * @typedef {Object} MethodObject
  * @property {string} documentation
- * @property {function()} implementation - the function to execute when this method is called
+ * @property {function()} implementation - the function to execute when this method is called. This function's parameters
+ *                                  will be based on `parameterTypes`, and should return the type specified by `returnType`
  * @property {IOType} returnType - the return IO Type of the method
  * @property {IOType[]} parameterTypes - the parameter IO Types for the method
  * @property {boolean} [invocableForReadOnlyElements=true] - by default, all methods are invocable for all elements.
  *    However, for some read-only elements, certain methods should not be invocable. In that case, they are marked as
  *    invocableForReadOnlyElements: false.
  */
+
+tandemNamespace.register( 'IOType', IOType );
+export default IOType;
