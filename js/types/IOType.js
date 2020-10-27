@@ -163,10 +163,11 @@ class IOType {
       assert && assert( this.methods[ methodName ], 'methodName not in public methods: ' + methodName );
     } );
 
-    if ( this.hasOwnProperty( 'api' ) ) {
-      assert && assert( this.api instanceof Object, 'Object expected for api' );
-      assert && assert( Object.getPrototypeOf( this.api ) === Object.prototype, 'no extra prototype allowed on API object' );
-    }
+    // TODO: support API checking, see https://github.com/phetsims/phet-io/issues/1657
+    // if ( this.hasOwnProperty( 'api' ) ) {
+    //   assert && assert( this.api instanceof Object, 'Object expected for api' );
+    //   assert && assert( Object.getPrototypeOf( this.api ) === Object.prototype, 'no extra prototype allowed on API object' );
+    // }
 
     // Make sure events are not listed again
     if ( supertype ) {
