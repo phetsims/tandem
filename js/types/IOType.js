@@ -80,7 +80,7 @@ class IOType {
       documentation: `IO Type for ${getCoreTypeName( ioTypeName )}`,
 
       // Functions cannot be sent from one iframe to another, so must be wrapped.  See phetioCommandProcessor.wrapFunction
-      wrapForPhetioCommandProcessor: false,
+      isFunctionType: false,
 
       /**** STATE ****/
 
@@ -130,7 +130,7 @@ class IOType {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
       config.applyState( coreObject, stateObject );
     };
-    this.wrapForPhetioCommandProcessor = config.wrapForPhetioCommandProcessor;
+    this.isFunctionType = config.isFunctionType;
     this.addChildElement = config.addChildElement;
 
     assert && assert( supertype || this.typeName === 'ObjectIO', 'supertype is required' );

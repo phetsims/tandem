@@ -41,7 +41,7 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
     cache[ cacheKey ] = new IOType( `FunctionIO(${parameterTypesString})=>${returnType.typeName}`, {
       valueType: 'function',
 
-      wrapForPhetioCommandProcessor: true,
+      isFunctionType: true,
 
       // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.
       // NOTE: the order is very important, for instance phetioCommandProcessor relies on the parameters being before
