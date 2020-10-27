@@ -21,6 +21,18 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 // Defined at the bottom of this file
 let ObjectIO = null;
 
+/**
+ * Estimate the core type name from a given IO Type name.
+ * @param {string} ioTypeName
+ * @returns {string}
+ * @private
+ */
+const getCoreTypeName = ioTypeName => {
+  const index = ioTypeName.indexOf( PhetioConstants.IO_TYPE_SUFFIX );
+  assert && assert( index >= 0, 'IO should be in the type name' );
+  return ioTypeName.substring( 0, index );
+};
+
 class IOType {
 
   /**
@@ -65,7 +77,7 @@ class IOType {
       parameterTypes: [],
 
       // {string} Documentation that appears in PhET-iO Studio, supports HTML markup.
-      documentation: `IO Type for ${ioTypeName.substring( 0, ioTypeName.length - PhetioConstants.IO_TYPE_SUFFIX.length )}`,
+      documentation: `IO Type for ${getCoreTypeName( ioTypeName )}`,
 
       // Functions cannot be sent from one iframe to another, so must be wrapped.  See phetioCommandProcessor.wrapFunction
       wrapForPhetioCommandProcessor: false,
