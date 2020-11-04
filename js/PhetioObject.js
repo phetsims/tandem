@@ -91,68 +91,12 @@ function PhetioObject( options ) {
   // @public (read-only) {Tandem} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
   this.tandem = DEFAULTS.tandem;
 
-  // @public (read-only) {IOType} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-  this.phetioType = DEFAULTS.phetioType;
-
-  // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-  this.phetioState = DEFAULTS.phetioState;
-
-  // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-  this.phetioReadOnly = DEFAULTS.phetioReadOnly;
-
-  // @public (read-only) {string} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-  this.phetioDocumentation = DEFAULTS.phetioDocumentation;
-
-  // @private {EventType} - see docs at DEFAULTS declaration
-  this.phetioEventType = DEFAULTS.phetioEventType;
-
-  // @private {boolean} - see docs at DEFAULTS declaration
-  this.phetioHighFrequency = DEFAULTS.phetioHighFrequency;
-
-  // @private {boolean} - see docs at DEFAULTS declaration
-  this.phetioPlayback = DEFAULTS.phetioPlayback;
-
-  // @private {boolean} - see docs at DEFAULTS declaration
-  this.phetioStudioControl = DEFAULTS.phetioStudioControl;
-
-  // @public (PhetioEngine) {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to
-  // children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
-  this.phetioDynamicElement = DEFAULTS.phetioDynamicElement;
-
-  // @public (read-only) {boolean} - see docs at DEFAULTS declaration
-  this.phetioFeatured = DEFAULTS.phetioFeatured;
-
-  // @private {Object|null}
-  this.phetioEventMetadata = DEFAULTS.phetioEventMetadata;
-
   // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
   // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
   this.phetioObjectInitialized = false;
 
-  // @private {number|null} - tracks the indices of started messages so that dataStream can check that ends match starts
-  this.phetioMessageStack = [];
-
   // @public (read-only) {boolean} - has it been disposed?
   this.isDisposed = false;
-
-  // @public {boolean} optional - Indicates that an object is a archetype for a dynamic class. Settable only by
-  // PhetioEngine and by classes that create dynamic elements when creating their archetype (like PhetioGroup) through
-  // PhetioObject.markDynamicElementArchetype().
-  // if true, items will be excluded from phetioState. This applies recursively automatically.
-  this.phetioIsArchetype = null;
-
-  // @public (phetioEngine) {Object|null} - only non null with phet.preloads.phetio.queryParameters.phetioPrintAPI enabled
-  this.phetioBaselineMetadata = null;
-
-  // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
-  this.phetioArchetypePhetioID = null;
-
-  // @private {LinkedElement[]|null} - keep track of LinkedElements for disposal. Null out to support asserting on
-  // edge error cases, see this.addLinkedElement()
-  this.linkedElements = [];
-
-  // @public (phet-io) set to true when this PhetioObject has been sent over to the parent.
-  this.phetioNotifiedObjectCreated = false;
 
   if ( options ) {
     this.initializePhetioObject( {}, options );
@@ -244,6 +188,15 @@ inherit( Object, PhetioObject, {
 
     assert && assert( this.linkedElements !== null, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
 
+    // @public (phetioEngine) {Object|null} - only non null with phet.preloads.phetio.queryParameters.phetioPrintAPI enabled
+    this.phetioBaselineMetadata = null;
+
+    // @public {boolean} optional - Indicates that an object is a archetype for a dynamic class. Settable only by
+    // PhetioEngine and by classes that create dynamic elements when creating their archetype (like PhetioGroup) through
+    // PhetioObject.markDynamicElementArchetype().
+    // if true, items will be excluded from phetioState. This applies recursively automatically.
+    this.phetioIsArchetype = false;
+
     // This block is associated with validating the baseline api and filling in metadata specified in the elements
     // overrides API file. Even when validation is not enabled, overrides should still be applied.
     if ( PHET_IO_ENABLED && config.tandem.supplied ) {
@@ -280,19 +233,55 @@ inherit( Object, PhetioObject, {
       }
     }
 
-    // Unpack config to properties
+    // @public (read-only) {Tandem} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.tandem = config.tandem;
+
+    // @public (read-only) {IOType} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioType = config.phetioType;
+
+    // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioState = config.phetioState;
+
+    // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioReadOnly = config.phetioReadOnly;
-    this.phetioEventType = config.phetioEventType;
+
+    // @public (read-only) {string} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
     this.phetioDocumentation = config.phetioDocumentation;
+
+    // @private {EventType} - see docs at DEFAULTS declaration
+    this.phetioEventType = config.phetioEventType;
+
+    // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioHighFrequency = config.phetioHighFrequency;
+
+    // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioPlayback = config.phetioPlayback;
+
+    // @private {boolean} - see docs at DEFAULTS declaration
     this.phetioStudioControl = config.phetioStudioControl;
-    this.phetioFeatured = config.phetioFeatured;
-    this.phetioEventMetadata = config.phetioEventMetadata;
+
+    // @public (PhetioEngine) {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to
+    // children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
     this.phetioDynamicElement = config.phetioDynamicElement;
+
+    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
+    this.phetioFeatured = config.phetioFeatured;
+
+    // @private {Object|null}
+    this.phetioEventMetadata = config.phetioEventMetadata;
+
+    // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
+    this.phetioArchetypePhetioID = null;
+
+    // @private {LinkedElement[]|null} - keep track of LinkedElements for disposal. Null out to support asserting on
+    // edge error cases, see this.addLinkedElement()
+    this.linkedElements = [];
+
+    // @public (phet-io) set to true when this PhetioObject has been sent over to the parent.
+    this.phetioNotifiedObjectCreated = false;
+
+    // @private {Array.<number>} - tracks the indices of started messages so that dataStream can check that ends match starts.
+    this.phetioMessageStack = [];
 
     // Make sure playback shows in the phetioEventMetadata
     if ( this.phetioPlayback ) {
@@ -395,6 +384,7 @@ inherit( Object, PhetioObject, {
 
     this.tandem.iterateDescendants( tandem => {
       if ( phetioEngine.hasPhetioObject( tandem.phetioID ) ) {
+        assert && assert( this.isPhetioInstrumented() );
         const phetioObject = phetioEngine.getPhetioObject( tandem.phetioID );
 
         // Order matters here! The phetioIsArchetype needs to be first to ensure that the setPhetioDynamicElement
@@ -415,6 +405,7 @@ inherit( Object, PhetioObject, {
    */
   setPhetioDynamicElement( phetioDynamicElement ) {
     assert && assert( !this.phetioNotifiedObjectCreated, 'should not change dynamic element flags after notifying this PhetioObject\'s creation.' );
+    assert && assert( this.isPhetioInstrumented() );
 
     // All archetypes are static (non-dynamic)
     this.phetioDynamicElement = this.phetioIsArchetype ? false : phetioDynamicElement;
@@ -523,7 +514,6 @@ inherit( Object, PhetioObject, {
    * @public
    */
   dispose: function() {
-    const self = this;
     assert && assert( !this.isDisposed, 'PhetioObject can only be disposed once' );
 
     // In order to support the structured data stream, PhetioObjects must end the messages in the correct
@@ -533,7 +523,10 @@ inherit( Object, PhetioObject, {
     //
     // The phetioEvent stack should resolve by the next frame, so that's when we check it.
     assert && animationFrameTimer.runOnNextTick( () => {
-      assert && assert( self.phetioMessageStack.length === 0, 'phetioMessageStack should be clear' );
+
+      // Uninstrumented PhetioObjects don't have a phetioMessageStack attribute.
+      assert && assert( !this.hasOwnProperty( 'phetioMessageStack' ) || this.phetioMessageStack.length === 0,
+        'phetioMessageStack should be clear' );
     } );
 
     if ( this.phetioObjectInitialized ) {
