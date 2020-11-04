@@ -102,7 +102,7 @@ class IOType {
       // {function(coreObject:*,stateObject:*)} For Reference Type Deserialization:  Applies the state (see toStateObject)
       // value to the instance. When setting PhET-iO state, this function will be called on an instrumented instance to set the
       // stateObject's value to it.
-      // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-guide.md#three-types-of-deserialization
+      // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
       // For dynamic element containers, see examples in IOTypes for PhetioDynamicElementContainer classes
