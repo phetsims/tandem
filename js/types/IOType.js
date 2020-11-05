@@ -201,6 +201,31 @@ class IOType {
     }
     return array;
   }
+
+  /**
+   * Convenience method for creating an IOType that forwards its state methods over to be handled by the core type.
+   * @public
+   * @param {string} ioTypeName - see IOType constuctor for details
+   * @param {function} CoreType - the PhET "core" type class/constructor associated with this IOType being created
+   * @param {Object} [options]
+   * @returns {IOType}
+   */
+  static fromCoreType( ioTypeName, CoreType, options ) {
+
+    if ( assert && options ) {
+      assert && assert( !options.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
+      assert && assert( !options.hasOwnProperty( 'toStateObject' ), 'fromCoreType sets its own toStateObject' );
+      assert && assert( !options.hasOwnProperty( 'stateToArgsForConstructor' ), 'fromCoreType sets its own stateToArgsForConstructor' );
+      assert && assert( !options.hasOwnProperty( 'applyState' ), 'fromCoreType sets its own applyState' );
+    }
+
+    return new IOType( ioTypeName, merge( {
+      valueType: CoreType,
+      toStateObject: coreType => coreType.toStateObject(),
+      stateToArgsForConstructor: CoreType.stateToArgsForConstructor,
+      applyState: ( coreType, stateObject ) => coreType.applyState( stateObject )
+    }, options ) );
+  }
 }
 
 ObjectIO = new IOType( 'ObjectIO', {
