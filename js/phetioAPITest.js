@@ -28,10 +28,6 @@ const METADATA_KEYS_WITH_PHET_IO_TYPE = PhetioObject.METADATA_KEYS.concat( [ 'ph
 const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
   if ( Tandem.PHET_IO_ENABLED ) {
 
-    // TODO: remove me when no longer needed, see https://github.com/phetsims/tandem/issues/187
-    Tandem.unlaunch();
-    Tandem.launch();
-
     const wasEnabled = phetioAPIValidation.enabled;
     phetioAPIValidation.enabled = false; // This prevents errors when trying to dispose static elements.
 
@@ -112,9 +108,6 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
 
     expectedComponentPhetioObject.dispose();
     phetioAPIValidation.enabled = wasEnabled;
-
-    // TODO: remove me when no longer needed, see https://github.com/phetsims/tandem/issues/187
-    Tandem.unlaunch();
   }
   else {
     assert.ok( true, 'make sure this runs in phet brand' );
