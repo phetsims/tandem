@@ -155,9 +155,11 @@ inherit( Object, PhetioObject, {
 
     // The presence of `tandem` indicates if this PhetioObject can be initialized. If not yet initialized, perhaps
     // it will be initialized later on, as in Node.mutate().
-    if ( !( config.tandem && config.tandem.supplied ) ) {
+    if ( !( PHET_IO_ENABLED && config.tandem && config.tandem.supplied ) ) {
       assert && !config.tandem && assert( !specifiesNonTandemPhetioObjectKey( config ), 'only specify metadata when providing a Tandem' );
 
+      // In this case, the PhetioObject is not initialized, but still set tandem to maintain a consistent API for
+      // creating the Tandem tree.
       if ( config.tandem ) {
         this.tandem = config.tandem;
       }
@@ -188,87 +190,79 @@ inherit( Object, PhetioObject, {
 
     assert && assert( this.linkedElements !== null, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
 
-    // @public (phetioEngine) {Object|null} - only non null with phet.preloads.phetio.queryParameters.phetioPrintAPI enabled
-    this.phetioBaselineMetadata = null;
-
     // @public {boolean} optional - Indicates that an object is a archetype for a dynamic class. Settable only by
     // PhetioEngine and by classes that create dynamic elements when creating their archetype (like PhetioGroup) through
     // PhetioObject.markDynamicElementArchetype().
     // if true, items will be excluded from phetioState. This applies recursively automatically.
     this.phetioIsArchetype = false;
 
-    // This block is associated with validating the baseline api and filling in metadata specified in the elements
-    // overrides API file. Even when validation is not enabled, overrides should still be applied.
-    if ( PHET_IO_ENABLED && config.tandem.supplied ) {
+    // @public (phetioEngine) {Object|null}
+    // Store the full baseline for usage in validation or for usage in studio.  Do this before applying overrides. The
+    // baseline is created when a sim is run with assertions to assist in phetioAPIValidation.  However, even when
+    // assertions are disabled, some wrappers such as studio need to generate the baseline anyway.
+    // not all metadata are passed through via config, so store baseline for these additional properties
+    this.phetioBaselineMetadata = ( phetioAPIValidation.enabled || phet.preloads.phetio.queryParameters.studio ) ?
+                                  this.getMetadata( merge( {
+                                    phetioIsArchetype: this.phetioIsArchetype
+                                  }, config ) ) :
+                                  null;
 
-      // Store the full baseline for usage in validation or for usage in studio.  Do this before applying overrides. The
-      // baseline is created when a sim is run with assertions to assist in phetioAPIValidation.  However, even when
-      // assertions are disabled, some wrappers such as studio need to generate the baseline anyway.
-      if ( phetioAPIValidation.enabled || phet.preloads.phetio.queryParameters.studio ) {
+    // If not a deprecated dynamic element
+    // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
+    if ( config.tandem.phetioID.indexOf( '~' ) === -1 ) {
 
-        // not all metadata are passed through via config, so store baseline for these additional properties
-        this.phetioBaselineMetadata = this.getMetadata( merge( {
-          phetioIsArchetype: this.phetioIsArchetype
-        }, config ) );
-      }
+      // Dynamic elements should compare to their "archetypal" counterparts.  For example, this means that a Particle
+      // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
+      const archetypalPhetioID = config.tandem.getArchetypalPhetioID();
 
-      // If not a deprecated dynamic element
-      // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
-      if ( config.tandem.phetioID.indexOf( '~' ) === -1 ) {
+      // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
+      // Patch in the desired values from overrides, if any.
+      if ( window.phet.preloads.phetio.phetioElementsOverrides ) {
+        const overrides = window.phet.preloads.phetio.phetioElementsOverrides[ archetypalPhetioID ];
+        if ( overrides ) {
 
-        // Dynamic elements should compare to their "archetypal" counterparts.  For example, this means that a Particle
-        // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
-        const archetypalPhetioID = config.tandem.getArchetypalPhetioID();
-
-        // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
-        // Patch in the desired values from overrides, if any.
-        if ( window.phet.preloads.phetio.phetioElementsOverrides ) {
-          const overrides = window.phet.preloads.phetio.phetioElementsOverrides[ archetypalPhetioID ];
-          if ( overrides ) {
-
-            // No need to make a new object, since this "config" variable was created in the previous merge call above.
-            config = merge( config, overrides );
-          }
+          // No need to make a new object, since this "config" variable was created in the previous merge call above.
+          config = merge( config, overrides );
         }
       }
     }
 
-    // @public (read-only) {Tandem} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
+    // @public (read-only) {Tandem} - see docs at DEFAULTS declaration
     this.tandem = config.tandem;
 
-    // @public (read-only) {IOType} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.phetioType = config.phetioType;
+    // @public (read-only) {IOType} - see docs at DEFAULTS declaration
+    this._phetioType = config.phetioType;
 
-    // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.phetioState = config.phetioState;
+    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
+    this._phetioState = config.phetioState;
 
-    // @public (read-only) {boolean} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.phetioReadOnly = config.phetioReadOnly;
+    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
+    this._phetioReadOnly = config.phetioReadOnly;
 
-    // @public (read-only) {string} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.phetioDocumentation = config.phetioDocumentation;
+    // @public (read-only) {string} - see docs at DEFAULTS declaration
+    this._phetioDocumentation = config.phetioDocumentation;
 
     // @private {EventType} - see docs at DEFAULTS declaration
-    this.phetioEventType = config.phetioEventType;
+    this._phetioEventType = config.phetioEventType;
 
     // @private {boolean} - see docs at DEFAULTS declaration
-    this.phetioHighFrequency = config.phetioHighFrequency;
+    this._phetioHighFrequency = config.phetioHighFrequency;
 
     // @private {boolean} - see docs at DEFAULTS declaration
-    this.phetioPlayback = config.phetioPlayback;
+    this._phetioPlayback = config.phetioPlayback;
 
     // @private {boolean} - see docs at DEFAULTS declaration
-    this.phetioStudioControl = config.phetioStudioControl;
+    this._phetioStudioControl = config.phetioStudioControl;
 
     // @public (PhetioEngine) {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to
     // children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
-    this.phetioDynamicElement = config.phetioDynamicElement;
+    this._phetioDynamicElement = config.phetioDynamicElement;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
-    this.phetioFeatured = config.phetioFeatured;
+    this._phetioFeatured = config.phetioFeatured;
 
     // @private {Object|null}
-    this.phetioEventMetadata = config.phetioEventMetadata;
+    this._phetioEventMetadata = config.phetioEventMetadata;
 
     // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
     this.phetioArchetypePhetioID = null;
@@ -284,19 +278,85 @@ inherit( Object, PhetioObject, {
     this.phetioMessageStack = [];
 
     // Make sure playback shows in the phetioEventMetadata
-    if ( this.phetioPlayback ) {
-      this.phetioEventMetadata = this.phetioEventMetadata || {};
-      assert && assert( !this.phetioEventMetadata.hasOwnProperty( 'playback' ), 'phetioEventMetadata.playback should not already exist' );
-      this.phetioEventMetadata.playback = true;
+    if ( this._phetioPlayback ) {
+      this._phetioEventMetadata = this._phetioEventMetadata || {};
+      assert && assert( !this._phetioEventMetadata.hasOwnProperty( 'playback' ), 'phetioEventMetadata.playback should not already exist' );
+      this._phetioEventMetadata.playback = true;
     }
 
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
-      assert && Tandem.VALIDATION && assert( !this.phetioType.uninstrumented, 'cannot instantiate a phetioType that should not be instrumented' );
+      assert && Tandem.VALIDATION && assert( !this._phetioType.uninstrumented, 'cannot instantiate a phetioType that should not be instrumented' );
     }
 
     // Alert that this PhetioObject is ready for cross-frame communication (thus becoming a "PhET-iO element" on the wrapper side.
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
+  },
+
+  // @public
+  get phetioType() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioType only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioType;
+  },
+
+  // @public
+  get phetioState() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioState only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioState;
+  },
+
+  // @public
+  get phetioReadOnly() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioReadOnly only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioReadOnly;
+  },
+
+  // @public
+  get phetioDocumentation() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDocumentation only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioDocumentation;
+  },
+
+  // @private
+  get phetioEventType() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventType only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioEventType;
+  },
+
+  // @private
+  get phetioHighFrequency() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioHighFrequency only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioHighFrequency;
+  },
+
+  // @private
+  get phetioPlayback() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioPlayback only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioPlayback;
+  },
+
+  // @private
+  get phetioStudioControl() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioStudioControl only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioStudioControl;
+  },
+
+  // @public
+  get phetioDynamicElement() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDynamicElement only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioDynamicElement;
+  },
+
+  // @public
+  get phetioFeatured() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioFeatured only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioFeatured;
+  },
+
+  // @private
+  get phetioEventMetadata() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventMetadata only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioEventMetadata;
   },
 
   /**
@@ -408,7 +468,7 @@ inherit( Object, PhetioObject, {
     assert && assert( this.isPhetioInstrumented() );
 
     // All archetypes are static (non-dynamic)
-    this.phetioDynamicElement = this.phetioIsArchetype ? false : phetioDynamicElement;
+    this._phetioDynamicElement = this.phetioIsArchetype ? false : phetioDynamicElement;
 
     // For dynamic elements, indicate the corresponding archetype element so that clients like Studio can leverage
     // the archetype metadata. Static elements don't have archetypes.

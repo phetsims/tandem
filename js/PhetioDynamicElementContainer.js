@@ -22,6 +22,7 @@ import phetioAPIValidation from './phetioAPIValidation.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
+import IOType from './types/IOType.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
@@ -100,9 +101,11 @@ class PhetioDynamicElementContainer extends PhetioObject {
     // @public (read-only) - called on disposal of an element
     this.elementDisposedEmitter = new Emitter( { parameters: [ { valueType: PhetioObject } ] } );
 
-    // Emit to the data stream on element creation/disposal
-    this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
-    this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
+    // Emit to the data stream on element creation/disposal, no need to do this in PhET brand
+    if ( Tandem.PHET_IO_ENABLED ) {
+      this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
+      this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
+    }
 
     // @private {boolean} - a way to delay creation notifications to a later time, for phet-io state engine support
     this.notificationsDeferred = false;
@@ -208,7 +211,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * Create a dynamic PhetioObject element for this container
    * @param {string} componentName
    * @param {Array.<*>} argsForCreateFunction
-   * @param {IOType} containerParameterType
+   * @param {IOType|null} containerParameterType - null in PhET brand
    * @returns {PhetioObject}
    * @public
    */
@@ -228,11 +231,16 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
     const createdObject = this.createElement( createdObjectTandem, ...argsForCreateFunction );
 
-    // Make sure the new group element matches the schema for elements.
-    validate( createdObject, containerParameterType.validator );
+    // This validation is only needed for PhET-iO brand
+    if ( Tandem.PHET_IO_ENABLED ) {
+      assert && assert( containerParameterType instanceof IOType, 'containerParameterType must be provided in PhET-iO brand' );
 
-    assert && assert( createdObject.phetioType === containerParameterType,
-      'dynamic element container expected its created instance\'s phetioType to match its parameterType.' );
+      // Make sure the new group element matches the schema for elements.
+      validate( createdObject, containerParameterType.validator );
+
+      assert && assert( createdObject.phetioType === containerParameterType,
+        'dynamic element container expected its created instance\'s phetioType to match its parameterType.' );
+    }
 
     assert && this.assertDynamicPhetioObject( createdObject );
 
@@ -245,7 +253,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @private
    */
   assertDynamicPhetioObject( phetioObject ) {
-    if ( Tandem.VALIDATION ) {
+    if ( Tandem.PHET_IO_ENABLED && Tandem.VALIDATION ) {
       assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
       assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
       assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
@@ -271,7 +279,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
   /**
    * Emit events when dynamic elements are created.
    * @param {PhetioObject} dynamicElement
-   * @public
+   * @private
    */
   createdEventListener( dynamicElement ) {
     const additionalData = dynamicElement.phetioState ? {
@@ -283,7 +291,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
   /**
    * Emit events when dynamic elements are disposed.
    * @param {PhetioObject} dynamicElement
-   * @public
+   * @private
    */
   disposedEventListener( dynamicElement ) {
     this.emitDataStreamEvent( dynamicElement, 'disposed' );

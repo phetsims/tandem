@@ -106,7 +106,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
     this.element = this.createDynamicElement(
       this.phetioDynamicElementName,
       argsForCreateFunction,
-      this.phetioType.parameterTypes[ 0 ]
+      Tandem.PHET_IO_ENABLED ? this.phetioType.parameterTypes[ 0 ] : null // Don't access phetioType in PhET brand
     );
 
     this.notifyElementCreated( this.element );
