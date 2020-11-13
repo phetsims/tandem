@@ -203,7 +203,8 @@ class IOType {
   }
 
   /**
-   * Convenience method for creating an IOType that forwards its state methods over to be handled by the core type.
+   * Convenience method for creating an IOType that forwards its state methods over to be handled by the core type. This
+   * function will gracefully forward any supported deserialization methods, but requires the CoreType to have `toStateObject`.
    * @public
    * @param {string} ioTypeName - see IOType constuctor for details
    * @param {function} CoreType - the PhET "core" type class/constructor associated with this IOType being created
@@ -219,12 +220,38 @@ class IOType {
       assert && assert( !options.hasOwnProperty( 'applyState' ), 'fromCoreType sets its own applyState' );
     }
 
-    return new IOType( ioTypeName, merge( {
+    let coreTypeHasToStateObject = false;
+    let coreTypeHasApplyState = false;
+
+    let proto = CoreType.prototype;
+    while ( proto ) {
+      if ( typeof proto.toStateObject === 'function' ) {
+        coreTypeHasToStateObject = true;
+      }
+      if ( typeof proto.applyState === 'function' ) {
+        coreTypeHasApplyState = true;
+      }
+      proto = Object.getPrototypeOf( proto );
+    }
+
+    assert && assert( coreTypeHasToStateObject, 'toStateObject is required to be on the CoreType' );
+
+    options = merge( {
       valueType: CoreType,
-      toStateObject: coreType => coreType.toStateObject(),
-      stateToArgsForConstructor: CoreType.stateToArgsForConstructor,
-      applyState: ( coreType, stateObject ) => coreType.applyState( stateObject )
-    }, options ) );
+      toStateObject: coreType => coreType.toStateObject()
+    }, options );
+
+    if ( coreTypeHasApplyState ) {
+      options.applyState = ( coreType, stateObject ) => coreType.applyState( stateObject );
+    }
+    if ( CoreType.fromStateObject ) {
+      options.fromStateObject = CoreType.fromStateObject;
+    }
+    if ( CoreType.stateToArgsForConstructor ) {
+      options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
+    }
+
+    return new IOType( ioTypeName, options );
   }
 }
 
