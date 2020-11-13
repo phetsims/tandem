@@ -20,8 +20,8 @@ import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 
-// {Object.<parameterTypeName:string, IOType>} - Cache each parameterized NullableIO so that it is only created once
-const cache = {};
+// {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once
+const cache = new Map();
 
 /**
  * Parametric type constructor function, do not use `new`
@@ -31,8 +31,8 @@ const cache = {};
 const NullableIO = parameterType => {
   assert && assert( parameterType, 'NullableIO needs parameterType' );
 
-  if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-    cache[ parameterType.typeName ] = new IOType( `NullableIO<${parameterType.typeName}>`, {
+  if ( !cache.has( parameterType ) ) {
+    cache.set( parameterType, new IOType( `NullableIO<${parameterType.typeName}>`, {
       documentation: 'An IOType adding support for null in addition to the behavior of its parameter.',
       isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, parameterType.validator ),
       parameterTypes: [ parameterType ],
@@ -42,10 +42,10 @@ const NullableIO = parameterType => {
 
       // If the argument is null, returns null. Otherwise converts a state object to an instance of the underlying type.
       fromStateObject: stateObject => stateObject === null ? null : parameterType.fromStateObject( stateObject )
-    } );
+    } ) );
   }
 
-  return cache[ parameterType.typeName ];
+  return cache.get( parameterType );
 };
 
 tandemNamespace.register( 'NullableIO', NullableIO );

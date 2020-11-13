@@ -11,8 +11,8 @@ import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 
-// {Object.<parameterTypeName:string, IOType>} - Cache each parameterized PropertyIO so that it is only created once.
-const cache = {};
+// {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once.
+const cache = new Map();
 
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns an appropriate array IO Type.
@@ -22,8 +22,8 @@ const cache = {};
  */
 const ArrayIO = parameterType => {
   assert && assert( !!parameterType, 'parameterType should be defined' );
-  if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-    cache[ parameterType.typeName ] = new IOType( `ArrayIO<${parameterType.typeName}>`, {
+  if ( !cache.has( parameterType ) ) {
+    cache.set( parameterType, new IOType( `ArrayIO<${parameterType.typeName}>`, {
       valueType: Array,
       isValidValue: array => {
         return _.every( array, element => ValidatorDef.isValueValid( element, parameterType.validator ) );
@@ -32,10 +32,10 @@ const ArrayIO = parameterType => {
       toStateObject: array => array.map( parameterType.toStateObject ),
       fromStateObject: stateObject => stateObject.map( parameterType.fromStateObject ),
       documentation: 'IO Type for the built-in JS array type, with the element type specified.'
-    } );
+    } ) );
   }
 
-  return cache[ parameterType.typeName ];
+  return cache.get( parameterType );
 };
 
 tandemNamespace.register( 'ArrayIO', ArrayIO );

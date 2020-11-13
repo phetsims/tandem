@@ -283,8 +283,8 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   }
 }
 
-// {Object.<parameterTypeName:string, IOType>} - cache each parameterized PropertyIO so that it is only created once.
-const cache = {};
+// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
+const cache = new Map();
 
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
@@ -296,8 +296,8 @@ PhetioGroup.PhetioGroupIO = parameterType => {
 
   assert && assert( parameterType instanceof IOType, 'element type should be defined' );
 
-  if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-    cache[ parameterType.typeName ] = new IOType( `PhetioGroupIO<${parameterType.typeName}>`, {
+  if ( !cache.has( parameterType ) ) {
+    cache.set( parameterType, new IOType( `PhetioGroupIO<${parameterType.typeName}>`, {
 
       isValidValue: v => {
         const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
@@ -332,10 +332,10 @@ PhetioGroup.PhetioGroupIO = parameterType => {
 
         return groupElement;
       }
-    } );
+    } ) );
   }
 
-  return cache[ parameterType.typeName ];
+  return cache.get( parameterType );
 };
 
 tandemNamespace.register( 'PhetioGroup', PhetioGroup );

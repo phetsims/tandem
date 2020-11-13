@@ -10,8 +10,8 @@
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 
-// {Object.<parameterTypeName:string, IOType>} - cache each parameterized PropertyIO so that it is only created once
-const cache = {};
+// {Map.<parameterTypeName:string, IOType>} - cache each parameterized IOType so that it is only created once
+const cache = new Map();
 
 /**
  * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapped IO Type for
@@ -29,7 +29,7 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
   // REVIEW https://github.com/phetsims/tandem/issues/169 Why is this different than the typeName later in this file?
   const cacheKey = `${returnType.typeName}.${functionParameterTypes.map( type => type.typeName ).join( ',' )}`;
 
-  if ( !cache.hasOwnProperty( cacheKey ) ) {
+  if ( !cache.has( cacheKey ) ) {
 
     // gather a list of argument names for the documentation string
     let argsString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ', ' );
@@ -38,7 +38,7 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
     }
     const parameterTypesString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
 
-    cache[ cacheKey ] = new IOType( `FunctionIO(${parameterTypesString})=>${returnType.typeName}`, {
+    cache.set( cacheKey, new IOType( `FunctionIO(${parameterTypesString})=>${returnType.typeName}`, {
       valueType: 'function',
 
       isFunctionType: true,
@@ -51,10 +51,10 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
       documentation: 'Wrapper for the built-in JS function type.<br>' +
                      '<strong>Arguments:</strong> ' + argsString + '<br>' +
                      '<strong>Return Type:</strong> ' + returnType.typeName
-    } );
+    } ) );
   }
 
-  return cache[ cacheKey ];
+  return cache.get( cacheKey );
 };
 
 tandemNamespace.register( 'FunctionIO', FunctionIO );

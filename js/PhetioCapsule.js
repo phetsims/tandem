@@ -115,8 +115,8 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   }
 }
 
-// {Object.<parameterTypeName:string, IOType>} - cache each parameterized PropertyIO so that it is only created once.
-const cache = {};
+// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
+const cache = new Map();
 
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
@@ -129,8 +129,8 @@ PhetioCapsule.PhetioCapsuleIO = parameterType => {
 
   assert && assert( parameterType instanceof IOType, 'element type should be an IO Type' );
 
-  if ( !cache.hasOwnProperty( parameterType.typeName ) ) {
-    cache[ parameterType.typeName ] = new IOType( `PhetioCapsuleIO<${parameterType.typeName}>`, {
+  if ( !cache.has( parameterType ) ) {
+    cache.set( parameterType, new IOType( `PhetioCapsuleIO<${parameterType.typeName}>`, {
       valueType: PhetioCapsule,
       documentation: 'An array that sends notifications when its values have changed.',
       parameterTypes: [ parameterType ],
@@ -142,10 +142,10 @@ PhetioCapsule.PhetioCapsuleIO = parameterType => {
         const args = parameterType.stateToArgsForConstructor( stateObject );
         return capsule.create( args, true );
       }
-    } );
+    } ) );
   }
 
-  return cache[ parameterType.typeName ];
+  return cache.get( parameterType );
 };
 
 tandemNamespace.register( 'PhetioCapsule', PhetioCapsule );
