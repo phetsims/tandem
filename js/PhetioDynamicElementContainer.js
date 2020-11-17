@@ -95,7 +95,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
     // access should not be needed. This will only be non-null when generating the phet-io api, see createArchetype().
     this.archetype = this.createArchetype();
 
-    // @public (read-only) - subtypes expected to fire this according to indivual implementations
+    // @public (read-only) - subtypes expected to fire this according to individual implementations
     this.elementCreatedEmitter = new Emitter( { parameters: [ { valueType: PhetioObject } ] } );
 
     // @public (read-only) - called on disposal of an element
