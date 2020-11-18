@@ -10,6 +10,7 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import Emitter from '../../axon/js/Emitter.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
 import PhetioObject from './PhetioObject.js';
@@ -23,7 +24,8 @@ const METADATA_KEYS_WITH_PHET_IO_TYPE = PhetioObject.METADATA_KEYS.concat( [ 'ph
  * @param {Object} assert - from QUnit
  * @param {PhetioObjectAPI|UninstrumentedAPI} API
  * @param {string} componentName - name of component that is being tested, largely for error messages
- * @param {function():PhetioObject} createPhetioObject
+ * @param {function(Tandem,Emitter):PhetioObject} createPhetioObject - second arg is an optional disposeEmitter to add
+ *        listeners to for cleanup. The PhetioObject returned by this function will be disposed by phetioAPITest
  */
 const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
   if ( Tandem.PHET_IO_ENABLED ) {
@@ -45,8 +47,9 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
       }
     } );
 
+    const disposeEmitter = new Emitter();
     const expectedComponentTandem = Tandem.GENERAL.createTandem( componentName );
-    const expectedComponentPhetioObject = createPhetioObject( expectedComponentTandem );
+    const expectedComponentPhetioObject = createPhetioObject( expectedComponentTandem, disposeEmitter );
 
     const visit = ( phetioID, componentAPI ) => {
       window.assert && window.assert( typeof phetioID === 'string' );
@@ -107,6 +110,7 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
     visit( expectedComponentTandem.phetioID, API );
 
     expectedComponentPhetioObject.dispose();
+    disposeEmitter.emit();
     phetioAPIValidation.enabled = wasEnabled;
   }
   else {
