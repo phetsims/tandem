@@ -45,6 +45,8 @@ class PhetioObjectAPI {
 
     METADATA_KEYS_WITH_PHET_IO_TYPE.forEach( key => {
       if ( options.hasOwnProperty( key ) ) {
+
+        // @public (read-only)
         this[ key ] = options[ key ];
       }
     } );
