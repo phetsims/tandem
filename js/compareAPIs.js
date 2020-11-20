@@ -49,7 +49,7 @@ const compareAPIs = ( referenceAPI, api ) => {
   }
 
   // TODO: compare types too, https://github.com/phetsims/phet-io/issues/1657
-  // TODO: Factor out keysToCheck so it can be reused in different tests.
+  // TODO: Factor out keysToCheck so it can be reused in different tests. https://github.com/phetsims/phet-io/issues/1657
 
   return report;
 };
