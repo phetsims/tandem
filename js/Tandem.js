@@ -461,6 +461,15 @@ Tandem.GENERAL_MODEL = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.
 Tandem.GENERAL_VIEW = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
 
 /**
+ * Tandem for controller simulation elements that are general to all sims.
+ *
+ * @public
+ * @constant
+ * @type {Tandem}
+ */
+Tandem.GENERAL_CONTROLLER = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.CONTROLLER_COMPONENT_NAME );
+
+/**
  * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
  * have simulation specific elements in them. Instrument items used by all sims under `Tandem.GENERAL`. Most
  * likely simulations elements should not be directly under this, but instead either under the model or view sub

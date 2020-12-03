@@ -24,6 +24,7 @@
   const HOME_SCREEN_COMPONENT_NAME = 'homeScreen';
   const MODEL_COMPONENT_NAME = 'model';
   const VIEW_COMPONENT_NAME = 'view';
+  const CONTROLLER_COMPONENT_NAME = 'controller';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -186,7 +187,7 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The separator used to piece together a phet-io ID.
-     * @type {String}
+     * @type {string}
      * @constant
      * @public
      */
@@ -195,7 +196,7 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The separator used to specify the count of a element in a group.
-     * @type {String}
+     * @type {string}
      * @constant
      * @public
      */
@@ -204,7 +205,7 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The component name for the id section that holds phet-io elements general to all simulations.
-     * @type {String}
+     * @type {string}
      * @constant
      * @public
      */
@@ -213,7 +214,7 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The component name for the id section that holds simulation specific elements that don't belong in a screen.
-     * @type {String}
+     * @type {string}
      * @constant
      * @public
      */
@@ -222,7 +223,7 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The component name for the id section that holds the home screen.
-     * @type {String}
+     * @type {string}
      * @constant
      * @public
      */
@@ -231,7 +232,7 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The component name for an id section that holds model specific elements.
-     * @type {String}
+     * @type {string}
      * @constant
      * @public
      */
@@ -240,10 +241,19 @@
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
      * The component name for an id section that holds view specific elements.
-     * @type {String}
+     * @type {string}
      * @constant
      * @public
      */
-    VIEW_COMPONENT_NAME: VIEW_COMPONENT_NAME
+    VIEW_COMPONENT_NAME: VIEW_COMPONENT_NAME,
+
+    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    /**
+     * The component name for an id section that holds controller specific elements.
+     * @type {string}
+     * @constant
+     * @public
+     */
+    CONTROLLER_COMPONENT_NAME: CONTROLLER_COMPONENT_NAME
   };
 } )();
