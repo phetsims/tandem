@@ -363,7 +363,6 @@ inherit( Object, PhetioObject, {
    * @public
    */
   phetioStartEvent: function( event, options ) {
-
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
       // only one or the other can be provided
