@@ -351,7 +351,7 @@ class Tandem {
   /**
    * After all listeners have been added, then Tandem can be launched.  This registers all of the buffered PhetioObjects
    * and subsequent PhetioObjects will be registered directly.
-   * @public
+   * @public (phetioEngine PhetioObjectTests)
    * @static
    */
   static launch() {

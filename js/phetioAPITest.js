@@ -74,6 +74,10 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
             // intermediate phetioID)
             assert.ok( phetioObject, `missing phetioObject for phetioID: ${phetioID}, for component test: ${componentName}` );
 
+            if ( !phetioObject ) {
+              return;
+            }
+
             // forward the LinkedElementIO onto the element that is linked to, since it should be validated as if it
             // was the linked element.
             if ( phetioObject.phetioType === LinkedElementIO ) {
