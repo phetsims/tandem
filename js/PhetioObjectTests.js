@@ -72,51 +72,6 @@ Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instru
   }, 'Should throw an assertion because you should not link elements before instrumentation' );
 } );
 
-QUnit.test( 'PhetioObject.isDynamicElement', assert => {
-  const test1 = Tandem.GENERAL.createTandem( 'test1' );
-  const parentTandem = test1.createTandem( 'parent' );
-  const child1Tandem = parentTandem.createTandem( 'child1' );
-  const child2Tandem = parentTandem.createTandem( 'child2' );
-  const child1 = new PhetioObject( {
-    tandem: child1Tandem
-  } );
-  const grandChild1 = new PhetioObject( {
-    tandem: child1Tandem.createTandem( 'grandChild' )
-  } );
-  assert.ok( !child1.phetioDynamicElement, 'direct child not dynamic before parent created' );
-  assert.ok( !grandChild1.phetioDynamicElement, 'grandchild not dynamic before parent created' );
-
-  const parent = new PhetioObject( {
-    tandem: parentTandem,
-    phetioDynamicElement: true
-  } );
-  assert.ok( parent.phetioDynamicElement, 'parent should be dynamic when marked dynamic' );
-
-  // This will only happen in phet-io brand
-  if ( Tandem.PHET_IO_ENABLED ) {
-
-    assert.ok( child1.phetioDynamicElement, 'direct child before parent creation' );
-    assert.ok( grandChild1.phetioDynamicElement, 'descendant child before parent creation' );
-
-    const child2 = new PhetioObject( {
-      tandem: parentTandem.createTandem( 'child2' )
-    } );
-
-    const grandChild2 = new PhetioObject( {
-      tandem: child2Tandem.createTandem( 'grandChild' )
-    } );
-
-    assert.ok( child2.phetioDynamicElement, 'direct child after parent creation' );
-    assert.ok( grandChild2.phetioDynamicElement, 'descendant child after parent creation' );
-
-    child2.markDynamicElementArchetype();
-
-    assert.ok( !child2.phetioDynamicElement, 'Not dynamic if archetype: direct child after parent creation' );
-    assert.ok( !grandChild2.phetioDynamicElement, 'Not dynamic if archetype: descendant child after parent creation' );
-  }
-
-} );
-
 QUnit.test( 'archetype bugginess when Tandem is not launched yet', assert => {
 
   // reset Tandem launch status to make sure that nothing goes through to phetioEngine in this test until launched again.
@@ -145,3 +100,51 @@ QUnit.test( 'PhetioObject PhET-iO API validation', assert => {
     tandem: tandem
   } ) );
 } );
+
+if ( Tandem.PHET_IO_ENABLED ) {
+
+  // isDynamicElement is not set in phet brand
+  QUnit.test( 'PhetioObject.isDynamicElement', assert => {
+    const test1 = Tandem.GENERAL.createTandem( 'test1' );
+    const parentTandem = test1.createTandem( 'parent' );
+    const child1Tandem = parentTandem.createTandem( 'child1' );
+    const child2Tandem = parentTandem.createTandem( 'child2' );
+    const child1 = new PhetioObject( {
+      tandem: child1Tandem
+    } );
+    const grandChild1 = new PhetioObject( {
+      tandem: child1Tandem.createTandem( 'grandChild' )
+    } );
+    assert.ok( !child1.phetioDynamicElement, 'direct child not dynamic before parent created' );
+    assert.ok( !grandChild1.phetioDynamicElement, 'grandchild not dynamic before parent created' );
+
+    const parent = new PhetioObject( {
+      tandem: parentTandem,
+      phetioDynamicElement: true
+    } );
+    assert.ok( parent.phetioDynamicElement, 'parent should be dynamic when marked dynamic' );
+
+    // This will only happen in phet-io brand
+    if ( Tandem.PHET_IO_ENABLED ) {
+
+      assert.ok( child1.phetioDynamicElement, 'direct child before parent creation' );
+      assert.ok( grandChild1.phetioDynamicElement, 'descendant child before parent creation' );
+
+      const child2 = new PhetioObject( {
+        tandem: parentTandem.createTandem( 'child2' )
+      } );
+
+      const grandChild2 = new PhetioObject( {
+        tandem: child2Tandem.createTandem( 'grandChild' )
+      } );
+
+      assert.ok( child2.phetioDynamicElement, 'direct child after parent creation' );
+      assert.ok( grandChild2.phetioDynamicElement, 'descendant child after parent creation' );
+
+      child2.markDynamicElementArchetype();
+
+      assert.ok( !child2.phetioDynamicElement, 'Not dynamic if archetype: direct child after parent creation' );
+      assert.ok( !grandChild2.phetioDynamicElement, 'Not dynamic if archetype: descendant child after parent creation' );
+    }
+  } );
+}
