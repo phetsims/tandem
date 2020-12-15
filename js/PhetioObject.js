@@ -13,12 +13,11 @@ import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
-import inherit from '../../phet-core/js/inherit.js';
 import merge from '../../phet-core/js/merge.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
-import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
+import phetioAPIValidation from './phetioAPIValidation.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 
@@ -82,57 +81,38 @@ const DEFAULTS = {
   phetioDynamicElement: false
 };
 
-/**
- * @param {Object} [options]
- * @constructor
- */
-function PhetioObject( options ) {
+class PhetioObject {
+  /**
+   * @param {Object} [options]
+   */
+  constructor( options ) {
 
-  // @public (read-only) {Tandem} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-  this.tandem = DEFAULTS.tandem;
+    // @public (read-only) {Tandem} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
+    this.tandem = DEFAULTS.tandem;
 
-  // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
-  // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
-  this.phetioObjectInitialized = false;
+    // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
+    // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
+    this.phetioObjectInitialized = false;
 
-  // @public (read-only) {boolean} - has it been disposed?
-  this.isDisposed = false;
+    // @public (read-only) {boolean} - has it been disposed?
+    this.isDisposed = false;
 
-  if ( options ) {
-    this.initializePhetioObject( {}, options );
-  }
+    if ( options ) {
+      this.initializePhetioObject( {}, options );
+    }
 
-  if ( assert ) {
+    if ( assert ) {
 
-    // Wrap the prototype dispose method with a check. NOTE: We will not catch devious cases where the dispose() is
-    // overridden after the Node constructor (which may happen).
-    const protoDispose = this.dispose;
-    this.dispose = () => {
-      assert && assert( !this.isDisposed, 'This PhetioObject has already been disposed, and cannot be disposed again' );
-      protoDispose.call( this );
-      assert && assert( this.isDisposed, 'PhetioObject.dispose() call is missing from an overridden dispose method' );
-    };
-  }
-}
-
-/**
- * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to
- * _.intersection( _.keys( options ), _.keys( DEFAULTS) ).length>0 but implemented imperatively to avoid memory or
- * performance issues. Also handles options.tandem differently.
- * @param {Object} [options]
- * @returns {boolean}
- */
-const specifiesNonTandemPhetioObjectKey = options => {
-  for ( const key in options ) {
-    if ( key !== 'tandem' && options.hasOwnProperty( key ) && DEFAULTS.hasOwnProperty( key ) ) {
-      return true;
+      // Wrap the prototype dispose method with a check. NOTE: We will not catch devious cases where the dispose() is
+      // overridden after the Node constructor (which may happen).
+      const protoDispose = this.dispose;
+      this.dispose = () => {
+        assert && assert( !this.isDisposed, 'This PhetioObject has already been disposed, and cannot be disposed again' );
+        protoDispose.call( this );
+        assert && assert( this.isDisposed, 'PhetioObject.dispose() call is missing from an overridden dispose method' );
+      };
     }
   }
-  return false;
-};
-
-// Since PhetioObject is extended with inherit (e.g., SCENERY/Node), this cannot be an ES6 class
-inherit( Object, PhetioObject, {
 
   /**
    * Like SCENERY/Node, PhetioObject can be configured during construction or later with a mutate call.
@@ -142,7 +122,7 @@ inherit( Object, PhetioObject, {
    * @param {Object} config
    * @protected
    */
-  initializePhetioObject: function( baseOptions, config ) {
+  initializePhetioObject( baseOptions, config ) {
     assert && assert( config, 'initializePhetioObject must be called with config' );
 
     // call before we exit early to support logging unsupplied Tandems.
@@ -287,73 +267,73 @@ inherit( Object, PhetioObject, {
     // Alert that this PhetioObject is ready for cross-frame communication (thus becoming a "PhET-iO element" on the wrapper side.
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
-  },
+  }
 
   // @public
   get phetioType() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioType only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioType;
-  },
+  }
 
   // @public
   get phetioState() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioState only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioState;
-  },
+  }
 
   // @public
   get phetioReadOnly() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioReadOnly only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioReadOnly;
-  },
+  }
 
   // @public
   get phetioDocumentation() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDocumentation only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioDocumentation;
-  },
+  }
 
   // @private
   get phetioEventType() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventType only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventType;
-  },
+  }
 
   // @private
   get phetioHighFrequency() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioHighFrequency only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioHighFrequency;
-  },
+  }
 
   // @private
   get phetioPlayback() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioPlayback only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioPlayback;
-  },
+  }
 
   // @private
   get phetioStudioControl() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioStudioControl only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioStudioControl;
-  },
+  }
 
   // @public
   get phetioDynamicElement() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDynamicElement only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioDynamicElement;
-  },
+  }
 
   // @public
   get phetioFeatured() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioFeatured only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioFeatured;
-  },
+  }
 
   // @private
   get phetioEventMetadata() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventMetadata only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventMetadata;
-  },
+  }
 
   /**
    * Start an event for the nested PhET-iO data stream.
@@ -362,7 +342,7 @@ inherit( Object, PhetioObject, {
    * @param {Object} [options]
    * @public
    */
-  phetioStartEvent: function( event, options ) {
+  phetioStartEvent( event, options ) {
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
       // only one or the other can be provided
@@ -406,14 +386,14 @@ inherit( Object, PhetioObject, {
       // https://github.com/phetsims/phet-io/issues/1693
       this.phetioPlayback && phet.phetio.dataStream.pushNonPlaybackable();
     }
-  },
+  }
 
   /**
    * End an event on the nested PhET-iO data stream. It this object was disposed or dataStream.start was not called,
    * this is a no-op.
    * @public
    */
-  phetioEndEvent: function() {
+  phetioEndEvent() {
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
       assert && assert( this.phetioMessageStack.length > 0, 'Must have messages to pop' );
@@ -426,13 +406,13 @@ inherit( Object, PhetioObject, {
       this.phetioPlayback && phet.phetio.dataStream.popNonPlaybackable();
       phet.phetio.dataStream.end( topMessageIndex );
     }
-  },
+  }
 
   /**
    * Set any instrumented descendants of this PhetioObject to the same value as this.phetioDynamicElement.
    * @private
    */
-  propagateDynamicFlagsToDescendants: function() {
+  propagateDynamicFlagsToDescendants() {
     assert && assert( Tandem.PHET_IO_ENABLED, 'phet-io should be enabled' );
     assert && assert( phet.phetio && phet.phetio.phetioEngine, 'Dynamic elements cannot be created statically before phetioEngine exists.' );
     const phetioEngine = phet.phetio.phetioEngine;
@@ -452,7 +432,7 @@ inherit( Object, PhetioObject, {
         }
       }
     } );
-  },
+  }
 
   /**
    * @param {boolean} phetioDynamicElement
@@ -473,13 +453,13 @@ inherit( Object, PhetioObject, {
     if ( this.phetioBaselineMetadata ) {
       this.phetioBaselineMetadata.phetioDynamicElement = this.phetioDynamicElement;
     }
-  },
+  }
 
   /**
    * Mark this PhetioObject as an archetype for dynamic elements.
    * @public
    */
-  markDynamicElementArchetype: function() {
+  markDynamicElementArchetype() {
     assert && assert( !this.phetioNotifiedObjectCreated, 'should not change dynamic element flags after notifying this PhetioObject\'s creation.' );
 
     this.phetioIsArchetype = true;
@@ -491,7 +471,7 @@ inherit( Object, PhetioObject, {
 
     // recompute for children also, but only if phet-io is enabled
     Tandem.PHET_IO_ENABLED && this.propagateDynamicFlagsToDescendants();
-  },
+  }
 
   /**
    * A PhetioObject will only be instrumented if the tandem that was passed in was "supplied". See Tandem.supplied
@@ -499,9 +479,9 @@ inherit( Object, PhetioObject, {
    * @returns {boolean}
    * @public
    */
-  isPhetioInstrumented: function() {
+  isPhetioInstrumented() {
     return this.tandem && this.tandem.supplied;
-  },
+  }
 
   /**
    * When an instrumented PhetioObject is linked with another instrumented PhetioObject, this creates a one-way
@@ -513,7 +493,7 @@ inherit( Object, PhetioObject, {
    * @param {Object} [options]
    * @public
    */
-  addLinkedElement: function( element, options ) {
+  addLinkedElement( element, options ) {
     if ( !this.isPhetioInstrumented() ) {
 
       // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrument
@@ -530,7 +510,7 @@ inherit( Object, PhetioObject, {
       assert && assert( Array.isArray( this.linkedElements ), 'linkedElements should be an array' );
       this.linkedElements.push( new LinkedElement( element, options ) );
     }
-  },
+  }
 
   /**
    * Remove all linked elements linking to the provided PhetioObject. This will dispose all removed LinkedElements. This
@@ -539,7 +519,7 @@ inherit( Object, PhetioObject, {
    * @param {PhetioObject} potentiallyLinkedElement
    * @public
    */
-  removeLinkedElements: function( potentiallyLinkedElement ) {
+  removeLinkedElements( potentiallyLinkedElement ) {
     if ( this.isPhetioInstrumented() && this.linkedElements ) {
       assert && assert( potentiallyLinkedElement instanceof PhetioObject );
       assert && assert( potentiallyLinkedElement.isPhetioInstrumented() );
@@ -550,25 +530,25 @@ inherit( Object, PhetioObject, {
         arrayRemove( this.linkedElements, linkedElement );
       } );
     }
-  },
+  }
 
   /**
    * Performs cleanup after the sim's construction has finished.
    *
    * @public
    */
-  onSimulationConstructionCompleted: function() {
+  onSimulationConstructionCompleted() {
 
     // deletes the phetioBaselineMetadata, as it's no longer needed since validation is complete.
     this.phetioBaselineMetadata = null;
-  },
+  }
 
   /**
    * Remove this phetioObject from PhET-iO. After disposal, this object is no longer interoperable. Also release any
    * other references created during its lifetime.
    * @public
    */
-  dispose: function() {
+  dispose() {
     assert && assert( !this.isDisposed, 'PhetioObject can only be disposed once' );
 
     // In order to support the structured data stream, PhetioObjects must end the messages in the correct
@@ -595,7 +575,7 @@ inherit( Object, PhetioObject, {
     }
 
     this.isDisposed = true;
-  },
+  }
 
   /**
    * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
@@ -606,7 +586,7 @@ inherit( Object, PhetioObject, {
    * @returns {Object} - metadata plucked from the passed in parameter
    * @public
    */
-  getMetadata: function( object ) {
+  getMetadata( object ) {
     object = object || this;
     const metadata = {
       phetioTypeName: object.phetioType.typeName,
@@ -626,27 +606,45 @@ inherit( Object, PhetioObject, {
     }
     return metadata;
   }
-}, {
 
-  DEFAULT_OPTIONS: DEFAULTS, // the default options for the phet-io object
+}
 
-  // THe keys that constitute the publicly available PHET-iO metadata for the PhetioObject.
-  METADATA_KEYS: [
-    'phetioTypeName',
-    'phetioDocumentation',
-    'phetioState',
-    'phetioReadOnly',
-    'phetioEventType',
-    'phetioHighFrequency',
-    'phetioPlayback',
-    'phetioStudioControl',
-    'phetioDynamicElement',
-    'phetioIsArchetype',
-    'phetioFeatured',
-    'phetioArchetypePhetioID'
-  ]
-} );
 
+PhetioObject.DEFAULT_OPTIONS = DEFAULTS; // the default options for the phet-io object
+
+// THe keys that constitute the publicly available PHET-iO metadata for the PhetioObject.
+PhetioObject.METADATA_KEYS = [
+  'phetioTypeName',
+  'phetioDocumentation',
+  'phetioState',
+  'phetioReadOnly',
+  'phetioEventType',
+  'phetioHighFrequency',
+  'phetioPlayback',
+  'phetioStudioControl',
+  'phetioDynamicElement',
+  'phetioIsArchetype',
+  'phetioFeatured',
+  'phetioArchetypePhetioID'
+];
+
+/**
+ * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to
+ * _.intersection( _.keys( options ), _.keys( DEFAULTS) ).length>0 but implemented imperatively to avoid memory or
+ * performance issues. Also handles options.tandem differently.
+ * @param {Object} [options]
+ * @returns {boolean}
+ */
+const specifiesNonTandemPhetioObjectKey = options => {
+  for ( const key in options ) {
+    if ( key !== 'tandem' && options.hasOwnProperty( key ) && DEFAULTS.hasOwnProperty( key ) ) {
+      return true;
+    }
+  }
+  return false;
+};
+
+// Since PhetioObject is extended with inherit (e.g., SCENERY/Node), this cannot be an ES6 class
 /**
  * Internal class to avoid cyclic dependencies.
  * @private
