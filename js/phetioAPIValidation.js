@@ -275,27 +275,20 @@ class PhetioAPIValidation {
             ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
           } );
         }
-        else if ( this.loadedReferenceAPI ) {
+        else {
 
           // Compare the dynamic element to the archetype in to the loaded reference API, if specified
           const archetypeID = phetioObject.tandem.getArchetypalPhetioID();
-          const archetypeMetadata = this.loadedReferenceAPI.phetioElements[ archetypeID ];
-          const actualMetadata = phetioObject.getMetadata();
 
-          KEYS_TO_CHECK.forEach( key => {
+          // Compare the dynamic element to the archetype in to the loaded reference API, if specified
+          if ( this.loadedReferenceAPI ) {
+            checkDynamicInstanceAgainstArchetype( this, phetioObject, this.loadedReferenceAPI.phetioElements[ archetypeID ], 'reference API' );
+          }
+          if ( phet.preloads.phetio.createArchetypes ) {
 
-            // These attributes are different for archetype vs actual
-            if ( key !== 'phetioDynamicElement' && key !== 'phetioArchetypePhetioID' && key !== 'phetioIsArchetype' ) {
-
-              if ( archetypeMetadata[ key ] !== actualMetadata[ key ] ) {
-                this.assertAPIError( {
-                  phetioID: phetioObject.tandem.phetioID,
-                  ruleInViolation: '11. Dynamic element metadata should match the archetype in the API.',
-                  message: 'mismatched metadata: ' + key
-                } );
-              }
-            }
-          } );
+            // Compare to the simulation-defined archetype, if it exists
+            checkDynamicInstanceAgainstArchetype( this, phetioObject, phet.phetio.phetioEngine.getPhetioObject( archetypeID ).getMetadata(), 'simulation archetype' );
+          }
         }
       } );
     }
@@ -371,6 +364,31 @@ class PhetioAPIValidation {
     assert && assert( false, 'PhET-iO API error:\n' + mismatchMessage );
   }
 }
+
+/**
+ * Compare a dynamic phetioObject's metadata to the expected metadata
+ * @param {phetioAPIValidation} phetioAPIValidation
+ * @param {PhetioObject} phetioObject
+ * @param {Object} archetypeMetadata - either from a reference API or from an archetype
+ * @param {string} source - where the archetype came from, for debugging
+ */
+const checkDynamicInstanceAgainstArchetype = ( phetioAPIValidation, phetioObject, archetypeMetadata, source ) => {
+  const actualMetadata = phetioObject.getMetadata();
+  KEYS_TO_CHECK.forEach( key => {
+
+    // These attributes are different for archetype vs actual
+    if ( key !== 'phetioDynamicElement' && key !== 'phetioArchetypePhetioID' && key !== 'phetioIsArchetype' ) {
+
+      if ( archetypeMetadata[ key ] !== actualMetadata[ key ] ) {
+        phetioAPIValidation.assertAPIError( {
+          phetioID: phetioObject.tandem.phetioID,
+          ruleInViolation: '11. Dynamic element metadata should match the archetype from the ' + source,
+          message: 'mismatched metadata: ' + key
+        } );
+      }
+    }
+  } );
+};
 
 const phetioAPIValidation = new PhetioAPIValidation();
 tandemNamespace.register( 'phetioAPIValidation', phetioAPIValidation );
