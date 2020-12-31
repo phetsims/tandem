@@ -68,6 +68,12 @@ class IOType {
       // {string[]} The list of events that can be emitted at this level (does not include events from supertypes).
       events: [],
 
+      // {string[]} The list of metadata keys that this IO Type adds to the metadata for its instances. If anything is
+      // provided here, then corresponding PhetioObjects that use this IOType should override PhetioObject.getMetadata()
+      // to add what keys they need for their specific type. It is HIGHLY recommended that you do not overwrite any
+      // metadata key defined by a parent.
+      metadataKeys: [],
+
       // {string} IO Types can specify the order that methods appear in the documentation by putting their names in this
       // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
       // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
@@ -110,6 +116,8 @@ class IOType {
     }, required( config ) );
 
     assert && assert( ValidatorDef.containsValidatorKey( config ), 'Validator is required' );
+    assert && assert( Array.isArray( config.events ) );
+    assert && assert( Array.isArray( config.metadataKeys ) );
 
     // @public (read-only)
     this.supertype = supertype;
@@ -117,6 +125,7 @@ class IOType {
     this.documentation = config.documentation;
     this.methods = config.methods;
     this.events = config.events;
+    this.metadataKeys = config.metadataKeys;
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
@@ -173,8 +182,13 @@ class IOType {
     if ( supertype ) {
       const typeHierarchy = supertype.getTypeHierarchy();
       assert && this.events && this.events.forEach( event => {
-        const has = _.some( typeHierarchy, t => t.events.includes( event ) );
-        assert( !has, 'this should not declare event that parent also has: ' + event );
+        assert( !_.some( typeHierarchy, t => t.events.includes( event ) ),
+          'this IOType should not declare event that parent also has: ' + event );
+      } );
+
+      assert && this.metadataKeys && this.metadataKeys.forEach( metadataKey => {
+        assert( !_.some( typeHierarchy, t => t.metadataKeys.includes( metadataKey ) ),
+          'this IOType should not declare  a metadataKey that parent also has: ' + metadataKey );
       } );
     }
     else {
@@ -262,7 +276,21 @@ ObjectIO = new IOType( 'ObjectIO', {
   toStateObject: coreObject => coreObject,
   fromStateObject: stateObject => stateObject,
   stateToArgsForConstructor: stateObject => [],
-  applyState: ( coreObject, stateObject ) => { }
+  applyState: ( coreObject, stateObject ) => { },
+  metadataKeys: [
+    'phetioTypeName',
+    'phetioDocumentation',
+    'phetioState',
+    'phetioReadOnly',
+    'phetioEventType',
+    'phetioHighFrequency',
+    'phetioPlayback',
+    'phetioStudioControl',
+    'phetioDynamicElement',
+    'phetioIsArchetype',
+    'phetioFeatured',
+    'phetioArchetypePhetioID' // though this will only be present for dynamic elements
+  ]
 } );
 
 // @public

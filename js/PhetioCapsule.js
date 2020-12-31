@@ -134,6 +134,7 @@ PhetioCapsule.PhetioCapsuleIO = parameterType => {
       valueType: PhetioCapsule,
       documentation: 'An array that sends notifications when its values have changed.',
       parameterTypes: [ parameterType ],
+      metadataKeys: [ 'phetioDynamicElementName' ],
       addChildElement( capsule, componentName, stateObject ) {
 
         // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another

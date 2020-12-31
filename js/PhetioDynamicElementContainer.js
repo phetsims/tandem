@@ -410,6 +410,19 @@ class PhetioDynamicElementContainer extends PhetioObject {
     assert && assert( this.deferredDisposals.length === 0, 'disposals should be clear' );
     this.notificationsDeferred = notificationsDeferred;
   }
+
+  /**
+   * @public - add the phetioDynamicElementName for API tracking
+   * @param {Object} [object]
+   * @override
+   */
+  getMetadata( object ) {
+    const metadata = super.getMetadata( object );
+    assert && assert( !metadata.hasOwnProperty( 'phetioDynamicElementName' ),
+      'PhetioDynamicElementContainer sets the phetioDynamicElementName metadata key' );
+    metadata.phetioDynamicElementName = this.phetioDynamicElementName;
+    return metadata;
+  }
 }
 
 tandemNamespace.register( 'PhetioDynamicElementContainer', PhetioDynamicElementContainer );

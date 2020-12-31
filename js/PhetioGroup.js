@@ -304,6 +304,7 @@ PhetioGroup.PhetioGroupIO = parameterType => {
         return v instanceof PhetioGroup;
       },
       documentation: 'An array that sends notifications when its values have changed.',
+      metadataKeys: [ 'phetioDynamicElementName' ],
       parameterTypes: [ parameterType ],
 
       /**
