@@ -362,6 +362,9 @@ class PhetioObject {
       assert && options.getData && assert( typeof options.getData === 'function' );
       assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
 
+      // If you hit this, then it is likely related to https://github.com/phetsims/scenery/issues/1124 and we would like to know about it!
+      assert && assert( phet.phetio.dataStream, 'trying to create an event before the data stream exists');
+
       // Opt out of certain events if queryParameter override is provided. Even for a low frequency data stream, high
       // frequency events can still be emitted when they have a low frequency ancestor.
       const skipHighFrequencyEvent = this.phetioHighFrequency &&
