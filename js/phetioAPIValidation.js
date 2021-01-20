@@ -382,7 +382,8 @@ const checkDynamicInstanceAgainstArchetype = ( phetioAPIValidation, phetioObject
       if ( archetypeMetadata[ key ] !== actualMetadata[ key ] ) {
         phetioAPIValidation.assertAPIError( {
           phetioID: phetioObject.tandem.phetioID,
-          ruleInViolation: '11. Dynamic element metadata should match the archetype from the ' + source,
+          ruleInViolation: '11. Dynamic element metadata should match the archetype in the API.',
+          source: source,
           message: 'mismatched metadata: ' + key
         } );
       }
