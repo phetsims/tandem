@@ -9,8 +9,10 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import ValueIO from './ValueIO.js';
 
 const StringIO = new IOType( 'StringIO', {
+  supertype: ValueIO,
   valueType: 'string',
   documentation: 'IO Type for Javascript\'s string primitive type'
 } );

@@ -9,8 +9,10 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import ValueIO from './ValueIO.js';
 
 const BooleanIO = new IOType( 'BooleanIO', {
+  supertype: ValueIO,
   valueType: 'boolean',
   documentation: 'IO Type for Javascript\'s boolean primitive type'
 } );
