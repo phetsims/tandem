@@ -26,7 +26,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
 
   /**
    * @param {function(Tandem, ...):PhetioObject} createElement - function that creates the encapsulated element
-   * @param {Array<*>|function():Array<*>} defaultArguments - arguments passed to createElement when creating the archetype
+   * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype
    * @param {Object} [options]
    */
   constructor( createElement, defaultArguments, options ) {
