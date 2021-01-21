@@ -273,8 +273,8 @@ ObjectIO = new IOType( 'ObjectIO', {
   isValidValue: () => true,
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',
-  toStateObject: coreObject => coreObject,
-  fromStateObject: stateObject => stateObject,
+  toStateObject: coreObject => null,
+  fromStateObject: stateObject => null,
   stateToArgsForConstructor: stateObject => [],
   applyState: ( coreObject, stateObject ) => { },
   metadataKeys: [
