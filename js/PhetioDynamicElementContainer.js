@@ -176,7 +176,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
    * Archetypes are created to generate the baseline file, or to validate against an existing baseline file.  They are
-   * PhetioObjects and registered with the phetioEngine, but not send out via notifications for phetioObjectAddedListeners,
+   * PhetioObjects and registered with the phetioEngine, but not send out via notifications from PhetioEngine.phetioElementAddedEmitter(),
    * because they are intended for internal usage only.  Archetypes should not be created in production code.
    * @returns {null|PhetioObject}
    * @private
