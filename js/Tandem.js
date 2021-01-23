@@ -309,8 +309,8 @@ class Tandem {
 
   /**
    * Creates a group tandem for creating multiple indexed child tandems, such as:
-   * sim.screen.model.electrons~0
-   * sim.screen.model.electrons~1
+   * sim.screen.model.electron0
+   * sim.screen.model.electron1
    *
    * In this case, 'sim.screen.model.electron' is the string passed to createGroupTandem.
    *
@@ -318,13 +318,9 @@ class Tandem {
    * have unique identifiers.
    * @param {string} name
    * @returns {GroupTandem}
-   * @deprecated - use PhetioGroup instead
    * @public
    */
   createGroupTandem( name ) {
-
-    assert && deprecationWarning( 'Tandem.createGroupTandem is deprecated, please use PhetioGroup instead' );
-
     if ( this.children[ name ] ) {
       return this.children[ name ];
     }
@@ -558,7 +554,6 @@ Tandem.VALIDATION = VALIDATION;
 
 /**
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
- * TODO: Replace GroupTandem usages with DynamicTandem, see https://github.com/phetsims/tandem/issues/87
  */
 class GroupTandem extends Tandem {
 
@@ -566,13 +561,10 @@ class GroupTandem extends Tandem {
    * @param {Tandem} parentTandem
    * @param {string} name
    * @constructor
-   * @deprecated - see PhetioGroup.js for the way of the future
    * @private create with Tandem.createGroupTandem
    */
   constructor( parentTandem, name ) {
     super( parentTandem, name );
-
-    assert && deprecationWarning( 'GroupTandem is deprecated, please use PhetioGroup instead' );
 
     // @private
     this.groupName = name;
@@ -587,7 +579,9 @@ class GroupTandem extends Tandem {
    * @public
    */
   createNextTandem() {
-    return this.parentTandem.createTandem( this.groupName + '~' + ( this.groupMemberIndex++ ) );
+    const tandem = this.parentTandem.createTandem( `${this.groupName}${this.groupMemberIndex}` );
+    this.groupMemberIndex++;
+    return tandem;
   }
 }
 
