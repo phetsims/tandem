@@ -9,7 +9,6 @@
  */
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
-import deprecationWarning from '../../phet-core/js/deprecationWarning.js';
 import merge from '../../phet-core/js/merge.js';
 import tandemNamespace from './tandemNamespace.js';
 
@@ -368,29 +367,6 @@ class Tandem {
   static unlaunch() {
     Tandem.launched = false;
     bufferedPhetioObjects.length = 0;
-  }
-
-  /**
-   * Given a phetioID, recursively create the Tandem structure needed to return a {Tandem} with the given phetioID.
-   * This method is mostly to support a deprecated way of handling groups and state, please see @zepumph or @samreid
-   * before using.
-   * @deprecated
-   * @param {string} phetioID
-   * @returns {Tandem}
-   * @public
-   */
-  static createFromPhetioID( phetioID ) {
-
-    assert && deprecationWarning( 'Tandem.createFromPhetioID is deprecated, please use tandem.createTandem() instead' );
-
-    return phetioID.split( '.' ).reduce( ( tandem, nextComponent ) => {
-
-      // first call case where tandem starts as the first string in the list
-      if ( typeof tandem === 'string' ) {
-        tandem = Tandem.ROOT;
-      }
-      return tandem.createTandem( nextComponent );
-    } );
   }
 }
 
