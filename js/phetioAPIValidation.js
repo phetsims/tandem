@@ -230,11 +230,7 @@ class PhetioAPIValidation {
     const phetioID = phetioObject.tandem.phetioID;
 
     // if it isn't dynamic, then it shouldn't be removed during the lifetime of the sim.
-    if ( !phetioObject.phetioDynamicElement &&
-
-         // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
-         phetioID.indexOf( '~' ) === -1
-    ) {
+    if ( !phetioObject.phetioDynamicElement ) {
       this.assertAPIError( {
         phetioID: phetioID,
         ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.'
@@ -259,10 +255,7 @@ class PhetioAPIValidation {
       this.everyPhetioType[ newPhetioType.typeName ] = newPhetioType;
     }
 
-    if ( this.simHasStarted &&
-
-         // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
-         phetioObject.tandem.phetioID.indexOf( '~' ) === -1 ) {
+    if ( this.simHasStarted ) {
 
       // Here we need to kick this validation to the next frame to support construction in any order. Parent first, or
       // child first. Use namespace to avoid because timer is a PhetioObject.

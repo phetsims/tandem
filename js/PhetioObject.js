@@ -187,23 +187,18 @@ class PhetioObject {
                                   }, config ) ) :
                                   null;
 
-    // If not a deprecated dynamic element
-    // TODO: Remove '~' check once TANDEM/Tandem.GroupTandem usages have been replaced, see https://github.com/phetsims/tandem/issues/87
-    if ( config.tandem.phetioID.indexOf( '~' ) === -1 ) {
+    // Dynamic elements should compare to their "archetypal" counterparts.  For example, this means that a Particle
+    // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
+    const archetypalPhetioID = config.tandem.getArchetypalPhetioID();
 
-      // Dynamic elements should compare to their "archetypal" counterparts.  For example, this means that a Particle
-      // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
-      const archetypalPhetioID = config.tandem.getArchetypalPhetioID();
+    // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
+    // Patch in the desired values from overrides, if any.
+    if ( window.phet.preloads.phetio.phetioElementsOverrides ) {
+      const overrides = window.phet.preloads.phetio.phetioElementsOverrides[ archetypalPhetioID ];
+      if ( overrides ) {
 
-      // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
-      // Patch in the desired values from overrides, if any.
-      if ( window.phet.preloads.phetio.phetioElementsOverrides ) {
-        const overrides = window.phet.preloads.phetio.phetioElementsOverrides[ archetypalPhetioID ];
-        if ( overrides ) {
-
-          // No need to make a new object, since this "config" variable was created in the previous merge call above.
-          config = merge( config, overrides );
-        }
+        // No need to make a new object, since this "config" variable was created in the previous merge call above.
+        config = merge( config, overrides );
       }
     }
 
@@ -363,7 +358,7 @@ class PhetioObject {
       assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
 
       // If you hit this, then it is likely related to https://github.com/phetsims/scenery/issues/1124 and we would like to know about it!
-      assert && assert( phet.phetio.dataStream, 'trying to create an event before the data stream exists');
+      assert && assert( phet.phetio.dataStream, 'trying to create an event before the data stream exists' );
 
       // Opt out of certain events if queryParameter override is provided. Even for a low frequency data stream, high
       // frequency events can still be emitted when they have a low frequency ancestor.
