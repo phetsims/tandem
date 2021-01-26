@@ -17,15 +17,12 @@ import IOType from './types/IOType.js';
 // constants -  phetioType is not a metadata key, as it is exchanged for just its typeName, see PhetioObject
 const METADATA_KEYS_WITH_PHET_IO_TYPE = PhetioObject.METADATA_KEYS.concat( [ 'phetioType' ] );
 
-// TODO: Should we separate new Specification() from test(instance), see https://github.com/phetsims/phet-io/issues/1657
-
 class PhetioObjectSpecification extends ObjectSpecification {
 
   /**
-   * @param {PhetioObject} phetioObject
    * @param {Object} [options]
    */
-  constructor( phetioObject, options ) {
+  constructor( options ) {
 
     // Purposefully duplicated from PhetioObject to provide a declarative base API for PhetioObject Metadata.
     options = merge( {}, {
@@ -48,15 +45,19 @@ class PhetioObjectSpecification extends ObjectSpecification {
 
     super( options );
 
-    assert && assert( Object.getPrototypeOf( options ) === Object.prototype, 'no extra prototype allowed on ' );
+    assert && assert( Object.getPrototypeOf( options ) === Object.prototype, 'no extra prototype allowed' );
+  }
+
+  // @public
+  test( phetioObject ) {
 
     // Instrumented AquaRadioButtons should have an instrumented fireListener
-    if ( Tandem.VALIDATION && options.tandem.supplied ) {
+    if ( Tandem.VALIDATION && this.options.tandem.supplied ) {
       assert && assert( phetioObject.isPhetioInstrumented(), 'Specification required the phetioObject to be instrumented' );
 
       METADATA_KEYS_WITH_PHET_IO_TYPE.forEach( key => {
-        if ( options.hasOwnProperty( key ) ) {
-          assert && assert( phetioObject[ key ] === options[ key ], `Specification required ${key}=${options[ key ]}, but it was ${phetioObject[ key ]}` );
+        if ( this.options.hasOwnProperty( key ) ) {
+          assert && assert( phetioObject[ key ] === this.options[ key ], `Specification required ${key}=${this.options[ key ]}, but it was ${phetioObject[ key ]}` );
         }
       } );
     }
