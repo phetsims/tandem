@@ -39,7 +39,7 @@ class PhetioObjectSpecification extends ObjectSpecification {
       phetioStudioControl: true,
       phetioFeatured: false,
       phetioEventMetadata: null,
-      phetioDynamicElement: false,
+      // phetioDynamicElement: false, // Not checked because it is overriden by parent recursion--not set in the options
       tandem: Tandem.OPTIONAL
     }, options );
 
