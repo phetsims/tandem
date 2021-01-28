@@ -72,36 +72,40 @@ Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instru
   }, 'Should throw an assertion because you should not link elements before instrumentation' );
 } );
 
-QUnit.test( 'archetype bugginess when Tandem is not launched yet', assert => {
-
-  // reset Tandem launch status to make sure that nothing goes through to phetioEngine in this test until launched again.
-  Tandem.unlaunch();
-
-  assert.ok( true, 'initial test' );
-
-  const object1Tandem = Tandem.GENERAL.createTandem( 'object1' );
-  const phetioObject1 = new PhetioObject( { tandem: object1Tandem } );
-  assert.ok( !phetioObject1.phetioIsArchetype, 'should not be an archetype before marking' );
-  phetioObject1.markDynamicElementArchetype();
-  assert.ok( phetioObject1.phetioIsArchetype, 'should be an archetype after marking' );
-
-  const phetioObject1Child = new PhetioObject( { tandem: object1Tandem.createTandem( 'child' ) } );
-  assert.ok( !phetioObject1Child.phetioIsArchetype, 'cannot be an archetype until tandem is launched because nothing is in the map' );
-
-  // launch to make sure tandem registration fires listeners
-  Tandem.launch();
-
-  // TODO Failing! because Tandem.launch() doesn't recalculate phetioIsArchetype, see https://github.com/phetsims/tandem/issues/147
-  // assert.ok( phetioObject1Child.phetioIsArchetype, 'should be an archetype now that tandem is launched' );
-} );
-
-QUnit.test( 'PhetioObject PhET-iO API validation', assert => {
-  phetioAPITest( assert, new PhetioObjectAPI(), 'phetioObject', tandem => new PhetioObject( {
-    tandem: tandem
-  } ) );
-} );
-
 if ( Tandem.PHET_IO_ENABLED ) {
+
+  QUnit.test( 'archetype bugginess when Tandem is not launched yet', assert => {
+
+    // reset Tandem launch status to make sure that nothing goes through to phetioEngine in this test until launched again.
+    Tandem.unlaunch();
+
+    assert.ok( true, 'initial test' );
+
+    const object1Tandem = Tandem.GENERAL.createTandem( 'object1' );
+    const phetioObject1 = new PhetioObject( { tandem: object1Tandem } );
+    assert.ok( !phetioObject1.phetioIsArchetype, 'should not be an archetype before marking' );
+
+    const phetioObject1Child = new PhetioObject( { tandem: object1Tandem.createTandem( 'child' ) } );
+
+    phetioObject1.markDynamicElementArchetype();
+
+    assert.ok( phetioObject1.phetioIsArchetype, 'should be an archetype after marking' );
+
+    // This should actually automatically take effect when we hit markDynamicElementArchetype!
+    assert.ok( phetioObject1Child.phetioIsArchetype, 'should look in the tandem buffered elements when it is not in the map' );
+
+    // launch to make sure tandem registration fires listeners
+    Tandem.launch();
+
+    assert.ok( phetioObject1.phetioIsArchetype, 'phetioIsArchetype should not have changed after launching' );
+    assert.ok( phetioObject1Child.phetioIsArchetype, 'phetioIsArchetype should not have changed after launching for child' );
+  } );
+
+  QUnit.test( 'PhetioObject PhET-iO API validation', assert => {
+    phetioAPITest( assert, new PhetioObjectAPI(), 'phetioObject', tandem => new PhetioObject( {
+      tandem: tandem
+    } ) );
+  } );
 
   // isDynamicElement is not set in phet brand
   QUnit.test( 'PhetioObject.isDynamicElement', assert => {

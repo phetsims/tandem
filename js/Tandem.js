@@ -370,6 +370,10 @@ class Tandem {
   }
 }
 
+// @public (read-only) - a list of PhetioObjects ready to be sent out to listeners, but can't because Tandem hasn't been
+// launched yet.
+Tandem.bufferedPhetioObjects = bufferedPhetioObjects;
+
 class RootTandem extends Tandem {
 
   /**

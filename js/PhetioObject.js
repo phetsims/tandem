@@ -16,8 +16,8 @@ import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExc
 import merge from '../../phet-core/js/merge.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
-import Tandem from './Tandem.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
+import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 
@@ -30,6 +30,8 @@ const BOOLEAN_VALIDATOR = { valueType: 'boolean' };
 const PHET_IO_DOCUMENTATION_VALIDATOR = { valueType: 'string', isValidValue: doc => doc.indexOf( '\n' ) === -1 };
 const PHET_IO_EVENT_TYPE_VALIDATOR = { valueType: EventType };
 const OBJECT_VALIDATOR = { valueType: [ Object, null ] };
+
+const objectToPhetioID = phetioObject => phetioObject.tandem.phetioID;
 
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
@@ -415,10 +417,18 @@ class PhetioObject {
     assert && assert( phet.phetio && phet.phetio.phetioEngine, 'Dynamic elements cannot be created statically before phetioEngine exists.' );
     const phetioEngine = phet.phetio.phetioEngine;
 
+    // in the same order as bufferedPhetioObjects
+    const unlaunchedPhetioIDs = !Tandem.launched ? Tandem.bufferedPhetioObjects.map( objectToPhetioID ) : [];
+
     this.tandem.iterateDescendants( tandem => {
-      if ( phetioEngine.hasPhetioObject( tandem.phetioID ) ) {
+      const phetioID = tandem.phetioID;
+
+      if ( phetioEngine.hasPhetioObject( phetioID ) || ( !Tandem.launched && unlaunchedPhetioIDs.includes( phetioID ) ) ) {
         assert && assert( this.isPhetioInstrumented() );
-        const phetioObject = phetioEngine.getPhetioObject( tandem.phetioID );
+        const phetioObject = phetioEngine.hasPhetioObject( phetioID ) ? phetioEngine.getPhetioObject( phetioID ) :
+                             Tandem.bufferedPhetioObjects[ unlaunchedPhetioIDs.indexOf( phetioID ) ];
+
+        assert && assert( phetioObject, 'should have a phetioObject here' );
 
         // Order matters here! The phetioIsArchetype needs to be first to ensure that the setPhetioDynamicElement
         // setter can opt out for archetypes.
