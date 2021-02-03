@@ -48,7 +48,7 @@ const phetioAPITest = ( assert, API, componentName, createPhetioObject ) => {
     } );
 
     const disposeEmitter = new Emitter();
-    const expectedComponentTandem = Tandem.GENERAL.createTandem( componentName );
+    const expectedComponentTandem = Tandem.ROOT_TEST.createTandem( componentName );
     const expectedComponentPhetioObject = createPhetioObject( expectedComponentTandem, disposeEmitter );
 
     const visit = ( phetioID, componentAPI ) => {

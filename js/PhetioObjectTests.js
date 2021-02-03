@@ -24,7 +24,7 @@ QUnit.test( 'PhetioObject start/start', function( assert ) {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
-    tandem: Tandem.GENERAL,
+    tandem: Tandem.ROOT_TEST,
     phetioType: MockTypeIO,
     phetioState: false
   } );
@@ -35,7 +35,7 @@ QUnit.test( 'PhetioObject start/end', function( assert ) {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
-    tandem: Tandem.GENERAL.createTandem( 'test1' ),
+    tandem: Tandem.ROOT_TEST.createTandem( 'test1' ),
     phetioType: MockTypeIO,
     phetioState: false
   } );
@@ -47,7 +47,7 @@ QUnit.test( 'PhetioObject end without start', function( assert ) {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
-    tandem: Tandem.GENERAL.createTandem( 'test2' ),
+    tandem: Tandem.ROOT_TEST.createTandem( 'test2' ),
     phetioType: MockTypeIO,
     phetioState: false
   } );
@@ -67,7 +67,7 @@ Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instru
 
   window.assert && assert.throws( function() {
     obj.initializePhetioObject( {
-      tandem: Tandem.GENERAL.createTandem( 'myObject' )
+      tandem: Tandem.ROOT_TEST.createTandem( 'myObject' )
     } );
   }, 'Should throw an assertion because you should not link elements before instrumentation' );
 } );
@@ -81,7 +81,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     assert.ok( true, 'initial test' );
 
-    const object1Tandem = Tandem.GENERAL.createTandem( 'object1' );
+    const object1Tandem = Tandem.ROOT_TEST.createTandem( 'object1' );
     const phetioObject1 = new PhetioObject( { tandem: object1Tandem } );
     assert.ok( !phetioObject1.phetioIsArchetype, 'should not be an archetype before marking' );
 
@@ -109,7 +109,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
   // isDynamicElement is not set in phet brand
   QUnit.test( 'PhetioObject.isDynamicElement', assert => {
-    const test1 = Tandem.GENERAL.createTandem( 'test1' );
+    const test1 = Tandem.ROOT_TEST.createTandem( 'test1' );
     const parentTandem = test1.createTandem( 'parent' );
     const child1Tandem = parentTandem.createTandem( 'child1' );
     const child2Tandem = parentTandem.createTandem( 'child2' );
