@@ -14,17 +14,17 @@ QUnit.module( 'Tandem' );
 QUnit.test( 'Tandem validation on ROOT', assert => {
 
   let p = new NumberProperty( 0, {
-    tandem: Tandem.GENERAL.createTandem( 'aProperty' )
+    tandem: Tandem.ROOT_TEST.createTandem( 'aProperty' )
   } );
   assert.ok( p.isPhetioInstrumented(), 'should be instrumented' );
 
   p = new NumberProperty( 0, {
-    tandem: Tandem.GLOBAL.createTandem( 'aProperty' )
+    tandem: Tandem.ROOT_TEST.createTandem( 'bProperty' )
   } );
   assert.ok( p.isPhetioInstrumented(), 'should be instrumented' );
 
   p = new NumberProperty( 0, {
-    tandem: Tandem.GENERAL_VIEW.createTandem( 'aProperty' )
+    tandem: Tandem.ROOT_TEST.createTandem( 'cProperty' )
   } );
   assert.ok( p.isPhetioInstrumented(), 'should be instrumented' );
 
