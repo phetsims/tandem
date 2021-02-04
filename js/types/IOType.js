@@ -60,7 +60,7 @@ class IOType {
 
       supertype: ObjectIO,
 
-      // {Object<string,MethodObject>} The public methods available for this IO Type. Each method is not just a function,
+      // {Object.<string,MethodObject>} The public methods available for this IO Type. Each method is not just a function,
       // but a collection of metadata about the method to be able to serialize parameters and return types and provide
       // better documentation.
       methods: {},
