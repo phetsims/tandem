@@ -102,25 +102,6 @@
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
     /**
-     * The root sim ID has a nested "general" ID which contains several simulation-level components.  This
-     * method can be used for convenience in accessing its child elements.
-     * @param {Client} Client - the Client type, not a Client instance
-     * @param {string|string[]} componentNames - to append to the general ID stub
-     * @returns {string}
-     * @example
-     * getGeneralID( phetio.Client, 'activeProperty' );
-     * -->  'faradaysLaw.general.activeProperty'
-     *
-     * getGeneralID( phetio.Client, [ 'mySubComponent', 'activeProperty' ] );
-     * -->  'faradaysLaw.general.mySubComponent.activeProperty'
-     * @public
-     */
-    getGeneralID: function( Client, ...componentNames ) {
-      return window.phetio.PhetioIDUtils.append( Client.CAMEL_CASE_SIMULATION_NAME, ...[ GENERAL_COMPONENT_NAME, ...componentNames ] );
-    },
-
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
-    /**
      * Get the screen id from the phetioID.
      * @example
      * getScreenID( 'sim.myScreen.model.property' )
@@ -162,7 +143,6 @@
         'component name for phetioID should have group element syntax' );
       return parseInt( componentName.split( window.phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
     },
-
 
     /**
      * Returns true if the potential ancestor is indeed an ancestor of the potential descendant, but not the same phetioID
