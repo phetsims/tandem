@@ -183,7 +183,7 @@ class PhetioObject {
     // baseline is created when a sim is run with assertions to assist in phetioAPIValidation.  However, even when
     // assertions are disabled, some wrappers such as studio need to generate the baseline anyway.
     // not all metadata are passed through via config, so store baseline for these additional properties
-    this.phetioBaselineMetadata = ( phetioAPIValidation.enabled || phet.preloads.phetio.queryParameters.studio ) ?
+    this.phetioBaselineMetadata = ( phetioAPIValidation.enabled || phet.preloads.phetio.queryParameters.setAndEmitAPIBaselines ) ?
                                   this.getMetadata( merge( {
                                     phetioIsArchetype: this.phetioIsArchetype
                                   }, config ) ) :
