@@ -145,13 +145,6 @@ class IOType {
     assert && assert( supertype || this.typeName === 'ObjectIO', 'supertype is required' );
     assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
 
-    // Validate that parametric types look as expected
-    // TODO: What about EmitterIO<> that has no parameter types?  See https://github.com/phetsims/tandem/issues/217
-    // if ( this.typeName.includes( '<' ) ) {
-    //   assert && assert( this.parameterTypes.length > 0,
-    //     'angle bracket notation is only used for parametric IO Types that have parameter IO Types' );
-    // }
-
     const splitOnParameters = this.typeName.split( /[<(]/ )[ 0 ];
     assert && assert( splitOnParameters.endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IO Type name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
     assert && assert( this.hasOwnProperty( 'typeName' ), 'this.typeName is required' );
