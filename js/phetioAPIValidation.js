@@ -76,9 +76,6 @@ class PhetioAPIValidation {
     // @public {boolean} - settable by phetioAPITest.js. Validation is only enabled when all screens are present.
     this.enabled = assert && Tandem.VALIDATION;
 
-    // @private (read-only) {string}
-    this.referenceAPI = this.enabled && window.phet.preloads.phetio.queryParameters.phetioReferenceAPI;
-
     // @private {Object.<typeName:string, IOType>} - this must be all phet-io types so that the
     // following would fail: add a phetioType, then remove it, then add a different one under the same typeName.
     // A Note about memory: Every IOType that is loaded as a module is already loaded on the namespace. Therefore
@@ -87,23 +84,6 @@ class PhetioAPIValidation {
     // are passed to parametric IOTypes, so this pattern remains memory leak free. Furthermore, this list is only
     // populated when `this.enabled`.
     this.everyPhetioType = {};
-
-    // @private {Object|null} if defined, this is the API loaded from a generated API file
-    this.loadedReferenceAPI = null;
-
-    if ( this.enabled && this.referenceAPI ) {
-      assert && assert( phet.preloads.phetio.createArchetypes, 'archetypes are required to be created to validate' );
-
-      // See readFile.js
-      const xhr = new XMLHttpRequest();
-      xhr.open( 'GET', window.phet.preloads.phetio.queryParameters.phetioReferenceAPI );
-      xhr.send( null );
-      xhr.onreadystatechange = () => {
-        if ( xhr.readyState === 4 /*done*/ && xhr.status === 200 /*ok*/ ) {
-          this.loadedReferenceAPI = JSON.parse( xhr.responseText );
-        }
-      };
-    }
   }
 
   /**
@@ -112,107 +92,9 @@ class PhetioAPIValidation {
    * @public
    */
   onSimStarted( phetioEngine ) {
-
     this.simHasStarted = true;
-
     if ( this.enabled && phet.joist.sim.allScreensCreated ) {
       this.validateOverridesFile();
-
-      if ( this.referenceAPI ) {
-
-        assert && assert( this.loadedReferenceAPI, 'Expected a reference API but it was not loaded: ' + this.loadedReferenceAPI );
-
-        const desiredMetadata = this.loadedReferenceAPI.phetioElements;
-        const desiredTypes = this.loadedReferenceAPI.phetioTypes;
-
-        const actualMetadata = phetioEngine.getPhetioElementsMetadata();
-        const actualTypes = phetioEngine.getPhetioTypes();
-
-        // check to make sure all phet-io elements and type entries were used.  If an entry wasn't used, throw an
-        // assertion error because the sim is missing something it is supposed to have.
-        // Don't check for this when generating the API file from the code.
-        for ( const phetioID in desiredMetadata ) {
-          if ( desiredMetadata.hasOwnProperty( phetioID ) ) {
-            if ( desiredMetadata[ phetioID ].phetioDynamicElement ) {
-              this.assertAPIError( {
-                phetioID: phetioID,
-                ruleInViolation: '10. Dynamic elements should not appear in the API.',
-                message: 'dynamic phetioID not expected but found'
-              } );
-            }
-            if ( !actualMetadata.hasOwnProperty( phetioID ) ) {
-              this.assertAPIError( {
-                phetioID: phetioID,
-                ruleInViolation: '5. When the sim is finished starting up, all non-dynamic schema entries must be registered.',
-                message: 'phetioID expected but does not exist'
-              } );
-            }
-
-            // Compare PhET-iO Elements for compatibility
-            for ( let i = 0; i < KEYS_TO_CHECK.length; i++ ) {
-              const key = KEYS_TO_CHECK[ i ];
-              if ( desiredMetadata[ phetioID ][ key ] !== actualMetadata[ phetioID ][ key ] ) {
-                this.assertAPIError( {
-                  ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
-                  phetioID: phetioID,
-                  message: `Incompatible value for ${key}, desired=${desiredMetadata[ phetioID ][ key ]}, actual=${actualMetadata[ phetioID ][ key ]}`
-                } );
-              }
-            }
-          }
-        }
-
-        // Compare IO Types for compatibility
-        for ( const type in desiredTypes ) {
-          if ( desiredTypes.hasOwnProperty( type ) ) {
-
-            // make sure we have the desired type
-            if ( !actualTypes.hasOwnProperty( type ) ) {
-              this.assertAPIError( {
-                ruleInViolation: 'Desired type missing: ' + type.typeName
-              } );
-            }
-            else {
-
-              // make sure we have all of the methods
-              const desiredMethods = desiredTypes[ type ].methods;
-              const actualMethods = actualTypes[ type ].methods;
-              for ( const method in desiredMethods ) {
-                if ( !actualMethods.hasOwnProperty( method ) ) {
-                  this.assertAPIError( { ruleInViolation: `Missing method, type=${type}, method=${method}` } );
-                }
-              }
-            }
-          }
-        }
-
-        if ( window.phet.preloads.phetio.queryParameters.phetioReferenceAPIValidationLevel === 'exact' ) {
-
-          if ( !_.isEqual( desiredMetadata, actualMetadata ) ) {
-            this.assertAPIError( {
-              // Note: this breaks rule 2 which may in some cases be rule 3
-              ruleInViolation: '2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.',
-              message: 'baseline schema does not match PhetioObject computed baseline metadata',
-              phetioElementsBaseline: desiredMetadata,
-              stringifiedBaseline: JSON.stringify( desiredMetadata, null, 2 ),
-              phetioElementsBaselineFromFile: desiredMetadata
-            } );
-          }
-
-          if ( !_.isEqual( desiredTypes, actualTypes ) ) {
-            const phetioTypesKeys = Object.keys( desiredTypes );
-            const windowPhetioTypesKeys = Object.keys( window.phet.preloads.phetio.phetioTypes );
-
-            this.assertAPIError( {
-              ruleInViolation: '9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.',
-              message: 'phetioTypes are not equivalent',
-              areKeysEquivalent: _.isEqual( phetioTypesKeys.sort(), windowPhetioTypesKeys.sort() ),
-              typesNotInSim: windowPhetioTypesKeys.filter( x => !phetioTypesKeys.includes( x ) ),
-              typesNotInFile: phetioTypesKeys.filter( x => !windowPhetioTypesKeys.includes( x ) )
-            } );
-          }
-        }
-      }
     }
   }
 
@@ -272,10 +154,6 @@ class PhetioAPIValidation {
           // Compare the dynamic element to the archetype in to the loaded reference API, if specified
           const archetypeID = phetioObject.tandem.getArchetypalPhetioID();
 
-          // Compare the dynamic element to the archetype in to the loaded reference API, if specified
-          if ( this.loadedReferenceAPI ) {
-            checkDynamicInstanceAgainstArchetype( this, phetioObject, this.loadedReferenceAPI.phetioElements[ archetypeID ], 'reference API' );
-          }
           if ( phet.preloads.phetio.createArchetypes ) {
 
             // Compare to the simulation-defined archetype, if it exists
