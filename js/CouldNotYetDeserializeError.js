@@ -19,5 +19,6 @@ class CouldNotYetDeserializeError extends Error {
     super( 'CouldNotYetDeserializeError' );  // Do not change this message without consulting appropriate usages.
   }
 }
+
 tandemNamespace.register( 'CouldNotYetDeserializeError', CouldNotYetDeserializeError );
 export default CouldNotYetDeserializeError;
