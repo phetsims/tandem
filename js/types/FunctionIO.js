@@ -34,7 +34,7 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
     // gather a list of argument names for the documentation string
     let argsString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ', ' );
     if ( argsString === '' ) {
-      argsString = 'VoidIO';
+      argsString = 'none';
     }
     const parameterTypesString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
 
