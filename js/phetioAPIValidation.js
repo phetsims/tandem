@@ -2,23 +2,17 @@
 
 /**
  * This singleton is responsible for ensuring that the phet-io api is correct through the lifetime of the simulation.
- * The phet-io api is defined through multiple preloaded files. The "elements baseline" file holds an exact match of
+ * The phet-io api is defined through multiple preloaded files. The "elements baseline" api holds an exact match of
  * what PhetioObject instances/metadata the sim should create on startup, where the "elements overrides" file is a
  * sparse list that can overwrite metadata without changing the code. See `grunt generate-phet-io-api` for
- * more information. The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453 and
- * is as follows:
+ * more information. The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453
+ * (and later trimmed down) and is as follows:
  *
- * 1. A full schema is required - any phet-io brand sim without these will have a 404, but this rule isn't tested in this file.
- * 2. Registered PhetioObject baseline must equal baseline schema to ensure that baseline changes are intentional.
- * 3. ~~ is no more
- * 4. After startup, only dynamic instances prescribed by the baseline file can be registered.
- * 5. When the sim is finished starting up, all non-dynamic schema entries must be registered.
- * 6. Any static, registered PhetioObject can never be deregistered.
- * 7. Any schema entries in the overrides file must exist in the baseline file
- * 8. Any schema entries in the overrides file must be different from its baseline counterpart
- * 9. Types in the sim must exactly match types in the types file to ensure that type changes are intentional.
- * 10. Dynamic elements should not appear in the API.
- * 11. Dynamic element metadata should match the archetype in the API.
+ * 1. After startup, only dynamic instances prescribed by the baseline api can be registered.
+ * 2. Any static, registered PhetioObject can never be deregistered.
+ * 3. Any schema entries in the overrides file must exist in the baseline api
+ * 4. Any schema entries in the overrides file must be different from its baseline counterpart
+ * 5. Dynamic element metadata should match the archetype in the API.
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
@@ -114,7 +108,7 @@ class PhetioAPIValidation {
     if ( !phetioObject.phetioDynamicElement ) {
       this.assertAPIError( {
         phetioID: phetioID,
-        ruleInViolation: '6. Any static, registered PhetioObject can never be deregistered.'
+        ruleInViolation: '2. Any static, registered PhetioObject can never be deregistered.'
       } );
     }
   }
@@ -146,18 +140,18 @@ class PhetioAPIValidation {
         if ( !phetioObject.phetioDynamicElement ) {
           this.assertAPIError( {
             phetioID: phetioObject.tandem.phetioID,
-            ruleInViolation: '4. After startup, only dynamic instances prescribed by the baseline file can be registered.'
+            ruleInViolation: '1. After startup, only dynamic instances prescribed by the baseline file can be registered.'
           } );
         }
         else {
 
-          // Compare the dynamic element to the archetype in to the loaded reference API, if specified
-          const archetypeID = phetioObject.tandem.getArchetypalPhetioID();
-
+          // Compare the dynamic element to the archetype if creating them this runtime.
           if ( phet.preloads.phetio.createArchetypes ) {
+            const archetypeID = phetioObject.tandem.getArchetypalPhetioID();
+            const archetypeMetadata = phet.phetio.phetioEngine.getPhetioObject( archetypeID ).getMetadata();
 
-            // Compare to the simulation-defined archetype, if it exists
-            checkDynamicInstanceAgainstArchetype( this, phetioObject, phet.phetio.phetioEngine.getPhetioObject( archetypeID ).getMetadata(), 'simulation archetype' );
+            // Compare to the simulation-defined archetype
+            checkDynamicInstanceAgainstArchetype( this, phetioObject, archetypeMetadata, 'simulation archetype' );
           }
         }
       } );
@@ -181,7 +175,7 @@ class PhetioAPIValidation {
         if ( !entireBaseline.hasOwnProperty( phetioID ) ) {
           this.assertAPIError( {
             phetioID: phetioID,
-            ruleInViolation: '7. Any schema entries in the overrides file must exist in the baseline file.',
+            ruleInViolation: '3. Any schema entries in the overrides file must exist in the baseline file.',
             message: 'phetioID expected in the baseline file but does not exist'
           } );
         }
@@ -193,7 +187,7 @@ class PhetioAPIValidation {
           if ( Object.keys( override ).length === 0 ) {
             this.assertAPIError( {
               phetioID: phetioID,
-              ruleInViolation: '8. Any schema entries in the overrides file must be different from its baseline counterpart.',
+              ruleInViolation: '4. Any schema entries in the overrides file must be different from its baseline counterpart.',
               message: 'no metadata keys found for this override.'
             } );
           }
@@ -239,7 +233,7 @@ class PhetioAPIValidation {
  * Compare a dynamic phetioObject's metadata to the expected metadata
  * @param {phetioAPIValidation} phetioAPIValidation
  * @param {PhetioObject} phetioObject
- * @param {Object} archetypeMetadata - either from a reference API or from an archetype
+ * @param {Object} archetypeMetadata - from an archetype of the dynamic element
  * @param {string} source - where the archetype came from, for debugging
  */
 const checkDynamicInstanceAgainstArchetype = ( phetioAPIValidation, phetioObject, archetypeMetadata, source ) => {
@@ -252,7 +246,7 @@ const checkDynamicInstanceAgainstArchetype = ( phetioAPIValidation, phetioObject
       if ( archetypeMetadata[ key ] !== actualMetadata[ key ] ) {
         phetioAPIValidation.assertAPIError( {
           phetioID: phetioObject.tandem.phetioID,
-          ruleInViolation: '11. Dynamic element metadata should match the archetype in the API.',
+          ruleInViolation: '5. Dynamic element metadata should match the archetype in the API.',
           source: source,
           message: 'mismatched metadata: ' + key
         } );
