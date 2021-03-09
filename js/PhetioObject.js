@@ -3,7 +3,10 @@
 /**
  * Base type that provides PhET-iO features. An instrumented PhetioObject is referred to on the wrapper side/design side
  * as a "PhET-iO element".  Note that sims may have hundreds or thousands of PhetioObjects, so performance and memory
- * considerations are important.
+ * considerations are important.  For this reason, initializePhetioObject is only called in PhET-iO brand, which means
+ * many of the getters such as `phetioState` and `phetioDocumentation` will not work in other brands. We have opted
+ * to have these getters throw assertion errors in other brands to help identify problems if these are called
+ * unexpectedly.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -266,67 +269,67 @@ class PhetioObject {
     this.phetioObjectInitialized = true;
   }
 
-  // @public
+  // @public - throws an assertion error in brands other than PhET-iO
   get phetioType() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioType only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioType;
   }
 
-  // @public
+  // @public - throws an assertion error in brands other than PhET-iO
   get phetioState() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioState only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioState;
   }
 
-  // @public
+  // @public - throws an assertion error in brands other than PhET-iO
   get phetioReadOnly() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioReadOnly only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioReadOnly;
   }
 
-  // @public
+  // @public - throws an assertion error in brands other than PhET-iO
   get phetioDocumentation() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDocumentation only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioDocumentation;
   }
 
-  // @private
+  // @private - throws an assertion error in brands other than PhET-iO
   get phetioEventType() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventType only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventType;
   }
 
-  // @private
+  // @private - throws an assertion error in brands other than PhET-iO
   get phetioHighFrequency() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioHighFrequency only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioHighFrequency;
   }
 
-  // @private
+  // @private - throws an assertion error in brands other than PhET-iO
   get phetioPlayback() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioPlayback only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioPlayback;
   }
 
-  // @private
+  // @private - throws an assertion error in brands other than PhET-iO
   get phetioStudioControl() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioStudioControl only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioStudioControl;
   }
 
-  // @public
+  // @public - throws an assertion error in brands other than PhET-iO
   get phetioDynamicElement() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDynamicElement only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioDynamicElement;
   }
 
-  // @public
+  // @public - throws an assertion error in brands other than PhET-iO
   get phetioFeatured() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioFeatured only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioFeatured;
   }
 
-  // @private
+  // @private - throws an assertion error in brands other than PhET-iO
   get phetioEventMetadata() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventMetadata only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventMetadata;
