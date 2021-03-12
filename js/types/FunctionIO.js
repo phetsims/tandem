@@ -48,9 +48,9 @@ const FunctionIO = ( returnType, functionParameterTypes ) => {
       // the return type.  If we decide this is too brittle, perhaps we should subclass IOType to FunctionIOType, and it
       // can track its functionParameterTypes separately from the returnType.
       parameterTypes: functionParameterTypes.concat( [ returnType ] ),
-      documentation: 'Wrapper for the built-in JS function type.<br>' +
-                     '<strong>Arguments:</strong> ' + argsString + '<br>' +
-                     '<strong>Return Type:</strong> ' + returnType.typeName
+      documentation: `${'Wrapper for the built-in JS function type.<br>' +
+                     '<strong>Arguments:</strong> '}${argsString}<br>` +
+                     `<strong>Return Type:</strong> ${returnType.typeName}`
     } ) );
   }
 

@@ -46,7 +46,7 @@
      */
     append: function( phetioID, ...componentNames ) {
       componentNames.forEach( componentName => {
-        assert && assert( componentName.indexOf( SEPARATOR ) === -1, 'separator appears in componentName: ' + componentName );
+        assert && assert( componentName.indexOf( SEPARATOR ) === -1, `separator appears in componentName: ${componentName}` );
         phetioID += SEPARATOR + componentName;
       } );
       return phetioID;
@@ -97,7 +97,7 @@
      * @public
      */
     getDOMElementID: function( phetioID ) {
-      return 'phetioID:' + phetioID;
+      return `phetioID:${phetioID}`;
     },
 
     // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.

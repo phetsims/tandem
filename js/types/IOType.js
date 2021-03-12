@@ -152,17 +152,17 @@ class IOType {
     // assert that each public method adheres to the expected schema
     Object.values( this.methods ).forEach( methodObject => {
       if ( typeof methodObject === 'object' ) {
-        assert && assert( Array.isArray( methodObject.parameterTypes ), 'parameter types must be an array: ' + methodObject.parameterTypes );
-        assert && assert( typeof methodObject.implementation === 'function', 'implementation must be of type function: ' + methodObject.implementation );
-        assert && assert( typeof methodObject.documentation === 'string', 'documentation must be of type string: ' + methodObject.documentation );
+        assert && assert( Array.isArray( methodObject.parameterTypes ), `parameter types must be an array: ${methodObject.parameterTypes}` );
+        assert && assert( typeof methodObject.implementation === 'function', `implementation must be of type function: ${methodObject.implementation}` );
+        assert && assert( typeof methodObject.documentation === 'string', `documentation must be of type string: ${methodObject.documentation}` );
         assert && methodObject.invocableForReadOnlyElements && assert( typeof methodObject.invocableForReadOnlyElements === 'boolean',
-          'invocableForReadOnlyElements must be of type boolean: ' + methodObject.invocableForReadOnlyElements );
+          `invocableForReadOnlyElements must be of type boolean: ${methodObject.invocableForReadOnlyElements}` );
       }
     } );
     assert && assert( typeof this.documentation === 'string' && this.documentation.length > 0, 'documentation must be provided' );
 
     this.hasOwnProperty( 'methodOrder' ) && this.methodOrder.forEach( methodName => {
-      assert && assert( this.methods[ methodName ], 'methodName not in public methods: ' + methodName );
+      assert && assert( this.methods[ methodName ], `methodName not in public methods: ${methodName}` );
     } );
 
     // TODO: support API checking, see https://github.com/phetsims/phet-io/issues/1657
@@ -176,12 +176,12 @@ class IOType {
       const typeHierarchy = supertype.getTypeHierarchy();
       assert && this.events && this.events.forEach( event => {
         assert( !_.some( typeHierarchy, t => t.events.includes( event ) ),
-          'this IOType should not declare event that parent also has: ' + event );
+          `this IOType should not declare event that parent also has: ${event}` );
       } );
 
       assert && this.metadataKeys && this.metadataKeys.forEach( metadataKey => {
         assert( !_.some( typeHierarchy, t => t.metadataKeys.includes( metadataKey ) ),
-          'this IOType should not declare  a metadataKey that parent also has: ' + metadataKey );
+          `this IOType should not declare  a metadataKey that parent also has: ${metadataKey}` );
       } );
     }
     else {

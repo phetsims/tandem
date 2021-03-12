@@ -169,7 +169,7 @@ class PhetioAPIValidation {
     for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
       const isArchetype = phetioID.indexOf( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ) >= 0;
       if ( !phet.preloads.phetio.createArchetypes && !entireBaseline.hasOwnProperty( phetioID ) ) {
-        assert && assert( isArchetype, 'phetioID missing from the baseline that was not an archetype: ' + phetioID );
+        assert && assert( isArchetype, `phetioID missing from the baseline that was not an archetype: ${phetioID}` );
       }
       else {
         if ( !entireBaseline.hasOwnProperty( phetioID ) ) {
@@ -225,7 +225,7 @@ class PhetioAPIValidation {
                             `${apiErrorObject.ruleInViolation}`;
 
     console.log( 'error data:', apiErrorObject );
-    assert && assert( false, 'PhET-iO API error:\n' + mismatchMessage );
+    assert && assert( false, `PhET-iO API error:\n${mismatchMessage}` );
   }
 }
 
@@ -248,7 +248,7 @@ const checkDynamicInstanceAgainstArchetype = ( phetioAPIValidation, phetioObject
           phetioID: phetioObject.tandem.phetioID,
           ruleInViolation: '5. Dynamic element metadata should match the archetype in the API.',
           source: source,
-          message: 'mismatched metadata: ' + key
+          message: `mismatched metadata: ${key}`
         } );
       }
     }
