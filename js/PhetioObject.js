@@ -165,7 +165,7 @@ class PhetioObject {
     assert && validate( config.phetioState, BOOLEAN_VALIDATOR );
     assert && validate( config.phetioReadOnly, BOOLEAN_VALIDATOR );
     assert && validate( config.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR );
-    assert && validate( config.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR );
+    assert && validate( config.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR, 'phetioDocumentation must be provided in the right format' );
     assert && validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR );
     assert && validate( config.phetioPlayback, BOOLEAN_VALIDATOR );
     assert && validate( config.phetioStudioControl, BOOLEAN_VALIDATOR );
