@@ -20,7 +20,7 @@ const MockTypeIO = new IOType( 'MockTypeIO', {
   events: [ 'hello' ]
 } );
 
-QUnit.test( 'PhetioObject start/start', function( assert ) {
+QUnit.test( 'PhetioObject start/start', assert => {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
@@ -31,7 +31,7 @@ QUnit.test( 'PhetioObject start/start', function( assert ) {
   obj.phetioStartEvent( 'hello' );
 } );
 
-QUnit.test( 'PhetioObject start/end', function( assert ) {
+QUnit.test( 'PhetioObject start/end', assert => {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
@@ -43,7 +43,7 @@ QUnit.test( 'PhetioObject start/end', function( assert ) {
   obj.phetioEndEvent();
 } );
 
-QUnit.test( 'PhetioObject end without start', function( assert ) {
+QUnit.test( 'PhetioObject end without start', assert => {
   assert.ok( true, 'initial test' );
 
   const obj = new PhetioObject( {
@@ -53,7 +53,7 @@ QUnit.test( 'PhetioObject end without start', function( assert ) {
   } );
 
   if ( Tandem.PHET_IO_ENABLED ) {
-    window.assert && assert.throws( function() {
+    window.assert && assert.throws( () => {
       obj.phetioEndEvent();
     }, 'Should throw an assertion error when Ending an unstarted event' );
   }
@@ -65,7 +65,7 @@ Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instru
   const obj = new PhetioObject();
   obj.addLinkedElement( new PhetioObject() );
 
-  window.assert && assert.throws( function() {
+  window.assert && assert.throws( () => {
     obj.initializePhetioObject( {
       tandem: Tandem.ROOT_TEST.createTandem( 'myObject' )
     } );
