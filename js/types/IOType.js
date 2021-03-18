@@ -130,13 +130,13 @@ class IOType {
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
     this.toStateObject = coreObject => {
-      validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
+      validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
       return config.toStateObject( coreObject );
     };
     this.fromStateObject = config.fromStateObject;
     this.stateToArgsForConstructor = config.stateToArgsForConstructor;
     this.applyState = ( coreObject, stateObject ) => {
-      validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
+      validate( coreObject, this.validator, 'unexpected parameter to applyState', VALIDATE_OPTIONS_FALSE );
       config.applyState( coreObject, stateObject );
     };
     this.isFunctionType = config.isFunctionType;
