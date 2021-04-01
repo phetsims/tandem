@@ -83,7 +83,15 @@ const DEFAULTS = {
   // {boolean} optional - indicates that an object may or may not have been created. Applies recursively automatically
   // and should only be set manually on the root dynamic element. Dynamic archetypes will have this overwritten to
   // false even if explicitly provided as true, as archetypes cannot be dynamic.
-  phetioDynamicElement: false
+  phetioDynamicElement: false,
+
+  // {boolean} Marking phetioDesigned: true opts-in to API change detection tooling that can be used to catch inadvertent
+  // changes to a designed API.  A phetioDesigned:true PhetioObject (or any of its tandem descendants) will throw
+  // assertion errors on CT (or when running with ?phetioCompareAPI) when:
+  // (a) its package.json lists compareDesignedAPIChanges:true in the "phet-io" section
+  // (b) the simulation is listed in perennial/data/phet-io-api-stable
+  // (c) any of its metadata values deviate from the reference API
+  phetioDesigned: false
 };
 
 class PhetioObject {
@@ -172,6 +180,7 @@ class PhetioObject {
     assert && validate( config.phetioFeatured, BOOLEAN_VALIDATOR );
     assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
     assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioDesigned, BOOLEAN_VALIDATOR );
 
     assert && assert( this.linkedElements !== null, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
 
@@ -243,6 +252,9 @@ class PhetioObject {
 
     // @private {Object|null}
     this._phetioEventMetadata = config.phetioEventMetadata;
+
+    // @private {boolean}
+    this._phetioDesigned = config.phetioDesigned;
 
     // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
     this.phetioArchetypePhetioID = null;
@@ -333,6 +345,12 @@ class PhetioObject {
   get phetioEventMetadata() {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventMetadata only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventMetadata;
+  }
+
+  // @private - throws an assertion error in brands other than PhET-iO
+  get phetioDesigned() {
+    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDesigned only accessible for instrumented objects in PhET-iO brand.' );
+    return this._phetioDesigned;
   }
 
   /**
@@ -610,16 +628,15 @@ class PhetioObject {
       phetioStudioControl: object.phetioStudioControl,
       phetioDynamicElement: object.phetioDynamicElement,
       phetioIsArchetype: object.phetioIsArchetype,
-      phetioFeatured: object.phetioFeatured
+      phetioFeatured: object.phetioFeatured,
+      phetioDesigned: object.phetioDesigned
     };
     if ( object.phetioArchetypePhetioID ) {
       metadata.phetioArchetypePhetioID = object.phetioArchetypePhetioID;
     }
     return metadata;
   }
-
 }
-
 
 PhetioObject.DEFAULT_OPTIONS = DEFAULTS; // the default options for the phet-io object
 
