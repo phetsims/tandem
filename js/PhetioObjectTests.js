@@ -6,9 +6,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import phetioAPITest from './phetioAPITest.js';
 import PhetioObject from './PhetioObject.js';
-import PhetioObjectAPI from './PhetioObjectAPI.js';
 import Tandem from './Tandem.js';
 import IOType from './types/IOType.js';
 
@@ -99,12 +97,6 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     assert.ok( phetioObject1.phetioIsArchetype, 'phetioIsArchetype should not have changed after launching' );
     assert.ok( phetioObject1Child.phetioIsArchetype, 'phetioIsArchetype should not have changed after launching for child' );
-  } );
-
-  QUnit.test( 'PhetioObject PhET-iO API validation', assert => {
-    phetioAPITest( assert, new PhetioObjectAPI(), 'phetioObject', tandem => new PhetioObject( {
-      tandem: tandem
-    } ) );
   } );
 
   // isDynamicElement is not set in phet brand

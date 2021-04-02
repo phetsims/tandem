@@ -67,7 +67,7 @@ class PhetioAPIValidation {
     // @private - keep track of when the sim has started.
     this.simHasStarted = false;
 
-    // @public {boolean} - settable by phetioAPITest.js. Validation is only enabled when all screens are present.
+    // @public {boolean} - settable by qunitStart.js. Validation is only enabled when all screens are present.
     this.enabled = assert && Tandem.VALIDATION;
 
     // @private {Object.<typeName:string, IOType>} - this must be all phet-io types so that the
