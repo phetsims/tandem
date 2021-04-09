@@ -328,6 +328,15 @@ class Tandem {
   }
 
   /**
+   * @param {Tandem} tandem
+   * @returns {boolean}
+   * @public
+   */
+  equals( tandem ) {
+    return this.phetioID === tandem.phetioID;
+  }
+
+  /**
    * Adds a listener that will be notified when items are registered/deregistered
    * Listeners have the form
    * {
