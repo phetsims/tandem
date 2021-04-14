@@ -13,6 +13,7 @@ import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import merge from '../../../phet-core/js/merge.js';
 import required from '../../../phet-core/js/required.js';
 import PhetioConstants from '../PhetioConstants.js';
+import TandemConstants from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 
 // constants
@@ -68,11 +69,10 @@ class IOType {
       // {string[]} The list of events that can be emitted at this level (does not include events from supertypes).
       events: [],
 
-      // {string[]} The list of metadata keys that this IO Type adds to the metadata for its instances. If anything is
-      // provided here, then corresponding PhetioObjects that use this IOType should override PhetioObject.getMetadata()
-      // to add what keys they need for their specific type. It is HIGHLY recommended that you do not overwrite any
-      // metadata key defined by a parent.
-      metadataKeys: [],
+      // {Object} Key/value pairs indicating the defaults for the IO Type metadata. If anything is provided here, then
+      // corresponding PhetioObjects that use this IOType should override PhetioObject.getMetadata() to add what keys
+      // they need for their specific type.  Cannot specify values also specified in parent types.
+      metadataDefaults: {},
 
       // {string} IO Types can specify the order that methods appear in the documentation by putting their names in this
       // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
@@ -117,7 +117,15 @@ class IOType {
 
     assert && assert( ValidatorDef.containsValidatorKey( config ), 'Validator is required' );
     assert && assert( Array.isArray( config.events ) );
-    assert && assert( Array.isArray( config.metadataKeys ) );
+    assert && assert( Object.getPrototypeOf( config.metadataDefaults ) === Object.prototype, 'Extra prototype on metadata keys' );
+
+    // TODO: update to only care about when the ancestor default is the same as this declared default. https://github.com/phetsims/phet-io/issues/1753
+    // if ( assert && supertype ) {
+    // assert && assert(
+    //   _.intersection( Object.keys( supertype.allMetadataDefaults ), Object.keys( config.metadataDefaults ) ).length === 0,
+    //   'metadata keys cannot overlap with ancestor metadata keys'
+    // );
+    // }
 
     // @public (read-only)
     this.supertype = supertype;
@@ -125,7 +133,10 @@ class IOType {
     this.documentation = config.documentation;
     this.methods = config.methods;
     this.events = config.events;
-    this.metadataKeys = config.metadataKeys;
+    this.metadataDefaults = config.metadataDefaults;
+
+    // TODO: Make this lazy (move back to method), see https://github.com/phetsims/phet-io/issues/1753
+    this.allMetadataDefaults = _.merge( {}, supertype ? supertype.allMetadataDefaults : {}, config.metadataDefaults ); // all metadataDefaults (for entire hierarchy)
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
@@ -165,23 +176,12 @@ class IOType {
       assert && assert( this.methods[ methodName ], `methodName not in public methods: ${methodName}` );
     } );
 
-    // TODO: support API checking, see https://github.com/phetsims/phet-io/issues/1657
-    // if ( this.hasOwnProperty( 'api' ) ) {
-    //   assert && assert( this.api instanceof Object, 'Object expected for api' );
-    //   assert && assert( Object.getPrototypeOf( this.api ) === Object.prototype, 'no extra prototype allowed on API object' );
-    // }
-
     // Make sure events are not listed again
     if ( supertype ) {
       const typeHierarchy = supertype.getTypeHierarchy();
       assert && this.events && this.events.forEach( event => {
         assert( !_.some( typeHierarchy, t => t.events.includes( event ) ),
           `this IOType should not declare event that parent also has: ${event}` );
-      } );
-
-      assert && this.metadataKeys && this.metadataKeys.forEach( metadataKey => {
-        assert( !_.some( typeHierarchy, t => t.metadataKeys.includes( metadataKey ) ),
-          `this IOType should not declare  a metadataKey that parent also has: ${metadataKey}` );
       } );
     }
     else {
@@ -262,7 +262,7 @@ class IOType {
   }
 }
 
-ObjectIO = new IOType( 'ObjectIO', {
+ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',
@@ -270,20 +270,7 @@ ObjectIO = new IOType( 'ObjectIO', {
   fromStateObject: stateObject => null,
   stateToArgsForConstructor: stateObject => [],
   applyState: ( coreObject, stateObject ) => { },
-  metadataKeys: [
-    'phetioTypeName',
-    'phetioDocumentation',
-    'phetioState',
-    'phetioReadOnly',
-    'phetioEventType',
-    'phetioHighFrequency',
-    'phetioPlayback',
-    'phetioStudioControl',
-    'phetioDynamicElement',
-    'phetioIsArchetype',
-    'phetioFeatured',
-    'phetioArchetypePhetioID' // though this will only be present for dynamic elements
-  ]
+  metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS
 } );
 
 // @public

@@ -8,6 +8,7 @@
 
 import Enumeration from '../../phet-core/js/Enumeration.js';
 import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
+import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 
 const EventType = Enumeration.byKeys( [
@@ -17,7 +18,7 @@ const EventType = Enumeration.byKeys( [
 
   // An event was produced by the simulation model. This could be in response to a user event, or something that happens
   // during the simulation step. Note the separation is not model vs view, but user-driven vs automatic.
-  'MODEL',
+  TandemConstants.EVENT_TYPE_MODEL,
 
   // An event was triggered by the PhET-iO wrapper, via PhetioEngineIO.triggerEvent
   'WRAPPER',

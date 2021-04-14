@@ -59,6 +59,7 @@ class Tandem {
     assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
     assert && assert( typeof name === 'string', 'name must be defined' );
     assert && assert( this.getTermRegex().test( name ), `name should match the regex pattern: ${name}` );
+    assert && assert( name !== Tandem.METADATA_KEY, 'name cannot match Tandem.METADATA_KEY' );
 
     // @public (read-only) {Tandem|null}
     this.parentTandem = parentTandem;
@@ -547,6 +548,13 @@ Tandem.PHET_IO_ENABLED = PHET_IO_ENABLED;
  * @type {boolean}
  */
 Tandem.VALIDATION = VALIDATION;
+
+/**
+ * For the API file, the key name for the metadata section.
+ * @type {string}
+ * @public
+ */
+Tandem.METADATA_KEY = '_metadata';
 
 /**
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.

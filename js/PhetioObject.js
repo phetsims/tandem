@@ -21,6 +21,7 @@ import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
+import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 
@@ -49,41 +50,37 @@ const DEFAULTS = {
 
   // {string} Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper. It's an html
   // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio
-  phetioDocumentation: '',
+  phetioDocumentation: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDocumentation,
 
   // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, must be specified for
   // children explicitly)
-  phetioState: true,
+  phetioState: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioState,
 
   // This option controls how PhET-iO wrappers can interface with this PhetioObject. Predominately this occurs via
   // public methods defined on this PhetioObject's phetioType, in which some method are not executable when this flag
   // is true. See `ObjectIO.methods` for further documentation, especially regarding `invocableForReadOnlyElements`.
-  phetioReadOnly: false,
+  phetioReadOnly: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioReadOnly,
 
   // Category of event type, can be overridden in phetioStartEvent options
   phetioEventType: EventType.MODEL,
 
   // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents
   // and Client.launchSim option
-  phetioHighFrequency: false,
+  phetioHighFrequency: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioHighFrequency,
 
   // When true, emits events for data streams for playback, see handlePlaybackEvent.js
-  phetioPlayback: false,
+  phetioPlayback: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioPlayback,
 
   // When true, Studio is allowed to create a control for this PhetioObject (if it knows how)
-  phetioStudioControl: true,
+  phetioStudioControl: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioStudioControl,
 
   // When true, this is categorized as an important "featured" element in Studio.
-  phetioFeatured: false,
-
-  // {Object|null} optional - delivered with each event, if specified. phetioPlayback is appended here, if true.
-  // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
-  phetioEventMetadata: null,
+  phetioFeatured: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioFeatured,
 
   // {boolean} optional - indicates that an object may or may not have been created. Applies recursively automatically
   // and should only be set manually on the root dynamic element. Dynamic archetypes will have this overwritten to
   // false even if explicitly provided as true, as archetypes cannot be dynamic.
-  phetioDynamicElement: false,
+  phetioDynamicElement: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDynamicElement,
 
   // {boolean} Marking phetioDesigned: true opts-in to API change detection tooling that can be used to catch inadvertent
   // changes to a designed API.  A phetioDesigned:true PhetioObject (or any of its tandem descendants) will throw
@@ -91,10 +88,18 @@ const DEFAULTS = {
   // (a) its package.json lists compareDesignedAPIChanges:true in the "phet-io" section
   // (b) the simulation is listed in perennial/data/phet-io-api-stable
   // (c) any of its metadata values deviate from the reference API
-  phetioDesigned: false
+  phetioDesigned: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDesigned,
+
+  // {Object|null} optional - delivered with each event, if specified. phetioPlayback is appended here, if true.
+  // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
+  phetioEventMetadata: null
 };
 
+assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType ) === TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioEventType,
+  'phetioEventType must have the same default as the default metadata values.' );
+
 class PhetioObject {
+
   /**
    * @param {Object} [options]
    */
@@ -638,23 +643,8 @@ class PhetioObject {
   }
 }
 
+// @public
 PhetioObject.DEFAULT_OPTIONS = DEFAULTS; // the default options for the phet-io object
-
-// THe keys that constitute the publicly available PHET-iO metadata for the PhetioObject.
-PhetioObject.METADATA_KEYS = [
-  'phetioTypeName',
-  'phetioDocumentation',
-  'phetioState',
-  'phetioReadOnly',
-  'phetioEventType',
-  'phetioHighFrequency',
-  'phetioPlayback',
-  'phetioStudioControl',
-  'phetioDynamicElement',
-  'phetioIsArchetype',
-  'phetioFeatured',
-  'phetioArchetypePhetioID'
-];
 
 /**
  * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to

@@ -418,10 +418,11 @@ class PhetioDynamicElementContainer extends PhetioObject {
    */
   getMetadata( object ) {
     const metadata = super.getMetadata( object );
-    assert && assert( !metadata.hasOwnProperty( 'phetioDynamicElementName' ),
-      'PhetioDynamicElementContainer sets the phetioDynamicElementName metadata key' );
-    metadata.phetioDynamicElementName = this.phetioDynamicElementName;
-    return metadata;
+    assert && assert(
+      !metadata.hasOwnProperty( 'phetioDynamicElementName' ),
+      'PhetioDynamicElementContainer sets the phetioDynamicElementName metadata key'
+    );
+    return merge( { phetioDynamicElementName: this.phetioDynamicElementName }, metadata );
   }
 }
 
