@@ -119,13 +119,13 @@ class IOType {
     assert && assert( Array.isArray( config.events ) );
     assert && assert( Object.getPrototypeOf( config.metadataDefaults ) === Object.prototype, 'Extra prototype on metadata keys' );
 
-    // TODO: update to only care about when the ancestor default is the same as this declared default. https://github.com/phetsims/phet-io/issues/1753
-    // if ( assert && supertype ) {
-    // assert && assert(
-    //   _.intersection( Object.keys( supertype.allMetadataDefaults ), Object.keys( config.metadataDefaults ) ).length === 0,
-    //   'metadata keys cannot overlap with ancestor metadata keys'
-    // );
-    // }
+    if ( assert && supertype ) {
+      Object.keys( config.metadataDefaults ).forEach( metadataDefaultKey => {
+        assert && supertype.allMetadataDefaults.hasOwnProperty( metadataDefaultKey ) &&
+        assert( supertype.allMetadataDefaults[ metadataDefaultKey ] !== config.metadataDefaults[ metadataDefaultKey ],
+          `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
+      } );
+    }
 
     // @public (read-only)
     this.supertype = supertype;
