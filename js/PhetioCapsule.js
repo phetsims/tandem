@@ -135,7 +135,11 @@ PhetioCapsule.PhetioCapsuleIO = parameterType => {
       documentation: 'An array that sends notifications when its values have changed.',
       parameterTypes: [ parameterType ],
 
-      // This is always specified by PhetioCapsule, and will never be this value.
+      // This is always specified by PhetioCapsule, and will never be this value. Yes, it is odd to have a default value
+      // that can never be the actual value, but we thought it would be simplest to reuse the "options" pipeline
+      // rather than inventing a new "required" pipeline.
+      // TODO: https://github.com/phetsims/phet-io/issues/1753 would a better default be "instance" or "element"?
+      // TODO: https://github.com/phetsims/phet-io/issues/1753 Review the occurrences and see if a name is reused.
       metadataDefaults: { phetioDynamicElementName: null },
       addChildElement( capsule, componentName, stateObject ) {
 

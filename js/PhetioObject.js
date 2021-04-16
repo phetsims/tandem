@@ -62,6 +62,7 @@ const DEFAULTS = {
   phetioReadOnly: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioReadOnly,
 
   // Category of event type, can be overridden in phetioStartEvent options
+  // TODO: https://github.com/phetsims/phet-io/issues/1753 should this be a TandemConstants value too?
   phetioEventType: EventType.MODEL,
 
   // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents

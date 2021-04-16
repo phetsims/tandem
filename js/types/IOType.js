@@ -71,7 +71,7 @@ class IOType {
 
       // {Object} Key/value pairs indicating the defaults for the IO Type metadata. If anything is provided here, then
       // corresponding PhetioObjects that use this IOType should override PhetioObject.getMetadata() to add what keys
-      // they need for their specific type.  Cannot specify values also specified in parent types.
+      // they need for their specific type.  Cannot specify redundant values (that an ancestor already specified).
       metadataDefaults: {},
 
       // {string} IO Types can specify the order that methods appear in the documentation by putting their names in this
@@ -135,7 +135,7 @@ class IOType {
     this.events = config.events;
     this.metadataDefaults = config.metadataDefaults;
 
-    // TODO: Make this lazy (move back to method), see https://github.com/phetsims/phet-io/issues/1753
+    // TODO: Make this lazy (move back to method), because it is not needed when assertions are stripped out, see https://github.com/phetsims/phet-io/issues/1753
     this.allMetadataDefaults = _.merge( {}, supertype ? supertype.allMetadataDefaults : {}, config.metadataDefaults ); // all metadataDefaults (for entire hierarchy)
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;

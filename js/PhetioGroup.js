@@ -306,6 +306,7 @@ PhetioGroup.PhetioGroupIO = parameterType => {
       documentation: 'An array that sends notifications when its values have changed.',
 
       // This is always specified by PhetioGroup, and will never be this value.
+      // See documentation in PhetioCapsule
       metadataDefaults: { phetioDynamicElementName: null },
       parameterTypes: [ parameterType ],
 
