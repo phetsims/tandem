@@ -121,8 +121,8 @@ class IOType {
 
     if ( assert && supertype ) {
       Object.keys( config.metadataDefaults ).forEach( metadataDefaultKey => {
-        assert && supertype.allMetadataDefaults.hasOwnProperty( metadataDefaultKey ) &&
-        assert( supertype.allMetadataDefaults[ metadataDefaultKey ] !== config.metadataDefaults[ metadataDefaultKey ],
+        assert && supertype.getAllMetadataDefaults().hasOwnProperty( metadataDefaultKey ) &&
+        assert( supertype.getAllMetadataDefaults()[ metadataDefaultKey ] !== config.metadataDefaults[ metadataDefaultKey ],
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
       } );
     }
@@ -133,10 +133,7 @@ class IOType {
     this.documentation = config.documentation;
     this.methods = config.methods;
     this.events = config.events;
-    this.metadataDefaults = config.metadataDefaults;
-
-    // TODO: Make this lazy (move back to method), because it is not needed when assertions are stripped out, see https://github.com/phetsims/phet-io/issues/1753
-    this.allMetadataDefaults = _.merge( {}, supertype ? supertype.allMetadataDefaults : {}, config.metadataDefaults ); // all metadataDefaults (for entire hierarchy)
+    this.metadataDefaults = config.metadataDefaults; // just for this level, see getAllMetadataDefaults()
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
@@ -207,6 +204,15 @@ class IOType {
       ioType = ioType.supertype;
     }
     return array;
+  }
+
+  /**
+   * Return all the metadata defaults (for the entire IO Type hierarchy)
+   * @returns {Object}
+   * @public
+   */
+  getAllMetadataDefaults() {
+    return _.merge( {}, this.supertype ? this.supertype.getAllMetadataDefaults() : {}, this.metadataDefaults );
   }
 
   /**
