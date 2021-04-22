@@ -12,6 +12,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import Record from '../../axon/js/Record.js';
 import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
@@ -19,9 +20,9 @@ import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExc
 import merge from '../../phet-core/js/merge.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
-import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
 import TandemConstants from './TandemConstants.js';
+import phetioAPIValidation from './phetioAPIValidation.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 
@@ -106,8 +107,8 @@ class PhetioObject {
    */
   constructor( options ) {
 
-    // @public (read-only) {Tandem} - assigned in initializePhetioObject - see docs at DEFAULTS declaration
-    this.tandem = DEFAULTS.tandem;
+    // @protected {Record}
+    this._record = new Record( this.recordConfig, this );
 
     // @private {boolean} - track whether the object has been initialized.  This is necessary because initialization
     // can happen in the constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
@@ -222,45 +223,20 @@ class PhetioObject {
       }
     }
 
-    // @public (read-only) {Tandem} - see docs at DEFAULTS declaration
+    // Set record fields
     this.tandem = config.tandem;
-
-    // @public (read-only) {IOType} - see docs at DEFAULTS declaration
     this._phetioType = config.phetioType;
-
-    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
     this._phetioState = config.phetioState;
-
-    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
     this._phetioReadOnly = config.phetioReadOnly;
-
-    // @public (read-only) {string} - see docs at DEFAULTS declaration
     this._phetioDocumentation = config.phetioDocumentation;
-
-    // @private {EventType} - see docs at DEFAULTS declaration
     this._phetioEventType = config.phetioEventType;
-
-    // @private {boolean} - see docs at DEFAULTS declaration
     this._phetioHighFrequency = config.phetioHighFrequency;
-
-    // @private {boolean} - see docs at DEFAULTS declaration
     this._phetioPlayback = config.phetioPlayback;
-
-    // @private {boolean} - see docs at DEFAULTS declaration
     this._phetioStudioControl = config.phetioStudioControl;
-
-    // @public (PhetioEngine) {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to
-    // children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
     this._phetioDynamicElement = config.phetioDynamicElement;
-
-    // @public (read-only) {boolean} - see docs at DEFAULTS declaration
     this._phetioFeatured = config.phetioFeatured;
-
-    // @private {Object|null}
-    this._phetioEventMetadata = config.phetioEventMetadata;
-
-    // @private {boolean}
     this._phetioDesigned = config.phetioDesigned;
+    this._phetioEventMetadata = config.phetioEventMetadata;
 
     // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
     this.phetioArchetypePhetioID = null;
@@ -285,6 +261,254 @@ class PhetioObject {
     // Alert that this PhetioObject is ready for cross-frame communication (thus becoming a "PhET-iO element" on the wrapper side.
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @public
+   *
+   * @returns {Tandem}
+   */
+  get tandem() {
+    return this._record._get_( 'tandem' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {Tandem} value
+   */
+  set tandem( value ) {
+    this._record._set_( 'tandem', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {IOType}
+   */
+  get _phetioType() {
+    return this._record._get_( 'phetioType' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {IOType} value
+   */
+  set _phetioType( value ) {
+    this._record._set_( 'phetioType', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {boolean}
+   */
+  get _phetioState() {
+    return this._record._get_( 'phetioState' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {boolean} value
+   */
+  set _phetioState( value ) {
+    this._record._set_( 'phetioState', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {boolean}
+   */
+  get _phetioReadOnly() {
+    return this._record._get_( 'phetioReadOnly' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {boolean} value
+   */
+  set _phetioReadOnly( value ) {
+    this._record._set_( 'phetioReadOnly', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {string}
+   */
+  get _phetioDocumentation() {
+    return this._record._get_( 'phetioDocumentation' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {string} value
+   */
+  set _phetioDocumentation( value ) {
+    this._record._set_( 'phetioDocumentation', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {EventType}
+   */
+  get _phetioEventType() {
+    return this._record._get_( 'phetioEventType' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {EventType} value
+   */
+  set _phetioEventType( value ) {
+    this._record._set_( 'phetioEventType', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {boolean}
+   */
+  get _phetioHighFrequency() {
+    return this._record._get_( 'phetioHighFrequency' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {boolean} value
+   */
+  set _phetioHighFrequency( value ) {
+    this._record._set_( 'phetioHighFrequency', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {boolean}
+   */
+  get _phetioPlayback() {
+    return this._record._get_( 'phetioPlayback' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {boolean} value
+   */
+  set _phetioPlayback( value ) {
+    this._record._set_( 'phetioPlayback', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {boolean}
+   */
+  get _phetioStudioControl() {
+    return this._record._get_( 'phetioStudioControl' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {boolean} value
+   */
+  set _phetioStudioControl( value ) {
+    this._record._set_( 'phetioStudioControl', value );
+  }
+
+  /**
+   * (PhetioEngine) see docs at DEFAULTS declaration - in order to recursively pass this value to
+   * children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
+   * @private
+   *
+   * @returns {boolean}
+   */
+  get _phetioDynamicElement() {
+    return this._record._get_( 'phetioDynamicElement' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {boolean} value
+   */
+  set _phetioDynamicElement( value ) {
+    this._record._set_( 'phetioDynamicElement', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {boolean}
+   */
+  get _phetioFeatured() {
+    return this._record._get_( 'phetioFeatured' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {boolean} value
+   */
+  set _phetioFeatured( value ) {
+    this._record._set_( 'phetioFeatured', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {boolean}
+   */
+  get _phetioDesigned() {
+    return this._record._get_( 'phetioDesigned' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {boolean} value
+   */
+  set _phetioDesigned( value ) {
+    this._record._set_( 'phetioDesigned', value );
+  }
+
+  /**
+   * See docs at DEFAULTS declaration
+   * @private
+   *
+   * @returns {Object|null}
+   */
+  get _phetioEventMetadata() {
+    return this._record._get_( 'phetioEventMetadata' );
+  }
+
+  /**
+   * @private
+   *
+   * @param {Object|null} value
+   */
+  set _phetioEventMetadata( value ) {
+    this._record._set_( 'phetioEventMetadata', value );
   }
 
   // @public - throws an assertion error in brands other than PhET-iO
@@ -642,7 +866,19 @@ class PhetioObject {
     }
     return metadata;
   }
+
+  /**
+   * @protected
+   *
+   * @returns {Object}
+   */
+  get recordConfig() {
+    return PhetioObject.RECORD_CONFIG;
+  }
 }
+
+// @protected {Object}
+PhetioObject.RECORD_CONFIG = Record.configFromDefaults( DEFAULTS );
 
 // @public
 PhetioObject.DEFAULT_OPTIONS = DEFAULTS; // the default options for the phet-io object
