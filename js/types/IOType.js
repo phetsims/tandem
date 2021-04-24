@@ -285,7 +285,7 @@ IOType.ObjectIO = ObjectIO;
 /**
  * @typedef {Object} MethodObject
  * @property {string} documentation
- * @property {function()} implementation - the function to execute when this method is called. This function's parameters
+ * @property {function} implementation - the function to execute when this method is called. This function's parameters
  *                                  will be based on `parameterTypes`, and should return the type specified by `returnType`
  * @property {IOType} returnType - the return IO Type of the method
  * @property {IOType[]} parameterTypes - the parameter IO Types for the method
