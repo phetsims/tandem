@@ -30,7 +30,7 @@ const DEFAULT_CONTAINER_SUFFIX = 'Container';
 class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
-   * @param {function(Tandem,...):PhetioObject} createElement - function that creates a dynamic element to be housed in
+   * @param {function(Tandem,...args):PhetioObject} createElement - function that creates a dynamic element to be housed in
    * this container. All of this dynamic element container's elements will be created from this function, including the
    * archetype.
    * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype
