@@ -238,6 +238,9 @@ class IOType {
 
     let proto = CoreType.prototype;
     while ( proto ) {
+      assert && assert( !proto.hasOwnProperty( 'fromStateObject' ),
+        'fromStateObject should be a static on the Class, and not on the prototype.' );
+
       if ( typeof proto.toStateObject === 'function' ) {
         coreTypeHasToStateObject = true;
       }
