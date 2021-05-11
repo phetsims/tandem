@@ -557,6 +557,13 @@ Tandem.VALIDATION = VALIDATION;
 Tandem.METADATA_KEY = '_metadata';
 
 /**
+ * For the API file, the key name for the data section.
+ * @type {string}
+ * @public
+ */
+Tandem.DATA_KEY = '_data';
+
+/**
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
  */
 class GroupTandem extends Tandem {

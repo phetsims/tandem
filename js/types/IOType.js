@@ -74,6 +74,10 @@ class IOType {
       // they need for their specific type.  Cannot specify redundant values (that an ancestor already specified).
       metadataDefaults: {},
 
+      // {Object} Key/value pairs indicating the defaults for the IO Type data. Most likely this will remain PhET-iO internal,
+      // and shouldn't need to be used when creating IOTypes outside of tandem/.
+      dataDefaults: {},
+
       // {string} IO Types can specify the order that methods appear in the documentation by putting their names in this
       // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
       // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
@@ -118,6 +122,7 @@ class IOType {
     assert && assert( ValidatorDef.containsValidatorKey( config ), 'Validator is required' );
     assert && assert( Array.isArray( config.events ) );
     assert && assert( Object.getPrototypeOf( config.metadataDefaults ) === Object.prototype, 'Extra prototype on metadata keys' );
+    assert && assert( Object.getPrototypeOf( config.dataDefaults ) === Object.prototype, 'Extra prototype on data defaults' );
 
     if ( assert && supertype ) {
       Object.keys( config.metadataDefaults ).forEach( metadataDefaultKey => {
@@ -134,6 +139,7 @@ class IOType {
     this.methods = config.methods;
     this.events = config.events;
     this.metadataDefaults = config.metadataDefaults; // just for this level, see getAllMetadataDefaults()
+    this.dataDefaults = config.dataDefaults; // just for this level, see getAllDataDefaults()
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
@@ -216,6 +222,15 @@ class IOType {
   }
 
   /**
+   * Return all the data defaults (for the entire IO Type hierarchy)
+   * @returns {Object}
+   * @public
+   */
+  getAllDataDefaults() {
+    return _.merge( {}, this.supertype ? this.supertype.getAllDataDefaults() : {}, this.dataDefaults );
+  }
+
+  /**
    * Convenience method for creating an IOType that forwards its state methods over to be handled by the core type. This
    * function will gracefully forward any supported deserialization methods, but requires the CoreType to have `toStateObject`.
    * @public
@@ -271,15 +286,21 @@ class IOType {
   }
 }
 
+// default state value
+const DEFAULT_STATE = null;
+
 ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',
-  toStateObject: coreObject => null,
+  toStateObject: coreObject => DEFAULT_STATE,
   fromStateObject: stateObject => null,
   stateToArgsForConstructor: stateObject => [],
   applyState: ( coreObject, stateObject ) => { },
-  metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS
+  metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS,
+  dataDefaults: {
+    initialState: DEFAULT_STATE
+  }
 } );
 
 // @public
