@@ -4,4 +4,20 @@ export type PhetioObjectOptions = {
   tandem: Tandem;
   phetioDocumentation: string;
 };
-export default class PhetioObject {}
+type DefaultOptions = {
+  phetioPlayback: boolean
+  phetioEventMetadata: Object | null
+}
+export default class PhetioObject {
+  constructor( options: PhetioObjectOptions );
+
+  phetioStartEvent( string: string, options: object );
+
+  phetioEndEvent();
+
+  dispose();
+
+  isPhetioInstrumented():boolean;
+
+  static DEFAULT_OPTIONS: DefaultOptions;
+}
