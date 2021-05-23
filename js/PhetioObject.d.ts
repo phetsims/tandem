@@ -17,7 +17,9 @@ export default class PhetioObject {
 
   dispose();
 
-  isPhetioInstrumented():boolean;
+  isPhetioInstrumented(): boolean;
+
+  phetioType: any;
 
   static DEFAULT_OPTIONS: DefaultOptions;
 }
