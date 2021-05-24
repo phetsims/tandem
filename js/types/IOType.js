@@ -273,7 +273,6 @@ class IOType {
   // }
 
   /**
-   * TODO: The performance of this method is not acceptable in MK's opinion, even when hidden behind assertions. https://github.com/phetsims/phet-io/issues/1774
    * @public
    * @param {Object} stateObject
    * @param {string[]} publicSchemaKeys
