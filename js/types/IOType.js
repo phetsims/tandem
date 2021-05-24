@@ -302,18 +302,8 @@ class IOType {
         const checkLevel = ( schemaLevel, objectLevel, keyList, exclude ) => {
           Object.keys( schemaLevel ).filter( k => k !== exclude ).forEach( key => {
 
-            // TODO https://github.com/phetsims/phet-io/issues/1774 how to deal with Property.validValues which
-            // sometimes exists and sometimes does not?  We will have them always exist.
-            if ( ![
-              'validValues',
-              'units',
-              'rangeProperty',
-              'rangePhetioID',
-              'range',
-              'step' ].includes( key ) ) {
-              assert && assert( objectLevel.hasOwnProperty( key ), `${key} in state schema but not in objectLevel` );
-              schemaLevel[ key ].validateStateObject( objectLevel[ key ] );
-            }
+            assert && assert( objectLevel.hasOwnProperty( key ), `${key} in state schema but not in objectLevel` );
+            schemaLevel[ key ].validateStateObject( objectLevel[ key ] );
             keyList.push( key );
           } );
         };
