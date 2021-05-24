@@ -151,7 +151,9 @@ class IOType {
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
       const toStateObject = config.toStateObject( coreObject );
-      assert && this.validateStateObject( toStateObject );
+
+      // Only validate the stateObject if it is phetioState:true. TODO: is this the long term solution? https://github.com/phetsims/phet-io/issues/1779
+      assert && ( !coreObject || coreObject.phetioState ) && this.validateStateObject( toStateObject );
       return toStateObject;
     };
     this.fromStateObject = config.fromStateObject;
