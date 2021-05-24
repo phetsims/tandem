@@ -17,6 +17,7 @@
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 
 // {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once
 const cache = new Map();
@@ -63,7 +64,8 @@ const OrIO = parameterTypes => {
         assert && assert( stateObject.hasOwnProperty( 'index' ), 'index required for deserialization' );
         assert && assert( stateObject.hasOwnProperty( 'state' ), 'state required for deserialization' );
         return parameterTypes[ stateObject.index ].fromStateObject( stateObject.state );
-      }
+      },
+      stateSchema: new StateSchema( `${typeNames.join( '|' )}` )
     } ) );
   }
 

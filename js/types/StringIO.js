@@ -9,12 +9,14 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 import ValueIO from './ValueIO.js';
 
 const StringIO = new IOType( 'StringIO', {
   supertype: ValueIO,
   valueType: 'string',
-  documentation: 'IO Type for Javascript\'s string primitive type'
+  documentation: 'IO Type for Javascript\'s string primitive type',
+  stateSchema: new StateSchema( 'string', { valueType: 'string' } )
 } );
 
 tandemNamespace.register( 'StringIO', StringIO );

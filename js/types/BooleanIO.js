@@ -9,12 +9,14 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 import ValueIO from './ValueIO.js';
 
 const BooleanIO = new IOType( 'BooleanIO', {
   supertype: ValueIO,
   valueType: 'boolean',
-  documentation: 'IO Type for Javascript\'s boolean primitive type'
+  documentation: 'IO Type for Javascript\'s boolean primitive type',
+  stateSchema: new StateSchema( 'boolean', { valueType: 'boolean' } )
 } );
 
 tandemNamespace.register( 'BooleanIO', BooleanIO );

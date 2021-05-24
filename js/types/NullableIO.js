@@ -19,6 +19,7 @@
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 
 // {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once
 const cache = new Map();
@@ -41,7 +42,15 @@ const NullableIO = parameterType => {
       toStateObject: instance => instance === null ? null : parameterType.toStateObject( instance ),
 
       // If the argument is null, returns null. Otherwise converts a state object to an instance of the underlying type.
-      fromStateObject: stateObject => stateObject === null ? null : parameterType.fromStateObject( stateObject )
+      fromStateObject: stateObject => stateObject === null ? null : parameterType.fromStateObject( stateObject ),
+      stateSchema: new StateSchema( `null|<${parameterType.typeName}>`, {
+          isValidValue: toStateObjectResult => {
+            return value => value === null || parameterType.validateStateObject( toStateObjectResult );
+          }
+        }
+      )
+
+      // stateSchema: parameterType.stateSchema // TODO: https://github.com/phetsims/phet-io/issues/1774 how to say "or null'?
     } ) );
   }
 

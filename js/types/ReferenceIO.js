@@ -12,6 +12,7 @@ import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StringIO from './StringIO.js';
 
 // {Map.<cacheKey:string|*, IOType>} - Cache each parameterized ReferenceIO so that it is only created once
 const cache = new Map();
@@ -41,6 +42,10 @@ const ReferenceIO = parameterType => {
         return {
           phetioID: phetioObject.tandem.phetioID
         };
+      },
+
+      stateSchema: {
+        phetioID: StringIO
       },
 
       /**

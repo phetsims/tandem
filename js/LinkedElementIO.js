@@ -9,6 +9,7 @@
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
+import StringIO from './types/StringIO.js';
 
 const LinkedElementIO = new IOType( 'LinkedElementIO', {
   isValidValue: () => true,
@@ -17,7 +18,10 @@ const LinkedElementIO = new IOType( 'LinkedElementIO', {
     assert && Tandem.VALIDATION && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
     return { elementID: linkedElement.element.tandem.phetioID };
   },
-  fromStateObject: stateObject => ( {} )
+  fromStateObject: stateObject => ( {} ),
+  stateSchema: {
+    elementID: StringIO
+  }
 } );
 
 tandemNamespace.register( 'LinkedElementIO', LinkedElementIO );

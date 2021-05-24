@@ -10,6 +10,7 @@
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 
 // {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once.
 const cache = new Map();
@@ -31,7 +32,16 @@ const ArrayIO = parameterType => {
       parameterTypes: [ parameterType ],
       toStateObject: array => array.map( parameterType.toStateObject ),
       fromStateObject: stateObject => stateObject.map( parameterType.fromStateObject ),
-      documentation: 'IO Type for the built-in JS array type, with the element type specified.'
+      documentation: 'IO Type for the built-in JS array type, with the element type specified.',
+      stateSchema: new StateSchema( `Array<${parameterType.typeName}>`, {
+        isValidValue: array => {
+
+          // TODO https://github.com/phetsims/phet-io/issues/1774 same solution as we will have in NullableIO,
+          // like calling parameterType.isValidStateObject(...)
+
+          return _.every( array, element => true );
+        }
+      } )
     } ) );
   }
 
