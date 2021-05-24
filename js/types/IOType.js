@@ -395,10 +395,8 @@ class IOType {
     if ( CoreType.fromStateObject ) {
       options.fromStateObject = CoreType.fromStateObject;
     }
-
-    // TODO: would it be clearer if this var wasn't formatted like a constant, but instead the options? https://github.com/phetsims/phet-io/issues/1774
     if ( CoreType.STATE_SCHEMA ) {
-      options.stateSchema = CoreType.STATE_SCHEMA;
+      options.stateSchema = _.clone( CoreType.STATE_SCHEMA );
     }
     if ( CoreType.stateToArgsForConstructor ) {
       options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
