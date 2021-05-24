@@ -273,6 +273,7 @@ class IOType {
   // }
 
   /**
+   * TODO: The performance of this method is not acceptable in MK's opinion, even when hidden behind assertions. https://github.com/phetsims/phet-io/issues/1774
    * @public
    * @param {Object} stateObject
    * @param {string[]} publicSchemaKeys
@@ -318,8 +319,10 @@ class IOType {
     // When we reach the root, make sure there isn't anything in the stateObject that isn't described by a schema
     if ( !this.supertype && stateObject && typeof stateObject !== 'string' && !Array.isArray( stateObject ) ) {
 
-      // TODO: is there a better way to exclude checking on "private" for this? https://github.com/phetsims/phet-io/issues/1774
-      Object.keys( stateObject ).forEach( key => assert && assert( key === 'private' || publicSchemaKeys.includes( key ), 'stateObject provided a public key that is not in the schema: ' + key ) );
+      Object.keys( stateObject ).forEach( key => {
+        assert && key !== 'private' && assert( publicSchemaKeys.includes( key ),
+          'stateObject provided a public key that is not in the schema: ' + key );
+      } );
 
       if ( stateObject.private ) {
         Object.keys( stateObject.private ).forEach( key => assert && assert( privateSchemaKeys.includes( key ), 'stateObject provided a private key that is not in the schema: ' + key ) );
