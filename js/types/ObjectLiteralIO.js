@@ -1,4 +1,4 @@
-// Copyright 2020, University of Colorado Boulder
+// Copyright 2021, University of Colorado Boulder
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';

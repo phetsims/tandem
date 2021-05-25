@@ -1,4 +1,4 @@
-// Copyright 2018-2020, University of Colorado Boulder
+// Copyright 2020, University of Colorado Boulder
 
 /**
  * Parametric IO Type that adds support for serializing an element as multiple types, as a composite. Serialization occurs
