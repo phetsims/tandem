@@ -275,33 +275,39 @@ class IOType {
     }
   }
 
-  // isValidStateObject(stateObject,publicSchemaKeys=[],privateSchemaKeys = []){
-  //
-  // }
-
   /**
    * @public
-   * @param {Object} stateObject
-   * @param {string[]} publicSchemaKeys
-   * @param {string[]} privateSchemaKeys
+   * @param {Object} stateObject - the stateObject to validate against
+   * @param {boolean} toAssert=false - whether or not to assert when invalid
+   * @param {string[]} publicSchemaKeys=[]
+   * @param {string[]} privateSchemaKeys=[]
+   * @returns {boolean} if the stateObject is valid or not.
    */
-  validateStateObject( stateObject, publicSchemaKeys = [], privateSchemaKeys = [] ) {
+  isStateObjectValid( stateObject, toAssert = false, publicSchemaKeys = [], privateSchemaKeys = [] ) {
+
+    let valid = true;
 
     // TODO: Get rid of this, see https://github.com/phetsims/phet-io/issues/1774
     if ( this.typeName === 'ValueIO' ) {
-      return;
+      return true;
     }
 
     // TODO: https://github.com/phetsims/phet-io/issues/1774 how to have NullableIO allow null?
     // if ( this.typeName.startsWith( 'NullableIO<' ) && stateObject === null || ( stateObject && stateObject.value === null ) ) {
     if ( this.typeName.startsWith( 'NullableIO<' ) ) {
-      return;
+      return true;
     }
 
     // make sure the stateObject has everything the schema requires and nothing more
     if ( this.stateSchema ) {
       if ( this.stateSchema instanceof StateSchema ) {
-        validate( stateObject, this.stateSchema.validator );
+
+        if ( toAssert ) {
+          validate( stateObject, this.stateSchema.validator );
+        }
+        else {
+          return ValidatorDef.isValueValid( stateObject, this.stateSchema.validator );
+        }
       }
       else {
         const schema = this.stateSchema;
@@ -309,7 +315,11 @@ class IOType {
         const checkLevel = ( schemaLevel, objectLevel, keyList, exclude ) => {
           Object.keys( schemaLevel ).filter( k => k !== exclude ).forEach( key => {
 
-            assert && assert( objectLevel.hasOwnProperty( key ), `${key} in state schema but not in objectLevel` );
+            const validKey = objectLevel.hasOwnProperty( key );
+            if ( !validKey ) {
+              valid = false;
+            }
+            assert && toAssert && assert( validKey, `${key} in state schema but not in objectLevel` );
             schemaLevel[ key ].validateStateObject( objectLevel[ key ] );
             keyList.push( key );
           } );
@@ -320,20 +330,47 @@ class IOType {
       }
     }
 
-    this.supertype && this.supertype.validateStateObject( stateObject, publicSchemaKeys, privateSchemaKeys );
+    if ( this.supertype ) {
+      return valid && this.supertype.isStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
+    }
 
     // When we reach the root, make sure there isn't anything in the stateObject that isn't described by a schema
     if ( !this.supertype && stateObject && typeof stateObject !== 'string' && !Array.isArray( stateObject ) ) {
 
       Object.keys( stateObject ).forEach( key => {
-        assert && key !== 'private' && assert( publicSchemaKeys.includes( key ),
-          'stateObject provided a public key that is not in the schema: ' + key );
+        if ( key !== 'private' ) {
+          const publicKeyValid = publicSchemaKeys.includes( key );
+          if ( !publicKeyValid ) {
+            valid = false;
+          }
+          assert && toAssert && assert( publicKeyValid,
+            'stateObject provided a public key that is not in the schema: ' + key );
+        }
       } );
 
       if ( stateObject.private ) {
-        Object.keys( stateObject.private ).forEach( key => assert && assert( privateSchemaKeys.includes( key ), 'stateObject provided a private key that is not in the schema: ' + key ) );
+        Object.keys( stateObject.private ).forEach( key => {
+
+          const privateKeyValid = privateSchemaKeys.includes( key );
+          if ( !privateKeyValid ) {
+            valid = false;
+          }
+          assert && toAssert && assert( privateKeyValid, 'stateObject provided a private key that is not in the schema: ' + key );
+        } );
       }
+
+      return valid;
     }
+    return true;
+  }
+
+  /**
+   * Assert if the provided stateObject is not valid to this IOType's stateSchema
+   * @public
+   * @param {Object} stateObject
+   */
+  validateStateObject( stateObject ) {
+    this.isStateObjectValid( stateObject, true );
   }
 
   /**
