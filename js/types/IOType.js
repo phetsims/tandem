@@ -158,14 +158,14 @@ class IOType {
       // Validate, but only if this IOType instance has more to validate than the supertype
       if ( toStateObjectSupplied || stateSchemaSupplied ) {
 
-        // Only validate the stateObject if it is phetioState:true. TODO: is this the long term solution? https://github.com/phetsims/phet-io/issues/1779
+        // Only validate the stateObject if it is phetioState:true.
         // This is an n*m algorithm because for each time toStateObject is called and needs validation, this.validateStateObject
         // looks all the way up the IOType hierarchy. This is not efficient, but gains us the ability to make sure that
         // the stateObject doesn't have any superfluous, unexpected keys. The "m" portion is based on how many sub-properties
         // in a state call `toStateObject`, and the "n" portion is based on how many IOTypes in the hierarchy define a
         // toStateObject or stateSchema. In the future we could potentially improve performance by having validateStateObject
         // only check against the schema at this level, but then extra keys in the stateObject would not be caught. From work done in https://github.com/phetsims/phet-io/issues/1774
-        assert && ( !coreObject || coreObject.phetioState ) && this.validateStateObject( toStateObject );
+        assert && this.validateStateObject( toStateObject );
       }
       return toStateObject;
     };
