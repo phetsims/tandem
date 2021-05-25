@@ -284,17 +284,11 @@ class IOType {
    * @returns {boolean} if the stateObject is valid or not.
    */
   isStateObjectValid( stateObject, toAssert = false, publicSchemaKeys = [], privateSchemaKeys = [] ) {
-
+    //window.toAssert = toAssert;
     let valid = true;
 
     // TODO: Get rid of this, see https://github.com/phetsims/phet-io/issues/1774
     if ( this.typeName === 'ValueIO' ) {
-      return true;
-    }
-
-    // TODO: https://github.com/phetsims/phet-io/issues/1774 how to have NullableIO allow null?
-    // if ( this.typeName.startsWith( 'NullableIO<' ) && stateObject === null || ( stateObject && stateObject.value === null ) ) {
-    if ( this.typeName.startsWith( 'NullableIO<' ) ) {
       return true;
     }
 
@@ -330,7 +324,8 @@ class IOType {
       }
     }
 
-    if ( this.supertype ) {
+    // TODO: when it is a StateSchema here, then likely it is something like NullableIO and we have already reached the base case with a validator that inclues checking on its parameterType. DISCUSS WITH SR, https://github.com/phetsims/phet-io/issues/1774
+    if ( this.supertype && !( this.stateSchema instanceof StateSchema ) ) {
       return valid && this.supertype.isStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
     }
 
@@ -415,6 +410,8 @@ class IOType {
     while ( proto ) {
       assert && assert( !proto.hasOwnProperty( 'fromStateObject' ),
         'fromStateObject should be a static on the Class, and not on the prototype.' );
+      assert && assert( !proto.hasOwnProperty( 'STATE_SCHEMA' ),
+        'STATE_SCHEMA should be a static on the Class, and not on the prototype.' );
 
       if ( typeof proto.toStateObject === 'function' ) {
         coreTypeHasToStateObject = true;

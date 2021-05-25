@@ -35,11 +35,7 @@ const ArrayIO = parameterType => {
       documentation: 'IO Type for the built-in JS array type, with the element type specified.',
       stateSchema: new StateSchema( `Array<${parameterType.typeName}>`, {
         isValidValue: array => {
-
-          // TODO https://github.com/phetsims/phet-io/issues/1774 same solution as we will have in NullableIO,
-          // like calling parameterType.isValidStateObject(...)
-
-          return _.every( array, element => true );
+          return _.every( array, element => parameterType.isStateObjectValid( element ) );
         }
       } )
     } ) );
