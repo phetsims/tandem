@@ -150,6 +150,8 @@ class IOType {
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
+
+      // TODO: config.toStateObject will often recursively call supertype IOType.prototype.toStateObject calls. This means that state objects are being validated N times (once for each call up the hierarchy of toStateObject methods). https://github.com/phetsims/phet-io/issues/1774
       const toStateObject = config.toStateObject( coreObject );
 
       // Only validate the stateObject if it is phetioState:true. TODO: is this the long term solution? https://github.com/phetsims/phet-io/issues/1779
@@ -160,6 +162,11 @@ class IOType {
     this.stateToArgsForConstructor = config.stateToArgsForConstructor;
     this.applyState = ( coreObject, stateObject ) => {
       validate( coreObject, this.validator, 'unexpected parameter to applyState', VALIDATE_OPTIONS_FALSE );
+
+      // TODO: I would like to call this, but there is buggy repetition up the supertyp hierarchy in the same way as for toSTateObject but with errors. SR let's talk about this, https://github.com/phetsims/phet-io/issues/1774
+      // Validate that the provided stateObject is of the expected schema
+      // assert && this.validateStateObject( stateObject );
+
       config.applyState( coreObject, stateObject );
     };
 
