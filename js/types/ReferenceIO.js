@@ -54,7 +54,6 @@ const ReferenceIO = parameterType => {
        * @param {{phetioID:string}} stateObject
        * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError
-       * @public
        */
       fromStateObject( stateObject ) {
         assert && assert( stateObject && typeof stateObject.phetioID === 'string', 'phetioID should be a string' );
@@ -64,6 +63,13 @@ const ReferenceIO = parameterType => {
         else {
           throw new CouldNotYetDeserializeError();
         }
+      },
+
+      /**
+       * References should be using fromStateObject to get a copy of the PhET-iO element.
+       */
+      applyState() {
+        assert && assert( false, 'ReferenceIO is meant to be used as DataType serialization (see fromStateObject' );
       }
     } ) );
   }
