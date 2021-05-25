@@ -63,8 +63,8 @@ const ReferenceIO = parameterType => {
       /**
        * References should be using fromStateObject to get a copy of the PhET-iO element.
        */
-      applyState() {
-        assert && assert( false, 'ReferenceIO is meant to be used as DataType serialization (see fromStateObject' );
+      applyState( coreObject ) {
+        assert && assert( false, `ReferenceIO is meant to be used as DataType serialization (see fromStateObject) for phetioID: ${coreObject.tandem.phetioID}` );
       }
     } ) );
   }
