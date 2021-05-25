@@ -119,7 +119,7 @@ class IOType {
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
-      // TODO: perhaps simplify this typeDoc by moving the complexity into the StateSchema constructor? https://github.com/phetsims/phet-io/issues/1774
+      // TODO: perhaps simplify this typeDoc by moving the complexity into the StateSchema constructor? https://github.com/phetsims/phet-io/issues/1781
       // {Object|StateSchema|function(IOType):Object|function(IOType):StateSchema|null} - the specification for how the
       // PhET-iO state will look for instances of this type. null specifies that the object is not serialized
       stateSchema: null,
@@ -301,11 +301,6 @@ class IOType {
 
     let valid = true;
 
-    // TODO: Get rid of this, see https://github.com/phetsims/phet-io/issues/1774
-    if ( this.typeName === 'ValueIO' ) {
-      return true;
-    }
-
     // make sure the stateObject has everything the schema requires and nothing more
     if ( this.stateSchema ) {
       if ( this.stateSchema instanceof StateSchema ) {
@@ -338,7 +333,7 @@ class IOType {
       }
     }
 
-    // TODO: when it is a StateSchema here, then likely it is something like NullableIO and we have already reached the base case with a validator that inclues checking on its parameterType. DISCUSS WITH SR, https://github.com/phetsims/phet-io/issues/1774
+    // TODO: when it is a StateSchema here, then likely it is something like NullableIO and we have already reached the base case with a validator that inclues checking on its parameterType. https://github.com/phetsims/phet-io/issues/1781
     if ( this.supertype && !( this.stateSchema instanceof StateSchema ) ) {
       return valid && this.supertype.isStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
     }
