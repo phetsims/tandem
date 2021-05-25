@@ -45,11 +45,6 @@ const NullableIO = parameterType => {
       fromStateObject: stateObject => stateObject === null ? null : parameterType.fromStateObject( stateObject ),
       stateSchema: new StateSchema( `null|<${parameterType.typeName}>`, {
           isValidValue: toStateObjectResult => {
-
-            // TODO: we sometimes get here when toAssert is true, which I would have though impossible, I think it is because how many times validateStateObject is called on values. https://github.com/phetsims/phet-io/issues/1774
-            // if( window.toAssert){
-            //   debugger;
-            // }
             return value => value === null || parameterType.isStateObjectValid( toStateObjectResult );
           }
         }

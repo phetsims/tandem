@@ -51,6 +51,9 @@ class IOType {
 
     // For reference in the config
     const supertype = config.supertype || ObjectIO;
+    const toStateObjectSupplied = !!( config.toStateObject );
+    const applyStateSupplied = !!( config.applyState );
+    const stateSchemaSupplied = !!( config.stateSchema );
 
     config = merge( {
 
@@ -150,12 +153,20 @@ class IOType {
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
-
-      // TODO: config.toStateObject will often recursively call supertype IOType.prototype.toStateObject calls. This means that state objects are being validated N times (once for each call up the hierarchy of toStateObject methods). https://github.com/phetsims/phet-io/issues/1774
       const toStateObject = config.toStateObject( coreObject );
 
-      // Only validate the stateObject if it is phetioState:true. TODO: is this the long term solution? https://github.com/phetsims/phet-io/issues/1779
-      assert && ( !coreObject || coreObject.phetioState ) && this.validateStateObject( toStateObject );
+      // Validate, but only if this IOType instance has more to validate than the supertype
+      if ( toStateObjectSupplied || stateSchemaSupplied ) {
+
+        // Only validate the stateObject if it is phetioState:true. TODO: is this the long term solution? https://github.com/phetsims/phet-io/issues/1779
+        // This is an n*m algorithm because for each time toStateObject is called and needs validation, this.validateStateObject
+        // looks all the way up the IOType hierarchy. This is not efficient, but gains us the ability to make sure that
+        // the stateObject doesn't have any superfluous, unexpected keys. The "m" portion is based on how many sub-properties
+        // in a state call `toStateObject`, and the "n" portion is based on how many IOTypes in the hierarchy define a
+        // toStateObject or stateSchema. In the future we could potentially improve performance by having validateStateObject
+        // only check against the schema at this level, but then extra keys in the stateObject would not be caught. From work done in https://github.com/phetsims/phet-io/issues/1774
+        assert && ( !coreObject || coreObject.phetioState ) && this.validateStateObject( toStateObject );
+      }
       return toStateObject;
     };
     this.fromStateObject = config.fromStateObject;
@@ -163,9 +174,12 @@ class IOType {
     this.applyState = ( coreObject, stateObject ) => {
       validate( coreObject, this.validator, 'unexpected parameter to applyState', VALIDATE_OPTIONS_FALSE );
 
-      // TODO: I would like to call this, but there is buggy repetition up the supertyp hierarchy in the same way as for toSTateObject but with errors. SR let's talk about this, https://github.com/phetsims/phet-io/issues/1774
-      // Validate that the provided stateObject is of the expected schema
-      // assert && this.validateStateObject( stateObject );
+      // Validate, but only if this IOType instance has more to validate than the supertype
+      if ( applyStateSupplied || stateSchemaSupplied ) {
+
+        // Validate that the provided stateObject is of the expected schema
+        assert && this.validateStateObject( stateObject );
+      }
 
       config.applyState( coreObject, stateObject );
     };
@@ -284,7 +298,7 @@ class IOType {
    * @returns {boolean} if the stateObject is valid or not.
    */
   isStateObjectValid( stateObject, toAssert = false, publicSchemaKeys = [], privateSchemaKeys = [] ) {
-    //window.toAssert = toAssert;
+
     let valid = true;
 
     // TODO: Get rid of this, see https://github.com/phetsims/phet-io/issues/1774
