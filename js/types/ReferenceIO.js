@@ -38,6 +38,7 @@ const ReferenceIO = parameterType => {
        * directly to use this implementation.
        */
       toStateObject( phetioObject ) {
+        assert && assert( phetioObject.phetioState === false, `ReferenceIO instance should be phetioState: false: ${phetioObject.tandem.phetioID}` );
         return {
           phetioID: phetioObject.tandem.phetioID
         };
