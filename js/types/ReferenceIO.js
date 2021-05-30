@@ -39,7 +39,7 @@ const ReferenceIO = parameterType => {
        */
       toStateObject( phetioObject ) {
 
-        // NOTE: We cannot assert that phetioObject.phetioState === false here because sometimes ReferencIO is used statically like
+        // NOTE: We cannot assert that phetioObject.phetioState === false here because sometimes ReferenceIO is used statically like
         // ReferenceIO( Vector2IO ).toStateObject( myVector );
         return {
           phetioID: phetioObject.tandem.phetioID
