@@ -23,6 +23,7 @@ const cache = new Map();
  */
 const ArrayIO = parameterType => {
   assert && assert( !!parameterType, 'parameterType should be defined' );
+  assert && assert( parameterType instanceof IOType, 'parameterType should be an IOType' );
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `ArrayIO<${parameterType.typeName}>`, {
       valueType: Array,
