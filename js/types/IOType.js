@@ -178,13 +178,15 @@ class IOType {
       if ( applyStateSupplied || stateSchemaSupplied ) {
 
         // Validate that the provided stateObject is of the expected schema
-        assert && this.validateStateObject( stateObject );
+        // NOTE: Cannot use this.validateStateObject because config adopts supertype.applyState, which is bounds to the
+        // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
+        assert && coreObject.phetioType.validateStateObject( stateObject );
       }
 
       config.applyState( coreObject, stateObject );
     };
 
-    // just for this level, see getAllStateSchema()
+    // @public - just for this level, see getAllStateSchema()
     this.stateSchema = typeof config.stateSchema === 'function' ? config.stateSchema( this ) : config.stateSchema;
     assert && this.validateStateSchema( this.stateSchema );
 
@@ -333,7 +335,7 @@ class IOType {
       }
     }
 
-    // TODO: when it is a StateSchema here, then likely it is something like NullableIO and we have already reached the base case with a validator that inclues checking on its parameterType. https://github.com/phetsims/phet-io/issues/1781
+    // TODO: when it is a StateSchema here, then likely it is something like NullableIO and we have already reached the base case with a validator that includes checking on its parameterType. https://github.com/phetsims/phet-io/issues/1781
     if ( this.supertype && !( this.stateSchema instanceof StateSchema ) ) {
       return valid && this.supertype.isStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
     }
@@ -352,6 +354,7 @@ class IOType {
         }
       } );
 
+      // TODO: https://github.com/phetsims/phet-io/issues/1774 duplicate with above
       if ( stateObject.private ) {
         Object.keys( stateObject.private ).forEach( key => {
 
