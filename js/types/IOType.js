@@ -330,7 +330,7 @@ class IOType {
             if ( !validKey ) {
               valid = false;
             }
-            assert && toAssert && assert( validKey, `${key} in state schema but not in objectLevel` );
+            assert && toAssert && assert( validKey, `${key} in state schema but not in the state object` );
             schemaLevel[ key ].validateStateObject( objectLevel[ key ] );
             keyList.push( key );
           } );
