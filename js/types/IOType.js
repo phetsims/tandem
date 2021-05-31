@@ -153,7 +153,7 @@ class IOType {
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
-      const toStateObject = config.toStateObject( coreObject ); // TODO https://github.com/phetsims/phet-io/issues/1774 what should we invoke this on?
+      const toStateObject = config.toStateObject( coreObject );
 
       // Validate, but only if this IOType instance has more to validate than the supertype
       if ( toStateObjectSupplied || stateSchemaSupplied ) {
@@ -165,12 +165,6 @@ class IOType {
         // in a state call `toStateObject`, and the "n" portion is based on how many IOTypes in the hierarchy define a
         // toStateObject or stateSchema. In the future we could potentially improve performance by having validateStateObject
         // only check against the schema at this level, but then extra keys in the stateObject would not be caught. From work done in https://github.com/phetsims/phet-io/issues/1774
-
-        // TODO: https://github.com/phetsims/phet-io/issues/1774 what to do here?  Calling on validationSource
-        // has a false positive for PropertyIO call in NumberPropertyIO, since subtype isn't done yet
-        // NOTE: Cannot use this.validateStateObject because config adopts supertype.applyState, which is bounds to the
-        // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
-        // const validationSource = coreObject && coreObject.phetioType ? coreObject.phetioType : this;
         assert && this.validateStateObject( toStateObject );
       }
       return toStateObject;
