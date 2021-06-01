@@ -343,28 +343,21 @@ class IOType {
     // When we reach the root, make sure there isn't anything in the stateObject that isn't described by a schema
     if ( !this.supertype && stateObject && typeof stateObject !== 'string' && !Array.isArray( stateObject ) ) {
 
-      Object.keys( stateObject ).forEach( key => {
-        if ( key !== 'private' ) {
-          const publicKeyValid = publicSchemaKeys.includes( key );
-          if ( !publicKeyValid ) {
-            valid = false;
-          }
-          assert && toAssert && assert( publicKeyValid,
-            'stateObject provided a public key that is not in the schema: ' + key );
+      const check = ( type, key ) => {
+        assert && assert( type === 'public' || type === 'private', `bad type: ${type}` );
+        const keys = type === 'public' ? publicSchemaKeys : privateSchemaKeys;
+        const keyValid = keys.includes( key );
+        if ( !keyValid ) {
+          valid = false;
         }
-      } );
+        assert && toAssert && assert( keyValid, `stateObject provided a ${type} key that is not in the schema: ${key}` );
+      };
 
-      // TODO: https://github.com/phetsims/phet-io/issues/1774 duplicate with above
-      if ( stateObject.private ) {
-        Object.keys( stateObject.private ).forEach( key => {
+      // Visit the public state
+      Object.keys( stateObject ).filter( key => key !== 'private' ).forEach( key => check( 'public', key ) );
 
-          const privateKeyValid = privateSchemaKeys.includes( key );
-          if ( !privateKeyValid ) {
-            valid = false;
-          }
-          assert && toAssert && assert( privateKeyValid, 'stateObject provided a private key that is not in the schema: ' + key );
-        } );
-      }
+      // Visit the private state, if any
+      stateObject.private && Object.keys( stateObject.private ).forEach( key => check( 'private', key ) );
 
       return valid;
     }
