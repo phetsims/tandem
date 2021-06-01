@@ -383,7 +383,7 @@ class IOType {
     }
     else {
       const stateSchemaAPI = _.mapValues( this.stateSchema, value => value.typeName );
-      if ( stateSchemaAPI.private ) {
+      if ( this.stateSchema.private ) {
         stateSchemaAPI.private = _.mapValues( this.stateSchema.private, value => value.typeName );
       }
       return stateSchemaAPI;
