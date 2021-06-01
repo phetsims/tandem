@@ -280,7 +280,7 @@ class IOType {
 
           const stateSchemaValue = stateSchema[ stateSchemaKey ];
 
-          if ( stateSchemaKey === 'private' ) {
+          if ( stateSchemaKey === '_private' ) {
             this.validateStateSchema( stateSchemaValue );
           }
           else {
@@ -330,8 +330,8 @@ class IOType {
           } );
         };
 
-        checkLevel( schema, stateObject, publicSchemaKeys, 'private' );
-        schema.private && checkLevel( schema.private, stateObject.private, privateSchemaKeys, null );
+        checkLevel( schema, stateObject, publicSchemaKeys, '_private' );
+        schema._private && checkLevel( schema._private, stateObject._private, privateSchemaKeys, null );
       }
     }
 
@@ -354,10 +354,10 @@ class IOType {
       };
 
       // Visit the public state
-      Object.keys( stateObject ).filter( key => key !== 'private' ).forEach( key => check( 'public', key ) );
+      Object.keys( stateObject ).filter( key => key !== '_private' ).forEach( key => check( 'public', key ) );
 
       // Visit the private state, if any
-      stateObject.private && Object.keys( stateObject.private ).forEach( key => check( 'private', key ) );
+      stateObject._private && Object.keys( stateObject._private ).forEach( key => check( 'private', key ) );
 
       return valid;
     }
@@ -383,8 +383,8 @@ class IOType {
     }
     else {
       const stateSchemaAPI = _.mapValues( this.stateSchema, value => value.typeName );
-      if ( this.stateSchema.private ) {
-        stateSchemaAPI.private = _.mapValues( this.stateSchema.private, value => value.typeName );
+      if ( this.stateSchema._private ) {
+        stateSchemaAPI._private = _.mapValues( this.stateSchema._private, value => value.typeName );
       }
       return stateSchemaAPI;
     }
