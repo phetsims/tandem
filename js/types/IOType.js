@@ -458,7 +458,10 @@ ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',
-  toStateObject: coreObject => DEFAULT_STATE,
+  toStateObject: coreObject => {
+    assert && assert( !coreObject.phetioState, `fell back to default state for ${coreObject.tandem.phetioID}, should it be marked phetioState: false, or have a custom state method in a more specific IO Type?` );
+    return DEFAULT_STATE;
+  },
   fromStateObject: stateObject => null,
   stateToArgsForConstructor: stateObject => [],
   applyState: ( coreObject, stateObject ) => { },
