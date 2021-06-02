@@ -1,4 +1,4 @@
-// Copyright 2018-2020, University of Colorado Boulder
+// Copyright 2018-2021, University of Colorado Boulder
 
 /**
  * Parametric IO Type that adds support for null values in toStateObject/fromStateObject. This type is to
@@ -19,6 +19,7 @@
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 
 // {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once
 const cache = new Map();
@@ -41,7 +42,11 @@ const NullableIO = parameterType => {
       toStateObject: instance => instance === null ? null : parameterType.toStateObject( instance ),
 
       // If the argument is null, returns null. Otherwise converts a state object to an instance of the underlying type.
-      fromStateObject: stateObject => stateObject === null ? null : parameterType.fromStateObject( stateObject )
+      fromStateObject: stateObject => stateObject === null ? null : parameterType.fromStateObject( stateObject ),
+      stateSchema: new StateSchema( `null|<${parameterType.typeName}>`, {
+          isValidValue: value => value === null || parameterType.isStateObjectValid( value )
+        }
+      )
     } ) );
   }
 

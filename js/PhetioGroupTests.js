@@ -1,4 +1,4 @@
-// Copyright 2020, University of Colorado Boulder
+// Copyright 2020-2021, University of Colorado Boulder
 
 /**
  * Unit tests for PhetioObject
@@ -18,7 +18,8 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
   const createElement = ( tandem, otherField ) => {
     const element = new PhetioObject( {
       tandem: tandem,
-      phetioDynamicElement: true
+      phetioDynamicElement: true,
+      phetioState: false
     } );
     element.otherField = otherField;
     return element;
@@ -67,7 +68,8 @@ QUnit.test( 'PhetioGroup deferring notifications', assert => {
   const createElement = tandem => {
     return new PhetioObject( {
       tandem: tandem,
-      phetioDynamicElement: true
+      phetioDynamicElement: true,
+      phetioState: false
     } );
   };
   const myPhetioGroup = new PhetioGroup( createElement, [], {

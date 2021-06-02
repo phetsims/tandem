@@ -1,4 +1,4 @@
-// Copyright 2020, University of Colorado Boulder
+// Copyright 2020-2021, University of Colorado Boulder
 
 /**
  * IO Types form a synthetic type system used to describe PhET-iO Elements. A PhET-iO Element is an instrumented PhetioObject
@@ -15,6 +15,7 @@ import required from '../../../phet-core/js/required.js';
 import PhetioConstants from '../PhetioConstants.js';
 import TandemConstants from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
+import StateSchema from './StateSchema.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -50,6 +51,9 @@ class IOType {
 
     // For reference in the config
     const supertype = config.supertype || ObjectIO;
+    const toStateObjectSupplied = !!( config.toStateObject );
+    const applyStateSupplied = !!( config.applyState );
+    const stateSchemaSupplied = !!( config.stateSchema );
 
     config = merge( {
 
@@ -115,6 +119,11 @@ class IOType {
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
+      // TODO: perhaps simplify this typeDoc by moving the complexity into the StateSchema constructor? https://github.com/phetsims/phet-io/issues/1781
+      // {Object|StateSchema|function(IOType):Object|function(IOType):StateSchema|null} - the specification for how the
+      // PhET-iO state will look for instances of this type. null specifies that the object is not serialized
+      stateSchema: null,
+
       // For dynamic element containers, see examples in IOTypes for PhetioDynamicElementContainer classes
       addChildElement: supertype && supertype.addChildElement
     }, required( config ) );
@@ -123,7 +132,6 @@ class IOType {
     assert && assert( Array.isArray( config.events ) );
     assert && assert( Object.getPrototypeOf( config.metadataDefaults ) === Object.prototype, 'Extra prototype on metadata keys' );
     assert && assert( Object.getPrototypeOf( config.dataDefaults ) === Object.prototype, 'Extra prototype on data defaults' );
-
     if ( assert && supertype ) {
       Object.keys( config.metadataDefaults ).forEach( metadataDefaultKey => {
         assert && supertype.getAllMetadataDefaults().hasOwnProperty( metadataDefaultKey ) &&
@@ -145,14 +153,43 @@ class IOType {
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
-      return config.toStateObject( coreObject );
+      const toStateObject = config.toStateObject( coreObject );
+
+      // Validate, but only if this IOType instance has more to validate than the supertype
+      if ( toStateObjectSupplied || stateSchemaSupplied ) {
+
+        // Only validate the stateObject if it is phetioState:true.
+        // This is an n*m algorithm because for each time toStateObject is called and needs validation, this.validateStateObject
+        // looks all the way up the IOType hierarchy. This is not efficient, but gains us the ability to make sure that
+        // the stateObject doesn't have any superfluous, unexpected keys. The "m" portion is based on how many sub-properties
+        // in a state call `toStateObject`, and the "n" portion is based on how many IOTypes in the hierarchy define a
+        // toStateObject or stateSchema. In the future we could potentially improve performance by having validateStateObject
+        // only check against the schema at this level, but then extra keys in the stateObject would not be caught. From work done in https://github.com/phetsims/phet-io/issues/1774
+        assert && this.validateStateObject( toStateObject );
+      }
+      return toStateObject;
     };
     this.fromStateObject = config.fromStateObject;
     this.stateToArgsForConstructor = config.stateToArgsForConstructor;
     this.applyState = ( coreObject, stateObject ) => {
       validate( coreObject, this.validator, 'unexpected parameter to applyState', VALIDATE_OPTIONS_FALSE );
+
+      // Validate, but only if this IOType instance has more to validate than the supertype
+      if ( applyStateSupplied || stateSchemaSupplied ) {
+
+        // Validate that the provided stateObject is of the expected schema
+        // NOTE: Cannot use this.validateStateObject because config adopts supertype.applyState, which is bounds to the
+        // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
+        assert && coreObject.phetioType.validateStateObject( stateObject );
+      }
+
       config.applyState( coreObject, stateObject );
     };
+
+    // @public - just for this level, see getAllStateSchema()
+    this.stateSchema = typeof config.stateSchema === 'function' ? config.stateSchema( this ) : config.stateSchema;
+    assert && this.validateStateSchema( this.stateSchema );
+
     this.isFunctionType = config.isFunctionType;
     this.addChildElement = config.addChildElement;
 
@@ -231,6 +268,129 @@ class IOType {
   }
 
   /**
+   * Only useful if assert is called.
+   * @private
+   * @param {Object|StateSchema} stateSchema
+   */
+  validateStateSchema( stateSchema ) {
+    if ( this.stateSchema && !( stateSchema instanceof StateSchema ) ) {
+
+      for ( const stateSchemaKey in stateSchema ) {
+        if ( stateSchema.hasOwnProperty( stateSchemaKey ) ) {
+
+          const stateSchemaValue = stateSchema[ stateSchemaKey ];
+
+          if ( stateSchemaKey === '_private' ) {
+            this.validateStateSchema( stateSchemaValue );
+          }
+          else {
+            assert && assert( stateSchemaValue instanceof IOType, `${stateSchemaValue} expected to be an IOType` );
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * @public
+   * @param {Object} stateObject - the stateObject to validate against
+   * @param {boolean} toAssert=false - whether or not to assert when invalid
+   * @param {string[]} publicSchemaKeys=[]
+   * @param {string[]} privateSchemaKeys=[]
+   * @returns {boolean} if the stateObject is valid or not.
+   */
+  isStateObjectValid( stateObject, toAssert = false, publicSchemaKeys = [], privateSchemaKeys = [] ) {
+
+    let valid = true;
+
+    // make sure the stateObject has everything the schema requires and nothing more
+    if ( this.stateSchema ) {
+      if ( this.stateSchema instanceof StateSchema ) {
+
+        if ( toAssert ) {
+          validate( stateObject, this.stateSchema.validator );
+        }
+        else {
+          return ValidatorDef.isValueValid( stateObject, this.stateSchema.validator );
+        }
+      }
+      else {
+        const schema = this.stateSchema;
+
+        const checkLevel = ( schemaLevel, objectLevel, keyList, exclude ) => {
+          Object.keys( schemaLevel ).filter( k => k !== exclude ).forEach( key => {
+
+            const validKey = objectLevel.hasOwnProperty( key );
+            if ( !validKey ) {
+              valid = false;
+            }
+            assert && toAssert && assert( validKey, `${key} in state schema but not in the state object` );
+            schemaLevel[ key ].validateStateObject( objectLevel[ key ] );
+            keyList.push( key );
+          } );
+        };
+
+        checkLevel( schema, stateObject, publicSchemaKeys, '_private' );
+        schema._private && checkLevel( schema._private, stateObject._private, privateSchemaKeys, null );
+      }
+    }
+
+    // TODO: when it is a StateSchema here, then likely it is something like NullableIO and we have already reached the base case with a validator that includes checking on its parameterType. https://github.com/phetsims/phet-io/issues/1781
+    if ( this.supertype && !( this.stateSchema instanceof StateSchema ) ) {
+      return valid && this.supertype.isStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
+    }
+
+    // When we reach the root, make sure there isn't anything in the stateObject that isn't described by a schema
+    if ( !this.supertype && stateObject && typeof stateObject !== 'string' && !Array.isArray( stateObject ) ) {
+
+      const check = ( type, key ) => {
+        assert && assert( type === 'public' || type === 'private', `bad type: ${type}` );
+        const keys = type === 'public' ? publicSchemaKeys : privateSchemaKeys;
+        const keyValid = keys.includes( key );
+        if ( !keyValid ) {
+          valid = false;
+        }
+        assert && toAssert && assert( keyValid, `stateObject provided a ${type} key that is not in the schema: ${key}` );
+      };
+
+      // Visit the public state
+      Object.keys( stateObject ).filter( key => key !== '_private' ).forEach( key => check( 'public', key ) );
+
+      // Visit the private state, if any
+      stateObject._private && Object.keys( stateObject._private ).forEach( key => check( 'private', key ) );
+
+      return valid;
+    }
+    return true;
+  }
+
+  /**
+   * Assert if the provided stateObject is not valid to this IOType's stateSchema
+   * @public
+   * @param {Object} stateObject
+   */
+  validateStateObject( stateObject ) {
+    this.isStateObjectValid( stateObject, true );
+  }
+
+  /**
+   * @public (phet-io internal)
+   * @returns {string|Object.<string,string|Object>} - Returns a unique identified for this stateSchema, or an object of the stateSchemas for state children
+   */
+  getStateSchemaAPI() {
+    if ( this.stateSchema instanceof StateSchema ) {
+      return this.stateSchema.string;
+    }
+    else {
+      const stateSchemaAPI = _.mapValues( this.stateSchema, value => value.typeName );
+      if ( this.stateSchema._private ) {
+        stateSchemaAPI._private = _.mapValues( this.stateSchema._private, value => value.typeName );
+      }
+      return stateSchemaAPI;
+    }
+  }
+
+  /**
    * Convenience method for creating an IOType that forwards its state methods over to be handled by the core type. This
    * function will gracefully forward any supported deserialization methods, but requires the CoreType to have `toStateObject`.
    * @public
@@ -255,6 +415,8 @@ class IOType {
     while ( proto ) {
       assert && assert( !proto.hasOwnProperty( 'fromStateObject' ),
         'fromStateObject should be a static on the Class, and not on the prototype.' );
+      assert && assert( !proto.hasOwnProperty( 'STATE_SCHEMA' ),
+        'STATE_SCHEMA should be a static on the Class, and not on the prototype.' );
 
       if ( typeof proto.toStateObject === 'function' ) {
         coreTypeHasToStateObject = true;
@@ -278,6 +440,9 @@ class IOType {
     if ( CoreType.fromStateObject ) {
       options.fromStateObject = CoreType.fromStateObject;
     }
+    if ( CoreType.STATE_SCHEMA ) {
+      options.stateSchema = _.clone( CoreType.STATE_SCHEMA );
+    }
     if ( CoreType.stateToArgsForConstructor ) {
       options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
     }
@@ -293,14 +458,18 @@ ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',
-  toStateObject: coreObject => DEFAULT_STATE,
+  toStateObject: coreObject => {
+    assert && assert( !coreObject.phetioState, `fell back to default state for ${coreObject.tandem.phetioID}, should it be marked phetioState: false, or have a custom state method in a more specific IO Type?` );
+    return DEFAULT_STATE;
+  },
   fromStateObject: stateObject => null,
   stateToArgsForConstructor: stateObject => [],
   applyState: ( coreObject, stateObject ) => { },
   metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS,
   dataDefaults: {
     initialState: DEFAULT_STATE
-  }
+  },
+  stateSchema: null
 } );
 
 // @public

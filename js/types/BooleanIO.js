@@ -1,4 +1,4 @@
-// Copyright 2018-2020, University of Colorado Boulder
+// Copyright 2018-2021, University of Colorado Boulder
 
 /**
  * IO Type for JS's built-in boolean type.
@@ -9,12 +9,14 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 import ValueIO from './ValueIO.js';
 
 const BooleanIO = new IOType( 'BooleanIO', {
   supertype: ValueIO,
   valueType: 'boolean',
-  documentation: 'IO Type for Javascript\'s boolean primitive type'
+  documentation: 'IO Type for Javascript\'s boolean primitive type',
+  stateSchema: new StateSchema( 'boolean', { valueType: 'boolean' } )
 } );
 
 tandemNamespace.register( 'BooleanIO', BooleanIO );

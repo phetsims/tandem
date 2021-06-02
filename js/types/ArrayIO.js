@@ -1,4 +1,4 @@
-// Copyright 2018-2020, University of Colorado Boulder
+// Copyright 2018-2021, University of Colorado Boulder
 
 /**
  * IO Type for JS's built-in Array type.
@@ -10,6 +10,7 @@
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 
 // {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once.
 const cache = new Map();
@@ -22,6 +23,7 @@ const cache = new Map();
  */
 const ArrayIO = parameterType => {
   assert && assert( !!parameterType, 'parameterType should be defined' );
+  assert && assert( parameterType instanceof IOType, 'parameterType should be an IOType' );
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `ArrayIO<${parameterType.typeName}>`, {
       valueType: Array,
@@ -31,7 +33,10 @@ const ArrayIO = parameterType => {
       parameterTypes: [ parameterType ],
       toStateObject: array => array.map( parameterType.toStateObject ),
       fromStateObject: stateObject => stateObject.map( parameterType.fromStateObject ),
-      documentation: 'IO Type for the built-in JS array type, with the element type specified.'
+      documentation: 'IO Type for the built-in JS array type, with the element type specified.',
+      stateSchema: new StateSchema( `Array<${parameterType.typeName}>`, {
+        isValidValue: array => _.every( array, element => parameterType.isStateObjectValid( element ) )
+      } )
     } ) );
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2019-2020, University of Colorado Boulder
+// Copyright 2019-2021, University of Colorado Boulder
 
 /**
  * ReferenceIO uses reference identity for toStateObject/fromStateObject
@@ -12,6 +12,7 @@ import ValidatorDef from '../../../axon/js/ValidatorDef.js';
 import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StringIO from './StringIO.js';
 
 // {Map.<cacheKey:string|*, IOType>} - Cache each parameterized ReferenceIO so that it is only created once
 const cache = new Map();
@@ -38,9 +39,16 @@ const ReferenceIO = parameterType => {
        * directly to use this implementation.
        */
       toStateObject( phetioObject ) {
+
+        // NOTE: We cannot assert that phetioObject.phetioState === false here because sometimes ReferenceIO is used statically like
+        // ReferenceIO( Vector2IO ).toStateObject( myVector );
         return {
           phetioID: phetioObject.tandem.phetioID
         };
+      },
+
+      stateSchema: {
+        phetioID: StringIO
       },
 
       /**
@@ -49,7 +57,6 @@ const ReferenceIO = parameterType => {
        * @param {{phetioID:string}} stateObject
        * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError
-       * @public
        */
       fromStateObject( stateObject ) {
         assert && assert( stateObject && typeof stateObject.phetioID === 'string', 'phetioID should be a string' );
@@ -59,6 +66,13 @@ const ReferenceIO = parameterType => {
         else {
           throw new CouldNotYetDeserializeError();
         }
+      },
+
+      /**
+       * References should be using fromStateObject to get a copy of the PhET-iO element.
+       */
+      applyState( coreObject ) {
+        assert && assert( false, `ReferenceIO is meant to be used as DataType serialization (see fromStateObject) for phetioID: ${coreObject.tandem.phetioID}` );
       }
     } ) );
   }

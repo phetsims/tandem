@@ -1,4 +1,4 @@
-// Copyright 2018-2020, University of Colorado Boulder
+// Copyright 2018-2021, University of Colorado Boulder
 
 /**
  * IO Type for JS's built-in string type.
@@ -9,12 +9,14 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 import ValueIO from './ValueIO.js';
 
 const StringIO = new IOType( 'StringIO', {
   supertype: ValueIO,
   valueType: 'string',
-  documentation: 'IO Type for Javascript\'s string primitive type'
+  documentation: 'IO Type for Javascript\'s string primitive type',
+  stateSchema: new StateSchema( 'string', { valueType: 'string' } )
 } );
 
 tandemNamespace.register( 'StringIO', StringIO );

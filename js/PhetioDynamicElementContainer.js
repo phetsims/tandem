@@ -1,4 +1,4 @@
-// Copyright 2019-2020, University of Colorado Boulder
+// Copyright 2019-2021, University of Colorado Boulder
 
 /**
  * Supertype for containers that hold dynamic elements that are PhET-iO instrumented. This type handles common

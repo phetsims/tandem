@@ -1,4 +1,4 @@
-// Copyright 2018-2020, University of Colorado Boulder
+// Copyright 2018-2021, University of Colorado Boulder
 
 /**
  * IO Type for JS's built-in number type.
@@ -9,6 +9,7 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
 
 const NumberIO = new IOType( 'NumberIO', {
   valueType: 'number',
@@ -31,7 +32,10 @@ const NumberIO = new IOType( 'NumberIO', {
       return Number.NEGATIVE_INFINITY;
     }
     return stateObject;
-  }
+  },
+  stateSchema: new StateSchema( '\'POSITIVE_INFINITY\'|\'NEGATIVE_INFINITY\'|number', {
+    isValidValue: value => value === 'POSITIVE_INFINITY' || value === 'NEGATIVE_INFINITY' || typeof value === 'number'
+  } )
 } );
 
 tandemNamespace.register( 'NumberIO', NumberIO );
