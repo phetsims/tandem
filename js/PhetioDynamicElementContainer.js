@@ -92,7 +92,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
     this.defaultArguments = defaultArguments;
 
     // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes, but otherwise
-    // access should not be needed. This will only be non-null when generating the phet-io API, see createArchetype().
+    // access should not be needed. This will only be non-null when generating the PhET-iO API, see createArchetype().
     this.archetype = this.createArchetype();
 
     // @public (read-only) - subtypes expected to fire this according to individual implementations
