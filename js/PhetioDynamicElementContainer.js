@@ -2,13 +2,13 @@
 
 /**
  * Supertype for containers that hold dynamic elements that are PhET-iO instrumented. This type handles common
- * features like creating the archetype for the PhET-iO api, and managing created/disposed data stream events.
+ * features like creating the archetype for the PhET-iO API, and managing created/disposed data stream events.
  *
  * "Dynamic" is an overloaded term, so allow me to explain what it means in the context of this type. A "dynamic element"
- * is an instrumented PhET-iO element that is conditionally in the PhET-iO api. Most commonly this is because elements
+ * is an instrumented PhET-iO element that is conditionally in the PhET-iO API. Most commonly this is because elements
  * can be created and destroyed during the runtime of the sim. Another "dynamic element" for the PhET-iO project is when
  * an element may or may not be created based on a query parameter. In this case, even if the object then exists for the
- * lifetime of the sim, we may still call this "dynamic" as it pertains to this type, and the PhET-iO api.
+ * lifetime of the sim, we may still call this "dynamic" as it pertains to this type, and the PhET-iO API.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
@@ -92,7 +92,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
     this.defaultArguments = defaultArguments;
 
     // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes, but otherwise
-    // access should not be needed. This will only be non-null when generating the phet-io api, see createArchetype().
+    // access should not be needed. This will only be non-null when generating the phet-io API, see createArchetype().
     this.archetype = this.createArchetype();
 
     // @public (read-only) - subtypes expected to fire this according to individual implementations

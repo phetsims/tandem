@@ -33,7 +33,7 @@
    */
   window.phetio.PhetioIDUtils = {
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * Appends a component to an existing phetioID to create a new unique phetioID for the component.
      * @example
@@ -52,7 +52,7 @@
       return phetioID;
     },
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * Given a phetioID for a PhET-iO element, get the part of that ID that pertains to the component (basically the
      * tail piece).
@@ -74,7 +74,7 @@
       }
     },
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * Given a phetioID for a PhET-iO element, get the phetioID of the parent component.
      * @example
@@ -89,7 +89,7 @@
       return indexOfLastSeparator === -1 ? null : phetioID.substring( 0, indexOfLastSeparator );
     },
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * Given a phetioID for a instrumented object, get a string that can be used to assign an ID to a DOM element
      * @param {string} phetioID - the ID of the PhET-iO element
@@ -100,7 +100,7 @@
       return `phetioID:${phetioID}`;
     },
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * Get the screen id from the phetioID.
      * @example
@@ -128,7 +128,7 @@
       return null;
     },
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * Get the index number from the component name of the component name provided.
      * @param {string} componentName
@@ -164,7 +164,7 @@
       return potentialDescendantPhetioID !== potentialAncestorPhetioID;
     },
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The separator used to piece together a phet-io ID.
      * @type {string}
@@ -173,7 +173,7 @@
      */
     SEPARATOR: SEPARATOR,
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The separator used to specify the count of a element in a group.
      * @type {string}
@@ -182,7 +182,7 @@
      */
     GROUP_SEPARATOR: GROUP_SEPARATOR,
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The component name for the id section that holds phet-io elements general to all simulations.
      * @type {string}
@@ -191,7 +191,7 @@
      */
     GENERAL_COMPONENT_NAME: GENERAL_COMPONENT_NAME,
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The component name for the id section that holds simulation specific elements that don't belong in a screen.
      * @type {string}
@@ -200,7 +200,7 @@
      */
     GLOBAL_COMPONENT_NAME: GLOBAL_COMPONENT_NAME,
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The component name for the id section that holds the home screen.
      * @type {string}
@@ -209,7 +209,7 @@
      */
     HOME_SCREEN_COMPONENT_NAME: HOME_SCREEN_COMPONENT_NAME,
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The component name for an id section that holds model specific elements.
      * @type {string}
@@ -218,7 +218,7 @@
      */
     MODEL_COMPONENT_NAME: MODEL_COMPONENT_NAME,
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The component name for an id section that holds view specific elements.
      * @type {string}
@@ -227,7 +227,7 @@
      */
     VIEW_COMPONENT_NAME: VIEW_COMPONENT_NAME,
 
-    // Private Doc: The below jsdoc is public to the phet-io api documentation. Change wisely.
+    // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The component name for an id section that holds controller specific elements.
      * @type {string}

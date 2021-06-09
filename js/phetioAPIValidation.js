@@ -1,16 +1,16 @@
 // Copyright 2019-2021, University of Colorado Boulder
 
 /**
- * This singleton is responsible for ensuring that the phet-io api is correct through the lifetime of the simulation.
- * The phet-io api is defined through multiple preloaded files. The "elements baseline" api holds an exact match of
+ * This singleton is responsible for ensuring that the phet-io API is correct through the lifetime of the simulation.
+ * The phet-io API is defined through multiple preloaded files. The "elements baseline" API holds an exact match of
  * what PhetioObject instances/metadata the sim should create on startup, where the "elements overrides" file is a
  * sparse list that can overwrite metadata without changing the code. See `grunt generate-phet-io-api` for
  * more information. The complete list of checks was decided on in https://github.com/phetsims/phet-io/issues/1453
  * (and later trimmed down) and is as follows:
  *
- * 1. After startup, only dynamic instances prescribed by the baseline api can be registered.
+ * 1. After startup, only dynamic instances prescribed by the baseline API can be registered.
  * 2. Any static, registered PhetioObject can never be deregistered.
- * 3. Any schema entries in the overrides file must exist in the baseline api
+ * 3. Any schema entries in the overrides file must exist in the baseline API
  * 4. Any schema entries in the overrides file must be different from its baseline counterpart
  * 5. Dynamic element metadata should match the archetype in the API.
  *
@@ -36,7 +36,7 @@ import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // constants
-// The api-tracked and validated metadata keys
+// The API-tracked and validated metadata keys
 const KEYS_TO_CHECK = [
   'phetioDynamicElement',
   'phetioEventType',
@@ -52,7 +52,7 @@ class PhetioAPIValidation {
   constructor() {
 
     /**
-     * {Object[]} - Each object holds a single "api mismatch" with the following keys:
+     * {Object[]} - Each object holds a single "API mismatch" with the following keys:
      *                phetioID: {string}
      *                stack: {string} - for a stack trace
      *                ruleInViolation: {string} - one of the numbered list in the header doc.
@@ -215,7 +215,7 @@ class PhetioAPIValidation {
   }
 
   /**
-   * Assert out the failed api validation rule.
+   * Assert out the failed API validation rule.
    * @param {Object} apiErrorObject - see doc for this.apiMismatches
    * @private
    */
