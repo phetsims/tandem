@@ -548,7 +548,7 @@ Tandem.PHET_IO_ENABLED = PHET_IO_ENABLED;
  * @type {boolean}
  */
 Tandem.API_GENERATION = Tandem.PHET_IO_ENABLED && ( phet.preloads.phetio.queryParameters.phetioPrintAPI ||
-                                                        phet.preloads.phetio.queryParameters.phetioCompareAPI );
+                                                    phet.preloads.phetio.queryParameters.phetioCompareAPI );
 
 /**
  * If PhET-iO is running with validation enabled.
