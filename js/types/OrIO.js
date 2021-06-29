@@ -57,7 +57,7 @@ const OrIO = parameterTypes => {
             };
           }
         }
-        assert && assert( false, 'somehow the instance was not valid, we should not get here. Why was isValidValue not used before this step?' );
+        throw new Error( 'somehow the instance was not valid, we should not get here. Why was isValidValue not used before this step?' );
       },
 
       fromStateObject: stateObject => {
