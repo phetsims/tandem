@@ -11,7 +11,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 ( function() {
-  'use strict';
+  
 
   // define the phetio global
   window.phetio = window.phetio || {};
