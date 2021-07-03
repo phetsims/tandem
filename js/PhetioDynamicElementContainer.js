@@ -184,7 +184,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
   createArchetype() {
 
     // Once the sim has started, any archetypes being created are likely done so because they are nested PhetioGroups.
-    // TODO: why do we get this information from phetioAPIValidation? Does recent API file work change this? https://github.com/phetsims/phet-io/issues/1648
+    // TODO: why do we get this information from phetioAPIValidation? Does recent API file work change this? https://github.com/phetsims/tandem/issues/242
     if ( phetioAPIValidation.simHasStarted ) {
       return null;
     }
