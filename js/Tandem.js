@@ -97,6 +97,9 @@ class Tandem {
 
     // @public (read-only)
     this.supplied = options.supplied;
+
+    // @private
+    this.isDisposed = false;
   }
 
   /**
@@ -293,7 +296,11 @@ class Tandem {
    * @private
    */
   dispose() {
+    assert && assert( !this.isDisposed, 'already disposed' );
+
     this.parentTandem.removeChild( this.name );
+
+    this.isDisposed = true;
   }
 
   /**
