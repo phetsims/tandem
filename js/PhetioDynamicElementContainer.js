@@ -18,7 +18,6 @@ import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import DynamicTandem from './DynamicTandem.js';
-import phetioAPIValidation from './phetioAPIValidation.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -184,8 +183,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
   createArchetype() {
 
     // Once the sim has started, any archetypes being created are likely done so because they are nested PhetioGroups.
-    // TODO: why do we get this information from phetioAPIValidation? Does recent API file work change this? https://github.com/phetsims/tandem/issues/242
-    if ( phetioAPIValidation.simHasStarted ) {
+    if ( _.hasIn( window, 'phet.joist.sim' ) && phet.joist.sim.isConstructionCompleteProperty.value ) {
       return null;
     }
 
