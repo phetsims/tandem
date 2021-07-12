@@ -175,18 +175,18 @@ class PhetioObject {
     config = merge( {}, DEFAULTS, baseOptions, config );
 
     // validate config before assigning to properties
-    assert && validate( config.phetioType, IO_TYPE_VALIDATOR );
-    assert && validate( config.phetioState, BOOLEAN_VALIDATOR );
-    assert && validate( config.phetioReadOnly, BOOLEAN_VALIDATOR );
-    assert && validate( config.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR );
+    assert && validate( config.phetioType, IO_TYPE_VALIDATOR, 'phetioType must be an IOType' );
+    assert && validate( config.phetioState, BOOLEAN_VALIDATOR, 'phetioState must be a boolean' );
+    assert && validate( config.phetioReadOnly, BOOLEAN_VALIDATOR, 'phetioReadOnly must be a boolean' );
+    assert && validate( config.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR, 'invalid phetioEventType' );
     assert && validate( config.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR, 'phetioDocumentation must be provided in the right format' );
-    assert && validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR );
-    assert && validate( config.phetioPlayback, BOOLEAN_VALIDATOR );
-    assert && validate( config.phetioStudioControl, BOOLEAN_VALIDATOR );
-    assert && validate( config.phetioFeatured, BOOLEAN_VALIDATOR );
-    assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR );
-    assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR );
-    assert && validate( config.phetioDesigned, BOOLEAN_VALIDATOR );
+    assert && validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR, 'phetioHighFrequency must be a boolean' );
+    assert && validate( config.phetioPlayback, BOOLEAN_VALIDATOR, 'phetioPlayback must be a boolean' );
+    assert && validate( config.phetioStudioControl, BOOLEAN_VALIDATOR, 'phetioStudioControl must be a boolean' );
+    assert && validate( config.phetioFeatured, BOOLEAN_VALIDATOR, 'phetioFeatured must be a boolean' );
+    assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR, 'object literal expected' );
+    assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR, 'phetioDynamicElement must be a boolean' );
+    assert && validate( config.phetioDesigned, BOOLEAN_VALIDATOR, 'phetioDesigned must be a boolean' );
 
     assert && assert( this.linkedElements !== null, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
 
