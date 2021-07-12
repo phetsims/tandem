@@ -586,6 +586,16 @@ class PhetioObject {
   dispose() {
     assert && assert( !this.isDisposed, 'PhetioObject can only be disposed once' );
 
+    const descendants = [];
+    if ( Tandem.PHET_IO_ENABLED && this.tandem.supplied ) {
+      const phetioEngine = phet.phetio.phetioEngine;
+      this.tandem.iterateDescendants( tandem => {
+        if ( phetioEngine.hasPhetioObject( tandem.phetioID ) ) {
+          descendants.push( phetioEngine.getPhetioObject( tandem.phetioID ) );
+        }
+      } );
+    }
+
     // In order to support the structured data stream, PhetioObjects must end the messages in the correct
     // sequence, without being interrupted by dispose() calls.  Therefore, we do not clear out any of the state
     // related to the endEvent.  Note this means it is acceptable (and expected) for endEvent() to be called on
@@ -597,6 +607,10 @@ class PhetioObject {
       // Uninstrumented PhetioObjects don't have a phetioMessageStack attribute.
       assert && assert( !this.hasOwnProperty( 'phetioMessageStack' ) || this.phetioMessageStack.length === 0,
         'phetioMessageStack should be clear' );
+
+      descendants.forEach( descendant => {
+        assert && assert( descendant.isDisposed, `All descendants must be disposed by the next frame: ${descendant.tandem.phetioID}` );
+      } );
     } );
 
     if ( this.phetioObjectInitialized ) {
