@@ -187,9 +187,15 @@ class IOType {
       config.applyState( coreObject, stateObject );
     };
 
-    // @public - just for this level, see getAllStateSchema()
-    this.stateSchema = typeof config.stateSchema === 'function' ? config.stateSchema( this ) : config.stateSchema;
-    assert && this.validateStateSchema( this.stateSchema );
+    let stateSchema = config.stateSchema;
+    if ( stateSchema !== null && !( stateSchema instanceof StateSchema ) ) {
+      const compositeSchema = typeof stateSchema === 'function' ? stateSchema( this ) : stateSchema;
+      stateSchema = new StateSchema( { compositeSchema: compositeSchema } );
+    }
+
+    // @public - The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
+    // see getAllStateSchema().
+    this.stateSchema = stateSchema;
 
     this.isFunctionType = config.isFunctionType;
     this.addChildElement = config.addChildElement;
@@ -269,30 +275,6 @@ class IOType {
   }
 
   /**
-   * Only useful if assert is called.
-   * @private
-   * @param {Object|StateSchema} stateSchema
-   */
-  validateStateSchema( stateSchema ) {
-    if ( this.stateSchema && !( stateSchema instanceof StateSchema ) ) {
-
-      for ( const stateSchemaKey in stateSchema ) {
-        if ( stateSchema.hasOwnProperty( stateSchemaKey ) ) {
-
-          const stateSchemaValue = stateSchema[ stateSchemaKey ];
-
-          if ( stateSchemaKey === '_private' ) {
-            this.validateStateSchema( stateSchemaValue );
-          }
-          else {
-            assert && assert( stateSchemaValue instanceof IOType, `${stateSchemaValue} expected to be an IOType` );
-          }
-        }
-      }
-    }
-  }
-
-  /**
    * @public
    * @param {Object} stateObject - the stateObject to validate against
    * @param {boolean} toAssert=false - whether or not to assert when invalid
@@ -302,42 +284,20 @@ class IOType {
    */
   isStateObjectValid( stateObject, toAssert = false, publicSchemaKeys = [], privateSchemaKeys = [] ) {
 
+    // Set to false when invalid
     let valid = true;
 
     // make sure the stateObject has everything the schema requires and nothing more
     if ( this.stateSchema ) {
-      if ( this.stateSchema instanceof StateSchema ) {
+      const validSoFar = this.stateSchema.checkStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
 
-        if ( toAssert ) {
-          validate( stateObject, this.stateSchema.validator );
-        }
-        else {
-          return ValidatorDef.isValueValid( stateObject, this.stateSchema.validator );
-        }
-      }
-      else {
-        const schema = this.stateSchema;
-
-        const checkLevel = ( schemaLevel, objectLevel, keyList, exclude ) => {
-          Object.keys( schemaLevel ).filter( k => k !== exclude ).forEach( key => {
-
-            const validKey = objectLevel.hasOwnProperty( key );
-            if ( !validKey ) {
-              valid = false;
-            }
-            assert && toAssert && assert( validKey, `${key} in state schema but not in the state object` );
-            schemaLevel[ key ].validateStateObject( objectLevel[ key ] );
-            keyList.push( key );
-          } );
-        };
-
-        checkLevel( schema, stateObject, publicSchemaKeys, '_private' );
-        schema._private && checkLevel( schema._private, stateObject._private, privateSchemaKeys, null );
+      // null as a marker to keep checking up the hierarchy, otherwise we reached our based case because the stateSchema was a value, not a composite
+      if ( validSoFar !== null ) {
+        return validSoFar;
       }
     }
 
-    // TODO: when it is a StateSchema here, then likely it is something like NullableIO and we have already reached the base case with a validator that includes checking on its parameterType. https://github.com/phetsims/phet-io/issues/1781
-    if ( this.supertype && !( this.stateSchema instanceof StateSchema ) ) {
+    if ( this.supertype && !( this.stateSchema && this.stateSchema.isComposite() ) ) {
       return valid && this.supertype.isStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
     }
 
@@ -372,23 +332,6 @@ class IOType {
    */
   validateStateObject( stateObject ) {
     this.isStateObjectValid( stateObject, true );
-  }
-
-  /**
-   * @public (phet-io internal)
-   * @returns {string|Object.<string,string|Object>} - Returns a unique identified for this stateSchema, or an object of the stateSchemas for state children
-   */
-  getStateSchemaAPI() {
-    if ( this.stateSchema instanceof StateSchema ) {
-      return this.stateSchema.displayString;
-    }
-    else {
-      const stateSchemaAPI = _.mapValues( this.stateSchema, value => value.typeName );
-      if ( this.stateSchema._private ) {
-        stateSchemaAPI._private = _.mapValues( this.stateSchema._private, value => value.typeName );
-      }
-      return stateSchemaAPI;
-    }
   }
 
   /**
