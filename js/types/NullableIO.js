@@ -43,7 +43,7 @@ const NullableIO = parameterType => {
 
       // If the argument is null, returns null. Otherwise converts a state object to an instance of the underlying type.
       fromStateObject: stateObject => stateObject === null ? null : parameterType.fromStateObject( stateObject ),
-      stateSchema: new StateSchema( `null|<${parameterType.typeName}>`, {
+      stateSchema: StateSchema.asValue( `null|<${parameterType.typeName}>`, {
           isValidValue: value => value === null || parameterType.isStateObjectValid( value )
         }
       )

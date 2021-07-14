@@ -380,7 +380,7 @@ class IOType {
    */
   getStateSchemaAPI() {
     if ( this.stateSchema instanceof StateSchema ) {
-      return this.stateSchema.string;
+      return this.stateSchema.displayString;
     }
     else {
       const stateSchemaAPI = _.mapValues( this.stateSchema, value => value.typeName );

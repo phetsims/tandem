@@ -33,7 +33,7 @@ const NumberIO = new IOType( 'NumberIO', {
     }
     return stateObject;
   },
-  stateSchema: new StateSchema( '\'POSITIVE_INFINITY\'|\'NEGATIVE_INFINITY\'|number', {
+  stateSchema: StateSchema.asValue( '\'POSITIVE_INFINITY\'|\'NEGATIVE_INFINITY\'|number', {
     isValidValue: value => value === 'POSITIVE_INFINITY' || value === 'NEGATIVE_INFINITY' || typeof value === 'number'
   } )
 } );

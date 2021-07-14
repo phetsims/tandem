@@ -13,7 +13,7 @@ const ValueIO = new IOType( 'ValueIO', {
   supertype: IOType.ObjectIO,
   toStateObject: coreObject => coreObject,
   fromStateObject: stateObject => stateObject,
-  stateSchema: new StateSchema( '*', { isValidValue: _.stubTrue } )
+  stateSchema: StateSchema.asValue( '*', { isValidValue: _.stubTrue } )
 } );
 
 tandemNamespace.register( 'ValueIO', ValueIO );

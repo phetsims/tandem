@@ -65,7 +65,7 @@ const OrIO = parameterTypes => {
         assert && assert( stateObject.hasOwnProperty( 'state' ), 'state required for deserialization' );
         return parameterTypes[ stateObject.index ].fromStateObject( stateObject.state );
       },
-      stateSchema: new StateSchema( `${typeNames.join( '|' )}` )
+      stateSchema: StateSchema.asValue( `${typeNames.join( '|' )}` )
     } ) );
   }
 

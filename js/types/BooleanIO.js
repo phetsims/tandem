@@ -16,7 +16,7 @@ const BooleanIO = new IOType( 'BooleanIO', {
   supertype: ValueIO,
   valueType: 'boolean',
   documentation: 'IO Type for Javascript\'s boolean primitive type',
-  stateSchema: new StateSchema( 'boolean', { valueType: 'boolean' } )
+  stateSchema: StateSchema.asValue( 'boolean', { valueType: 'boolean' } )
 } );
 
 tandemNamespace.register( 'BooleanIO', BooleanIO );

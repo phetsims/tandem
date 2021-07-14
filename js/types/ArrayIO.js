@@ -34,7 +34,7 @@ const ArrayIO = parameterType => {
       toStateObject: array => array.map( parameterType.toStateObject ),
       fromStateObject: stateObject => stateObject.map( parameterType.fromStateObject ),
       documentation: 'IO Type for the built-in JS array type, with the element type specified.',
-      stateSchema: new StateSchema( `Array<${parameterType.typeName}>`, {
+      stateSchema: StateSchema.asValue( `Array<${parameterType.typeName}>`, {
         isValidValue: array => _.every( array, element => parameterType.isStateObjectValid( element ) )
       } )
     } ) );
