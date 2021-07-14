@@ -48,6 +48,7 @@ class IOType {
    * @param {Object} config
    */
   constructor( ioTypeName, config ) {
+    assert && assert( typeof ioTypeName === 'string', 'ioTypeName should be a string' );
 
     // For reference in the config
     const supertype = config.supertype || ObjectIO;
