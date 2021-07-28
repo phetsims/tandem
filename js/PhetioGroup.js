@@ -176,6 +176,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   forEach( action ) { this._array.forEach( action ); }
 
   /**
+   * Find the specified element.
+   * @param {function(PhetioObject)} action - a function with a single parameter: the item to find
+   * @public
+   */
+  find( element ) { return this._array.find( element ); }
+
+  /**
    * Returns an array with every element mapped to a new one.
    * @param {function(PhetioObject)} f
    * @returns {Object[]}
