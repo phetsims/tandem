@@ -3,6 +3,8 @@
 /**
  * IO Type for JS's built-in Map type.
  *
+ * NOTE: This has not been reviewed, tested or used in production code yet.
+ *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Jesse Greenberg (PhET Interactive Simulations)
  */
