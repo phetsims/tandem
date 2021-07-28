@@ -24,6 +24,7 @@
   const HOME_SCREEN_COMPONENT_NAME = 'homeScreen';
   const MODEL_COMPONENT_NAME = 'model';
   const VIEW_COMPONENT_NAME = 'view';
+  const COLORS_COMPONENT_NAME = 'colors';
   const CONTROLLER_COMPONENT_NAME = 'controller';
 
   /**
@@ -234,6 +235,14 @@
      * @constant
      * @public
      */
-    CONTROLLER_COMPONENT_NAME: CONTROLLER_COMPONENT_NAME
+    CONTROLLER_COMPONENT_NAME: CONTROLLER_COMPONENT_NAME,
+
+    /**
+     * The component name for a section that holds colors
+     * @type {string}
+     * @constant
+     * @public
+     */
+    COLORS_COMPONENT_NAME: COLORS_COMPONENT_NAME
   };
 } )();

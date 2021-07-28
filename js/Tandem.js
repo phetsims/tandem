@@ -502,6 +502,15 @@ Tandem.GLOBAL_MODEL = GLOBAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COM
 Tandem.GLOBAL_VIEW = GLOBAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
 
 /**
+ * Colors used in the simulation.
+ *
+ * @public
+ * @constant
+ * @type {Tandem}
+ */
+Tandem.COLORS = Tandem.GLOBAL_VIEW.createTandem( window.phetio.PhetioIDUtils.COLORS_COMPONENT_NAME );
+
+/**
  * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
  * passed in, then it will not be instrumented.
  * @public
