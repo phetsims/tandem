@@ -32,19 +32,23 @@ const MapIO = ( keyType, valueType ) => {
 
   const cacheKey = keyType.typeName + ',' + valueType.typeName;
   if ( !cache.has( cacheKey ) ) {
+
+    // parameterized valid value function
+    const mapIsValidValue = map => {
+      for ( const [ key, value ] of map ) {
+        if ( !ValidatorDef.isValueValid( key, keyType.validator ) ) {
+          return false;
+        }
+        if ( !ValidatorDef.isValueValid( value, valueType.validator ) ) {
+          return false;
+        }
+      }
+      return true;
+    };
+
     cache.set( cacheKey, new IOType( `MapIO<${keyType.typeName},${valueType.typeName}>`, {
       valueType: Map,
-      isValidValue: map => {
-        for ( const [ key, value ] of map ) {
-          if ( !ValidatorDef.isValueValid( key, keyType.validator ) ) {
-            return false;
-          }
-          if ( !ValidatorDef.isValueValid( value, valueType.validator ) ) {
-            return false;
-          }
-        }
-        return true;
-      },
+      isValidValue: mapIsValidValue,
       parameterTypes: [ keyType, valueType ],
       toStateObject: map => {
         const array = [];
@@ -61,19 +65,7 @@ const MapIO = ( keyType, valueType ) => {
       },
       documentation: 'IO Type for the built-in JS Map type, with the key and value types specified.',
       stateSchema: StateSchema.asValue( `Map<${keyType.typeName},${valueType.typeName}>`, {
-
-        // TODO: https://github.com/phetsims/tandem/issues/244 duplicate with above
-        isValidValue: map => {
-          for ( const [ key, value ] of map ) {
-            if ( !ValidatorDef.isValueValid( key, keyType.validator ) ) {
-              return false;
-            }
-            if ( !ValidatorDef.isValueValid( value, valueType.validator ) ) {
-              return false;
-            }
-          }
-          return true;
-        }
+        isValidValue: mapIsValidValue
       } )
     } ) );
   }
