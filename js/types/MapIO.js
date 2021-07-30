@@ -17,6 +17,22 @@ import StateSchema from './StateSchema.js';
 // {Map.<keyType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once.
 const cache = new Map();
 
+// TODO: why didn't arrayElementType: Array not work? https://github.com/phetsims/tandem/issues/244
+const ARRAY_OF_ARRAY_VALIDATOR = {
+  isValidValue: array => {
+    if ( !Array.isArray( array ) ) {
+      return false;
+    }
+    for ( let i = 0; i < array.length; i++ ) {
+      const arrayElement = array[ i ];
+      if ( !Array.isArray( arrayElement ) ) {
+        return false;
+      }
+    }
+    return true;
+  }
+};
+
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns an appropriate map IO Type.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
@@ -33,22 +49,19 @@ const MapIO = ( keyType, valueType ) => {
   const cacheKey = keyType.typeName + ',' + valueType.typeName;
   if ( !cache.has( cacheKey ) ) {
 
-    // parameterized valid value function
-    const mapIsValidValue = map => {
-      for ( const [ key, value ] of map ) {
-        if ( !ValidatorDef.isValueValid( key, keyType.validator ) ) {
-          return false;
-        }
-        if ( !ValidatorDef.isValueValid( value, valueType.validator ) ) {
-          return false;
-        }
-      }
-      return true;
-    };
-
     cache.set( cacheKey, new IOType( `MapIO<${keyType.typeName},${valueType.typeName}>`, {
       valueType: Map,
-      isValidValue: mapIsValidValue,
+      isValidValue: map => {
+        for ( const [ key, value ] of map ) {
+          if ( !ValidatorDef.isValueValid( key, keyType.validator ) ) {
+            return false;
+          }
+          if ( !ValidatorDef.isValueValid( value, valueType.validator ) ) {
+            return false;
+          }
+        }
+        return true;
+      },
       parameterTypes: [ keyType, valueType ],
       toStateObject: map => {
         const array = [];
@@ -65,7 +78,22 @@ const MapIO = ( keyType, valueType ) => {
       },
       documentation: 'IO Type for the built-in JS Map type, with the key and value types specified.',
       stateSchema: StateSchema.asValue( `Map<${keyType.typeName},${valueType.typeName}>`, {
-        isValidValue: mapIsValidValue
+        isValidValue: stateObject => {
+          if ( !ValidatorDef.isValueValid( stateObject, ARRAY_OF_ARRAY_VALIDATOR ) ) {
+            return false;
+          }
+          for ( let i = 0; i < stateObject.length; i++ ) {
+            const mapElementArray = stateObject[ i ];
+            if ( !Array.isArray( mapElementArray ) ) {
+              return false;
+            }
+            if ( mapElementArray.length !== 2 ) {
+              return false;
+            }
+            // TODO: check each entry based on the key and value IOType stateSchema, https://github.com/phetsims/tandem/issues/244
+          }
+          return true;
+        }
       } )
     } ) );
   }
