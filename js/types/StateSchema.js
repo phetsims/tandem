@@ -73,6 +73,58 @@ class StateSchema {
   }
 
   /**
+   * @public
+   * @param {PhetioObject} coreObject
+   * @param {Object} stateObject
+   */
+  defaultApplyState( coreObject, stateObject ) {
+
+    const applyStateForLevel = ( schema, stateObjectLevel ) => {
+      assert && assert( this.isComposite(), 'defaultApplyState from stateSchema only applies to composite stateSchemas' );
+      for ( const stateKey in schema ) {
+        if ( schema.hasOwnProperty( stateKey ) ) {
+          if ( stateKey === '_private' ) {
+            applyStateForLevel( schema._private, stateObjectLevel._private );
+          }
+          else {
+            assert && assert( stateObjectLevel.hasOwnProperty( stateKey ), `stateObject does not have expected schema key: ${stateKey}` );
+            coreObject[ stateKey ] = schema[ stateKey ].fromStateObject( stateObjectLevel[ stateKey ] );
+          }
+        }
+      }
+    };
+    applyStateForLevel( this.compositeSchema, stateObject );
+  }
+
+  /**
+   * @public
+   * @param {PhetioObject} coreObject
+   * @returns {Object}
+   */
+  defaultToStateObject( coreObject ) {
+    assert && assert( this.isComposite(), 'defaultToStateObject from stateSchema only applies to composite stateSchemas' );
+
+    const toStateObjectForSchemaLevel = schema => {
+
+      const stateObject = {};
+      for ( const stateKey in schema ) {
+        if ( schema.hasOwnProperty( stateKey ) ) {
+          if ( stateKey === '_private' ) {
+            stateObject._private = toStateObjectForSchemaLevel( schema._private );
+          }
+          else {
+            assert && assert( coreObject.hasOwnProperty( stateKey ),
+              `cannot get state because coreObject does not have expected schema key: ${stateKey}` );
+            stateObject[ stateKey ] = schema[ stateKey ].toStateObject( coreObject[ stateKey ] );
+          }
+        }
+      }
+      return stateObject;
+    };
+    return toStateObjectForSchemaLevel( this.compositeSchema );
+  }
+
+  /**
    * True if the StateSchema is a composite schema.
    * @public
    * @returns {boolean}
