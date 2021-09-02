@@ -17,20 +17,9 @@ import StateSchema from './StateSchema.js';
 // {Map.<keyType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once.
 const cache = new Map();
 
-// TODO: why didn't arrayElementType: Array not work? https://github.com/phetsims/tandem/issues/244
 const ARRAY_OF_ARRAY_VALIDATOR = {
-  isValidValue: array => {
-    if ( !Array.isArray( array ) ) {
-      return false;
-    }
-    for ( let i = 0; i < array.length; i++ ) {
-      const arrayElement = array[ i ];
-      if ( !Array.isArray( arrayElement ) ) {
-        return false;
-      }
-    }
-    return true;
-  }
+  valueType: Array,
+  arrayElementType: Array
 };
 
 /**
