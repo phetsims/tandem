@@ -35,6 +35,24 @@ const getCoreTypeName = ioTypeName => {
   return ioTypeName.substring( 0, index );
 };
 
+/**
+ * Parse all available ways to pass stateSchema, and return a StateSchema instance. Null if stateSchema not provided
+ * @param {*} stateSchemaOption - see IOType.config.stateSchema for parameter type doc
+ * @param {IOType} [ioTypeInstance] - required only if the stateSchemaOption is a function to be run with this as the arg
+ * @returns {StateSchema|null}
+ */
+const stateSchemaOptionToType = ( stateSchemaOption, ioTypeInstance ) => {
+  if ( stateSchemaOption !== null && !( stateSchemaOption instanceof StateSchema ) ) {
+    let compositeSchema = stateSchemaOption;
+    if ( typeof stateSchemaOption === 'function' ) {
+      assert && assert( ioTypeInstance, 'expected instance to run function to get composite stateSchemaOption with' );
+      compositeSchema = stateSchemaOption( ioTypeInstance );
+    }
+    return new StateSchema( { compositeSchema: compositeSchema } );
+  }
+  return stateSchemaOption;
+};
+
 class IOType {
 
   /**
@@ -153,16 +171,9 @@ class IOType {
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
 
-    let stateSchema = config.stateSchema;
-    if ( stateSchema !== null && !( stateSchema instanceof StateSchema ) ) {
-      const compositeSchema = typeof stateSchema === 'function' ? stateSchema( this ) : stateSchema;
-      stateSchema = new StateSchema( { compositeSchema: compositeSchema } );
-    }
-
     // @public - The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
     // see getAllStateSchema().
-    this.stateSchema = stateSchema;
-
+    this.stateSchema = stateSchemaOptionToType( config.stateSchema, this );
 
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
@@ -391,9 +402,6 @@ class IOType {
       proto = Object.getPrototypeOf( proto );
     }
 
-    // TODO: this is hard and annoying because CoreType.STATE_SCHEMA is not always of type StateSchema. Perhaps I will need to update that, https://github.com/phetsims/phet-io/issues/1782
-    assert && assert( coreTypeHasToStateObject || hasStateSchema, 'toStateObject is required to be on the CoreType' );
-
     options = merge( {
       valueType: CoreType
     }, options );
@@ -409,11 +417,18 @@ class IOType {
     if ( CoreType.fromStateObject ) {
       options.fromStateObject = CoreType.fromStateObject;
     }
-    if ( hasStateSchema ) { // TODO: shouldn't this be required and validated against if object is stateful? https://github.com/phetsims/phet-io/issues/1782
-      options.stateSchema = CoreType.STATE_SCHEMA;
-    }
     if ( CoreType.stateToArgsForConstructor ) {
       options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
+    }
+
+    if ( hasStateSchema ) {
+
+      // TODO: shouldn't this be required and validated against only if object is stateful? https://github.com/phetsims/phet-io/issues/1782
+      // TODO: Very annoying that we don't support the function case from this spot, since there is no IOType, as a result, we dont' test the assertion below in that case https://github.com/phetsims/phet-io/issues/1782
+      options.stateSchema = typeof CoreType.STATE_SCHEMA === 'function' ? CoreType.STATE_SCHEMA : stateSchemaOptionToType( CoreType.STATE_SCHEMA );
+    }
+    if ( options.stateSchema && options.stateSchema instanceof StateSchema ) {
+      assert && assert( coreTypeHasToStateObject || options.stateSchema.isComposite(), 'toStateObject is required to be on the CoreType, but can be supplied via stateSchema' );
     }
 
     return new IOType( ioTypeName, options );

@@ -6,9 +6,10 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import qunitStart from '../../chipper/js/sim-tests/qunitStart.js';
 import './PhetioGroupTests.js';
 import './PhetioObjectTests.js';
 import './TandemTests.js';
-import qunitStart from '../../chipper/js/sim-tests/qunitStart.js';
+import './types/IOTypeTests.js';
 
 qunitStart();
