@@ -368,11 +368,12 @@ class IOType {
       assert && assert( !options.hasOwnProperty( 'toStateObject' ), 'fromCoreType sets its own toStateObject' );
       assert && assert( !options.hasOwnProperty( 'stateToArgsForConstructor' ), 'fromCoreType sets its own stateToArgsForConstructor' );
       assert && assert( !options.hasOwnProperty( 'applyState' ), 'fromCoreType sets its own applyState' );
+      assert && assert( !options.hasOwnProperty( 'stateSchema' ), 'fromCoreType sets its own stateSchema' );
     }
 
     let coreTypeHasToStateObject = false;
     let coreTypeHasApplyState = false;
-    const hasStateSchema = !!CoreType.STATE_SCHEMA || ( options && options.stateSchema );
+    const hasStateSchema = !!CoreType.STATE_SCHEMA;
 
     let proto = CoreType.prototype;
     while ( proto ) {
@@ -408,8 +409,8 @@ class IOType {
     if ( CoreType.fromStateObject ) {
       options.fromStateObject = CoreType.fromStateObject;
     }
-    if ( CoreType.STATE_SCHEMA ) { // TODO: shouldn't this be required and validated against if object is stateful? https://github.com/phetsims/phet-io/issues/1782
-      options.stateSchema = _.clone( CoreType.STATE_SCHEMA );
+    if ( hasStateSchema ) { // TODO: shouldn't this be required and validated against if object is stateful? https://github.com/phetsims/phet-io/issues/1782
+      options.stateSchema = CoreType.STATE_SCHEMA;
     }
     if ( CoreType.stateToArgsForConstructor ) {
       options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
