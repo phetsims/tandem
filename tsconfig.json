@@ -1,0 +1,3 @@
+{
+  "extends": "../chipper/tsconfig/axon-tandem"
+}
