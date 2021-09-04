@@ -8,7 +8,7 @@
   ],
   "include": [
     "js/**/*",
-    "../tandem/js/**/*",
+    "../axon/js/**/*",
     "../phet-core/js/EnumerationIO.js",
     "../dot/js/Range.js",
     "../dot/js/dot.js",
