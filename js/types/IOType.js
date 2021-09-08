@@ -35,24 +35,6 @@ const getCoreTypeName = ioTypeName => {
   return ioTypeName.substring( 0, index );
 };
 
-/**
- * Parse all available ways to pass stateSchema, and return a StateSchema instance. Null if stateSchema not provided
- * @param {*} stateSchemaOption - see IOType.config.stateSchema for parameter type doc
- * @param {IOType} [ioTypeInstance] - required only if the stateSchemaOption is a function to be run with this as the arg
- * @returns {StateSchema|null}
- */
-const stateSchemaOptionToType = ( stateSchemaOption, ioTypeInstance ) => {
-  if ( stateSchemaOption !== null && !( stateSchemaOption instanceof StateSchema ) ) {
-    let compositeSchema = stateSchemaOption;
-    if ( typeof stateSchemaOption === 'function' ) {
-      assert && assert( ioTypeInstance, 'expected instance to run function to get composite stateSchemaOption with' );
-      compositeSchema = stateSchemaOption( ioTypeInstance );
-    }
-    return new StateSchema( { compositeSchema: compositeSchema } );
-  }
-  return stateSchemaOption;
-};
-
 class IOType {
 
   /**
@@ -138,7 +120,6 @@ class IOType {
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
-      // TODO: perhaps simplify this typeDoc by moving the complexity into the StateSchema constructor? https://github.com/phetsims/phet-io/issues/1781
       // {Object|StateSchema|function(IOType):Object|function(IOType):StateSchema|null} - the specification for how the
       // PhET-iO state will look for instances of this type. null specifies that the object is not serialized
       stateSchema: null,
@@ -171,9 +152,15 @@ class IOType {
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
 
+    let stateSchema = config.stateSchema;
+    if ( stateSchema !== null && !( stateSchema instanceof StateSchema ) ) {
+      const compositeSchema = typeof stateSchema === 'function' ? stateSchema( this ) : stateSchema;
+      stateSchema = new StateSchema( { compositeSchema: compositeSchema } );
+    }
+
     // @public - The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
     // see getAllStateSchema().
-    this.stateSchema = stateSchemaOptionToType( config.stateSchema, this );
+    this.stateSchema = stateSchema;
 
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
@@ -400,9 +387,6 @@ class IOType {
     let coreTypeHasToStateObject = false;
     let coreTypeHasApplyState = false;
 
-    // TODO: rename, https://github.com/phetsims/phet-io/issues/1782
-    const hasStateSchema = !!CoreType.STATE_SCHEMA;
-
     let proto = CoreType.prototype;
     while ( proto ) {
       assert && assert( !proto.hasOwnProperty( 'fromStateObject' ),
@@ -437,12 +421,8 @@ class IOType {
     if ( CoreType.stateToArgsForConstructor ) {
       options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
     }
-
-    if ( hasStateSchema ) {
-
-      // TODO: shouldn't this be required and validated against only if object is stateful? https://github.com/phetsims/phet-io/issues/1782
-      // TODO: Very annoying that we don't support the function case from this spot, since there is no IOType, as a result, we dont' test the assertion below in that case https://github.com/phetsims/phet-io/issues/1782
-      options.stateSchema = typeof CoreType.STATE_SCHEMA === 'function' ? CoreType.STATE_SCHEMA : stateSchemaOptionToType( CoreType.STATE_SCHEMA );
+    if ( CoreType.STATE_SCHEMA ) {
+      options.stateSchema = CoreType.STATE_SCHEMA;
     }
 
     // Assert that all value-StateSchema instances have a provided toStateObject. Composite StateSchema instances can use
