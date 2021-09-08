@@ -381,7 +381,7 @@ class IOType {
    * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#serialization
    *
    * @public
-   * @param {string} ioTypeName - see IOType constuctor for details
+   * @param {string} ioTypeName - see IOType constructor for details
    * @param {function} CoreType - the PhET "core" type class/constructor associated with this IOType being created.
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param {Object} [options]
@@ -399,6 +399,8 @@ class IOType {
 
     let coreTypeHasToStateObject = false;
     let coreTypeHasApplyState = false;
+
+    // TODO: rename, https://github.com/phetsims/phet-io/issues/1782
     const hasStateSchema = !!CoreType.STATE_SCHEMA;
 
     let proto = CoreType.prototype;
@@ -442,9 +444,13 @@ class IOType {
       // TODO: Very annoying that we don't support the function case from this spot, since there is no IOType, as a result, we dont' test the assertion below in that case https://github.com/phetsims/phet-io/issues/1782
       options.stateSchema = typeof CoreType.STATE_SCHEMA === 'function' ? CoreType.STATE_SCHEMA : stateSchemaOptionToType( CoreType.STATE_SCHEMA );
     }
-    if ( options.stateSchema && options.stateSchema instanceof StateSchema ) {
-      assert && assert( coreTypeHasToStateObject || options.stateSchema.isComposite(), 'toStateObject is required to be on the CoreType, but can be supplied via stateSchema' );
-    }
+
+    // Assert that all value-StateSchema instances have a provided toStateObject. Composite StateSchema instances can use
+    // their stateSchema as a default serialization method.
+    assert && !coreTypeHasToStateObject && assert( !( options.stateSchema && options.stateSchema instanceof StateSchema
+    && !options.stateSchema.isComposite() ),
+      'a serialization method (toStateObject) is required to use fromCoreType. It can be specified either by default ' +
+      'from STATE_SCHEMA, or provided manually from toStateObject.' );
 
     return new IOType( ioTypeName, options );
   }

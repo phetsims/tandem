@@ -6,10 +6,12 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import merge from '../../../phet-core/js/merge.js';
 import PhetioObject from '../PhetioObject.js';
 import Tandem from '../Tandem.js';
 import IOType from './IOType.js';
 import NumberIO from './NumberIO.js';
+import StateSchema from './StateSchema.js';
 
 QUnit.module( 'IOType' );
 
@@ -54,5 +56,39 @@ if ( Tandem.PHET_IO_ENABLED ) {
     assert.ok( xHolder.x === 7, 'applyState should be right number' );
 
     xHolder.dispose();
+
+    ///////////////////////////////////////////////////////////////
+
+    class ParticularParticle extends PhetioObject {
+      constructor( options ) {
+        options = merge( {
+          phetioType: ParticularParticleIO
+
+        }, options );
+        super( options );
+      }
+
+      /**
+       * @public
+       */
+      static get STATE_SCHEMA() {
+        return StateSchema.asValue( 'particularParticle', { isValidValue: value => value === 'particularParticle' } );
+      }
+    }
+
+    window.assert && assert.throws( () => {
+      return IOType.fromCoreType( 'ParticularParticleIO', ParticularParticle );
+    }, 'no toStateObject on value StateSchema\'ed IOType.' );
+
+    ParticularParticle.prototype.toStateObject = () => 'particularParticle';
+
+    const ParticularParticleIO = IOType.fromCoreType( 'ParticularParticleIO', ParticularParticle );
+    const particularParticle = new ParticularParticle( {
+      tandem: Tandem.ROOT_TEST.createTandem( 'particularParticle1' )
+    } );
+
+    assert.ok( ParticularParticleIO.toStateObject( particularParticle ) === 'particularParticle', 'serialization should work for value stateSchema' );
+    particularParticle.dispose();
+
   } );
 }
