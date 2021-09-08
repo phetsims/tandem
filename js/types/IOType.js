@@ -364,11 +364,26 @@ class IOType {
   }
 
   /**
-   * Convenience method for creating an IOType that forwards its state methods over to be handled by the core type. This
-   * function will gracefully forward any supported deserialization methods, but requires the CoreType to have `toStateObject`.
+   * Convenience method for creating an IOType that forwards its "state methods" over to be handled by the core type.
+   * This function assumes that it is creating an IOType that supports serialization and deserialization. This function
+   * will gracefully forward the following items from the core type into options pased to the IOType constructor:
+   *
+   * - STATE_SCHEMA: This is required for stateful phetioTypes for API tracking. Should be static on the CoreType
+   * - toStateObject: It is required that a serialization-supported IOType have a way to serialize, if this method is
+   *                  not provided, then the default serialization gathered from STATE_SCHEMA will be used. Should be
+   *                  on the prototype of the CoreType.
+   * - fromStateObject: if using data-type serialization, this method is used to reconstitute an instance from its
+   *                    serialization object. Should be static on the CoreType
+   * - applyState: if using references-type serialization, this method is used to apply the serialization-object state
+   *                 onto an already existence PhET-iO element instance. Should be on the prototype of the CoreType.
+   *
+   * For more information on how to support serialization and PhET-iO state, please see
+   * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#serialization
+   *
    * @public
    * @param {string} ioTypeName - see IOType constuctor for details
-   * @param {function} CoreType - the PhET "core" type class/constructor associated with this IOType being created
+   * @param {function} CoreType - the PhET "core" type class/constructor associated with this IOType being created.
+   *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param {Object} [options]
    * @returns {IOType}
    */
