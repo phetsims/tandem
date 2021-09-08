@@ -91,4 +91,66 @@ if ( Tandem.PHET_IO_ENABLED ) {
     particularParticle.dispose();
 
   } );
+
+  QUnit.test( 'fromCoreType with Class hierarchy', assert => {
+
+    class Parent extends PhetioObject {
+      constructor( parentNumber, options ) {
+        options = merge( {
+
+          phetioType: ParentIO,
+
+          tandem: Tandem.ROOT_TEST.createTandem( 'parent' )
+
+        }, options );
+        super( options );
+        this.parentNumber = parentNumber;
+      }
+
+      /**
+       * @public
+       */
+      static get STATE_SCHEMA() {
+        return {
+          parentNumber: NumberIO
+        };
+      }
+    }
+
+    class Child extends Parent {
+      constructor( childNumber ) {
+        super( 10, {
+          phetioType: ChildIO,
+
+          tandem: Tandem.ROOT_TEST.createTandem( 'child' )
+        } );
+
+        this.childNumber = childNumber;
+      }
+
+      /**
+       * @public
+       */
+      static get STATE_SCHEMA() {
+        return {
+          childNumber: NumberIO
+        };
+      }
+    }
+
+    const ParentIO = IOType.fromCoreType( 'ParentIO', Parent );
+    const ChildIO = IOType.fromCoreType( 'ChildIO', Child );
+
+    const child = new Child( 4 );
+    const parentStateObject = ParentIO.toStateObject( child );
+    assert.ok( parentStateObject.parentNumber === 10, 'simple case, treated as parent' );
+
+    const childStateObject = ChildIO.toStateObject( child );
+    assert.ok( childStateObject.childNumber === 4, 'simple case, treated as child' );
+
+    // This does not work. Instead, you have to manually create a toStateObject in ChildIO that calls up to the parent.
+    // assert.ok( childStateObject.parentNumber === 10, 'oh boy' );
+
+    child.dispose();
+  } );
 }
