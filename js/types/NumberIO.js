@@ -15,7 +15,6 @@ const NumberIO = new IOType( 'NumberIO', {
   valueType: 'number',
   documentation: 'IO Type for Javascript\'s number primitive type',
   toStateObject: value => {
-    assert && assert( typeof value === 'number', 'value should be number' );
     if ( value === Number.POSITIVE_INFINITY ) {
       return 'POSITIVE_INFINITY';
     }
@@ -34,7 +33,7 @@ const NumberIO = new IOType( 'NumberIO', {
     return stateObject;
   },
   stateSchema: StateSchema.asValue( '\'POSITIVE_INFINITY\'|\'NEGATIVE_INFINITY\'|number', {
-    isValidValue: value => value === 'POSITIVE_INFINITY' || value === 'NEGATIVE_INFINITY' || typeof value === 'number'
+    isValidValue: value => value === 'POSITIVE_INFINITY' || value === 'NEGATIVE_INFINITY' || ( typeof value === 'number' && !isNaN( value ) )
   } )
 } );
 
