@@ -444,7 +444,11 @@ ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',
   toStateObject: coreObject => {
-    assert && assert( !coreObject.phetioState, `fell back to default state for ${coreObject.tandem.phetioID}, should it be marked phetioState: false, or have a custom state method in a more specific IO Type?` );
+    assert && assert( !coreObject.phetioState,
+      `fell back to root serialization state for ${coreObject.tandem.phetioID}. Potential solutions:
+       * mark the type as phetioState: false
+       * create a custom toStateObject ethod in your IO Type
+       * perhaps you have everything right, but forgot to pass in the IOType via phetioType in the constructor` );
     return DEFAULT_STATE;
   },
   fromStateObject: stateObject => null,
