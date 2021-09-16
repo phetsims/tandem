@@ -10,6 +10,7 @@
 
 import validate from '../../../axon/js/validate.js';
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
+import Enumeration from '../../../phet-core/js/Enumeration.js';
 import merge from '../../../phet-core/js/merge.js';
 import required from '../../../phet-core/js/required.js';
 import PhetioConstants from '../PhetioConstants.js';
@@ -34,6 +35,10 @@ const getCoreTypeName = ioTypeName => {
   assert && assert( index >= 0, 'IO should be in the type name' );
   return ioTypeName.substring( 0, index );
 };
+
+// Currently, this is only the list of methods that default stateSchema applyState functions support when deserializing
+// componenents
+const DeserializationMethod = Enumeration.byKeys( [ 'FROM_STATE_OBJECT', 'APPLY_STATE' ] );
 
 class IOType {
 
@@ -100,11 +105,13 @@ class IOType {
       /**** STATE ****/
 
       // {function(coreObject:*):*)} Serialize the core object. Most often this looks like an object literal that holds
-      // data about the PhetioObject instance.
+      // data about the PhetioObject instance. This is likely superfluous to just providing a stateSchema of composite
+      // key/IOType values, which will create a default toStateObject based on the schema.
       toStateObject: supertype && supertype.toStateObject,
 
       // {function(stateObject:*):*} For Data Type Deserialization. Decodes the object from a state (see toStateObject)
       // into an instance of the core type.
+      // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       fromStateObject: supertype && supertype.fromStateObject,
 
       // {function(stateObject:*):Array[*]} For Dynamic Element Deserialization: converts the state object to arguments
@@ -112,17 +119,32 @@ class IOType {
       // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
       // to be implemented on IO Types who's core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
       // elements.
+      // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       stateToArgsForConstructor: supertype && supertype.stateToArgsForConstructor,
 
       // {function(coreObject:*,stateObject:*)} For Reference Type Deserialization:  Applies the state (see toStateObject)
       // value to the instance. When setting PhET-iO state, this function will be called on an instrumented instance to set the
-      // stateObject's value to it.
+      // stateObject's value to it. StateSchema makes this method often superfluous. A composite stateSchema can be used
+      // to automatically formulate the applyState function. If using stateSchema for the applyState method, make sure that
+      // each compose IOType has the correct defaultDeserializationMethod. Most of the time, composite IOTypes use fromStateObject
+      // to deserialize each sub-component, but in some circumstances, you will want your child to deserialize by also using applyState.
+      // See config.defaultDeserializationMethod to configure this case.
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
       // {Object|StateSchema|function(IOType):Object|function(IOType):StateSchema|null} - the specification for how the
-      // PhET-iO state will look for instances of this type. null specifies that the object is not serialized
+      // PhET-iO state will look for instances of this type. null specifies that the object is not serialized. A composite
+      // StateSchema can supply a toStateObject and applyState serialization strategy. By default, it will assume that
+      // each composite child of this stateSchema deserializes via "fromStateObject", if instead it uses applyState, please
+      // specify that per IOType with defaultDeserializationMethod.
       stateSchema: null,
+
+      // {DeserializationMethod} For use when this IOType is pare of a composite stateSchema in another IOType.  When
+      // using serialization methods by supplying only stateSchema, then deserialization
+      // can take a variety of forms, and this will vary based on the IOType. In most cases deserialization of a component
+      // is done via fromStateObject. If not, specify this option so that the stateSchema will be able to know to call
+      // the appropriate deserialization method when deserializing something of this IOType.
+      defaultDeserializationMethod: DeserializationMethod.FROM_STATE_OBJECT,
 
       // For dynamic element containers, see examples in IOTypes for PhetioDynamicElementContainer classes
       addChildElement: supertype && supertype.addChildElement
@@ -139,6 +161,9 @@ class IOType {
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
       } );
     }
+    assert && assert( config.defaultDeserializationMethod === DeserializationMethod.FROM_STATE_OBJECT ||
+                      config.defaultDeserializationMethod === DeserializationMethod.APPLY_STATE,
+      'unsupported deserialization method' );
 
     // @public (read-only)
     this.supertype = supertype;
@@ -151,6 +176,7 @@ class IOType {
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
+    this.defaultDeserializationMethod = config.defaultDeserializationMethod;
 
     let stateSchema = config.stateSchema;
     if ( stateSchema !== null && !( stateSchema instanceof StateSchema ) ) {
@@ -435,6 +461,9 @@ class IOType {
     return new IOType( ioTypeName, options );
   }
 }
+
+// @public - deserialization methods supported by IOType
+IOType.DeserializationMethod = DeserializationMethod;
 
 // default state value
 const DEFAULT_STATE = null;

@@ -87,8 +87,21 @@ class StateSchema {
             applyStateForLevel( schema._private, stateObjectLevel._private );
           }
           else {
+
+            // The IOType for the key in the composite.
+            const schemaIOType = schema[ stateKey ];
             assert && assert( stateObjectLevel.hasOwnProperty( stateKey ), `stateObject does not have expected schema key: ${stateKey}` );
-            coreObject[ stateKey ] = schema[ stateKey ].fromStateObject( stateObjectLevel[ stateKey ] );
+
+            // Using fromStateObject to deserialize sub-component
+            if ( schemaIOType.defaultDeserializationMethod === IOType.DeserializationMethod.FROM_STATE_OBJECT ) {
+              coreObject[ stateKey ] = schema[ stateKey ].fromStateObject( stateObjectLevel[ stateKey ] );
+            }
+            else {
+              assert && assert( schemaIOType.defaultDeserializationMethod === IOType.DeserializationMethod.APPLY_STATE, 'unexpected deserialization method' );
+
+              // Using applyState to deserialize sub-component
+              schema[ stateKey ].applyState( coreObject[ stateKey ], stateObjectLevel[ stateKey ] );
+            }
           }
         }
       }
