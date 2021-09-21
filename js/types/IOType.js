@@ -134,9 +134,11 @@ class IOType {
 
       // {Object|StateSchema|function(IOType):Object|function(IOType):StateSchema|null} - the specification for how the
       // PhET-iO state will look for instances of this type. null specifies that the object is not serialized. A composite
-      // StateSchema can supply a toStateObject and applyState serialization strategy. By default, it will assume that
-      // each composite child of this stateSchema deserializes via "fromStateObject", if instead it uses applyState, please
-      // specify that per IOType with defaultDeserializationMethod.
+      // StateSchema can supply a toStateObject and applyState serialization strategy. This default serialization strategy
+      // only applies to this level, and does not recurse to parents. If you need to add serialization from parent levels,
+      // this can be done by manually implementing a custom toStateObject. By default, it will assume that each composite
+      // child of this stateSchema deserializes via "fromStateObject", if instead it uses applyState, please specify that
+      // per IOType with defaultDeserializationMethod.
       stateSchema: null,
 
       // {DeserializationMethod} For use when this IOType is pare of a composite stateSchema in another IOType.  When
