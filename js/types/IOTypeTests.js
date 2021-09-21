@@ -139,7 +139,9 @@ if ( Tandem.PHET_IO_ENABLED ) {
     }
 
     const ParentIO = IOType.fromCoreType( 'ParentIO', Parent );
-    const ChildIO = IOType.fromCoreType( 'ChildIO', Child );
+    const ChildIO = IOType.fromCoreType( 'ChildIO', Child, {
+      supertype: ParentIO
+    } );
 
     const child = new Child( 4 );
     const parentStateObject = ParentIO.toStateObject( child );
@@ -148,9 +150,56 @@ if ( Tandem.PHET_IO_ENABLED ) {
     const childStateObject = ChildIO.toStateObject( child );
     assert.ok( childStateObject.childNumber === 4, 'simple case, treated as child' );
 
+    child.dispose();
+
+    ////////////////////////////////////////////////
     // This does not work. Instead, you have to manually create a toStateObject in ChildIO that calls up to the parent.
     // assert.ok( childStateObject.parentNumber === 10, 'oh boy' );
+    //
+    // Like this example below
 
-    child.dispose();
+    class ChildThatUsesParentState extends Parent {
+      constructor( childNumber ) {
+        super( 10, {
+          phetioType: ChildThatUsesParentStateIO,
+
+          tandem: Tandem.ROOT_TEST.createTandem( 'childWithParentState' )
+        } );
+
+        this.childNumber = childNumber;
+      }
+
+      /**
+       * @public
+       */
+      toStateObject() {
+        const parentState = ParentIO.toStateObject( this );
+        parentState.childNumber = this.childNumber;
+        return parentState;
+      }
+
+      /**
+       * @public
+       */
+      static get STATE_SCHEMA() {
+        return {
+          childNumber: NumberIO
+        };
+      }
+    }
+
+    const ChildThatUsesParentStateIO = IOType.fromCoreType( 'ChildThatUsesParentStateIO', ChildThatUsesParentState, {
+      supertype: ParentIO
+    } );
+
+    const childWithParentState = new ChildThatUsesParentState( 555 );
+    const newStateObject = ChildThatUsesParentStateIO.toStateObject( childWithParentState );
+    assert.ok( newStateObject.parentNumber === 10, 'should include parent' );
+    assert.ok( newStateObject.childNumber === 555, 'definitely needs its own number' );
+    childWithParentState.dispose();
+
+    ////////////////////////////////////////////////
+
+
   } );
 }
