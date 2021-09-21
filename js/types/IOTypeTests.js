@@ -174,8 +174,8 @@ if ( Tandem.PHET_IO_ENABLED ) {
        */
       toStateObject() {
         const parentState = ParentIO.toStateObject( this );
-        parentState.childNumber = this.childNumber;
-        return parentState;
+        const childSelfState = ChildThatUsesParentStateIO.stateSchema.defaultToStateObject( this );
+        return merge( {}, parentState, childSelfState );
       }
 
       /**
