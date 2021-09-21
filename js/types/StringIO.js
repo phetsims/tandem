@@ -16,7 +16,8 @@ const StringIO = new IOType( 'StringIO', {
   supertype: ValueIO,
   valueType: 'string',
   documentation: 'IO Type for Javascript\'s string primitive type',
-  stateSchema: StateSchema.asValue( 'string', { valueType: 'string' } )
+  stateSchema: StateSchema.asValue( 'string', { valueType: 'string' } ),
+  toStateObject: _.identity
 } );
 
 tandemNamespace.register( 'StringIO', StringIO );

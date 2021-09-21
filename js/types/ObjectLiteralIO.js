@@ -14,7 +14,8 @@ const ObjectLiteralIO = new IOType( 'ObjectLiteralIO', {
   documentation: 'IO Type for object literals',
   isValidValue: noExtraPrototype,
   supertype: ValueIO,
-  stateSchema: StateSchema.asValue( 'object', { valueType: Object, isValidValue: noExtraPrototype } )
+  stateSchema: StateSchema.asValue( 'object', { valueType: Object, isValidValue: noExtraPrototype } ),
+  toStateObject: _.identity
 } );
 
 tandemNamespace.register( 'ObjectLiteralIO', ObjectLiteralIO );

@@ -184,9 +184,15 @@ class IOType {
       stateSchema = new StateSchema( { compositeSchema: compositeSchema } );
     }
 
-    // @public - The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
+    // @public {StateSchema|null} - The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
     // see getAllStateSchema().
     this.stateSchema = stateSchema;
+
+    // Assert that toStateObject method is provided for value StateSchemas. Do this with the following logic:
+    // 1. It is acceptable to not provide a stateSchema (for IOTypes that aren't stateful)
+    // 2. You must either provide a toStateObject, or have a composite StateSchema. Composite state schemas support default serialization methods.
+    assert && assert( !this.stateSchema || ( toStateObjectSupplied || this.stateSchema.isComposite() ),
+      'toStateObject method must be provided for value StateSchemas' );
 
     this.toStateObject = coreObject => {
       validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
@@ -450,13 +456,6 @@ class IOType {
     if ( CoreType.STATE_SCHEMA ) {
       options.stateSchema = CoreType.STATE_SCHEMA;
     }
-
-    // Assert that all value-StateSchema instances have a provided toStateObject. Composite StateSchema instances can use
-    // their stateSchema as a default serialization method.
-    assert && !coreTypeHasToStateObject && assert( !( options.stateSchema && options.stateSchema instanceof StateSchema
-    && !options.stateSchema.isComposite() ),
-      'a serialization method (toStateObject) is required to use fromCoreType. It can be specified either by default ' +
-      'from STATE_SCHEMA, or provided manually from toStateObject.' );
 
     return new IOType( ioTypeName, options );
   }
