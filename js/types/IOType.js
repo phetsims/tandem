@@ -165,7 +165,7 @@ class IOType {
     }
     assert && assert( config.defaultDeserializationMethod === DeserializationMethod.FROM_STATE_OBJECT ||
                       config.defaultDeserializationMethod === DeserializationMethod.APPLY_STATE,
-      'unsupported deserialization method' );
+      'StateSchema\'s default serialization only supports fromStateObject or applyState' );
 
     // @public (read-only)
     this.supertype = supertype;
