@@ -25,6 +25,9 @@ import IOType from './types/IOType.js';
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
 
+/**
+ * @template T
+ */
 class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
@@ -93,7 +96,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * 3. element.dispose
    * 4. fire elementDisposedEmitter
    *
-   * @param {PhetioObject} element
+   * @param {T} element
    * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    * @public
    * @override
@@ -110,7 +113,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   /**
    * Gets a reference to the underlying array. DO NOT create/dispose elements while iterating, or otherwise modify
    * the array.  If you need to modify the array, use getArrayCopy.
-   * @returns {PhetioObject[]}
+   * @returns {T[]}
    * @public
    */
   getArray() {
@@ -120,7 +123,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   /**
    * Gets a copy of the underlying array. Use this method if you need to create/dispose elements while iterating,
    * or otherwise modify the group's array.
-   * @returns {PhetioObject[]}
+   * @returns {T[]}
    * @public
    */
   getArrayCopy() {
@@ -130,7 +133,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   /**
    * Returns the element at the specified index
    * @param {number} index
-   * @returns {PhetioObject}
+   * @returns {T}
    * @public
    */
   getElement( index ) {
@@ -147,14 +150,14 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   /**
    * Returns an array with elements that pass the filter predicate.
    * @param {function(PhetioObject)} predicate
-   * @returns {Object[]}
+   * @returns {T[]}
    * @public
    */
   filter( predicate ) { return this._array.filter( predicate ); }
 
   /**
    * Does the group include the specified element?
-   * @param {PhetioObject} element
+   * @param {T} element
    * @returns {boolean}
    * @public
    */
@@ -162,7 +165,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Gets the index of the specified element in the underlying array.
-   * @param {PhetioObject} element
+   * @param {T} element
    * @returns {number} - index, -1 if not found
    * @public
    */
@@ -170,21 +173,21 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Runs the function on each element of the group.
-   * @param {function(PhetioObject)} action - a function with a single parameter: the current element
+   * @param {(t:T)=>void} action - a function with a single parameter: the current element
    * @public
    */
   forEach( action ) { this._array.forEach( action ); }
 
   /**
    * Find the specified element.
-   * @param {function(PhetioObject)} action - a function with a single parameter: the item to find
+   * @param {T} element
    * @public
    */
   find( element ) { return this._array.find( element ); }
 
   /**
    * Returns an array with every element mapped to a new one.
-   * @param {function(PhetioObject)} f
+   * @param {(t:T)=>any} f
    * @returns {Object[]}
    * @public
    */
@@ -245,7 +248,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * Creates the next group element.
    * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
    *                                      `stateToArgsForConstructor` method
-   * @returns {PhetioObject}
+   * @returns {T}
    * @public
    */
   createNextElement( ...argsForCreateFunction ) {
@@ -263,7 +266,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @param {number} index - the number of the individual element
    * @param {Array.<*>} argsForCreateFunction
    * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
-   * @returns {PhetioObject}
+   * @returns {T}
    * @public (PhetioGroupIO)
    */
   createIndexedElement( index, argsForCreateFunction, fromStateSetting ) {
@@ -297,7 +300,6 @@ const cache = new Map();
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
  * @param {IOType} parameterType
  * @returns {IOType}
- * @constructor
  */
 PhetioGroup.PhetioGroupIO = parameterType => {
 
