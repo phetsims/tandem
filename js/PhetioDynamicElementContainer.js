@@ -318,7 +318,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * the listener is changed because of a force that isn't the PhET-iO state engine (see Sim.isSettingPhetioStateProperty
    * and its usages). This helps catch complicated and obfuscated state bugs in an easy way. After reading this, it
    * should go without saying that sim code should NOT set this flag to be true!
-   * @protected - should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
+   * @public - but should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
    */
   disposeElement( element, fromStateSetting ) {
     element.dispose();
