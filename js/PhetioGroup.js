@@ -179,11 +179,11 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   forEach( action ) { this._array.forEach( action ); }
 
   /**
-   * Find the specified element.
-   * @param {T} element
+   * Use the predicate to find the first matching occurrence in the array.
+   * @param {function<T>>} predicate
    * @public
    */
-  find( element ) { return this._array.find( element ); }
+  find( predicate ) { return this._array.find( predicate ); }
 
   /**
    * Returns an array with every element mapped to a new one.
