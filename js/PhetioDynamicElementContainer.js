@@ -319,6 +319,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * and its usages). This helps catch complicated and obfuscated state bugs in an easy way. After reading this, it
    * should go without saying that sim code should NOT set this flag to be true!
    * @public - but should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
+   * TODO: once this file has been converted to TypeScript, this function should be marked as protected, see https://github.com/phetsims/tandem/issues/248#issuecomment-952347257
    */
   disposeElement( element, fromStateSetting ) {
     element.dispose();
