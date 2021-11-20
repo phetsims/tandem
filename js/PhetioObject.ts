@@ -104,6 +104,23 @@ const DEFAULTS = {
 assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType ) === TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioEventType,
   'phetioEventType must have the same default as the default metadata values.' );
 
+// Options for creating a PhetioObject
+type PhetioObjectOptions = {
+  tandem?: Tandem;
+  phetioType?: IOType;
+  phetioState?: boolean;
+  phetioReadOnly?: boolean;
+  phetioEventType?: any;
+  phetioDocumentation?: string;
+  phetioHighFrequency?: boolean;
+  phetioPlayback?: boolean;
+  phetioStudioControl?: boolean;
+  phetioFeatured?: boolean;
+  phetioEventMetadata?: any;
+  phetioDynamicElement?: boolean;
+  phetioDesigned?: boolean;
+};
+
 class PhetioObject {
 
   // assigned in initializePhetioObject - see docs at DEFAULTS declaration
@@ -137,7 +154,7 @@ class PhetioObject {
   phetioMessageStack?: number[];
   static DEFAULT_OPTIONS: any;
 
-  constructor( options?: any ) {
+  constructor( options?: PhetioObjectOptions ) {
 
     this.tandem = DEFAULTS.tandem;
     this.phetioObjectInitialized = false;
@@ -164,7 +181,7 @@ class PhetioObject {
    * Like SCENERY/Node, PhetioObject can be configured during construction or later with a mutate call.
    * Noop if provided config keys don't intersect with any key in DEFAULTS; baseOptions are ignored for this calculation.
    */
-  protected initializePhetioObject( baseOptions: any, config: any ): void {
+  protected initializePhetioObject( baseOptions: any, config: PhetioObjectOptions ): void {
     assert && assert( config, 'initializePhetioObject must be called with config' );
 
     // call before we exit early to support logging unsupplied Tandems.
@@ -195,6 +212,7 @@ class PhetioObject {
     // Guard validation on assert to avoid calling a large number of no-ops when assertions are disabled, see https://github.com/phetsims/tandem/issues/200
     assert && validate( config.tandem, { valueType: Tandem } );
 
+    // @ts-ignore
     config = merge( {}, DEFAULTS, baseOptions, config );
 
     // validate config before assigning to properties
@@ -232,7 +250,7 @@ class PhetioObject {
 
     // Dynamic elements should compare to their "archetypal" counterparts.  For example, this means that a Particle
     // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
-    const archetypalPhetioID = config.tandem.getArchetypalPhetioID();
+    const archetypalPhetioID = config.tandem!.getArchetypalPhetioID();
 
     // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
     // Patch in the desired values from overrides, if any.
@@ -241,12 +259,13 @@ class PhetioObject {
       if ( overrides ) {
 
         // No need to make a new object, since this "config" variable was created in the previous merge call above.
+        // @ts-ignore
         config = merge( config, overrides );
       }
     }
 
     // @public (read-only) {Tandem} - see docs at DEFAULTS declaration
-    this.tandem = config.tandem;
+    this.tandem = config.tandem!;
 
     // @public (read-only) {IOType} - see docs at DEFAULTS declaration
     this._phetioType = config.phetioType;
@@ -739,4 +758,4 @@ class LinkedElement extends PhetioObject {
 }
 
 tandemNamespace.register( 'PhetioObject', PhetioObject );
-export default PhetioObject;
+export { PhetioObject as default, PhetioObjectOptions };
