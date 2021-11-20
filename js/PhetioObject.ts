@@ -116,6 +116,7 @@ class PhetioObject {
   // Has it been disposed?
   isDisposed: boolean;
 
+  // See documentation in DEFAULTS
   phetioIsArchetype?: boolean;
   phetioBaselineMetadata: any | null;
   _phetioType?: IOType;
