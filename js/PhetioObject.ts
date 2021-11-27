@@ -758,4 +758,5 @@ class LinkedElement extends PhetioObject {
 }
 
 tandemNamespace.register( 'PhetioObject', PhetioObject );
-export { PhetioObject as default, PhetioObjectOptions, LinkedElement };
+export { PhetioObject as default, LinkedElement };
+export type { PhetioObjectOptions };
