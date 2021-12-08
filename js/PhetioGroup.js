@@ -67,7 +67,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     } );
 
     assert && this.countProperty.link( count => {
-      assert( count === this._array.length, `${this.countProperty.tandem.phetioID} listener fired and array length differs.` );
+      assert( count === this._array.length, `${this.countProperty.tandem.phetioID} listener fired and array length differs, count=${count}, arrayLength=${this._array.length}` );
     } );
 
     // countProperty can be overwritten during state set, see PhetioGroup.createIndexedElement(), and so this assertion
