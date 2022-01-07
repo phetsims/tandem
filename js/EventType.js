@@ -6,12 +6,12 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import Enumeration from '../../phet-core/js/Enumeration.js';
+import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
 import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
 import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 
-const EventType = Enumeration.byKeys( [
+const EventType = EnumerationDeprecated.byKeys( [
 
   // The user has taken an action, such as pressing a button or moving a mouse
   'USER',

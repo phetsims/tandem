@@ -10,7 +10,7 @@
 
 import validate from '../../../axon/js/validate.js';
 import ValidatorDef from '../../../axon/js/ValidatorDef.js';
-import Enumeration from '../../../phet-core/js/Enumeration.js';
+import EnumerationDeprecated from '../../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../../phet-core/js/merge.js';
 import required from '../../../phet-core/js/required.js';
 import PhetioConstants from '../PhetioConstants.js';
@@ -38,7 +38,7 @@ const getCoreTypeName = ioTypeName => {
 
 // Currently, this is only the list of methods that default stateSchema applyState functions support when deserializing
 // componenents
-const DeserializationMethod = Enumeration.byKeys( [ 'FROM_STATE_OBJECT', 'APPLY_STATE' ] );
+const DeserializationMethod = EnumerationDeprecated.byKeys( [ 'FROM_STATE_OBJECT', 'APPLY_STATE' ] );
 
 class IOType {
 
