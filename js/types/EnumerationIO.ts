@@ -5,11 +5,11 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
-import IRichEnumeration, { RichEnumerationContainer } from '../../phet-core/js/IRichEnumeration.js';
-import IOType from '../../tandem/js/types/IOType.js';
-import StateSchema from '../../tandem/js/types/StateSchema.js';
-import axon from './axon.js';
+import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
+import IRichEnumeration, { RichEnumerationContainer } from '../../../phet-core/js/IRichEnumeration.js';
+import IOType from './IOType.js';
+import StateSchema from './StateSchema.js';
+import tandemNamespace from '../tandemNamespace.js';
 
 // Cache each parameterized IOType so that it is only created once.
 const cache = new Map<IRichEnumeration<any>, IOType>();
@@ -33,7 +33,7 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: RichEn
       documentation: `Possible values: ${keys.join( ', ' )}.${additionalDocs}`,
       toStateObject: ( t: T ) => enumeration.getKey( t ),
       fromStateObject: ( stateObject: string ): T => {
-        assert && assert( typeof stateObject === 'string', 'unsupported RichEnumerationIO value type, expected string' );
+        assert && assert( typeof stateObject === 'string', 'unsupported EnumerationIO value type, expected string' );
         assert && assert( keys.includes( stateObject ), `Unrecognized value: ${stateObject}` );
         return enumeration.getValue( stateObject )!;
       },
@@ -46,5 +46,5 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: RichEn
   return cache.get( enumeration )!;
 };
 
-axon.register( 'EnumerationIO', EnumerationIO );
+tandemNamespace.register( 'EnumerationIO', EnumerationIO );
 export default EnumerationIO;

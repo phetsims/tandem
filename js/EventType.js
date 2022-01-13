@@ -7,7 +7,7 @@
  */
 
 import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
-import EnumerationIO from '../../phet-core/js/EnumerationIO.js';
+import EnumerationIO from './types/EnumerationIO.js';
 import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 
