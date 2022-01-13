@@ -6,17 +6,17 @@
  */
 
 import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
-import IRichEnumeration, { RichEnumerationContainer } from '../../../phet-core/js/IRichEnumeration.js';
+import IEnumeration, { EnumerationContainer } from '../../../phet-core/js/IEnumeration.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 import tandemNamespace from '../tandemNamespace.js';
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new Map<IRichEnumeration<any>, IOType>();
+const cache = new Map<IEnumeration<any>, IOType>();
 
 const joinKeys = ( keys: string[] ) => keys.join( '|' );
 
-const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: RichEnumerationContainer<T> ): IOType => {
+const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: EnumerationContainer<T> ): IOType => {
   const enumeration = enumerationContainer.enumeration;
 
   // This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
