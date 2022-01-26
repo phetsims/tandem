@@ -45,6 +45,9 @@ const phetioObjectListeners = [];
 // {PhetioObject[]} - PhetioObjects that have been added before listeners are ready.
 const bufferedPhetioObjects = [];
 
+// {Array<function():>} - keep track of listeners to fire when Tandem.launch() is called.
+const launchListeners = [];
+
 class Tandem {
 
   /**
@@ -370,11 +373,11 @@ class Tandem {
   static launch() {
     assert && assert( !Tandem.launched, 'Tandem cannot be launched twice' );
     Tandem.launched = true;
-    while ( bufferedPhetioObjects.length > 0 ) {
-      const phetioObject = bufferedPhetioObjects.shift();
-      phetioObject.tandem.addPhetioObject( phetioObject );
+
+    while ( launchListeners.length > 0 ) {
+      launchListeners.shift()();
     }
-    assert && assert( bufferedPhetioObjects.length === 0, 'bufferedPhetioObjects should be empty' );
+    assert && assert( launchListeners.length === 0 );
   }
 
   /**
@@ -385,8 +388,28 @@ class Tandem {
   static unlaunch() {
     Tandem.launched = false;
     bufferedPhetioObjects.length = 0;
+    launchListeners.length = 0;
+  }
+
+  /**
+   * Add a listener that will fire when Tandem is launched
+   * @public
+   * @param listener
+   */
+  static addLaunchListener( listener ) {
+    assert && assert( !Tandem.launched, 'tandem has already been launched, cannot add listener for that hook.' );
+    launchListeners.push( listener );
   }
 }
+
+
+Tandem.addLaunchListener( () => {
+  while ( bufferedPhetioObjects.length > 0 ) {
+    const phetioObject = bufferedPhetioObjects.shift();
+    phetioObject.tandem.addPhetioObject( phetioObject );
+  }
+  assert && assert( bufferedPhetioObjects.length === 0, 'bufferedPhetioObjects should be empty' );
+} );
 
 // @public (read-only) - a list of PhetioObjects ready to be sent out to listeners, but can't because Tandem hasn't been
 // launched yet.
