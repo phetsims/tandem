@@ -39,7 +39,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
     options = merge( {
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
-      tandem: Tandem.REQUIRED,
+      tandem: Tandem.OPTIONAL,
 
       // By default, a PhetioDynamicElementContainer's elements are included in state such that on every setState call,
       // the elements are cleared out by the phetioStateEngine so elements in the state can be added to the empty group.

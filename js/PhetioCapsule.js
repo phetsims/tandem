@@ -32,7 +32,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   constructor( createElement, defaultArguments, options ) {
 
     options = merge( {
-      tandem: Tandem.REQUIRED,
+      tandem: Tandem.OPTIONAL,
 
       // {string} The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
       // will consist of the capsule's tandem name with this suffix stripped off.

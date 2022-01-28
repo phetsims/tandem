@@ -42,7 +42,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   constructor( createElement, defaultArguments, options ) {
 
     options = merge( {
-      tandem: Tandem.REQUIRED,
+      tandem: Tandem.OPTIONAL,
 
       // {string} The group's tandem name must have this suffix, and the base tandem name for elements of
       // the group will consist of the group's tandem name with this suffix stripped off.
