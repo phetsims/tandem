@@ -68,8 +68,10 @@ class PhetioDynamicElementContainer extends PhetioObject {
       'PhetioDynamicElementContainer\'s phetioType must have exactly one parameter type' );
     assert && Tandem.VALIDATION && assert( !!options.phetioType.parameterTypes[ 0 ],
       'PhetioDynamicElementContainer\'s phetioType\'s parameterType must be truthy' );
-    assert && Tandem.VALIDATION && assert( options.tandem.name.endsWith( options.containerSuffix ),
-      'PhetioDynamicElementContainer tandems should end with options.containerSuffix' );
+    if ( assert && options.tandem.supplied ) {
+      assert && Tandem.VALIDATION && assert( options.tandem.name.endsWith( options.containerSuffix ),
+        'PhetioDynamicElementContainer tandems should end with options.containerSuffix' );
+    }
 
     // options that depend on other options
     options = merge( {
@@ -197,7 +199,9 @@ class PhetioDynamicElementContainer extends PhetioObject {
       const archetype = this.createElement( this.tandem.createTandem( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ), ...defaultArgs );
 
       // Mark the archetype for inclusion in the baseline schema
-      archetype.markDynamicElementArchetype();
+      if ( this.isPhetioInstrumented() ) {
+        archetype.markDynamicElementArchetype();
+      }
       return archetype;
     }
     else {
