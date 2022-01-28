@@ -39,6 +39,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
     options = merge( {
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
+
+      // Many PhET-iO instrumented types live in common code used by multiple sims, and may only be instrumented in a subset of their usages.
       tandem: Tandem.OPTIONAL,
 
       // By default, a PhetioDynamicElementContainer's elements are included in state such that on every setState call,
