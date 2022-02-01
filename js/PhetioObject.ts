@@ -76,9 +76,6 @@ const DEFAULTS = {
   // When true, emits events for data streams for playback, see handlePlaybackEvent.js
   phetioPlayback: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioPlayback,
 
-  // When true, Studio is allowed to create a control for this PhetioObject (if it knows how)
-  phetioStudioControl: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioStudioControl,
-
   // When true, this is categorized as an important "featured" element in Studio.
   phetioFeatured: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioFeatured,
 
@@ -114,7 +111,6 @@ type PhetioObjectOptions = {
   phetioDocumentation?: string;
   phetioHighFrequency?: boolean;
   phetioPlayback?: boolean;
-  phetioStudioControl?: boolean;
   phetioFeatured?: boolean;
   phetioEventMetadata?: any;
   phetioDynamicElement?: boolean;
@@ -143,7 +139,6 @@ class PhetioObject {
   _phetioEventType?: any;
   _phetioHighFrequency?: boolean;
   _phetioPlayback?: boolean;
-  _phetioStudioControl?: boolean;
   _phetioDynamicElement?: boolean;
   _phetioFeatured?: boolean;
   _phetioEventMetadata?: any | null;
@@ -223,7 +218,6 @@ class PhetioObject {
     assert && validate( config.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR, 'phetioDocumentation must be provided in the right format' );
     assert && validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR, 'phetioHighFrequency must be a boolean' );
     assert && validate( config.phetioPlayback, BOOLEAN_VALIDATOR, 'phetioPlayback must be a boolean' );
-    assert && validate( config.phetioStudioControl, BOOLEAN_VALIDATOR, 'phetioStudioControl must be a boolean' );
     assert && validate( config.phetioFeatured, BOOLEAN_VALIDATOR, 'phetioFeatured must be a boolean' );
     assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR, 'object literal expected' );
     assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR, 'phetioDynamicElement must be a boolean' );
@@ -287,9 +281,6 @@ class PhetioObject {
 
     // @private {boolean} - see docs at DEFAULTS declaration
     this._phetioPlayback = config.phetioPlayback;
-
-    // @private {boolean} - see docs at DEFAULTS declaration
-    this._phetioStudioControl = config.phetioStudioControl;
 
     // @public (PhetioEngine) {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to
     // children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
@@ -369,12 +360,6 @@ class PhetioObject {
   private get phetioPlayback(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioPlayback only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioPlayback!;
-  }
-
-  // throws an assertion error in brands other than PhET-iO
-  private get phetioStudioControl(): boolean {
-    assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioStudioControl only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioStudioControl!;
   }
 
   // throws an assertion error in brands other than PhET-iO
@@ -676,7 +661,6 @@ class PhetioObject {
       phetioEventType: EventType.phetioType.toStateObject( object.phetioEventType ),
       phetioHighFrequency: object.phetioHighFrequency,
       phetioPlayback: object.phetioPlayback,
-      phetioStudioControl: object.phetioStudioControl,
       phetioDynamicElement: object.phetioDynamicElement,
       phetioIsArchetype: object.phetioIsArchetype,
       phetioFeatured: object.phetioFeatured,

@@ -28,7 +28,6 @@ const TandemConstants = {
     phetioEventType: EVENT_TYPE_MODEL,
     phetioHighFrequency: false,
     phetioPlayback: false,
-    phetioStudioControl: true,
     phetioDynamicElement: false,
     phetioIsArchetype: false,
     phetioFeatured: false,
