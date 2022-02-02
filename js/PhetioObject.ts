@@ -1,4 +1,4 @@
-// Copyright 2017-2021, University of Colorado Boulder
+// Copyright 2017-2022, University of Colorado Boulder
 
 /**
  * Base type that provides PhET-iO features. An instrumented PhetioObject is referred to on the wrapper side/design side
