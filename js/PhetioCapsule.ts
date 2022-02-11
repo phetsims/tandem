@@ -23,23 +23,16 @@ import PhetioObject from './PhetioObject.js';
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 
-class PhetioCapsule<T extends PhetioObject, A = never, B = never, C = never, D = never, E = never> extends PhetioDynamicElementContainer<T, A, B, C, D, E> {
+class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
   static PhetioCapsuleIO: ( parameterType: IOType ) => IOType;
-
-  // TODO: Should this use <T extends any[] = []> like TinyEmitter? see https://github.com/phetsims/tandem/issues/254
-  constructor( createElement: ( tandem: Tandem, a: A ) => T, defaultArguments: [ A ], options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B ) => T, defaultArguments: [ A, B ], options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C ) => T, defaultArguments: [ A, B, C ], options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D ) => T, defaultArguments: [ A, B, C, D ], options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D, e: E ) => T, defaultArguments: [ A, B, C, D, E ], options: any );
 
   /**
    * @param {function(Tandem, ...):PhetioObject} createElement - function that creates the encapsulated element
    * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype
    * @param {Object} [options]
    */
-  constructor( createElement: any, defaultArguments: any, options?: any ) {
+  constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
 
     options = merge( {
       tandem: Tandem.OPTIONAL,
@@ -73,7 +66,7 @@ class PhetioCapsule<T extends PhetioObject, A = never, B = never, C = never, D =
    * @returns {Object}
    * @public
    */
-  getElement( ...argsForCreateFunction: any ) {
+  getElement( ...argsForCreateFunction: P ) {
     if ( !this.element ) {
       this.create( argsForCreateFunction );
     }

@@ -26,7 +26,7 @@ import IOType from './types/IOType.js';
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
 
-class PhetioDynamicElementContainer<T extends PhetioObject, A = never, B = never, C = never, D = never, E = never> extends PhetioObject {
+class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []> extends PhetioObject {
   readonly archetype: T;
   elementCreatedEmitter: Emitter<[ T ]>;
   elementDisposedEmitter: Emitter<[ T ]>;
@@ -38,13 +38,6 @@ class PhetioDynamicElementContainer<T extends PhetioObject, A = never, B = never
   createElement: any;
   defaultArguments: any;
 
-  // TODO: Should this use <T extends any[] = []> like TinyEmitter? see https://github.com/phetsims/tandem/issues/254
-  constructor( createElement: ( tandem: Tandem, a: A ) => T, defaultArguments: [ A ], options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B ) => T, defaultArguments: [ A, B ], options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C ) => T, defaultArguments: [ A, B, C ], options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D ) => T, defaultArguments: [ A, B, C, D ], options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D, e: E ) => T, defaultArguments: [ A, B, C, D, E ], options: any );
-
   /**
    * @param {function(Tandem,...args):PhetioObject} createElement - function that creates a dynamic element to be housed in
    * this container. All of this dynamic element container's elements will be created from this function, including the
@@ -52,7 +45,7 @@ class PhetioDynamicElementContainer<T extends PhetioObject, A = never, B = never
    * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype
    * @param {Object} [options] - describe the Group itself
    */
-  constructor( createElement: any, defaultArguments: any, options?: any ) {
+  constructor( createElement: ( t: Tandem, ...args: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
 
     options = merge( {
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
@@ -235,7 +228,7 @@ class PhetioDynamicElementContainer<T extends PhetioObject, A = never, B = never
    * @param {Array.<*>} argsForCreateFunction
    * @param {IOType|null} containerParameterType - null in PhET brand
    */
-  createDynamicElement( componentName: string, argsForCreateFunction: any, containerParameterType: any ): T {
+  createDynamicElement( componentName: string, argsForCreateFunction: P, containerParameterType: any ): T {
     assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
     // create with default state and substructure, details will need to be set by setter methods.

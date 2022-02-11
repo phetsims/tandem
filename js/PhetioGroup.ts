@@ -30,18 +30,11 @@ const DEFAULT_CONTAINER_SUFFIX = 'Group';
 // type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
 
 // A extends ( ...args: any[] ) => any, B extends Parameters<A>
-class PhetioGroup<T extends PhetioObject, A = never, B = never, C = never, D = never, E = never> extends PhetioDynamicElementContainer<T, A, B, C, D, E> {
-  _array: T[];
+class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDynamicElementContainer<T, P> {
+  private readonly _array: T[];
   groupElementIndex: number;
-  countProperty: NumberProperty;
+  readonly countProperty: NumberProperty;
   static PhetioGroupIO: ( parameterType: any ) => any;
-
-  // TODO: Should this use <T extends any[] = []> like TinyEmitter? see https://github.com/phetsims/tandem/issues/254
-  constructor( createElement: ( tandem: Tandem, a: A ) => T, defaultArguments: [ A ] | ( () => [ A ] ), options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B ) => T, defaultArguments: [ A, B ] | ( () => [ A, B ] ), options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C ) => T, defaultArguments: [ A, B, C ] | ( () => [ A, B, C ] ), options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D ) => T, defaultArguments: [ A, B, C, D ] | ( () => [ A, B, C, D ] ), options: any );
-  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D, e: E ) => T, defaultArguments: [ A, B, C, D, E ] | ( () => [ A, B, C, D, E ] ), options: any );
 
   /**
    * @param {function(Tandem,...):PhetioObject} createElement - function that creates a dynamic element to be housed in
@@ -52,7 +45,7 @@ class PhetioGroup<T extends PhetioObject, A = never, B = never, C = never, D = n
    *                                       defaults array, you should pass an empty object here anyways.
    * @param {Object} [options] - describe the Group itself
    */
-  constructor( createElement: any, defaultArguments: any, options?: any ) {
+  constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
 
     options = merge( {
       tandem: Tandem.OPTIONAL,
@@ -225,7 +218,7 @@ class PhetioGroup<T extends PhetioObject, A = never, B = never, C = never, D = n
    * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
    *                                      `stateToArgsForConstructor` method
    */
-  createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: any[] ) {
+  createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ) {
 
     // @ts-ignore
     const index = window.phetio.PhetioIDUtils.getGroupElementIndex( tandemName );
@@ -243,7 +236,7 @@ class PhetioGroup<T extends PhetioObject, A = never, B = never, C = never, D = n
    * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
    *                                      `stateToArgsForConstructor` method
    */
-  createNextElement( ...argsForCreateFunction: any[] ): T {
+  createNextElement( ...argsForCreateFunction: P ): T {
     return this.createIndexedElement( this.groupElementIndex++, argsForCreateFunction );
   }
 
@@ -260,7 +253,7 @@ class PhetioGroup<T extends PhetioObject, A = never, B = never, C = never, D = n
    * @param [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    * @public (PhetioGroupIO)
    */
-  createIndexedElement( index: number, argsForCreateFunction: any[], fromStateSetting = false ): T {
+  createIndexedElement( index: number, argsForCreateFunction: P, fromStateSetting = false ): T {
     assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
