@@ -26,7 +26,24 @@ import IOType from './types/IOType.js';
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
 
-class PhetioDynamicElementContainer extends PhetioObject {
+class PhetioDynamicElementContainer<T extends PhetioObject, A = never, B = never, C = never, D = never, E = never> extends PhetioObject {
+  readonly archetype: T;
+  elementCreatedEmitter: Emitter<[ T ]>;
+  elementDisposedEmitter: Emitter<[ T ]>;
+  notificationsDeferred: boolean;
+  deferredCreations: T[];
+  deferredDisposals: T[];
+  readonly supportsDynamicState: boolean;
+  protected phetioDynamicElementName: string;
+  createElement: any;
+  defaultArguments: any;
+
+  // TODO: Should this use <T extends any[] = []> like TinyEmitter? see https://github.com/phetsims/tandem/issues/254
+  constructor( createElement: ( tandem: Tandem, a: A ) => T, defaultArguments: [ A ], options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B ) => T, defaultArguments: [ A, B ], options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C ) => T, defaultArguments: [ A, B, C ], options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D ) => T, defaultArguments: [ A, B, C, D ], options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D, e: E ) => T, defaultArguments: [ A, B, C, D, E ], options: any );
 
   /**
    * @param {function(Tandem,...args):PhetioObject} createElement - function that creates a dynamic element to be housed in
@@ -35,7 +52,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype
    * @param {Object} [options] - describe the Group itself
    */
-  constructor( createElement, defaultArguments, options ) {
+  constructor( createElement: any, defaultArguments: any, options?: any ) {
 
     options = merge( {
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
@@ -87,7 +104,6 @@ class PhetioDynamicElementContainer extends PhetioObject {
     // @public (read-only phet-io internal) {boolean}
     this.supportsDynamicState = options.supportsDynamicState;
 
-    // @protected {string}
     this.phetioDynamicElementName = options.phetioDynamicElementName;
 
     // @protected
@@ -131,6 +147,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
       const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
 
       // On state start, clear out the container and set to defer notifications.
+      // @ts-ignore
       phetioStateEngine.onBeforeStateSetEmitter.addListener( ( state, scopeTandem ) => {
 
         // Only clear if this PhetioDynamicElementContainer is in scope of the state to be set
@@ -147,6 +164,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
         }
       } );
 
+      // @ts-ignore
       phetioStateEngine.addSetStateHelper( ( state, stillToSetIDs ) => {
         let creationNotified = false;
 
@@ -163,13 +181,13 @@ class PhetioDynamicElementContainer extends PhetioObject {
   }
 
   /**
-   * @param {string} dynamicElementID
-   * @param {string[]} stillToSetIDs
-   * @returns {boolean} - true if all children of a single dynamic element (based on phetioID) have had their state set already.
-   * @private
+   * @returns true if all children of a single dynamic element (based on phetioID) have had their state set already.
    */
-  stateSetOnAllChildrenOfDynamicElement( dynamicElementID, stillToSetIDs ) {
+  // @ts-ignore
+  private stateSetOnAllChildrenOfDynamicElement( dynamicElementID, stillToSetIDs ): boolean {
     for ( let i = 0; i < stillToSetIDs.length; i++ ) {
+
+      // @ts-ignore
       if ( phetio.PhetioIDUtils.isAncestor( dynamicElementID, stillToSetIDs[ i ] ) ) {
         return false;
       }
@@ -216,10 +234,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @param {string} componentName
    * @param {Array.<*>} argsForCreateFunction
    * @param {IOType|null} containerParameterType - null in PhET brand
-   * @returns {PhetioObject}
-   * @public
    */
-  createDynamicElement( componentName, argsForCreateFunction, containerParameterType ) {
+  createDynamicElement( componentName: string, argsForCreateFunction: any, containerParameterType: any ): T {
     assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
     // create with default state and substructure, details will need to be set by setter methods.
@@ -253,12 +269,10 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
    * A dynamic element should be an instrumented PhetioObject with phetioDynamicElement: true
-   * @param {PhetioObject} phetioObject - object to be validated
-   * @private
+   * @param phetioObject - object to be validated
    */
-  assertDynamicPhetioObject( phetioObject ) {
+  private assertDynamicPhetioObject( phetioObject: T ) {
     if ( Tandem.PHET_IO_ENABLED && Tandem.VALIDATION ) {
-      assert && assert( phetioObject instanceof PhetioObject, 'instance should be a PhetioObject' );
       assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
       assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
     }
@@ -266,12 +280,11 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
    * Emit a created or disposed event.
-   * @param {PhetioObject} dynamicElement
-   * @param {string} eventName
-   * @param {Object} [additionalData] additional data for the event
-   * @private
+   * @param dynamicElement
+   * @param eventName
+   * @param [additionalData] additional data for the event
    */
-  emitDataStreamEvent( dynamicElement, eventName, additionalData ) {
+  private emitDataStreamEvent( dynamicElement: T, eventName: string, additionalData?: any ): void {
     this.phetioStartEvent( eventName, {
       data: merge( {
         phetioID: dynamicElement.tandem.phetioID
@@ -282,10 +295,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
    * Emit events when dynamic elements are created.
-   * @param {PhetioObject} dynamicElement
-   * @private
    */
-  createdEventListener( dynamicElement ) {
+  private createdEventListener( dynamicElement: T ): void {
     const additionalData = dynamicElement.phetioState ? {
       state: this.phetioType.parameterTypes[ 0 ].toStateObject( dynamicElement )
     } : null;
@@ -294,16 +305,11 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
    * Emit events when dynamic elements are disposed.
-   * @param {PhetioObject} dynamicElement
-   * @private
    */
-  disposedEventListener( dynamicElement ) {
+  private disposedEventListener( dynamicElement: T ) {
     this.emitDataStreamEvent( dynamicElement, 'disposed' );
   }
 
-  /**
-   * @public
-   */
   dispose() {
 
     // If hitting this assertion because of nested dynamic element containers, please discuss with a phet-io team member.
@@ -327,7 +333,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @public - but should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
    * TODO: once this file has been converted to TypeScript, this function should be marked as protected, see https://github.com/phetsims/tandem/issues/248#issuecomment-952347257
    */
-  disposeElement( element, fromStateSetting ) {
+  disposeElement( element: T, fromStateSetting = false ): void {
     element.dispose();
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
@@ -348,17 +354,15 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @param {Object} [options]
    * @param {boolean} options.fromStateSetting -  Used for validation during state setting. See this.disposeElement() for documentation
    */
-  clear( options ) {
+  clear( options?: any ) {
     throw new Error( 'clear() is abstract and should be implemented by subtypes' );
   }
 
   /**
    * Flush a single element from the list of deferred disposals that have not yet notified about the disposal. This
    * should never be called publicly, instead see `disposeElement`
-   * @private
-   * @param {PhetioObject} disposedElement
    */
-  notifyElementDisposedWhileDeferred( disposedElement ) {
+  private notifyElementDisposedWhileDeferred( disposedElement: T ) {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
     assert && assert( this.deferredDisposals.indexOf( disposedElement ) >= 0, 'disposedElement should not have been already notified' );
     this.elementDisposedEmitter.emit( disposedElement );
@@ -367,10 +371,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
 
   /**
    * Should be called by subtypes upon element creation, see PhetioGroup as an example.
-   * @protected
-   * @param {PhetioObject} createdElement
    */
-  notifyElementCreated( createdElement ) {
+  protected notifyElementCreated( createdElement: T ) {
     if ( this.notificationsDeferred ) {
       this.deferredCreations.push( createdElement );
     }
@@ -383,9 +385,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * Flush a single element from the list of deferred creations that have not yet notified about the disposal. This
    * is only public to support specific order dependencies in the PhetioStateEngine, otherwise see `this.notifyElementCreated()`
    * @public (PhetioGroupTests, phet-io) - only the PhetioStateEngine should notify individual elements created.
-   * @param {PhetioObject} createdElement
    */
-  notifyElementCreatedWhileDeferred( createdElement ) {
+  notifyElementCreatedWhileDeferred( createdElement: T ) {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
     assert && assert( this.deferredCreations.indexOf( createdElement ) >= 0, 'createdElement should not have been already notified' );
     this.elementCreatedEmitter.emit( createdElement );
@@ -396,10 +397,8 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * When set to true, creation and disposal notifications will be deferred until set to false. When set to false,
    * this function will flush all of the notifications for created and disposed elements (in that order) that occurred
    * while this container was deferring its notifications.
-   * @public
-   * @param {boolean} notificationsDeferred
    */
-  setNotificationsDeferred( notificationsDeferred ) {
+  setNotificationsDeferred( notificationsDeferred: boolean ): void {
     assert && assert( notificationsDeferred !== this.notificationsDeferred, 'should not be the same as current value' );
 
     // Flush all notifications when setting to be no longer deferred
@@ -421,7 +420,7 @@ class PhetioDynamicElementContainer extends PhetioObject {
    * @param {Object} [object]
    * @override
    */
-  getMetadata( object ) {
+  getMetadata( object: any ) {
     const metadata = super.getMetadata( object );
     assert && assert(
       !metadata.hasOwnProperty( 'phetioDynamicElementName' ),

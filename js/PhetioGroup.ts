@@ -18,6 +18,7 @@ import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
+import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
@@ -25,10 +26,22 @@ import IOType from './types/IOType.js';
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
 
-/**
- * @template T
- */
-class PhetioGroup extends PhetioDynamicElementContainer {
+// Type of a derivation function, that returns T and takes the typed parameters (as a tuple type)
+// type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
+
+// A extends ( ...args: any[] ) => any, B extends Parameters<A>
+class PhetioGroup<T extends PhetioObject, A = never, B = never, C = never, D = never, E = never> extends PhetioDynamicElementContainer<T, A, B, C, D, E> {
+  _array: T[];
+  groupElementIndex: number;
+  countProperty: NumberProperty;
+  static PhetioGroupIO: ( parameterType: any ) => any;
+
+  // TODO: Should this use <T extends any[] = []> like TinyEmitter? see https://github.com/phetsims/tandem/issues/254
+  constructor( createElement: ( tandem: Tandem, a: A ) => T, defaultArguments: [ A ] | ( () => [ A ] ), options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B ) => T, defaultArguments: [ A, B ] | ( () => [ A, B ] ), options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C ) => T, defaultArguments: [ A, B, C ] | ( () => [ A, B, C ] ), options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D ) => T, defaultArguments: [ A, B, C, D ] | ( () => [ A, B, C, D ] ), options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D, e: E ) => T, defaultArguments: [ A, B, C, D, E ] | ( () => [ A, B, C, D, E ] ), options: any );
 
   /**
    * @param {function(Tandem,...):PhetioObject} createElement - function that creates a dynamic element to be housed in
@@ -39,7 +52,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    *                                       defaults array, you should pass an empty object here anyways.
    * @param {Object} [options] - describe the Group itself
    */
-  constructor( createElement, defaultArguments, options ) {
+  constructor( createElement: any, defaultArguments: any, options?: any ) {
 
     options = merge( {
       tandem: Tandem.OPTIONAL,
@@ -67,16 +80,16 @@ class PhetioGroup extends PhetioDynamicElementContainer {
     } );
 
     assert && this.countProperty.link( count => {
-      assert( count === this._array.length, `${this.countProperty.tandem.phetioID} listener fired and array length differs, count=${count}, arrayLength=${this._array.length}` );
+      assert && assert( count === this._array.length, `${this.countProperty.tandem.phetioID} listener fired and array length differs, count=${count}, arrayLength=${this._array.length}` );
     } );
 
     // countProperty can be overwritten during state set, see PhetioGroup.createIndexedElement(), and so this assertion
     // makes sure that the final length of the elements array matches the expected count from the state.
-    assert && Tandem.VALIDATION && phet.phetio.phetioEngine.phetioStateEngine.stateSetEmitter.addListener( state => {
+    assert && Tandem.VALIDATION && phet.phetio.phetioEngine.phetioStateEngine.stateSetEmitter.addListener( ( state: any ) => {
 
       // This supports cases when only partial state is being set
       if ( state[ this.countProperty.tandem.phetioID ] ) {
-        assert( state[ this.countProperty.tandem.phetioID ].value === this._array.length, `${this.countProperty.tandem.phetioID} should match array length.  Expected ${state[ this.countProperty.tandem.phetioID ].value} but found ${this._array.length}` );
+        assert && assert( state[ this.countProperty.tandem.phetioID ].value === this._array.length, `${this.countProperty.tandem.phetioID} should match array length.  Expected ${state[ this.countProperty.tandem.phetioID ].value} but found ${this._array.length}` );
       }
     } );
   }
@@ -101,7 +114,7 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @public
    * @override
    */
-  disposeElement( element, fromStateSetting ) {
+  disposeElement( element: T, fromStateSetting = false ) {
     assert && assert( !element.isDisposed, 'element already disposed' );
     arrayRemove( this._array, element );
 
@@ -132,20 +145,15 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Returns the element at the specified index
-   * @param {number} index
-   * @returns {T}
-   * @public
    */
-  getElement( index ) {
+  getElement( index: number ): T {
     return this._array[ index ];
   }
 
   /**
    * Gets the number of elements in the group.
-   * @returns {number}
-   * @public
    */
-  get count() { return this.countProperty.value; }
+  get count(): number { return this.countProperty.value; }
 
   /**
    * Returns an array with elements that pass the filter predicate.
@@ -153,53 +161,39 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * @returns {T[]}
    * @public
    */
-  filter( predicate ) { return this._array.filter( predicate ); }
+  filter( predicate: ( t: T ) => boolean ) { return this._array.filter( predicate ); }
 
   /**
    * Does the group include the specified element?
-   * @param {T} element
-   * @returns {boolean}
-   * @public
    */
-  includes( element ) { return this._array.includes( element ); }
+  includes( element: T ) { return this._array.includes( element ); }
 
   /**
    * Gets the index of the specified element in the underlying array.
    * @param {T} element
    * @returns {number} - index, -1 if not found
-   * @public
    */
-  indexOf( element ) { return this._array.indexOf( element ); }
+  indexOf( element: T ): number { return this._array.indexOf( element ); }
 
   /**
    * Runs the function on each element of the group.
-   * @param {(t:T)=>void} action - a function with a single parameter: the current element
-   * @public
    */
-  forEach( action ) { this._array.forEach( action ); }
+  forEach( action: ( t: T ) => void ) { this._array.forEach( action ); }
 
   /**
    * Use the predicate to find the first matching occurrence in the array.
-   * @param {function<T>>} predicate
-   * @public
    */
-  find( predicate ) { return this._array.find( predicate ); }
+  find( predicate: ( t: T ) => boolean ) { return this._array.find( predicate ); }
 
   /**
    * Returns an array with every element mapped to a new one.
-   * @param {(t:T)=>any} f
-   * @returns {Object[]}
-   * @public
    */
-  map( f ) { return this._array.map( f ); }
+  map<U>( f: ( t: T ) => U ) { return this._array.map( f ); }
 
   /**
-   * remove and dispose all registered group elements
-   * @param {object} [options]
-   * @public
-   * @override
+   * Remove and dispose all registered group elements
    */
-  clear( options ) {
+  clear( options?: any ) {
     options = merge( {
 
       // used for validation during state setting (phet-io internal), see PhetioDynamicElementContainer.disposeElement for documentation
@@ -227,13 +221,13 @@ class PhetioGroup extends PhetioDynamicElementContainer {
   /**
    * When creating a view element that corresponds to a specific model element, we match the tandem name index suffix
    * so that electron_0 corresponds to electronNode_0 and so on.
-   * @param {string} tandemName - the tandem name of the model element
-   * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
+   * @param tandemName - the tandem name of the model element
+   * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
    *                                      `stateToArgsForConstructor` method
-   * @returns {PhetioObject}
-   * @public
    */
-  createCorrespondingGroupElement( tandemName, ...argsForCreateFunction ) {
+  createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: any[] ) {
+
+    // @ts-ignore
     const index = window.phetio.PhetioIDUtils.getGroupElementIndex( tandemName );
 
     // If the specified index overlapped with the next available index, bump it up so there is no collision on the
@@ -246,12 +240,10 @@ class PhetioGroup extends PhetioDynamicElementContainer {
 
   /**
    * Creates the next group element.
-   * @param {...*} argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
+   * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
    *                                      `stateToArgsForConstructor` method
-   * @returns {T}
-   * @public
    */
-  createNextElement( ...argsForCreateFunction ) {
+  createNextElement( ...argsForCreateFunction: any[] ): T {
     return this.createIndexedElement( this.groupElementIndex++, argsForCreateFunction );
   }
 
@@ -263,19 +255,19 @@ class PhetioGroup extends PhetioDynamicElementContainer {
    * 3. update countProperty
    * 4. fire elementCreatedEmitter
    *
-   * @param {number} index - the number of the individual element
-   * @param {Array.<*>} argsForCreateFunction
-   * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
-   * @returns {T}
+   * @param index - the number of the individual element
+   * @param argsForCreateFunction
+   * @param [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    * @public (PhetioGroupIO)
    */
-  createIndexedElement( index, argsForCreateFunction, fromStateSetting ) {
+  createIndexedElement( index: number, argsForCreateFunction: any[], fromStateSetting = false ): T {
     assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
     assert && phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
       'dynamic elements should only be created by the state engine when setting state.' );
 
+    // @ts-ignore
     const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
     // Don't access phetioType in PhET brand
@@ -308,7 +300,9 @@ PhetioGroup.PhetioGroupIO = parameterType => {
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `PhetioGroupIO<${parameterType.typeName}>`, {
 
-      isValidValue: v => {
+      isValidValue: ( v: any ) => {
+
+        // @ts-ignore
         const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
         return v instanceof PhetioGroup;
       },
@@ -321,20 +315,17 @@ PhetioGroup.PhetioGroupIO = parameterType => {
 
       /**
        * Creates an element and adds it to the group
-       * @param {PhetioGroup} group
-       * @param {string} componentName
-       * @param {Object} stateObject
-       * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError - if it could not yet deserialize
        * @public (PhetioStateEngine)
        */
-      addChildElement( group, componentName, stateObject ) {
+      addChildElement( group: PhetioGroup<any>, componentName: string, stateObject: any ): PhetioObject {
 
         // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
         // element in the state needs to be created first, so we will try again on the next iteration of the state
         // setting engine.
         const args = parameterType.stateToArgsForConstructor( stateObject );
 
+        // @ts-ignore
         const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 
         const groupElement = group.createIndexedElement( index, args, true );

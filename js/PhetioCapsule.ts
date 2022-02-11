@@ -18,18 +18,28 @@ import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
+import PhetioObject from './PhetioObject.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 
-class PhetioCapsule extends PhetioDynamicElementContainer {
+class PhetioCapsule<T extends PhetioObject, A = never, B = never, C = never, D = never, E = never> extends PhetioDynamicElementContainer<T, A, B, C, D, E> {
+  private element: T | null;
+  static PhetioCapsuleIO: ( parameterType: IOType ) => IOType;
+
+  // TODO: Should this use <T extends any[] = []> like TinyEmitter? see https://github.com/phetsims/tandem/issues/254
+  constructor( createElement: ( tandem: Tandem, a: A ) => T, defaultArguments: [ A ], options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B ) => T, defaultArguments: [ A, B ], options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C ) => T, defaultArguments: [ A, B, C ], options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D ) => T, defaultArguments: [ A, B, C, D ], options: any );
+  constructor( createElement: ( tandem: Tandem, a: A, b: B, c: C, d: D, e: E ) => T, defaultArguments: [ A, B, C, D, E ], options: any );
 
   /**
    * @param {function(Tandem, ...):PhetioObject} createElement - function that creates the encapsulated element
    * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype
    * @param {Object} [options]
    */
-  constructor( createElement, defaultArguments, options ) {
+  constructor( createElement: any, defaultArguments: any, options?: any ) {
 
     options = merge( {
       tandem: Tandem.OPTIONAL,
@@ -49,12 +59,11 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * Dispose the underlying element.  Called by the PhetioStateEngine so the capsule element can be recreated with the
    * correct state.
    * @param {boolean} [fromStateSetting] - Used for validation during state setting, see PhetioDynamicElementContainer.disposeElement()
-   * @public
-   * @override
    */
-  disposeElement( fromStateSetting ) {
+  // @ts-ignore
+  disposeElement( fromStateSetting = false ): void {
     assert && assert( this.element, 'cannot dispose if element is not defined' );
-    super.disposeElement( this.element, fromStateSetting );
+    super.disposeElement( this.element!, fromStateSetting );
     this.element = null;
   }
 
@@ -64,7 +73,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * @returns {Object}
    * @public
    */
-  getElement( ...argsForCreateFunction ) {
+  getElement( ...argsForCreateFunction: any ) {
     if ( !this.element ) {
       this.create( argsForCreateFunction );
     }
@@ -72,11 +81,9 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
   }
 
   /**
-   * @public
-   * @override
    * @param {object} [options]
    */
-  clear( options ) {
+  clear( options?: any ) {
     options = merge( {
 
       // Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
@@ -95,7 +102,7 @@ class PhetioCapsule extends PhetioDynamicElementContainer {
    * @returns {Object}
    * @public (phet-io)
    */
-  create( argsForCreateFunction, fromStateSetting ) {
+  create( argsForCreateFunction: any, fromStateSetting = false ): T {
     assert && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioCapsules? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
@@ -139,6 +146,8 @@ PhetioCapsule.PhetioCapsuleIO = parameterType => {
       // that can never be the actual value, but we thought it would be simplest to reuse the "options" pipeline
       // rather than inventing a new "required" pipeline.
       metadataDefaults: { phetioDynamicElementName: null },
+
+      // @ts-ignore
       addChildElement( capsule, componentName, stateObject ) {
 
         // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another

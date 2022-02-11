@@ -256,7 +256,7 @@ class Tandem {
   /**
    * @param {string} name
    * @returns {boolean}
-   * @private
+   * @public
    */
   hasChild( name ) {
     return this.children.hasOwnProperty( name );
