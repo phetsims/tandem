@@ -392,7 +392,7 @@ class PhetioObject {
    * @param event - the name of the event
    * @param [options]
    */
-  phetioStartEvent( event: string, options: any ): void {
+  phetioStartEvent( event: string, options?: any ): void {
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
       // only one or the other can be provided
