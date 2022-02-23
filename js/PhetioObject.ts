@@ -107,7 +107,7 @@ type PhetioObjectOptions = {
   phetioType?: IOType;
   phetioState?: boolean;
   phetioReadOnly?: boolean;
-  phetioEventType?: any;
+  phetioEventType?: EventType;
   phetioDocumentation?: string;
   phetioHighFrequency?: boolean;
   phetioPlayback?: boolean;
@@ -136,7 +136,7 @@ class PhetioObject {
   _phetioState?: boolean;
   _phetioReadOnly?: boolean;
   _phetioDocumentation?: string;
-  _phetioEventType?: any;
+  _phetioEventType?: EventType;
   _phetioHighFrequency?: boolean;
   _phetioPlayback?: boolean;
   _phetioDynamicElement?: boolean;
@@ -345,7 +345,7 @@ class PhetioObject {
   }
 
   // throws an assertion error in brands other than PhET-iO
-  private get phetioEventType(): any {
+  private get phetioEventType(): EventType {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventType only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventType!;
   }

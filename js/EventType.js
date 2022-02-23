@@ -6,30 +6,30 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import EnumerationDeprecated from '../../phet-core/js/EnumerationDeprecated.js';
-import EnumerationIO from './types/EnumerationIO.js';
+import Enumeration from '../../phet-core/js/Enumeration.js';
+import EnumerationValue from '../../phet-core/js/EnumerationValue.js';
 import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
+import EnumerationIO from './types/EnumerationIO.js';
 
-const EventType = EnumerationDeprecated.byKeys( [
+class EventType extends EnumerationValue {
 
   // The user has taken an action, such as pressing a button or moving a mouse
-  'USER',
+  static USER = new EventType();
 
   // An event was produced by the simulation model. This could be in response to a user event, or something that happens
   // during the simulation step. Note the separation is not model vs view, but user-driven vs automatic.
-  TandemConstants.EVENT_TYPE_MODEL,
+  static [ TandemConstants.EVENT_TYPE_MODEL ] = new EventType();
 
   // An event was triggered by the PhET-iO wrapper, via PhetioEngineIO.triggerEvent
-  'WRAPPER',
+  static WRAPPER = new EventType();
 
   // These messages are suppressed, use this to opt a PhetioObject out of the data stream feature.
-  'OPT_OUT'
-], {
-  beforeFreeze: EventType => {
-    EventType.phetioType = EnumerationIO( EventType );
-  }
-} );
+  static OPT_OUT = new EventType();
+
+  static enumeration = new Enumeration( EventType );
+  static phetioType = EnumerationIO( EventType );
+}
 
 tandemNamespace.register( 'EventType', EventType );
 export default EventType;
