@@ -424,7 +424,7 @@ class PhetioObject {
 
       // TODO: If there is no dataStream global defined, then we should handle this differently to keep the event that is triggered, see https://github.com/phetsims/phet-io/issues/1844
       // @ts-ignore
-      if ( skipHighFrequencyEvent || this.phetioEventType === EventType.OPT_OUT || !_.hasIn( 'phet.phetio.dataStream' ) ) {
+      if ( skipHighFrequencyEvent || this.phetioEventType === EventType.OPT_OUT || !_.hasIn( window, 'phet.phetio.dataStream' ) ) {
         this.phetioMessageStack!.push( SKIPPING_MESSAGE );
         return;
       }
