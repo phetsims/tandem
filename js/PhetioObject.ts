@@ -43,6 +43,8 @@ const objectToPhetioID = ( phetioObject: PhetioObject ) => phetioObject.tandem.p
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
 
+type RequiredTandem<T extends { tandem?: Tandem }> = Required<Pick<T, 'tandem'>>;
+
 const DEFAULTS = {
 
   // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
@@ -744,4 +746,4 @@ class LinkedElement extends PhetioObject {
 
 tandemNamespace.register( 'PhetioObject', PhetioObject );
 export { PhetioObject as default, LinkedElement };
-export type { PhetioObjectOptions };
+export type { PhetioObjectOptions, RequiredTandem };
