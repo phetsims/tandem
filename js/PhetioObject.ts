@@ -71,6 +71,7 @@ const DEFAULTS = {
 
   // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents
   // and Client.launchSim option
+  // @deprecated - see https://github.com/phetsims/phet-io/issues/1629#issuecomment-608002410
   phetioHighFrequency: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioHighFrequency,
 
   // When true, emits events for data streams for playback, see handlePlaybackEvent.js
@@ -109,7 +110,7 @@ type PhetioObjectOptions = {
   phetioReadOnly?: boolean;
   phetioEventType?: EventType;
   phetioDocumentation?: string;
-  phetioHighFrequency?: boolean;
+  phetioHighFrequency?: boolean; // @deprecated
   phetioPlayback?: boolean;
   phetioFeatured?: boolean;
   phetioEventMetadata?: any;
