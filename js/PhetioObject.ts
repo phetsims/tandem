@@ -118,9 +118,6 @@ type PhetioObjectOptions = {
   phetioDesigned?: boolean;
 };
 
-// When Tandem is converted to typescript, let's move that there.
-type RequiredTandem = Required<Pick<PhetioObjectOptions, 'tandem'>>;
-
 class PhetioObject {
 
   // assigned in initializePhetioObject - see docs at DEFAULTS declaration
@@ -750,4 +747,4 @@ class LinkedElement extends PhetioObject {
 
 tandemNamespace.register( 'PhetioObject', PhetioObject );
 export { PhetioObject as default, LinkedElement };
-export type { PhetioObjectOptions, RequiredTandem };
+export type { PhetioObjectOptions };
