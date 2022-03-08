@@ -1,10 +1,15 @@
 // Copyright 2022, University of Colorado Boulder
 
 /**
- * An instrumented class that wraps a function that does work that needs to be interoperable. PhetioAction supports
- * adding its executed action to the PhET-iO data stream, and an IOType with an API to execute that function.
+ * An instrumented class that wraps a function that does "work" that needs to be interoperable with PhET-iO.
+ * PhetioAction supports the following features:
  *
- * TODO: It also has an emitter if you want to listen to when the action is done doing its work, https://github.com/phetsims/phet-io/issues/1543
+ * 1. Data stream support: The function will be wrapped in an `executed` event and added to the data stream, nesting
+ * subsequent events the action's "work" cascades to as child events.
+ * 2. Interopererability: PhetioActionIO supports the `execute` method so that PhetioAction instances can be executed
+ * from the PhET-iO wrapper.
+ * 3. TODO: It also has an emitter if you want to listen to when the action is done doing its work, https://github.com/phetsims/phet-io/issues/1543
+ *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
@@ -15,33 +20,17 @@ import Tandem from './Tandem.js';
 import VoidIO from './types/VoidIO.js';
 import PhetioDataHandler, { PhetioDataHandlerOptions } from './PhetioDataHandler.js';
 import validate from '../../axon/js/validate.js';
+import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
-
-type Constructor = new ( ...args: any[] ) => {};
-
-type ValueType = Constructor | string | null;
-
-type Parameter = {
-  name?: string;
-  phetioType?: IOType;
-  phetioDocumentation?: string;
-  phetioPrivate?: boolean;
-  valueType?: ValueType | ValueType[];
-  validValues?: any[]
-};
-
-// Simulations have thousands of Emitters, so we re-use objects where possible.
-const EMPTY_ARRAY: Parameter[] = [];
-assert && Object.freeze( EMPTY_ARRAY );
 
 // By default, PhetioActions are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
 export type ActionOptions = Partial<PhetioDataHandlerOptions>;
 
-class PhetioAction<T extends any[] = []> extends PhetioDataHandler<T> {
+class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
 
   private readonly action: () => void;
 
@@ -51,11 +40,8 @@ class PhetioAction<T extends any[] = []> extends PhetioDataHandler<T> {
    * @param action - the function that is called when this PhetioAction occurs
    * @param providedOptions
    */
-  constructor( action: ( ...args: T ) => any, providedOptions?: ActionOptions ) {
+  constructor( action: ( ...args: T ) => void, providedOptions?: ActionOptions ) {
     const options = optionize<ActionOptions, {}, PhetioDataHandlerOptions, 'phetioOuterType'>( {
-
-      // {Object[]} - see PARAMETER_KEYS for a list of legal keys, their types, and documentation
-      parameters: EMPTY_ARRAY,
 
       phetioOuterType: PhetioAction.PhetioActionIO,
       phetioState: PHET_IO_STATE_DEFAULT,
@@ -90,15 +76,16 @@ class PhetioAction<T extends any[] = []> extends PhetioDataHandler<T> {
       }
     }
 
-    // handle phet-io data stream for the emitted event
-    this.phetioStartEvent( 'executed', {
+    // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
+    // called so many times that it is worth the optimization for PhET brand.
+    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( 'executed', {
       getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
     } );
 
     // @ts-ignore
     this.action.apply( null, args );
 
-    this.phetioEndEvent();
+    Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioEndEvent();
   }
 }
 

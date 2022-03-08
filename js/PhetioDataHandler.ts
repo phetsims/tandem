@@ -1,8 +1,9 @@
 // Copyright 2022, University of Colorado Boulder
 
 /**
- * Helper type that supports instrumented classes that take a variable number of parameters in their IOType, and
- * for data stream support.
+ * Helper type that supports a `parameters` member.
+ * This is mostly useful for PhET-iO instrumented sub-class to use that takes a variable number of parameters in their
+ * IOType. With this function you gain parameter validation, PhET-iO documentation, and data stream support.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -53,20 +54,19 @@ const PARAMETER_KEYS = [
 const paramToPhetioType = ( param: Parameter ) => param.phetioType!;
 const paramToName = ( param: Parameter ) => param.name!;
 
-type PhetioDataHandlerSelfOptions = {
+type SelfOptions = {
   parameters?: Parameter[];
   phetioOuterType: ( t: IOType[] ) => IOType;
 };
-export type PhetioDataHandlerOptions = PhetioDataHandlerSelfOptions & PhetioObjectOptions;
+
+export type PhetioDataHandlerOptions = SelfOptions & PhetioObjectOptions;
 
 class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
   readonly parameters: Parameter[];
 
-  static PhetioDataHandlerIO: ( parameterTypes: IOType[] ) => IOType;
-
   constructor( providedOptions?: PhetioDataHandlerOptions ) {
-    const options = optionize<PhetioDataHandlerOptions, PhetioDataHandlerSelfOptions, PhetioObjectOptions, 'tandem' | 'phetioDocumentation'>( {
+    const options = optionize<PhetioDataHandlerOptions, SelfOptions, PhetioObjectOptions, 'tandem' | 'phetioDocumentation'>( {
 
       // {Object[]} - see PARAMETER_KEYS for a list of legal keys, their types, and documentation
       parameters: EMPTY_ARRAY,
@@ -92,7 +92,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
     // phetioPlayback events need to know the order the arguments occur in order to call EmitterIO.emit()
     // Indicate whether the event is for playback, but leave this "sparse"--only indicate when this happens to be true
     if ( options.phetioPlayback ) {
-      options.phetioEventMetadata = options.phetioEventMetadata || {};
+      options.phetioEventMetadata = options.phetioEventMetadata || {}; // phetioEventMetadata defaults to null
 
       assert && assert( !options.phetioEventMetadata.hasOwnProperty( 'dataKeys' ),
         'dataKeys should be supplied by PhetioDataHandler, not elsewhere' );
