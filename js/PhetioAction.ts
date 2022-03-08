@@ -99,6 +99,11 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
 
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioEndEvent();
   }
+
+  dispose(): void {
+    this.executedEmitter.dispose();
+    super.dispose();
+  }
 }
 
 const paramToTypeName = ( param: IOType ) => param.typeName;
