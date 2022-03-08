@@ -23,7 +23,7 @@ type Constructor = new ( ...args: any[] ) => {};
 type ValueType = Constructor | string | null;
 
 // TODO: update once we have ValidatorDef converted. https://github.com/phetsims/phet-io/issues/1543
-type Parameter = {
+export type Parameter = {
   name?: string;
   phetioType?: IOType;
   phetioDocumentation?: string;

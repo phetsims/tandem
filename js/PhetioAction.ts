@@ -18,12 +18,14 @@ import IOType from './types/IOType.js';
 import optionize from '../../phet-core/js/optionize.js';
 import Tandem from './Tandem.js';
 import VoidIO from './types/VoidIO.js';
-import PhetioDataHandler, { PhetioDataHandlerOptions } from './PhetioDataHandler.js';
+import PhetioDataHandler, { Parameter, PhetioDataHandlerOptions } from './PhetioDataHandler.js';
 import validate from '../../axon/js/validate.js';
 import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
+import Emitter from '../../axon/js/Emitter.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
+const EMPTY_ARRAY: Parameter[] = [];
 
 // By default, PhetioActions are not stateful
 const PHET_IO_STATE_DEFAULT = false;
@@ -34,6 +36,9 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
 
   private readonly action: () => void;
 
+  // To listen to when the action has completed.
+  readonly executedEmitter: Emitter<T>;
+
   static PhetioActionIO: ( parameterTypes: IOType[] ) => IOType;
 
   /**
@@ -41,7 +46,8 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
    * @param providedOptions
    */
   constructor( action: ( ...args: T ) => void, providedOptions?: ActionOptions ) {
-    const options = optionize<ActionOptions, {}, PhetioDataHandlerOptions, 'phetioOuterType'>( {
+    const options = optionize<ActionOptions, {}, PhetioDataHandlerOptions, 'phetioOuterType' | 'tandem'>( {
+      parameters: EMPTY_ARRAY,
 
       phetioOuterType: PhetioAction.PhetioActionIO,
       phetioState: PHET_IO_STATE_DEFAULT,
@@ -53,7 +59,11 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
 
     this.action = action;
 
-    // TODO: make ze emitter, https://github.com/phetsims/phet-io/issues/1543
+    this.executedEmitter = new Emitter<T>( {
+      parameters: options.parameters,
+      tandem: options.tandem.createTandem( 'executedEmitter' ),
+      phetioDocumentation: 'Emitter that emits when this actions work is complete'
+    } );
   }
 
   /**
@@ -84,6 +94,8 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
 
     // @ts-ignore
     this.action.apply( null, args );
+
+    this.executedEmitter.emit( ...args );
 
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioEndEvent();
   }
