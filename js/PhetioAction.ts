@@ -19,13 +19,10 @@ import optionize from '../../phet-core/js/optionize.js';
 import Tandem from './Tandem.js';
 import VoidIO from './types/VoidIO.js';
 import PhetioDataHandler, { Parameter, PhetioDataHandlerOptions } from './PhetioDataHandler.js';
-import validate from '../../axon/js/validate.js';
 import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
 import Emitter from '../../axon/js/Emitter.js';
 import PhetioObject from './PhetioObject.js';
 
-// constants
-const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 const EMPTY_ARRAY: Parameter[] = [];
 
 // By default, PhetioActions are not stateful
@@ -85,18 +82,7 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
    */
   execute( ...args: T ) {
     if ( assert ) {
-      assert( args.length === this.parameters.length,
-        `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${args.length}`
-      );
-      for ( let i = 0; i < this.parameters.length; i++ ) {
-        const parameter = this.parameters[ i ];
-        validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
-
-        // valueType overrides the phetioType validator so we don't use that one if there is a valueType
-        if ( parameter.phetioType && !parameter.valueType ) {
-          validate( args[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
-        }
-      }
+      super.validateArguments( ...args );
     }
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is

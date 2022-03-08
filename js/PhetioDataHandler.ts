@@ -18,6 +18,8 @@ import axon from '../../axon/js/axon.js';
 import validate from '../../axon/js/validate.js';
 import ValidatorDef from '../../axon/js/ValidatorDef.js';
 
+const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
+
 type Constructor = new ( ...args: any[] ) => {};
 
 type ValueType = Constructor | string | null;
@@ -158,6 +160,26 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
     // Changing after construction indicates a logic error.
     assert && Object.freeze( parameters );
+  }
+
+  /**
+   * Validate that provided args match the expected schema given via options.parameters.
+   */
+  protected validateArguments( ...args: T ) {
+    if ( assert ) {
+      assert( args.length === this.parameters.length,
+        `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${args.length}`
+      );
+      for ( let i = 0; i < this.parameters.length; i++ ) {
+        const parameter = this.parameters[ i ];
+        validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
+
+        // valueType overrides the phetioType validator so we don't use that one if there is a valueType
+        if ( parameter.phetioType && !parameter.valueType ) {
+          validate( args[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
+        }
+      }
+    }
   }
 
   /**
