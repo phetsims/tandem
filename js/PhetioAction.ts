@@ -22,6 +22,7 @@ import PhetioDataHandler, { Parameter, PhetioDataHandlerOptions } from './Phetio
 import validate from '../../axon/js/validate.js';
 import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
 import Emitter from '../../axon/js/Emitter.js';
+import PhetioObject from './PhetioObject.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -47,11 +48,19 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
    */
   constructor( action: ( ...args: T ) => void, providedOptions?: ActionOptions ) {
     const options = optionize<ActionOptions, {}, PhetioDataHandlerOptions, 'phetioOuterType' | 'tandem'>( {
+
+      // We need to defined this here in addition to PhetioDataHandler to pass to executedEmitter
       parameters: EMPTY_ARRAY,
 
+      // PhetioDataHandler
       phetioOuterType: PhetioAction.PhetioActionIO,
-      phetioState: PHET_IO_STATE_DEFAULT,
+
+      // PhetioObject
       tandem: Tandem.OPTIONAL,
+      phetioState: PHET_IO_STATE_DEFAULT,
+      phetioReadOnly: PhetioObject.DEFAULT_OPTIONS.phetioReadOnly,
+      phetioHighFrequency: PhetioObject.DEFAULT_OPTIONS.phetioHighFrequency,
+      phetioEventType: PhetioObject.DEFAULT_OPTIONS.phetioEventType,
       phetioDocumentation: 'A class that wraps a function, adding API to execute that function and data stream capture.'
     }, providedOptions );
 
@@ -62,6 +71,10 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
     this.executedEmitter = new Emitter<T>( {
       parameters: options.parameters,
       tandem: options.tandem.createTandem( 'executedEmitter' ),
+      phetioState: options.phetioState,
+      phetioReadOnly: options.phetioReadOnly,
+      phetioHighFrequency: options.phetioHighFrequency,
+      phetioEventType: options.phetioEventType,
       phetioDocumentation: 'Emitter that emits when this actions work is complete'
     } );
   }
