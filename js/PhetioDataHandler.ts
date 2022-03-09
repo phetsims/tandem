@@ -114,7 +114,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
    * @param {boolean} tandemSupplied - proxy for whether the PhetioObject is instrumented.  We cannot call
    *                                 - PhetioObject.isPhetioInstrumented() until after the supercall, so we use this beforehand.
    */
-  private static validateParameters( parameters: Parameter[], tandemSupplied: boolean ) {
+  private static validateParameters( parameters: Parameter[], tandemSupplied: boolean ): void {
 
     // validate the parameters object
     validate( parameters, { valueType: Array } );
@@ -165,7 +165,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
   /**
    * Validate that provided args match the expected schema given via options.parameters.
    */
-  protected validateArguments( ...args: T ) {
+  protected validateArguments( ...args: T ): void {
     for ( let i = 0; i < this.parameters.length; i++ ) {
       const parameter = this.parameters[ i ];
       assert && validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
@@ -179,9 +179,9 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
   /**
    * Gets the data that will be emitted to the PhET-iO data stream, for an instrumented simulation.
-   * @returns {Object} - the data, keys dependent on parameter metadata
+   * @returns the data, keys dependent on parameter metadata
    */
-  getPhetioData( ...args: T ) {
+  getPhetioData( ...args: T ): null | Object {
 
     assert && assert( Tandem.PHET_IO_ENABLED, 'should only get phet-io data in phet-io brand' );
 
