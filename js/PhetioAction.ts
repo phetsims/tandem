@@ -8,7 +8,7 @@
  * subsequent events the action's "work" cascades to as child events.
  * 2. Interopererability: PhetioActionIO supports the `execute` method so that PhetioAction instances can be executed
  * from the PhET-iO wrapper.
- * 3. TODO: It also has an emitter if you want to listen to when the action is done doing its work, https://github.com/phetsims/phet-io/issues/1543
+ * 3. It also has an emitter if you want to listen to when the action is done doing its work, https://github.com/phetsims/phet-io/issues/1543
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
