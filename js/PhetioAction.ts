@@ -28,9 +28,12 @@ const EMPTY_ARRAY: Parameter[] = [];
 // By default, PhetioActions are not stateful
 const PHET_IO_STATE_DEFAULT = false;
 
+// undefined and never are not allows as parameters to PhetioAction
+type ActionParameter = Exclude<IntentionalAny, undefined | never>;
+
 export type ActionOptions = Partial<PhetioDataHandlerOptions>;
 
-class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
+class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T> {
 
   private readonly action: ( ...args: T ) => void;
 
