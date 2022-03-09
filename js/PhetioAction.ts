@@ -81,9 +81,7 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
    * @params - expected parameters are based on options.parameters, see constructor
    */
   execute( ...args: T ) {
-    if ( assert ) {
-      super.validateArguments( ...args );
-    }
+    assert && super.validateArguments( ...args );
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
     // called so many times that it is worth the optimization for PhET brand.

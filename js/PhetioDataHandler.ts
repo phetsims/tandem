@@ -65,7 +65,7 @@ export type PhetioDataHandlerOptions = SelfOptions & PhetioObjectOptions;
 
 class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
-  readonly parameters: Parameter[];
+  private readonly parameters: Parameter[];
 
   constructor( providedOptions?: PhetioDataHandlerOptions ) {
     const options = optionize<PhetioDataHandlerOptions, SelfOptions, PhetioObjectOptions, 'tandem' | 'phetioDocumentation'>( {
@@ -105,7 +105,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
     super( options );
 
-    // (only for testing, otherwise @protected) - Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
+    // Note: one test indicates stripping this out via assert && in builds may save around 300kb heap
     this.parameters = options.parameters;
   }
 
@@ -166,18 +166,16 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
    * Validate that provided args match the expected schema given via options.parameters.
    */
   protected validateArguments( ...args: T ) {
-    if ( assert ) {
-      assert( args.length === this.parameters.length,
-        `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${args.length}`
-      );
-      for ( let i = 0; i < this.parameters.length; i++ ) {
-        const parameter = this.parameters[ i ];
-        validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
+    assert && assert( args.length === this.parameters.length,
+      `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${args.length}`
+    );
+    for ( let i = 0; i < this.parameters.length; i++ ) {
+      const parameter = this.parameters[ i ];
+      assert && validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
 
-        // valueType overrides the phetioType validator so we don't use that one if there is a valueType
-        if ( parameter.phetioType && !parameter.valueType ) {
-          validate( args[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
-        }
+      // valueType overrides the phetioType validator so we don't use that one if there is a valueType
+      if ( parameter.phetioType && !parameter.valueType ) {
+        assert && validate( args[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
       }
     }
   }
