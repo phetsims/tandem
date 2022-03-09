@@ -19,7 +19,7 @@ import optionize from '../../phet-core/js/optionize.js';
 import Tandem from './Tandem.js';
 import VoidIO from './types/VoidIO.js';
 import PhetioDataHandler, { Parameter, PhetioDataHandlerOptions } from './PhetioDataHandler.js';
-import IntentionalAny from '../../phet-core/js/IntentionalAny.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Emitter from '../../axon/js/Emitter.js';
 import PhetioObject from './PhetioObject.js';
 
