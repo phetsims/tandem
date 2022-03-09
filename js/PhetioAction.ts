@@ -32,7 +32,7 @@ export type ActionOptions = Partial<PhetioDataHandlerOptions>;
 
 class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T> {
 
-  private readonly action: () => void;
+  private readonly action: ( ...args: T ) => void;
 
   // To listen to when the action has completed.
   readonly executedEmitter: Emitter<T>;
@@ -89,7 +89,6 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
       getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
     } );
 
-    // @ts-ignore
     this.action.apply( null, args );
 
     this.executedEmitter.emit( ...args );
