@@ -80,7 +80,7 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
    * Invokes the action.
    * @params - expected parameters are based on options.parameters, see constructor
    */
-  execute( ...args: T ) {
+  execute( ...args: T ): void {
     assert && super.validateArguments( ...args );
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
@@ -103,16 +103,15 @@ class PhetioAction<T extends IntentionalAny[] = []> extends PhetioDataHandler<T>
   }
 }
 
-const paramToTypeName = ( param: IOType ) => param.typeName;
+const getTypeName = ( ioType: IOType ) => ioType.typeName;
 
-
-// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
-const cache = new Map();
+// cache each parameterized IOType so that it is only created once.
+const cache = new Map<string, IOType>();
 
 PhetioAction.PhetioActionIO = ( parameterTypes: IOType[] ) => {
-  const key = parameterTypes.map( paramToTypeName ).join( ',' );
+  const key = parameterTypes.map( getTypeName ).join( ',' );
   if ( !cache.has( key ) ) {
-    cache.set( key, new IOType( `PhetioActionIO<${parameterTypes.map( paramToTypeName ).join( ', ' )}>`, {
+    cache.set( key, new IOType( `PhetioActionIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
       valueType: PhetioAction,
       documentation: 'Executes when an event occurs',
       events: [ 'executed' ],
@@ -137,7 +136,7 @@ PhetioAction.PhetioActionIO = ( parameterTypes: IOType[] ) => {
       }
     } ) );
   }
-  return cache.get( key );
+  return cache.get( key )!;
 };
 
 tandemNamespace.register( 'PhetioAction', PhetioAction );
