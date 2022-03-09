@@ -166,9 +166,6 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
    * Validate that provided args match the expected schema given via options.parameters.
    */
   protected validateArguments( ...args: T ) {
-    assert && assert( args.length === this.parameters.length,
-      `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${args.length}`
-    );
     for ( let i = 0; i < this.parameters.length; i++ ) {
       const parameter = this.parameters[ i ];
       assert && validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
