@@ -106,7 +106,6 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    */
   execute( ...args: T ): void {
     assert && assert( !this.isDisposed, 'should not be disposed' );
-    assert && assert( !this.isExecuting, 'reentrant actions are not supported' );
 
     this.isExecuting = true;
 
