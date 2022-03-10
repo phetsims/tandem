@@ -105,12 +105,11 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * @params - expected parameters are based on options.parameters, see constructor
    */
   execute( ...args: T ): void {
+    assert && assert( !this.isDisposed, 'should not be disposed' );
+    assert && assert( !this.isExecuting, 'reentrant actions are not supported' );
+
     this.isExecuting = true;
 
-    assert && assert( !this.isDisposed, 'should not be disposed' );
-
-    // TODO: make work for https://github.com/phetsims/phet-io/issues/1543
-    // assert && assert( !this.isExecuting, 'reentrant actions are not supported' );
     assert && super.validateArguments( ...args );
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
