@@ -37,6 +37,20 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
 
   private readonly action: ( ...args: T ) => void;
 
+  // Keep track of it this instance is currently executing its action, see execute() for implementation. This doesn't
+  // need to be a stack because we do not allow reentrant PhetioActions (guarded with an assertion in execute()).
+  private isExecuting: boolean;
+
+  // Disposal can potentially occur from the action that is being executed. If this is the case, we still want to emit
+  // the executedEmitter upon completion of the action, so defer disposal of the executedEmitter (and
+  // disposePhetioAction in general), until the execute() function is complete. This doesn't need to be a stack because
+  // we do not allow reentrant PhetioActions (guarded with an assertion in execute()).
+  private disposeOnExecuteCompletion: boolean;
+
+  // Called upon disposal of PhetioAction, but if dispose() is called while the action is executing, defer calling this
+  // function until the execute() function is complete.
+  private disposePhetioAction: () => void;
+
   // To listen to when the action has completed.
   readonly executedEmitter: Emitter<T>;
 
@@ -68,6 +82,9 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
 
     this.action = action;
 
+    this.isExecuting = false;
+    this.disposeOnExecuteCompletion = false;
+
     this.executedEmitter = new Emitter<T>( {
       parameters: options.parameters,
       tandem: options.tandem.createTandem( 'executedEmitter' ),
@@ -77,6 +94,10 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
       phetioEventType: options.phetioEventType,
       phetioDocumentation: 'Emitter that emits when this actions work is complete'
     } );
+
+    this.disposePhetioAction = () => {
+      this.executedEmitter.dispose();
+    };
   }
 
   /**
@@ -84,6 +105,10 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * @params - expected parameters are based on options.parameters, see constructor
    */
   execute( ...args: T ): void {
+    this.isExecuting = true;
+
+    assert && assert( !this.isDisposed, 'should not be disposed' );
+    assert && assert( !this.isExecuting, 'reentrant actions are not supported' );
     assert && super.validateArguments( ...args );
 
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
@@ -93,14 +118,33 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
     } );
 
     this.action.apply( null, args );
-
     this.executedEmitter.emit( ...args );
 
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioEndEvent();
+
+    if ( this.disposeOnExecuteCompletion === true ) {
+      this.disposePhetioAction();
+      this.disposeOnExecuteCompletion = false;
+    }
+
+    this.isExecuting = false;
   }
 
+  /**
+   * Note: Be careful about adding disposal logic directly to this function, it is likely preferred to add it to
+   * disposePhetioAction instead, see disposeOnExecuteCompletion for details.
+   */
   dispose(): void {
-    this.executedEmitter.dispose();
+    if ( this.isExecuting ) {
+
+      // Defer disposing components until executing is completed, see disposeOnExecuteCompletion.
+      this.disposeOnExecuteCompletion = true;
+    }
+    else {
+      this.disposePhetioAction();
+    }
+
+    // Always dispose the object itself
     super.dispose();
   }
 }
