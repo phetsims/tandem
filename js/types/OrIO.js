@@ -34,18 +34,19 @@ const OrIO = parameterTypes => {
   const key = typeNames.join( ',' );
 
   if ( !cache.has( key ) ) {
+    const isValidValue = instance => {
+      for ( let i = 0; i < parameterTypes.length; i++ ) {
+        const parameterType = parameterTypes[ i ];
+        if ( ValidatorDef.isValueValid( instance, parameterType.validator ) ) {
+          return true;
+        }
+      }
+      return false;
+    };
     cache.set( key, new IOType( `OrIO<${typeNames.join( ', ' )}>`, {
       documentation: 'An IOType adding support for a composite type that can be any of its parameters.',
       parameterTypes: parameterTypes,
-      isValidValue: instance => {
-        for ( let i = 0; i < parameterTypes.length; i++ ) {
-          const parameterType = parameterTypes[ i ];
-          if ( ValidatorDef.isValueValid( instance, parameterType.validator ) ) {
-            return true;
-          }
-        }
-        return false;
-      },
+      isValidValue: isValidValue,
 
       toStateObject: instance => {
         for ( let i = 0; i < parameterTypes.length; i++ ) {
@@ -65,7 +66,9 @@ const OrIO = parameterTypes => {
         assert && assert( stateObject.hasOwnProperty( 'state' ), 'state required for deserialization' );
         return parameterTypes[ stateObject.index ].fromStateObject( stateObject.state );
       },
-      stateSchema: StateSchema.asValue( `${typeNames.join( '|' )}` )
+      stateSchema: StateSchema.asValue( `${typeNames.join( '|' )}`, {
+        isValidValue: isValidValue
+      } )
     } ) );
   }
 
