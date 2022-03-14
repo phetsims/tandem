@@ -241,6 +241,8 @@ class StateSchema {
    * @returns {StateSchema}
    */
   static asValue( displayString, validator ) {
+    assert && assert( typeof displayString === 'string', 'displayString required' );
+    assert && assert( validator, 'validator required' );
     return new StateSchema( {
       validator: validator,
       displayString: displayString
