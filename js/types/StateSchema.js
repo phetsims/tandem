@@ -1,4 +1,4 @@
-// Copyright 2021, University of Colorado Boulder
+// Copyright 2021-2022, University of Colorado Boulder
 
 /**
  * Class responsible for storing information about the schema of PhET-iO state. See IOType stateSchema option for usage
