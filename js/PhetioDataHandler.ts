@@ -31,7 +31,7 @@ export type Parameter = {
   phetioDocumentation?: string;
   phetioPrivate?: boolean;
   valueType?: ValueType | ValueType[];
-  validValues?: any[]
+  validValues?: any[];
 };
 
 // Simulations have thousands of Emitters, so we re-use objects where possible.
