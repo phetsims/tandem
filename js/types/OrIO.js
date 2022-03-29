@@ -67,7 +67,14 @@ const OrIO = parameterTypes => {
         return parameterTypes[ stateObject.index ].fromStateObject( stateObject.state );
       },
       stateSchema: StateSchema.asValue( `${typeNames.join( '|' )}`, {
-        isValidValue: isValidValue
+        isValidValue: stateObject => {
+
+          // Check based on the parameter that serialized the state
+          if ( typeof stateObject.index === 'number' ) {
+            return parameterTypes[ stateObject.index ].isStateObjectValid( stateObject.state );
+          }
+          return false;
+        }
       } )
     } ) );
   }
