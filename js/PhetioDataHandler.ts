@@ -61,7 +61,9 @@ type SelfOptions = {
   phetioOuterType: ( t: IOType[] ) => IOType;
 };
 
-export type PhetioDataHandlerOptions = SelfOptions & PhetioObjectOptions;
+// Use each subtype should provide its own phetioOuterType. That coupled with parameter IOTypes will result in the
+// phetioType. Don't pass this in!
+export type PhetioDataHandlerOptions = SelfOptions & Omit<PhetioObjectOptions, 'phetioType'>;
 
 class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
@@ -75,7 +77,6 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
       // phet-io - see PhetioObject.js for doc
       tandem: Tandem.OPTIONAL,
-
       phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
       phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata,
       phetioDocumentation: ''
