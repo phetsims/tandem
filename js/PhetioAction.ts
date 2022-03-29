@@ -117,7 +117,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
     // Although this is not the idiomatic pattern (since it is guarded in the phetioStartEvent), this function is
     // called so many times that it is worth the optimization for PhET brand.
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioStartEvent( 'executed', {
-      getData: () => this.getPhetioData( ...args ) // put this in a closure so that it is only called in phet-io brand
+      data: this.getPhetioData( ...args )
     } );
 
     this.action.apply( null, args );
