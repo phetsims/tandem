@@ -31,7 +31,7 @@ const PHET_IO_STATE_DEFAULT = false;
 // undefined and never are not allows as parameters to PhetioAction
 type ActionParameter = Exclude<IntentionalAny, undefined | never>;
 
-export type ActionOptions = Partial<PhetioDataHandlerOptions>;
+export type ActionOptions = Omit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
 class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T> {
 
