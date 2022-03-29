@@ -7,6 +7,7 @@
  */
 
 import qunitStart from '../../chipper/js/sim-tests/qunitStart.js';
+import './PhetioActionTests.js';
 import './PhetioGroupTests.js';
 import './PhetioObjectTests.js';
 import './TandemTests.js';

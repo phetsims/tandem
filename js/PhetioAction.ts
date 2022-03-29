@@ -37,9 +37,9 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
 
   private readonly action: ( ...args: T ) => void;
 
-  // Keep track of it this instance is currently executing its action, see execute() for implementation. This doesn't
-  // need to be a stack because we do not allow reentrant PhetioActions (guarded with an assertion in execute()).
-  private isExecuting: boolean;
+  // Keep track of it this instance is currently executing its action, see execute() for implementation. This needs to
+  // be a stack because reentrant PhetioAction execute calls are supported.
+  private isExecutingCount: number;
 
   // Disposal can potentially occur from the action that is being executed. If this is the case, we still want to emit
   // the executedEmitter upon completion of the action, so defer disposal of the executedEmitter (and
@@ -82,7 +82,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
 
     this.action = action;
 
-    this.isExecuting = false;
+    this.isExecutingCount = 0;
     this.disposeOnExecuteCompletion = false;
 
     this.executedEmitter = new Emitter<T>( {
@@ -105,9 +105,11 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * @params - expected parameters are based on options.parameters, see constructor
    */
   execute( ...args: T ): void {
-    assert && assert( !this.isDisposed, 'should not be disposed' );
 
-    this.isExecuting = true;
+    // We delay the disposal of composed entities to handle reentrant cases of disposing ourself.
+    assert && assert( !this.executedEmitter.isDisposed, 'self should not be disposed' );
+
+    this.isExecutingCount++;
 
     assert && super.validateArguments( ...args );
 
@@ -122,12 +124,12 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
 
     Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() && this.phetioEndEvent();
 
-    if ( this.disposeOnExecuteCompletion === true ) {
+    this.isExecutingCount--;
+
+    if ( this.disposeOnExecuteCompletion === true && this.isExecutingCount === 0 ) {
       this.disposePhetioAction();
       this.disposeOnExecuteCompletion = false;
     }
-
-    this.isExecuting = false;
   }
 
   /**
@@ -135,7 +137,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * disposePhetioAction instead, see disposeOnExecuteCompletion for details.
    */
   dispose(): void {
-    if ( this.isExecuting ) {
+    if ( this.isExecutingCount > 0 ) {
 
       // Defer disposing components until executing is completed, see disposeOnExecuteCompletion.
       this.disposeOnExecuteCompletion = true;
@@ -144,7 +146,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
       this.disposePhetioAction();
     }
 
-    // Always dispose the object itself
+    // Always dispose the object itself, or PhetioObject will assert out.
     super.dispose();
   }
 }
