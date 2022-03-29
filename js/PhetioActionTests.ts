@@ -54,16 +54,22 @@ QUnit.test( 'PhetioAction reentrant disposal', assert => {
       invokeActionOnce();
     }
     else if ( currentCount === 2 ) {
-      phetioAction.dispose();
       invokeActionOnce();
+      phetioAction.dispose();
     }
-    assert.ok( !actionDisposedItself(), 'should not be disposed until after executing' + currentCount );
+    assert.ok( !actionDisposedItself(), 'should not be disposed until after executing ' + currentCount );
   };
   const phetioAction = new PhetioAction<[ number ]>( action, {
     parameters: [ { name: 'count', phetioType: NumberIO } ],
     tandem: Tandem.ROOT_TEST.createTandem( 'phetioAction' )
   } );
 
+  phetioAction.executedEmitter.addListener( ( currentCount: number ) => {
+    assert.ok( !actionDisposedItself(), 'should not be disposed until after emitting ' + currentCount );
+    assert.ok( count === 3, 'count will always be last because all execute calls come before all emitting ' + currentCount );
+  } );
+
   invokeActionOnce();
+  assert.ok( count === 3, 'three calls total' );
   assert.ok( actionDisposedItself(), 'should now be disposed' );
 } );

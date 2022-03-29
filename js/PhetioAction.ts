@@ -105,6 +105,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * @params - expected parameters are based on options.parameters, see constructor
    */
   execute( ...args: T ): void {
+    assert && assert( !this.isDisposed, 'should not be called if disposed' );
 
     // We delay the disposal of composed entities to handle reentrant cases of disposing ourself.
     assert && assert( !this.executedEmitter.isDisposed, 'self should not be disposed' );
