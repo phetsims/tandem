@@ -16,7 +16,7 @@ import Tandem from './Tandem.js';
 import IOType from './types/IOType.js';
 import axon from '../../axon/js/axon.js';
 import validate from '../../axon/js/validate.js';
-import ValidatorDef from '../../axon/js/ValidatorDef.js';
+import ValidatorDef, { Validator } from '../../axon/js/ValidatorDef.js';
 
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
@@ -176,7 +176,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
       // valueType overrides the phetioType validator so we don't use that one if there is a valueType
       if ( parameter.phetioType && !parameter.valueType ) {
-        assert && validate( args[ i ], parameter.phetioType.validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
+        assert && validate( args[ i ], parameter.phetioType.validator as Validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
       }
     }
   }

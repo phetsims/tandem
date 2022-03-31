@@ -177,6 +177,8 @@ class IOType {
     this.dataDefaults = config.dataDefaults; // just for this level, see getAllDataDefaults()
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
+
+    // {Validator}
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
     this.defaultDeserializationMethod = config.defaultDeserializationMethod;
 
