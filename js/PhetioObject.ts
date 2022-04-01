@@ -118,6 +118,8 @@ type PhetioObjectOptions = {
   phetioDesigned?: boolean;
 };
 
+export type LinkableElement = Pick<PhetioObject, 'phetioFeatured' | 'isPhetioInstrumented'>;
+
 class PhetioObject {
 
   // assigned in initializePhetioObject - see docs at DEFAULTS declaration
@@ -552,7 +554,7 @@ class PhetioObject {
    *                               - otherwise it gracefully opts out
    * @param [options]
    */
-  addLinkedElement( element: PhetioObject, options?: any ): void {
+  addLinkedElement( element: LinkableElement, options?: any ): void {
     if ( !this.isPhetioInstrumented() ) {
 
       // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrument
@@ -560,8 +562,6 @@ class PhetioObject {
       this.linkedElements = null;
       return;
     }
-
-    assert && assert( element instanceof PhetioObject, 'element must be of type PhetioObject' );
 
     // In some cases, UI components need to be wired up to a private (internal) Property which should neither be
     // instrumented nor linked.
@@ -701,16 +701,14 @@ const specifiesNonTandemPhetioObjectKey: ( options: any ) => boolean = ( options
  * @private
  */
 class LinkedElement extends PhetioObject {
-  element: PhetioObject;
+  element: LinkableElement;
 
   /**
    * @param {PhetioObject} coreElement
    * @param {Object} [options]
    */
-  constructor( coreElement: PhetioObject, options?: any ) {
+  constructor( coreElement: LinkableElement, options?: any ) {
     assert && assert( !!coreElement, 'coreElement should be defined' );
-    assert && assert( coreElement instanceof PhetioObject, 'coreElement should be PhetioObject' );
-    assert && assert( coreElement.tandem, 'coreElement should have a tandem' );
 
     options = merge( {
       phetioType: LinkedElementIO
