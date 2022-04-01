@@ -35,3 +35,13 @@ QUnit.test( 'Tandem validation on ROOT', assert => {
     } );
   } );
 } );
+
+QUnit.test( 'Tandem blacklisted', assert => {
+  assert.ok( true, 'hello beautiful world.' );
+
+  Tandem.ROOT_TEST.createTandem( 'anythingAllowedHere' );
+
+  window.assert && Tandem.VALIDATION && assert.throws( () => {
+    Tandem.ROOT_TEST.createTandem( 'pickableProperty' );
+  }, 'pickableProperty should never be instrumented' );
+} );
