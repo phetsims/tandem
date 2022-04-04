@@ -29,7 +29,7 @@ const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMET
 
 const VALIDATION = PHET_IO_ENABLED && IS_VALIDATION_SPECIFIED && !PRINT_MISSING_TANDEMS;
 
-const TANDEM_NAME_BLACK_LISTED_SIMS = [ 'pickableProperty' ];
+const UNALLOWED_TANDEM_NAMES = [ 'pickableProperty' ];
 
 const REQUIRED_TANDEM_NAME = 'requiredTandem';
 const OPTIONAL_TANDEM_NAME = 'optionalTandem';
@@ -239,7 +239,7 @@ class Tandem {
    * @public
    */
   createTandem( name, options ) {
-    assert && Tandem.VALIDATION && assert( !TANDEM_NAME_BLACK_LISTED_SIMS.includes( name ), 'tandem name is blacklisted: ' + name );
+    assert && Tandem.VALIDATION && assert( !UNALLOWED_TANDEM_NAMES.includes( name ), 'tandem name is not allowed: ' + name );
 
     options = this.getExtendedOptions( options );
 

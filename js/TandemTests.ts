@@ -36,7 +36,7 @@ QUnit.test( 'Tandem validation on ROOT', assert => {
   } );
 } );
 
-QUnit.test( 'Tandem blacklisted', assert => {
+QUnit.test( 'Tandem excluded', assert => {
   assert.ok( true, 'hello beautiful world.' );
 
   Tandem.ROOT_TEST.createTandem( 'anythingAllowedHere' );
