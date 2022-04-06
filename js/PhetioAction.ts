@@ -137,7 +137,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * Note: Be careful about adding disposal logic directly to this function, it is likely preferred to add it to
    * disposePhetioAction instead, see disposeOnExecuteCompletion for details.
    */
-  dispose(): void {
+  override dispose(): void {
     if ( this.isExecutingCount > 0 ) {
 
       // Defer disposing components until executing is completed, see disposeOnExecuteCompletion.

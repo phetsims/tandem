@@ -736,7 +736,7 @@ class LinkedElement extends PhetioObject {
    *                          (see usage initializePhetioObject)
    * @returns - metadata plucked from the passed in parameter
    */
-  getMetadata( object: any ): any {
+  override getMetadata( object: any ): any {
     const phetioObjectMetadata = super.getMetadata( object );
     delete phetioObjectMetadata.phetioFeatured;
     return phetioObjectMetadata;

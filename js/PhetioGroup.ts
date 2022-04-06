@@ -90,7 +90,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * @public
    */
-  dispose() {
+  override dispose() {
     assert && assert( false, 'PhetioGroup not intended for disposal' );
   }
 
@@ -105,9 +105,8 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param {T} element
    * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    * @public
-   * @override
    */
-  disposeElement( element: T, fromStateSetting = false ) {
+  override disposeElement( element: T, fromStateSetting = false ) {
     assert && assert( !element.isDisposed, 'element already disposed' );
     arrayRemove( this._array, element );
 
@@ -186,7 +185,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Remove and dispose all registered group elements
    */
-  clear( options?: any ) {
+  override clear( options?: any ) {
     options = merge( {
 
       // used for validation during state setting (phet-io internal), see PhetioDynamicElementContainer.disposeElement for documentation

@@ -303,7 +303,7 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
     this.emitDataStreamEvent( dynamicElement, 'disposed' );
   }
 
-  dispose() {
+  override dispose() {
 
     // If hitting this assertion because of nested dynamic element containers, please discuss with a phet-io team member.
     assert && assert( false, 'PhetioDynamicElementContainers are not intended for disposal' );
@@ -411,9 +411,8 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
   /**
    * @public - add the phetioDynamicElementName for API tracking
    * @param {Object} [object]
-   * @override
    */
-  getMetadata( object: any ) {
+  override getMetadata( object: any ) {
     const metadata = super.getMetadata( object );
     assert && assert(
       !metadata.hasOwnProperty( 'phetioDynamicElementName' ),

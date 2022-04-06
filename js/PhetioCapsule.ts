@@ -76,7 +76,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
   /**
    * @param {object} [options]
    */
-  clear( options?: any ) {
+  override clear( options?: any ) {
     options = merge( {
 
       // Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
