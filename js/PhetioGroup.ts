@@ -118,7 +118,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Gets a reference to the underlying array. DO NOT create/dispose elements while iterating, or otherwise modify
    * the array.  If you need to modify the array, use getArrayCopy.
-   * @returns {T[]}
    * @public
    */
   getArray() {
@@ -128,7 +127,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Gets a copy of the underlying array. Use this method if you need to create/dispose elements while iterating,
    * or otherwise modify the group's array.
-   * @returns {T[]}
    * @public
    */
   getArrayCopy() {
@@ -150,7 +148,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Returns an array with elements that pass the filter predicate.
    * @param {function(PhetioObject)} predicate
-   * @returns {T[]}
    * @public
    */
   filter( predicate: ( t: T ) => boolean ) { return this._array.filter( predicate ); }
@@ -163,7 +160,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Gets the index of the specified element in the underlying array.
    * @param {T} element
-   * @returns {number} - index, -1 if not found
    */
   indexOf( element: T ): number { return this._array.indexOf( element ); }
 
@@ -283,7 +279,6 @@ const cache = new Map();
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
  * @param {IOType} parameterType
- * @returns {IOType}
  */
 PhetioGroup.PhetioGroupIO = parameterType => {
 
