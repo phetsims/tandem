@@ -17,11 +17,12 @@ import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
+import optionize, { OptionizeDefaults } from '../../phet-core/js/optionize.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
-import TandemConstants from './TandemConstants.js';
+import TandemConstants, { PhetioObjectMetadata } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 
@@ -103,20 +104,20 @@ assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType )
   'phetioEventType must have the same default as the default metadata values.' );
 
 // Options for creating a PhetioObject
-type PhetioObjectOptions = {
+export type PhetioObjectOptions = Omit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
+  'phetioIsArchetype' | 'phetioEventType'> & {
   tandem?: Tandem;
   phetioType?: IOType;
-  phetioState?: boolean;
-  phetioReadOnly?: boolean;
   phetioEventType?: EventType;
-  phetioDocumentation?: string;
-  phetioHighFrequency?: boolean; // @deprecated
-  phetioPlayback?: boolean;
-  phetioFeatured?: boolean;
-  phetioEventMetadata?: any;
-  phetioDynamicElement?: boolean;
-  phetioDesigned?: boolean;
+  phetioEventMetadata?: {
+
+    // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
+    [ key: string ]: string | boolean | number | Array<string | boolean | number>;
+  };
 };
+
+type PhetioObjectMetadataKeys = keyof ( Omit<PhetioObjectMetadata, 'phetioTypeName'> ) | 'phetioType';
+export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
 
 export type LinkableElement = Pick<PhetioObject, 'phetioFeatured' | 'isPhetioInstrumented'>;
 
@@ -133,23 +134,23 @@ class PhetioObject {
   isDisposed: boolean;
 
   // See documentation in DEFAULTS
-  phetioIsArchetype?: boolean;
-  phetioBaselineMetadata: any | null;
-  _phetioType?: IOType;
-  _phetioState?: boolean;
-  _phetioReadOnly?: boolean;
-  _phetioDocumentation?: string;
-  _phetioEventType?: EventType;
-  _phetioHighFrequency?: boolean;
-  _phetioPlayback?: boolean;
-  _phetioDynamicElement?: boolean;
-  _phetioFeatured?: boolean;
-  _phetioEventMetadata?: any | null;
-  _phetioDesigned?: boolean;
-  phetioArchetypePhetioID?: string | null;
-  linkedElements?: LinkedElement[] | null;
-  phetioNotifiedObjectCreated?: boolean;
-  phetioMessageStack?: number[];
+  phetioIsArchetype!: boolean;
+  phetioBaselineMetadata!: any | null;
+  _phetioType!: IOType;
+  _phetioState!: boolean;
+  _phetioReadOnly!: boolean;
+  _phetioDocumentation!: string;
+  _phetioEventType!: EventType;
+  _phetioHighFrequency!: boolean;
+  _phetioPlayback!: boolean;
+  _phetioDynamicElement!: boolean;
+  _phetioFeatured!: boolean;
+  _phetioEventMetadata!: any | null;
+  _phetioDesigned!: boolean;
+  phetioArchetypePhetioID!: string | null;
+  linkedElements!: LinkedElement[] | null;
+  phetioNotifiedObjectCreated!: boolean;
+  phetioMessageStack!: number[];
   static DEFAULT_OPTIONS: any;
 
   constructor( options?: PhetioObjectOptions ) {
@@ -177,28 +178,28 @@ class PhetioObject {
 
   /**
    * Like SCENERY/Node, PhetioObject can be configured during construction or later with a mutate call.
-   * Noop if provided config keys don't intersect with any key in DEFAULTS; baseOptions are ignored for this calculation.
+   * Noop if provided options keys don't intersect with any key in DEFAULTS; baseOptions are ignored for this calculation.
    */
-  protected initializePhetioObject( baseOptions: any, config: PhetioObjectOptions ): void {
-    assert && assert( config, 'initializePhetioObject must be called with config' );
+  protected initializePhetioObject( baseOptions: Partial<PhetioObjectOptions>, providedOptions: PhetioObjectOptions ): void {
+    assert && assert( providedOptions, 'initializePhetioObject must be called with providedOptions' );
 
     // call before we exit early to support logging unsupplied Tandems.
-    config.tandem && Tandem.onMissingTandem( config.tandem );
+    providedOptions.tandem && Tandem.onMissingTandem( providedOptions.tandem );
 
     // Make sure that required tandems are supplied
-    if ( Tandem.VALIDATION && config.tandem && config.tandem.required ) {
-      assert && assert( config.tandem.supplied, 'required tandems must be supplied' );
+    if ( Tandem.VALIDATION && providedOptions.tandem && providedOptions.tandem.required ) {
+      assert && assert( providedOptions.tandem.supplied, 'required tandems must be supplied' );
     }
 
     // The presence of `tandem` indicates if this PhetioObject can be initialized. If not yet initialized, perhaps
     // it will be initialized later on, as in Node.mutate().
-    if ( !( PHET_IO_ENABLED && config.tandem && config.tandem.supplied ) ) {
-      assert && !config.tandem && assert( !specifiesNonTandemPhetioObjectKey( config ), 'only specify metadata when providing a Tandem' );
+    if ( !( PHET_IO_ENABLED && providedOptions.tandem && providedOptions.tandem.supplied ) ) {
+      assert && !providedOptions.tandem && assert( !specifiesNonTandemPhetioObjectKey( providedOptions ), 'only specify metadata when providing a Tandem' );
 
       // In this case, the PhetioObject is not initialized, but still set tandem to maintain a consistent API for
       // creating the Tandem tree.
-      if ( config.tandem ) {
-        this.tandem = config.tandem;
+      if ( providedOptions.tandem ) {
+        this.tandem = providedOptions.tandem;
       }
       return;
     }
@@ -208,23 +209,24 @@ class PhetioObject {
     assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
     // Guard validation on assert to avoid calling a large number of no-ops when assertions are disabled, see https://github.com/phetsims/tandem/issues/200
-    assert && validate( config.tandem, { valueType: Tandem } );
+    assert && validate( providedOptions.tandem, { valueType: Tandem } );
 
-    // @ts-ignore
-    config = merge( {}, DEFAULTS, baseOptions, config );
+    const defaults: OptionizeDefaults<PhetioObjectOptions> = merge( {}, DEFAULTS, baseOptions );
 
-    // validate config before assigning to properties
-    assert && validate( config.phetioType, IO_TYPE_VALIDATOR, 'phetioType must be an IOType' );
-    assert && validate( config.phetioState, BOOLEAN_VALIDATOR, 'phetioState must be a boolean' );
-    assert && validate( config.phetioReadOnly, BOOLEAN_VALIDATOR, 'phetioReadOnly must be a boolean' );
-    assert && validate( config.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR, 'invalid phetioEventType' );
-    assert && validate( config.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR, 'phetioDocumentation must be provided in the right format' );
-    assert && validate( config.phetioHighFrequency, BOOLEAN_VALIDATOR, 'phetioHighFrequency must be a boolean' );
-    assert && validate( config.phetioPlayback, BOOLEAN_VALIDATOR, 'phetioPlayback must be a boolean' );
-    assert && validate( config.phetioFeatured, BOOLEAN_VALIDATOR, 'phetioFeatured must be a boolean' );
-    assert && validate( config.phetioEventMetadata, OBJECT_VALIDATOR, 'object literal expected' );
-    assert && validate( config.phetioDynamicElement, BOOLEAN_VALIDATOR, 'phetioDynamicElement must be a boolean' );
-    assert && validate( config.phetioDesigned, BOOLEAN_VALIDATOR, 'phetioDesigned must be a boolean' );
+    let options = optionize<PhetioObjectOptions>( defaults, providedOptions );
+
+    // validate options before assigning to properties
+    assert && validate( options.phetioType, IO_TYPE_VALIDATOR, 'phetioType must be an IOType' );
+    assert && validate( options.phetioState, BOOLEAN_VALIDATOR, 'phetioState must be a boolean' );
+    assert && validate( options.phetioReadOnly, BOOLEAN_VALIDATOR, 'phetioReadOnly must be a boolean' );
+    assert && validate( options.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR, 'invalid phetioEventType' );
+    assert && validate( options.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR, 'phetioDocumentation must be provided in the right format' );
+    assert && validate( options.phetioHighFrequency, BOOLEAN_VALIDATOR, 'phetioHighFrequency must be a boolean' );
+    assert && validate( options.phetioPlayback, BOOLEAN_VALIDATOR, 'phetioPlayback must be a boolean' );
+    assert && validate( options.phetioFeatured, BOOLEAN_VALIDATOR, 'phetioFeatured must be a boolean' );
+    assert && validate( options.phetioEventMetadata, OBJECT_VALIDATOR, 'object literal expected' );
+    assert && validate( options.phetioDynamicElement, BOOLEAN_VALIDATOR, 'phetioDynamicElement must be a boolean' );
+    assert && validate( options.phetioDesigned, BOOLEAN_VALIDATOR, 'phetioDesigned must be a boolean' );
 
     assert && assert( this.linkedElements !== null, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
 
@@ -238,16 +240,17 @@ class PhetioObject {
     // Store the full baseline for usage in validation or for usage in studio.  Do this before applying overrides. The
     // baseline is created when a sim is run with assertions to assist in phetioAPIValidation.  However, even when
     // assertions are disabled, some wrappers such as studio need to generate the baseline anyway.
-    // not all metadata are passed through via config, so store baseline for these additional properties
+    // not all metadata are passed through via options, so store baseline for these additional properties
     this.phetioBaselineMetadata = ( phetioAPIValidation.enabled || phet.preloads.phetio.queryParameters.phetioEmitAPIBaseline ) ?
                                   this.getMetadata( merge( {
-                                    phetioIsArchetype: this.phetioIsArchetype
-                                  }, config ) ) :
+                                    phetioIsArchetype: this.phetioIsArchetype,
+                                    phetioArchetypePhetioID: this.phetioArchetypePhetioID
+                                  }, options ) ) :
                                   null;
 
     // Dynamic elements should compare to their "archetypal" counterparts.  For example, this means that a Particle
     // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
-    const archetypalPhetioID = config.tandem!.getArchetypalPhetioID();
+    const archetypalPhetioID = options.tandem!.getArchetypalPhetioID();
 
     // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
     // Patch in the desired values from overrides, if any.
@@ -255,48 +258,47 @@ class PhetioObject {
       const overrides = window.phet.preloads.phetio.phetioElementsOverrides[ archetypalPhetioID ];
       if ( overrides ) {
 
-        // No need to make a new object, since this "config" variable was created in the previous merge call above.
-        // @ts-ignore
-        config = merge( config, overrides );
+        // No need to make a new object, since this "options" variable was created in the previous merge call above.
+        options = merge( options, overrides );
       }
     }
 
     // @public (read-only) {Tandem} - see docs at DEFAULTS declaration
-    this.tandem = config.tandem!;
+    this.tandem = options.tandem!;
 
     // @public (read-only) {IOType} - see docs at DEFAULTS declaration
-    this._phetioType = config.phetioType;
+    this._phetioType = options.phetioType;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
-    this._phetioState = config.phetioState;
+    this._phetioState = options.phetioState;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
-    this._phetioReadOnly = config.phetioReadOnly;
+    this._phetioReadOnly = options.phetioReadOnly;
 
     // @public (read-only) {string} - see docs at DEFAULTS declaration
-    this._phetioDocumentation = config.phetioDocumentation;
+    this._phetioDocumentation = options.phetioDocumentation;
 
     // @private {EventType} - see docs at DEFAULTS declaration
-    this._phetioEventType = config.phetioEventType;
+    this._phetioEventType = options.phetioEventType;
 
     // @private {boolean} - see docs at DEFAULTS declaration
-    this._phetioHighFrequency = config.phetioHighFrequency;
+    this._phetioHighFrequency = options.phetioHighFrequency;
 
     // @private {boolean} - see docs at DEFAULTS declaration
-    this._phetioPlayback = config.phetioPlayback;
+    this._phetioPlayback = options.phetioPlayback;
 
     // @public (PhetioEngine) {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to
     // children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
-    this._phetioDynamicElement = config.phetioDynamicElement;
+    this._phetioDynamicElement = options.phetioDynamicElement;
 
     // @public (read-only) {boolean} - see docs at DEFAULTS declaration
-    this._phetioFeatured = config.phetioFeatured;
+    this._phetioFeatured = options.phetioFeatured;
 
     // @private {Object|null}
-    this._phetioEventMetadata = config.phetioEventMetadata;
+    this._phetioEventMetadata = options.phetioEventMetadata;
 
     // @private {boolean}
-    this._phetioDesigned = config.phetioDesigned;
+    this._phetioDesigned = options.phetioDesigned;
 
     // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
     this.phetioArchetypePhetioID = null;
@@ -348,19 +350,19 @@ class PhetioObject {
   }
 
   // throws an assertion error in brands other than PhET-iO
-  private get phetioEventType(): EventType {
+  get phetioEventType(): EventType {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventType only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventType!;
   }
 
   // throws an assertion error in brands other than PhET-iO
-  private get phetioHighFrequency(): boolean {
+  get phetioHighFrequency(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioHighFrequency only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioHighFrequency!;
   }
 
   // throws an assertion error in brands other than PhET-iO
-  private get phetioPlayback(): boolean {
+  get phetioPlayback(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioPlayback only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioPlayback!;
   }
@@ -378,13 +380,13 @@ class PhetioObject {
   }
 
   // throws an assertion error in brands other than PhET-iO
-  private get phetioEventMetadata(): any {
+  get phetioEventMetadata(): any {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventMetadata only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventMetadata!;
   }
 
   // throws an assertion error in brands other than PhET-iO
-  private get phetioDesigned(): boolean {
+  get phetioDesigned(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDesigned only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioDesigned!;
   }
@@ -653,9 +655,9 @@ class PhetioObject {
    *                          (see usage initializePhetioObject). If not provided, will instead use the value of "this"
    * @returns {Object} - metadata plucked from the passed in parameter
    */
-  getMetadata( object: any ): any {
+  getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
     object = object || this;
-    const metadata = {
+    const metadata: PhetioObjectMetadata = {
       phetioTypeName: object.phetioType.typeName,
       phetioDocumentation: object.phetioDocumentation,
       phetioState: object.phetioState,
@@ -672,7 +674,6 @@ class PhetioObject {
     };
     if ( object.phetioArchetypePhetioID ) {
 
-      // @ts-ignore
       metadata.phetioArchetypePhetioID = object.phetioArchetypePhetioID;
     }
     return metadata;
@@ -736,8 +737,10 @@ class LinkedElement extends PhetioObject {
    *                          (see usage initializePhetioObject)
    * @returns - metadata plucked from the passed in parameter
    */
-  override getMetadata( object: any ): any {
+  override getMetadata( object: any ): PhetioObjectMetadata {
     const phetioObjectMetadata = super.getMetadata( object );
+
+    // @ts-ignore
     delete phetioObjectMetadata.phetioFeatured;
     return phetioObjectMetadata;
   }
@@ -745,4 +748,3 @@ class LinkedElement extends PhetioObject {
 
 tandemNamespace.register( 'PhetioObject', PhetioObject );
 export { PhetioObject as default, LinkedElement };
-export type { PhetioObjectOptions };

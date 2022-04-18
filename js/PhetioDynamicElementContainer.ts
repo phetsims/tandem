@@ -17,54 +17,83 @@ import Emitter from '../../axon/js/Emitter.js';
 import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
+import PickRequired from '../../phet-core/js/types/PickRequired.js';
+import optionize from '../../phet-core/js/optionize.js';
 import DynamicTandem from './DynamicTandem.js';
-import PhetioObject from './PhetioObject.js';
+import PhetioObject, { PhetioObjectMetadataInput, PhetioObjectOptions } from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
+import { PhetioObjectMetadata } from './TandemConstants.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
 
-class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []> extends PhetioObject {
-  readonly archetype: T;
-  elementCreatedEmitter: Emitter<[ T ]>;
-  elementDisposedEmitter: Emitter<[ T ]>;
-  notificationsDeferred: boolean;
-  deferredCreations: T[];
-  deferredDisposals: T[];
-  readonly supportsDynamicState: boolean;
+type SelfOptions = {
+
+  // By default, a PhetioDynamicElementContainer's elements are included in state such that on every setState call,
+  // the elements are cleared out by the phetioStateEngine so elements in the state can be added to the empty group.
+  // This option is for opting out of that behavior. When false, this container will not have its elements cleared
+  // when beginning to set PhET-iO state. Furthermore, view elements following the "only the models are stateful"
+  // pattern must mark this as false, otherwise the state engine will try to create these elements instead of letting
+  // the model notifications handle this.
+  supportsDynamicState?: boolean;
+
+  // The container's tandem name must have this suffix, and the base tandem name for elements in
+  // the container will consist of the group's tandem name with this suffix stripped off.
+  containerSuffix?: string;
+
+  // tandem name for elements in the container is the container's tandem name without containerSuffix
+  phetioDynamicElementName: string;
+}
+
+type PhetioDynamicElementContainerOptions = SelfOptions & PhetioObjectOptions & PickRequired<PhetioObjectOptions, 'phetioType'>;
+
+
+type ClearOptions = {
+
+  //  Used for validation during state setting. See this.disposeElement() for documentation
+  fromStateSetting?: boolean;
+}
+
+
+function archetypeCast<T>( archetype: T | null ): T {
+  if ( archetype === null ) {
+    throw new Error( 'archetype should exist' );
+  }
+  return archetype;
+}
+
+
+abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []> extends PhetioObject {
+  private readonly _archetype: T | null;
+  readonly elementCreatedEmitter: Emitter<[ T ]>;
+  readonly elementDisposedEmitter: Emitter<[ T ]>;
+  private notificationsDeferred: boolean;
+  private readonly deferredCreations: T[];
+  private readonly deferredDisposals: T[];
+  readonly supportsDynamicState: boolean; // (phet-io internal)
   protected phetioDynamicElementName: string;
-  createElement: any;
-  defaultArguments: any;
+  protected createElement: any;
+  protected defaultArguments: any;
 
   /**
-   * @param {function(Tandem,...args):PhetioObject} createElement - function that creates a dynamic element to be housed in
+   * @param createElement - function that creates a dynamic readonly element to be housed in
    * this container. All of this dynamic element container's elements will be created from this function, including the
    * archetype.
-   * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype
-   * @param {Object} [options] - describe the Group itself
+   * @param defaultArguments - arguments passed to createElement when creating the archetype
+   * @param [providedOptions] - describe the Group itself
    */
-  constructor( createElement: ( t: Tandem, ...args: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
+  constructor( createElement: ( t: Tandem, ...args: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioDynamicElementContainerOptions ) {
 
-    options = merge( {
+    let options = optionize<PhetioDynamicElementContainerOptions, SelfOptions, PhetioObjectOptions, 'tandem'>( {
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
 
       // Many PhET-iO instrumented types live in common code used by multiple sims, and may only be instrumented in a subset of their usages.
       tandem: Tandem.OPTIONAL,
-
-      // By default, a PhetioDynamicElementContainer's elements are included in state such that on every setState call,
-      // the elements are cleared out by the phetioStateEngine so elements in the state can be added to the empty group.
-      // This option is for opting out of that behavior. When false, this container will not have its elements cleared
-      // when beginning to set PhET-iO state. Furthermore, view elements following the "only the models are stateful"
-      // pattern must mark this as false, otherwise the state engine will try to create these elements instead of letting
-      // the model notifications handle this.
       supportsDynamicState: true,
-
-      // {string} The container's tandem name must have this suffix, and the base tandem name for elements in
-      // the container will consist of the group's tandem name with this suffix stripped off.
       containerSuffix: DEFAULT_CONTAINER_SUFFIX
-    }, options );
+    }, providedOptions );
 
     assert && assert( typeof createElement === 'function', 'createElement should be a function' );
     assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
@@ -75,7 +104,8 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
     }
 
     assert && Tandem.VALIDATION && assert( !!options.phetioType, 'phetioType must be supplied' );
-    assert && Tandem.VALIDATION && assert( Array.isArray( options.phetioType.parameterTypes ), 'phetioType must supply its parameter types' );
+    assert && Tandem.VALIDATION && assert( Array.isArray( options.phetioType.parameterTypes ),
+      'phetioType must supply its parameter types' );
     assert && Tandem.VALIDATION && assert( options.phetioType.parameterTypes.length === 1,
       'PhetioDynamicElementContainer\'s phetioType must have exactly one parameter type' );
     assert && Tandem.VALIDATION && assert( !!options.phetioType.parameterTypes[ 0 ],
@@ -88,30 +118,26 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
     // options that depend on other options
     options = merge( {
 
-      // {string} - tandem name for elements in the container is the container's tandem name without containerSuffix
       phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - options.containerSuffix.length )
     }, options );
 
     super( options );
 
-    // @public (read-only phet-io internal) {boolean}
     this.supportsDynamicState = options.supportsDynamicState;
-
     this.phetioDynamicElementName = options.phetioDynamicElementName;
 
-    // @protected
     this.createElement = createElement;
     this.defaultArguments = defaultArguments;
 
-    // @public (read-only) {PhetioObject|null} Can be used as an argument to create other archetypes, but otherwise
+    // Can be used as an argument to create other archetypes, but otherwise
     // access should not be needed. This will only be non-null when generating the PhET-iO API, see createArchetype().
-    this.archetype = this.createArchetype();
+    this._archetype = this.createArchetype();
 
-    // @public (read-only) - subtypes expected to fire this according to individual implementations
-    this.elementCreatedEmitter = new Emitter( { parameters: [ { valueType: PhetioObject } ] } );
+    // subtypes expected to fire this according to individual implementations
+    this.elementCreatedEmitter = new Emitter<[ T ]>( { parameters: [ { valueType: PhetioObject } ] } );
 
-    // @public (read-only) - called on disposal of an element
-    this.elementDisposedEmitter = new Emitter( { parameters: [ { valueType: PhetioObject } ] } );
+    // called on disposal of an element
+    this.elementDisposedEmitter = new Emitter<[ T ]>( { parameters: [ { valueType: PhetioObject } ] } );
 
     // Emit to the data stream on element creation/disposal, no need to do this in PhET brand
     if ( Tandem.PHET_IO_ENABLED ) {
@@ -119,10 +145,10 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
       this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
     }
 
-    // @private {boolean} - a way to delay creation notifications to a later time, for phet-io state engine support
+    // a way to delay creation notifications to a later time, for phet-io state engine support
     this.notificationsDeferred = false;
 
-    // @private {PhetioObject} - lists to keep track of the created and disposed elements when notifications are deferred.
+    // lists to keep track of the created and disposed elements when notifications are deferred.
     // These are used to then flush notifications when they are set to no longer be deferred.
     this.deferredCreations = [];
     this.deferredDisposals = [];
@@ -176,8 +202,7 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
   /**
    * @returns true if all children of a single dynamic element (based on phetioID) have had their state set already.
    */
-  // @ts-ignore
-  private stateSetOnAllChildrenOfDynamicElement( dynamicElementID, stillToSetIDs ): boolean {
+  private stateSetOnAllChildrenOfDynamicElement( dynamicElementID: string, stillToSetIDs: string[] ): boolean {
     for ( let i = 0; i < stillToSetIDs.length; i++ ) {
 
       // @ts-ignore
@@ -192,13 +217,12 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
    * Archetypes are created to generate the baseline file, or to validate against an existing baseline file.  They are
    * PhetioObjects and registered with the phetioEngine, but not send out via notifications from PhetioEngine.phetioElementAddedEmitter(),
    * because they are intended for internal usage only.  Archetypes should not be created in production code.
-   * @returns {null|PhetioObject}
-   * @private
    */
-  createArchetype() {
+  private createArchetype(): T | null {
 
     // Once the sim has started, any archetypes being created are likely done so because they are nested PhetioGroups.
     if ( _.hasIn( window, 'phet.joist.sim' ) && phet.joist.sim.isConstructionCompleteProperty.value ) {
+      assert && assert( false, 'nested DynacmicElementContainers are not currently supported' );
       return null;
     }
 
@@ -224,11 +248,11 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
 
   /**
    * Create a dynamic PhetioObject element for this container
-   * @param {string} componentName
-   * @param {Array.<*>} argsForCreateFunction
-   * @param {IOType|null} containerParameterType - null in PhET brand
+   * @param componentName
+   * @param argsForCreateFunction
+   * @param containerParameterType - null in PhET brand
    */
-  createDynamicElement( componentName: string, argsForCreateFunction: P, containerParameterType: any ): T {
+  createDynamicElement( componentName: string, argsForCreateFunction: P, containerParameterType: IOType | null ): T {
     assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
     // create with default state and substructure, details will need to be set by setter methods.
@@ -249,6 +273,7 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
       assert && assert( containerParameterType instanceof IOType, 'containerParameterType must be provided in PhET-iO brand' );
 
       // Make sure the new group element matches the schema for elements.
+      // @ts-ignore
       validate( createdObject, containerParameterType.validator );
 
       assert && assert( createdObject.phetioType === containerParameterType,
@@ -262,7 +287,6 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
 
   /**
    * A dynamic element should be an instrumented PhetioObject with phetioDynamicElement: true
-   * @param phetioObject - object to be validated
    */
   private assertDynamicPhetioObject( phetioObject: T ) {
     if ( Tandem.PHET_IO_ENABLED && Tandem.VALIDATION ) {
@@ -273,11 +297,8 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
 
   /**
    * Emit a created or disposed event.
-   * @param dynamicElement
-   * @param eventName
-   * @param [additionalData] additional data for the event
    */
-  private emitDataStreamEvent( dynamicElement: T, eventName: string, additionalData?: any ): void {
+  private emitDataStreamEvent( dynamicElement: T, eventName: string, additionalData?: Object | null ): void {
     this.phetioStartEvent( eventName, {
       data: merge( {
         phetioID: dynamicElement.tandem.phetioID
@@ -311,8 +332,8 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
 
   /**
    * Dispose a contained element
-   * @param {PhetioObject} element
-   * @param {boolean} [fromStateSetting] - Used for validation during state setting. This should only be true when this
+   * @param element
+   * @param [fromStateSetting] - Used for validation during state setting. This should only be true when this
    * function is being called from setting PhET-iO state in PhetioStateEngine.js. This flag is used purely for validation.
    * If this function is called during PhET-iO state setting, but not from the state engine, then it is from sim-specific,
    * non-PhET-iO code, and will most likely be buggy. As an example let's think about this in terms of PhetioGroup. If
@@ -323,10 +344,8 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
    * the listener is changed because of a force that isn't the PhET-iO state engine (see Sim.isSettingPhetioStateProperty
    * and its usages). This helps catch complicated and obfuscated state bugs in an easy way. After reading this, it
    * should go without saying that sim code should NOT set this flag to be true!
-   * @public - but should not be called directly for PhetioGroup or PhetioCapsule, but can be made public if other subtypes need to.
-   * TODO: once this file has been converted to TypeScript, this function should be marked as protected, see https://github.com/phetsims/tandem/issues/248#issuecomment-952347257
    */
-  disposeElement( element: T, fromStateSetting = false ): void {
+  protected disposeElement( element: T, fromStateSetting = false ): void {
     element.dispose();
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
@@ -342,14 +361,9 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
   }
 
   /**
-   * @public
    * @abstract
-   * @param {Object} [options]
-   * @param {boolean} options.fromStateSetting -  Used for validation during state setting. See this.disposeElement() for documentation
    */
-  clear( options?: any ) {
-    throw new Error( 'clear() is abstract and should be implemented by subtypes' );
-  }
+  abstract clear( options?: ClearOptions ): void;
 
   /**
    * Flush a single element from the list of deferred disposals that have not yet notified about the disposal. This
@@ -377,7 +391,7 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
   /**
    * Flush a single element from the list of deferred creations that have not yet notified about the disposal. This
    * is only public to support specific order dependencies in the PhetioStateEngine, otherwise see `this.notifyElementCreated()`
-   * @public (PhetioGroupTests, phet-io) - only the PhetioStateEngine should notify individual elements created.
+   * (PhetioGroupTests, phet-io) - only the PhetioStateEngine should notify individual elements created.
    */
   notifyElementCreatedWhileDeferred( createdElement: T ) {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
@@ -409,10 +423,16 @@ class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []
   }
 
   /**
-   * @public - add the phetioDynamicElementName for API tracking
-   * @param {Object} [object]
+   * @throws error if trying to access when archetypes aren't being created.
    */
-  override getMetadata( object: any ) {
+  get archetype(): T {
+    return archetypeCast( this._archetype );
+  }
+
+  /**
+   * Add the phetioDynamicElementName for API tracking
+   */
+  override getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
     const metadata = super.getMetadata( object );
     assert && assert(
       !metadata.hasOwnProperty( 'phetioDynamicElementName' ),
