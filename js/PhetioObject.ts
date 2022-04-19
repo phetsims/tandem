@@ -213,7 +213,7 @@ class PhetioObject {
 
     const defaults: OptionizeDefaults<PhetioObjectOptions> = merge( {}, DEFAULTS, baseOptions );
 
-    let options = optionize<PhetioObjectOptions>( defaults, providedOptions );
+    let options = optionize<PhetioObjectOptions>()( defaults, providedOptions );
 
     // validate options before assigning to properties
     assert && validate( options.phetioType, IO_TYPE_VALIDATOR, 'phetioType must be an IOType' );

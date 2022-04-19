@@ -70,7 +70,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
   private readonly parameters: Parameter[];
 
   constructor( providedOptions?: PhetioDataHandlerOptions ) {
-    const options = optionize<PhetioDataHandlerOptions, SelfOptions, PhetioObjectOptions, 'tandem' | 'phetioDocumentation'>( {
+    const options = optionize<PhetioDataHandlerOptions, SelfOptions, PhetioObjectOptions>()( {
 
       // {Object[]} - see PARAMETER_KEYS for a list of legal keys, their types, and documentation
       parameters: EMPTY_ARRAY,

@@ -86,7 +86,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
    */
   constructor( createElement: ( t: Tandem, ...args: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioDynamicElementContainerOptions ) {
 
-    let options = optionize<PhetioDynamicElementContainerOptions, SelfOptions, PhetioObjectOptions, 'tandem'>( {
+    let options = optionize<PhetioDynamicElementContainerOptions, SelfOptions, PhetioObjectOptions>()( {
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
 
       // Many PhET-iO instrumented types live in common code used by multiple sims, and may only be instrumented in a subset of their usages.
