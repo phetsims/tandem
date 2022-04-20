@@ -28,15 +28,19 @@ import IOType from './types/IOType.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
-const IO_TYPE_VALIDATOR = { valueType: IOType };
+const IO_TYPE_VALIDATOR = { valueType: IOType, validationMessage: 'phetioType must be an IOType' };
 const BOOLEAN_VALIDATOR = { valueType: 'boolean' };
 
 // use "<br>" instead of newlines
 const PHET_IO_DOCUMENTATION_VALIDATOR = {
   valueType: 'string',
-  isValidValue: ( doc: string ) => doc.indexOf( '\n' ) === -1
+  isValidValue: ( doc: string ) => doc.indexOf( '\n' ) === -1,
+  validationMessage: 'phetioDocumentation must be provided in the right format'
 };
-const PHET_IO_EVENT_TYPE_VALIDATOR = { valueType: EventType };
+const PHET_IO_EVENT_TYPE_VALIDATOR = {
+  valueType: EventType,
+  validationMessage: 'invalid phetioEventType'
+};
 const OBJECT_VALIDATOR = { valueType: [ Object, null ] };
 
 const objectToPhetioID = ( phetioObject: PhetioObject ) => phetioObject.tandem.phetioID;
@@ -216,17 +220,17 @@ class PhetioObject {
     let options = optionize<PhetioObjectOptions>()( defaults, providedOptions );
 
     // validate options before assigning to properties
-    assert && validate( options.phetioType, IO_TYPE_VALIDATOR, 'phetioType must be an IOType' );
-    assert && validate( options.phetioState, BOOLEAN_VALIDATOR, 'phetioState must be a boolean' );
-    assert && validate( options.phetioReadOnly, BOOLEAN_VALIDATOR, 'phetioReadOnly must be a boolean' );
-    assert && validate( options.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR, 'invalid phetioEventType' );
-    assert && validate( options.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR, 'phetioDocumentation must be provided in the right format' );
-    assert && validate( options.phetioHighFrequency, BOOLEAN_VALIDATOR, 'phetioHighFrequency must be a boolean' );
-    assert && validate( options.phetioPlayback, BOOLEAN_VALIDATOR, 'phetioPlayback must be a boolean' );
-    assert && validate( options.phetioFeatured, BOOLEAN_VALIDATOR, 'phetioFeatured must be a boolean' );
-    assert && validate( options.phetioEventMetadata, OBJECT_VALIDATOR, 'object literal expected' );
-    assert && validate( options.phetioDynamicElement, BOOLEAN_VALIDATOR, 'phetioDynamicElement must be a boolean' );
-    assert && validate( options.phetioDesigned, BOOLEAN_VALIDATOR, 'phetioDesigned must be a boolean' );
+    assert && validate( options.phetioType, IO_TYPE_VALIDATOR );
+    assert && validate( options.phetioState, merge( {}, BOOLEAN_VALIDATOR, { validationMessage: 'phetioState must be a boolean' } ) );
+    assert && validate( options.phetioReadOnly, merge( {}, BOOLEAN_VALIDATOR, { validationMessage: 'phetioReadOnly must be a boolean' } ) );
+    assert && validate( options.phetioEventType, PHET_IO_EVENT_TYPE_VALIDATOR );
+    assert && validate( options.phetioDocumentation, PHET_IO_DOCUMENTATION_VALIDATOR );
+    assert && validate( options.phetioHighFrequency, merge( {}, BOOLEAN_VALIDATOR, { validationMessage: 'phetioHighFrequency must be a boolean' } ) );
+    assert && validate( options.phetioPlayback, merge( {}, BOOLEAN_VALIDATOR, { validationMessage: 'phetioPlayback must be a boolean' } ) );
+    assert && validate( options.phetioFeatured, merge( {}, BOOLEAN_VALIDATOR, { validationMessage: 'phetioFeatured must be a boolean' } ) );
+    assert && validate( options.phetioEventMetadata, merge( {}, OBJECT_VALIDATOR, { validationMessage: 'object literal expected' } ) );
+    assert && validate( options.phetioDynamicElement, merge( {}, BOOLEAN_VALIDATOR, { validationMessage: 'phetioDynamicElement must be a boolean' } ) );
+    assert && validate( options.phetioDesigned, merge( {}, BOOLEAN_VALIDATOR, { validationMessage: 'phetioDesigned must be a boolean' } ) );
 
     assert && assert( this.linkedElements !== null, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
 

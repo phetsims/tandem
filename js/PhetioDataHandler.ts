@@ -172,11 +172,11 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
     );
     for ( let i = 0; i < this.parameters.length; i++ ) {
       const parameter = this.parameters[ i ];
-      assert && validate( args[ i ], parameter, 'argument does not match provided parameter validator', VALIDATE_OPTIONS_FALSE );
+      assert && validate( args[ i ], parameter, VALIDATE_OPTIONS_FALSE );
 
       // valueType overrides the phetioType validator so we don't use that one if there is a valueType
       if ( parameter.phetioType && !parameter.valueType ) {
-        assert && validate( args[ i ], parameter.phetioType.validator as Validator, 'argument does not match parameter\'s phetioType validator', VALIDATE_OPTIONS_FALSE );
+        assert && validate( args[ i ], parameter.phetioType.validator as Validator, VALIDATE_OPTIONS_FALSE );
       }
     }
   }

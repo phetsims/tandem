@@ -180,6 +180,8 @@ class IOType {
 
     // {Validator}
     this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
+    this.validator.validationMessage = this.validator.validationMessage || `Validation failed IOType Validator: ${this.typeName}`;
+
     this.defaultDeserializationMethod = config.defaultDeserializationMethod;
 
     let stateSchema = config.stateSchema;
@@ -199,7 +201,7 @@ class IOType {
       'toStateObject method must be provided for value StateSchemas' );
 
     this.toStateObject = coreObject => {
-      validate( coreObject, this.validator, 'unexpected parameter to toStateObject', VALIDATE_OPTIONS_FALSE );
+      validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
 
 
       let toStateObject;
@@ -229,7 +231,7 @@ class IOType {
     this.fromStateObject = config.fromStateObject;
     this.stateToArgsForConstructor = config.stateToArgsForConstructor;
     this.applyState = ( coreObject, stateObject ) => {
-      validate( coreObject, this.validator, 'unexpected parameter to applyState', VALIDATE_OPTIONS_FALSE );
+      validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
 
       // Validate, but only if this IOType instance has more to validate than the supertype
       if ( applyStateSupplied || stateSchemaSupplied ) {
