@@ -57,13 +57,13 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
 
     super( createElement, defaultArguments, options );
 
-    // @public (PhetioGroupTests only) {PhetioObject[]} access using getArray or getArrayCopy
+    // (PhetioGroupTests only) {PhetioObject[]} access using getArray or getArrayCopy
     this._array = [];
 
-    // @public (only for PhetioGroupIO) - for generating indices from a pool
+    // (only for PhetioGroupIO) - for generating indices from a pool
     this.groupElementIndex = 0;
 
-    // @public (read-only)
+    // (read-only)
     this.countProperty = new NumberProperty( 0, {
       tandem: options.tandem.createTandem( 'countProperty' ),
       phetioDocumentation: 'the number of elements in the group',
@@ -88,7 +88,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   }
 
   /**
-   * @public
    */
   override dispose() {
     assert && assert( false, 'PhetioGroup not intended for disposal' );
@@ -104,7 +103,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    *
    * @param {T} element
    * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
-   * @public
    */
   override disposeElement( element: T, fromStateSetting = false ) {
     assert && assert( !element.isDisposed, 'element already disposed' );
@@ -118,7 +116,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Gets a reference to the underlying array. DO NOT create/dispose elements while iterating, or otherwise modify
    * the array.  If you need to modify the array, use getArrayCopy.
-   * @public
    */
   getArray() {
     return this._array;
@@ -127,7 +124,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Gets a copy of the underlying array. Use this method if you need to create/dispose elements while iterating,
    * or otherwise modify the group's array.
-   * @public
    */
   getArrayCopy() {
     return this._array.slice();
@@ -148,7 +144,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Returns an array with elements that pass the filter predicate.
    * @param {function(PhetioObject)} predicate
-   * @public
    */
   filter( predicate: ( t: T ) => boolean ) { return this._array.filter( predicate ); }
 
@@ -246,7 +241,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param index - the number of the individual element
    * @param argsForCreateFunction
    * @param [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
-   * @public (PhetioGroupIO)
+   * (PhetioGroupIO)
    */
   createIndexedElement( index: number, argsForCreateFunction: P, fromStateSetting = false ): T {
     assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
@@ -303,7 +298,7 @@ PhetioGroup.PhetioGroupIO = parameterType => {
       /**
        * Creates an element and adds it to the group
        * @throws CouldNotYetDeserializeError - if it could not yet deserialize
-       * @public (PhetioStateEngine)
+       * (PhetioStateEngine)
        */
       addChildElement( group: PhetioGroup<any>, componentName: string, stateObject: any ): PhetioObject {
 

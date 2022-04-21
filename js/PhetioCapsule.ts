@@ -44,7 +44,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
 
     super( createElement, defaultArguments, options );
 
-    // @public (read-only PhetioCapsuleIO) {PhetioObject}
+    // (read-only PhetioCapsuleIO) {PhetioObject}
     this.element = null;
   }
 
@@ -64,7 +64,6 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * Creates the element if it has not been created yet, and returns it.
    * @param {Array.<*>} [argsForCreateFunction]
    * @returns {Object}
-   * @public
    */
   getElement( ...argsForCreateFunction: P ) {
     if ( !this.element ) {
@@ -93,7 +92,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * @param {Array.<*>} argsForCreateFunction
    * @param {boolean} [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
    * @returns {Object}
-   * @public (phet-io)
+   * (phet-io)
    */
   create( argsForCreateFunction: any, fromStateSetting = false ): T {
     assert && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioCapsules? see https://github.com/phetsims/tandem/issues/184' );
