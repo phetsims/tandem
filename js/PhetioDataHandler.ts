@@ -16,23 +16,15 @@ import Tandem from './Tandem.js';
 import IOType from './types/IOType.js';
 import axon from '../../axon/js/axon.js';
 import validate from '../../axon/js/validate.js';
-import ValidatorDef, { Validator } from '../../axon/js/ValidatorDef.js';
+import Validation, { Validator } from '../../axon/js/Validation.js';
 
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
-type Constructor = new ( ...args: any[] ) => {};
-
-type ValueType = Constructor | string | null;
-
-// TODO: update once we have ValidatorDef converted. https://github.com/phetsims/phet-io/issues/1543
 export type Parameter = {
   name?: string;
-  phetioType?: IOType;
   phetioDocumentation?: string;
   phetioPrivate?: boolean;
-  valueType?: ValueType | ValueType[];
-  validValues?: any[];
-};
+} & Validator;
 
 // Simulations have thousands of Emitters, so we re-use objects where possible.
 const EMPTY_ARRAY: Parameter[] = [];
@@ -50,7 +42,7 @@ const PARAMETER_KEYS = [
   'phetioPrivate'
 
   // @ts-ignore
-].concat( ValidatorDef.VALIDATOR_KEYS );
+].concat( Validation.VALIDATOR_KEYS );
 
 // helper closures
 const paramToPhetioType = ( param: Parameter ) => param.phetioType!;
@@ -144,7 +136,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
       ] );
 
       // @ts-ignore
-      assert && assert( _.intersection( Object.keys( parameter ), ValidatorDef.VALIDATOR_KEYS ).length > 0,
+      assert && assert( _.intersection( Object.keys( parameter ), Validation.VALIDATOR_KEYS ).length > 0,
         `validator must be specified for parameter ${i}` );
 
       for ( const key in parameter ) {
@@ -156,7 +148,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 
       // validate the options passed in to validate each PhetioDataHandler argument
       // @ts-ignore
-      ValidatorDef.validateValidator( parameter );
+      Validation.validateValidator( parameter );
     }
 
     // Changing after construction indicates a logic error.
