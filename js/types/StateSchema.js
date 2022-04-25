@@ -13,7 +13,7 @@
  */
 
 import validate from '../../../axon/js/validate.js';
-import ValidatorDef from '../../../axon/js/ValidatorDef.js';
+import Validation from '../../../axon/js/Validation.js';
 import assertMutuallyExclusiveOptions from '../../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../../phet-core/js/merge.js';
 import tandemNamespace from '../tandemNamespace.js';
@@ -184,7 +184,7 @@ class StateSchema {
       if ( toAssert ) {
         validate( stateObject, this.validator );
       }
-      return ValidatorDef.isValueValid( stateObject, this.validator );
+      return Validation.isValueValid( stateObject, this.validator );
     }
   }
 

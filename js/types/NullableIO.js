@@ -16,7 +16,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import ValidatorDef from '../../../axon/js/ValidatorDef.js';
+import Validation from '../../../axon/js/Validation.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
@@ -35,7 +35,7 @@ const NullableIO = parameterType => {
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType( `NullableIO<${parameterType.typeName}>`, {
       documentation: 'An IOType adding support for null in addition to the behavior of its parameter.',
-      isValidValue: instance => instance === null || ValidatorDef.isValueValid( instance, parameterType.validator ),
+      isValidValue: instance => instance === null || Validation.isValueValid( instance, parameterType.validator ),
       parameterTypes: [ parameterType ],
 
       // If the argument is null, returns null. Otherwise converts the instance to a state object for serialization.

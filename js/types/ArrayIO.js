@@ -7,7 +7,7 @@
  * @author Andrew Adare (PhET Interactive Simulations)
  */
 
-import ValidatorDef from '../../../axon/js/ValidatorDef.js';
+import Validation from '../../../axon/js/Validation.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
@@ -28,7 +28,7 @@ const ArrayIO = parameterType => {
     cache.set( parameterType, new IOType( `ArrayIO<${parameterType.typeName}>`, {
       valueType: Array,
       isValidValue: array => {
-        return _.every( array, element => ValidatorDef.isValueValid( element, parameterType.validator ) );
+        return _.every( array, element => Validation.isValueValid( element, parameterType.validator ) );
       },
       parameterTypes: [ parameterType ],
       toStateObject: array => array.map( parameterType.toStateObject ),

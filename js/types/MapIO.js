@@ -9,7 +9,7 @@
  * @author Jesse Greenberg (PhET Interactive Simulations)
  */
 
-import ValidatorDef from '../../../axon/js/ValidatorDef.js';
+import Validation from '../../../axon/js/Validation.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
@@ -42,10 +42,10 @@ const MapIO = ( keyType, valueType ) => {
       valueType: Map,
       isValidValue: map => {
         for ( const [ key, value ] of map ) {
-          if ( !ValidatorDef.isValueValid( key, keyType.validator ) ) {
+          if ( !Validation.isValueValid( key, keyType.validator ) ) {
             return false;
           }
-          if ( !ValidatorDef.isValueValid( value, valueType.validator ) ) {
+          if ( !Validation.isValueValid( value, valueType.validator ) ) {
             return false;
           }
         }
@@ -68,7 +68,7 @@ const MapIO = ( keyType, valueType ) => {
       documentation: 'IO Type for the built-in JS Map type, with the key and value types specified.',
       stateSchema: StateSchema.asValue( `Map<${keyType.typeName},${valueType.typeName}>`, {
         isValidValue: stateObject => {
-          if ( !ValidatorDef.isValueValid( stateObject, ARRAY_OF_ARRAY_VALIDATOR ) ) {
+          if ( !Validation.isValueValid( stateObject, ARRAY_OF_ARRAY_VALIDATOR ) ) {
             return false;
           }
           for ( let i = 0; i < stateObject.length; i++ ) {

@@ -8,7 +8,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import ValidatorDef from '../../../axon/js/ValidatorDef.js';
+import Validation from '../../../axon/js/Validation.js';
 import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
@@ -30,7 +30,7 @@ const ReferenceIO = parameterType => {
 
     assert && assert( typeof parameterType.typeName === 'string', 'type name should be a string' );
     cache.set( cacheKey, new IOType( `ReferenceIO<${parameterType.typeName}>`, {
-      isValidValue: value => ValidatorDef.isValueValid( value, parameterType.validator ),
+      isValidValue: value => Validation.isValueValid( value, parameterType.validator ),
       documentation: 'Uses reference identity for serializing and deserializing, and validates based on its parameter IO Type.',
       parameterTypes: [ parameterType ],
 

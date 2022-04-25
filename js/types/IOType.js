@@ -9,7 +9,7 @@
  */
 
 import validate from '../../../axon/js/validate.js';
-import ValidatorDef from '../../../axon/js/ValidatorDef.js';
+import Validation from '../../../axon/js/Validation.js';
 import EnumerationDeprecated from '../../../phet-core/js/EnumerationDeprecated.js';
 import merge from '../../../phet-core/js/merge.js';
 import required from '../../../phet-core/js/required.js';
@@ -152,7 +152,7 @@ class IOType {
       addChildElement: supertype && supertype.addChildElement
     }, required( config ) );
 
-    assert && assert( ValidatorDef.containsValidatorKey( config ), 'Validator is required' );
+    assert && assert( Validation.containsValidatorKey( config ), 'Validator is required' );
     assert && assert( Array.isArray( config.events ) );
     assert && assert( Object.getPrototypeOf( config.metadataDefaults ) === Object.prototype, 'Extra prototype on metadata keys' );
     assert && assert( Object.getPrototypeOf( config.dataDefaults ) === Object.prototype, 'Extra prototype on data defaults' );
@@ -179,7 +179,7 @@ class IOType {
     this.parameterTypes = config.parameterTypes;
 
     // {Validator}
-    this.validator = _.pick( config, ValidatorDef.VALIDATOR_KEYS );
+    this.validator = _.pick( config, Validation.VALIDATOR_KEYS );
     this.validator.validationMessage = this.validator.validationMessage || `Validation failed IOType Validator: ${this.typeName}`;
 
     this.defaultDeserializationMethod = config.defaultDeserializationMethod;

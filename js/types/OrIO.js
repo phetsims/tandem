@@ -14,7 +14,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import ValidatorDef from '../../../axon/js/ValidatorDef.js';
+import Validation from '../../../axon/js/Validation.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
@@ -37,7 +37,7 @@ const OrIO = parameterTypes => {
     const isValidValue = instance => {
       for ( let i = 0; i < parameterTypes.length; i++ ) {
         const parameterType = parameterTypes[ i ];
-        if ( ValidatorDef.isValueValid( instance, parameterType.validator ) ) {
+        if ( Validation.isValueValid( instance, parameterType.validator ) ) {
           return true;
         }
       }
@@ -51,7 +51,7 @@ const OrIO = parameterTypes => {
       toStateObject: instance => {
         for ( let i = 0; i < parameterTypes.length; i++ ) {
           const parameterType = parameterTypes[ i ];
-          if ( ValidatorDef.isValueValid( instance, parameterType.validator ) ) {
+          if ( Validation.isValueValid( instance, parameterType.validator ) ) {
             return {
               index: i,
               state: parameterType.toStateObject( instance )
