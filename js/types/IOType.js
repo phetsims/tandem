@@ -1,4 +1,5 @@
 // Copyright 2020-2022, University of Colorado Boulder
+// @ts-nocheck
 
 /**
  * IO Types form a synthetic type system used to describe PhET-iO Elements. A PhET-iO Element is an instrumented PhetioObject
