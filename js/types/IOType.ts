@@ -1,5 +1,4 @@
 // Copyright 2020-2022, University of Colorado Boulder
-// @ts-nocheck
 
 /**
  * IO Types form a synthetic type system used to describe PhET-iO Elements. A PhET-iO Element is an instrumented PhetioObject
@@ -10,19 +9,22 @@
  */
 
 import validate from '../../../axon/js/validate.js';
-import Validation from '../../../axon/js/Validation.js';
-import EnumerationDeprecated from '../../../phet-core/js/EnumerationDeprecated.js';
+import Validation, { Validator } from '../../../axon/js/Validation.js';
+import Enumeration from '../../../phet-core/js/Enumeration.js';
+import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
 import merge from '../../../phet-core/js/merge.js';
-import required from '../../../phet-core/js/required.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import PhetioConstants from '../PhetioConstants.js';
 import TandemConstants from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 import StateSchema from './StateSchema.js';
+import PhetioObject from '../PhetioObject.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 // Defined at the bottom of this file
+// @ts-ignore
 let ObjectIO = null;
 
 /**
@@ -31,7 +33,7 @@ let ObjectIO = null;
  * @returns {string}
  * @private
  */
-const getCoreTypeName = ioTypeName => {
+const getCoreTypeName = ( ioTypeName: string ): string => {
   const index = ioTypeName.indexOf( PhetioConstants.IO_TYPE_SUFFIX );
   assert && assert( index >= 0, 'IO should be in the type name' );
   return ioTypeName.substring( 0, index );
@@ -39,9 +41,60 @@ const getCoreTypeName = ioTypeName => {
 
 // Currently, this is only the list of methods that default stateSchema applyState functions support when deserializing
 // componenents
-const DeserializationMethod = EnumerationDeprecated.byKeys( [ 'FROM_STATE_OBJECT', 'APPLY_STATE' ] );
+// TODO: https://github.com/phetsims/tandem/issues/261 let's use string union literal probably
+class DeserializationMethod extends EnumerationValue {
+  static FROM_STATE_OBJECT = new DeserializationMethod();
+  static APPLY_STATE = new DeserializationMethod();
 
-class IOType {
+  // Make sure this is last, once all EnumerationValues have been declared statically.
+  static enumeration = new Enumeration( DeserializationMethod );
+}
+
+type IOTypeOptions<T> = {
+  supertype?: IOType<any> | null;
+  toStateObject?: ( t: T ) => any;
+  fromStateObject?: any;
+  stateToArgsForConstructor?: any;
+  applyState?: ( t: T, state: any ) => void;
+  stateSchema?: ( ( ioType: IOType<T> ) => StateSchema ) | StateSchema | ( { [ key: string ]: IOType } ) | null;
+  events?: string[];
+  dataDefaults?: { [ key: string ]: unknown };
+  metadataDefaults?: { [ key: string ]: unknown };
+  defaultDeserializationMethod?: DeserializationMethod;
+  documentation?: string;
+  methods?: unknown;
+  methodOrder?: string[];
+  parameterTypes?: IOType<unknown>[];
+  isFunctionType?: boolean;
+  addChildElement?: any;
+} & Validator<T>;
+
+// TODO https://github.com/phetsims/tandem/issues/261 don't be unknown
+class IOType<T = unknown> {
+  readonly supertype?: IOType<unknown>;
+  readonly typeName: string;
+  readonly documentation?: any;
+  readonly methods?: any;
+  readonly events: string[];
+  readonly metadataDefaults?: { [ key: string ]: unknown };
+  readonly dataDefaults?: { [ key: string ]: unknown };
+  readonly methodOrder?: string[];
+  readonly parameterTypes?: any;
+
+  readonly toStateObject: any;
+  readonly fromStateObject: any;
+  readonly stateToArgsForConstructor: any;
+  readonly applyState: any;
+  readonly addChildElement: any;
+  readonly validator: any;
+  readonly defaultDeserializationMethod: DeserializationMethod;
+
+  // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
+  // see getAllStateSchema().
+  readonly stateSchema: StateSchema;
+  static ObjectIO: IOType<unknown>;
+  static DeserializationMethod: typeof DeserializationMethod;
+  isFunctionType: any;
 
   /**
    * @param {string} ioTypeName - The name that this IOType will have in the public PhET-iO API. In general, this should
@@ -51,18 +104,21 @@ class IOType {
    *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
    *    with an open paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
    *    Parameterized types should also include a `parameterTypes` field on the IOType.
-   * @param {Object} config
+   * @param {Object} providedOptions
    */
-  constructor( ioTypeName, config ) {
+  constructor( ioTypeName: string, providedOptions: IOTypeOptions<T> ) {
     assert && assert( typeof ioTypeName === 'string', 'ioTypeName should be a string' );
 
     // For reference in the config
-    const supertype = config.supertype || ObjectIO;
-    const toStateObjectSupplied = !!( config.toStateObject );
-    const applyStateSupplied = !!( config.applyState );
-    const stateSchemaSupplied = !!( config.stateSchema );
+    // @ts-ignore
+    const supertype = providedOptions.supertype || ObjectIO;
+    const toStateObjectSupplied = !!( providedOptions.toStateObject );
+    const applyStateSupplied = !!( providedOptions.applyState );
+    const stateSchemaSupplied = !!( providedOptions.stateSchema );
 
-    config = merge( {
+    // TODO: https://github.com/phetsims/phet-core/issues/114
+    // @ts-ignore
+    const config = optionize<IOTypeOptions<T>, IOTypeOptions<T>, IOTypeOptions<T>>()( {
 
       /***** REQUIRED ****/
 
@@ -70,6 +126,7 @@ class IOType {
 
       /***** OPTIONAL ****/
 
+      // @ts-ignore
       supertype: ObjectIO,
 
       // {Object.<string,MethodObject>} The public methods available for this IO Type. Each method is not just a function,
@@ -151,7 +208,7 @@ class IOType {
 
       // For dynamic element containers, see examples in IOTypes for PhetioDynamicElementContainer classes
       addChildElement: supertype && supertype.addChildElement
-    }, required( config ) );
+    }, providedOptions );
 
     assert && assert( Validation.containsValidatorKey( config ), 'Validator is required' );
     assert && assert( Array.isArray( config.events ) );
@@ -168,7 +225,6 @@ class IOType {
                       config.defaultDeserializationMethod === DeserializationMethod.APPLY_STATE,
       'StateSchema\'s default serialization only supports fromStateObject or applyState' );
 
-    // @public (read-only)
     this.supertype = supertype;
     this.typeName = ioTypeName;
     this.documentation = config.documentation;
@@ -191,8 +247,7 @@ class IOType {
       stateSchema = new StateSchema( { compositeSchema: compositeSchema } );
     }
 
-    // @public {StateSchema|null} - The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
-    // see getAllStateSchema().
+    // @ts-ignore
     this.stateSchema = stateSchema;
 
     // Assert that toStateObject method is provided for value StateSchemas. Do this with the following logic:
@@ -201,18 +256,18 @@ class IOType {
     assert && assert( !this.stateSchema || ( toStateObjectSupplied || this.stateSchema.isComposite() ),
       'toStateObject method must be provided for value StateSchemas' );
 
-    this.toStateObject = coreObject => {
+    this.toStateObject = ( coreObject: T ) => {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
 
 
       let toStateObject;
 
       // Only do this non-standard toStateObject function if there is a stateSchema but no toStateObject provided
-      if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema.isComposite() ) {
-        toStateObject = this.stateSchema.defaultToStateObject( coreObject );
+      if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema!.isComposite() ) {
+        toStateObject = this.stateSchema!.defaultToStateObject( coreObject );
       }
       else {
-        toStateObject = config.toStateObject( coreObject );
+        toStateObject = config.toStateObject!( coreObject );
       }
 
       // Validate, but only if this IOType instance has more to validate than the supertype
@@ -231,7 +286,7 @@ class IOType {
     };
     this.fromStateObject = config.fromStateObject;
     this.stateToArgsForConstructor = config.stateToArgsForConstructor;
-    this.applyState = ( coreObject, stateObject ) => {
+    this.applyState = ( coreObject: T, stateObject: any ) => {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
 
       // Validate, but only if this IOType instance has more to validate than the supertype
@@ -240,6 +295,7 @@ class IOType {
         // Validate that the provided stateObject is of the expected schema
         // NOTE: Cannot use this.validateStateObject because config adopts supertype.applyState, which is bounds to the
         // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
+        // @ts-ignore
         assert && coreObject.phetioType.validateStateObject( stateObject );
       }
 
@@ -263,7 +319,7 @@ class IOType {
     assert && assert( this.hasOwnProperty( 'typeName' ), 'this.typeName is required' );
 
     // assert that each public method adheres to the expected schema
-    Object.values( this.methods ).forEach( methodObject => {
+    Object.values( this.methods ).forEach( ( methodObject: any ) => {
       if ( typeof methodObject === 'object' ) {
         assert && assert( Array.isArray( methodObject.parameterTypes ), `parameter types must be an array: ${methodObject.parameterTypes}` );
         assert && assert( typeof methodObject.implementation === 'function', `implementation must be of type function: ${methodObject.implementation}` );
@@ -282,7 +338,7 @@ class IOType {
     if ( supertype ) {
       const typeHierarchy = supertype.getTypeHierarchy();
       assert && this.events && this.events.forEach( event => {
-        assert( !_.some( typeHierarchy, t => t.events.includes( event ) ),
+        assert && assert( !_.some( typeHierarchy, t => t.events.includes( event ) ),
           `this IOType should not declare event that parent also has: ${event}` );
       } );
     }
@@ -298,46 +354,39 @@ class IOType {
 
   /**
    * Gets an array of IOTypes of the self type and all the supertype ancestors.
-   * @returns {IOType[]}
-   * @public
    */
-  getTypeHierarchy() {
+  getTypeHierarchy(): IOType[] {
     const array = [];
-    let ioType = this; // eslint-disable-line
+    let ioType: IOType = this; // eslint-disable-line
     while ( ioType ) {
       array.push( ioType );
-      ioType = ioType.supertype;
+      ioType = ioType.supertype!;
     }
     return array;
   }
 
   /**
    * Return all the metadata defaults (for the entire IO Type hierarchy)
-   * @returns {Object}
-   * @public
    */
-  getAllMetadataDefaults() {
+  getAllMetadataDefaults(): { [ key: string ]: unknown } {
     return _.merge( {}, this.supertype ? this.supertype.getAllMetadataDefaults() : {}, this.metadataDefaults );
   }
 
   /**
    * Return all the data defaults (for the entire IO Type hierarchy)
-   * @returns {Object}
-   * @public
    */
-  getAllDataDefaults() {
+  getAllDataDefaults(): { [ key: string ]: unknown } {
     return _.merge( {}, this.supertype ? this.supertype.getAllDataDefaults() : {}, this.dataDefaults );
   }
 
   /**
-   * @public
    * @param {Object} stateObject - the stateObject to validate against
    * @param {boolean} toAssert=false - whether or not to assert when invalid
    * @param {string[]} publicSchemaKeys=[]
    * @param {string[]} privateSchemaKeys=[]
    * @returns {boolean} if the stateObject is valid or not.
    */
-  isStateObjectValid( stateObject, toAssert = false, publicSchemaKeys = [], privateSchemaKeys = [] ) {
+  isStateObjectValid( stateObject: any, toAssert = false, publicSchemaKeys: string[] = [], privateSchemaKeys: string[] = [] ): boolean {
 
     // Set to false when invalid
     let valid = true;
@@ -359,7 +408,7 @@ class IOType {
     // When we reach the root, make sure there isn't anything in the stateObject that isn't described by a schema
     if ( !this.supertype && stateObject && typeof stateObject !== 'string' && !Array.isArray( stateObject ) ) {
 
-      const check = ( type, key ) => {
+      const check = ( type: string, key: string ) => {
         assert && assert( type === 'public' || type === 'private', `bad type: ${type}` );
         const keys = type === 'public' ? publicSchemaKeys : privateSchemaKeys;
         const keyValid = keys.includes( key );
@@ -382,10 +431,8 @@ class IOType {
 
   /**
    * Assert if the provided stateObject is not valid to this IOType's stateSchema
-   * @public
-   * @param {Object} stateObject
    */
-  validateStateObject( stateObject ) {
+  validateStateObject( stateObject: unknown ): void {
     this.isStateObjectValid( stateObject, true );
   }
 
@@ -406,14 +453,13 @@ class IOType {
    * For more information on how to support serialization and PhET-iO state, please see
    * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#serialization
    *
-   * @public
    * @param {string} ioTypeName - see IOType constructor for details
    * @param {function} CoreType - the PhET "core" type class/constructor associated with this IOType being created.
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param {Object} [options]
    * @returns {IOType}
    */
-  static fromCoreType( ioTypeName, CoreType, options ) {
+  static fromCoreType<T>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T> ) {
 
     if ( assert && options ) {
       assert && assert( !options.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
@@ -426,6 +472,7 @@ class IOType {
     let coreTypeHasToStateObject = false;
     let coreTypeHasApplyState = false;
 
+    // @ts-ignore
     let proto = CoreType.prototype;
     while ( proto ) {
       assert && assert( !proto.hasOwnProperty( 'fromStateObject' ),
@@ -448,10 +495,14 @@ class IOType {
 
     // Only specify if supplying toStateObject, otherwise stateSchema will handle things for us.
     if ( coreTypeHasToStateObject ) {
+
+      // @ts-ignore
       options.toStateObject = coreType => coreType.toStateObject();
     }
 
     if ( coreTypeHasApplyState ) {
+
+      // @ts-ignore
       options.applyState = ( coreType, stateObject ) => coreType.applyState( stateObject );
     }
     if ( CoreType.fromStateObject ) {
@@ -468,7 +519,6 @@ class IOType {
   }
 }
 
-// @public - deserialization methods supported by IOType
 IOType.DeserializationMethod = DeserializationMethod;
 
 // default state value
@@ -478,7 +528,8 @@ ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',
-  toStateObject: coreObject => {
+  toStateObject: ( coreObject: PhetioObject ) => {
+
     assert && assert( !coreObject.phetioState,
       `fell back to root serialization state for ${coreObject.tandem.phetioID}. Potential solutions:
        * mark the type as phetioState: false
@@ -486,7 +537,9 @@ ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
        * perhaps you have everything right, but forgot to pass in the IOType via phetioType in the constructor` );
     return DEFAULT_STATE;
   },
+  // @ts-ignore
   fromStateObject: stateObject => null,
+  // @ts-ignore
   stateToArgsForConstructor: stateObject => [],
   applyState: ( coreObject, stateObject ) => { },
   metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS,
@@ -496,7 +549,6 @@ ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
   stateSchema: null
 } );
 
-// @public
 IOType.ObjectIO = ObjectIO;
 
 /**
