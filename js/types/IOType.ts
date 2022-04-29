@@ -459,7 +459,7 @@ class IOType<T = unknown> {
    * @param {Object} [options]
    * @returns {IOType}
    */
-  static fromCoreType<T>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T> ) {
+  static fromCoreType<T>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T> ): IOType<T> {
 
     if ( assert && options ) {
       assert && assert( !options.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );

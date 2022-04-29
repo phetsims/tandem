@@ -288,7 +288,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
   /**
    * A dynamic element should be an instrumented PhetioObject with phetioDynamicElement: true
    */
-  private assertDynamicPhetioObject( phetioObject: T ) {
+  private assertDynamicPhetioObject( phetioObject: T ): void {
     if ( Tandem.PHET_IO_ENABLED && Tandem.VALIDATION ) {
       assert && assert( phetioObject.isPhetioInstrumented(), 'instance should be instrumented' );
       assert && assert( phetioObject.phetioDynamicElement, 'instance should be marked as phetioDynamicElement:true' );
@@ -320,11 +320,11 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
   /**
    * Emit events when dynamic elements are disposed.
    */
-  private disposedEventListener( dynamicElement: T ) {
+  private disposedEventListener( dynamicElement: T ): void {
     this.emitDataStreamEvent( dynamicElement, 'disposed' );
   }
 
-  override dispose() {
+  override dispose(): void {
 
     // If hitting this assertion because of nested dynamic element containers, please discuss with a phet-io team member.
     assert && assert( false, 'PhetioDynamicElementContainers are not intended for disposal' );
@@ -369,7 +369,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
    * Flush a single element from the list of deferred disposals that have not yet notified about the disposal. This
    * should never be called publicly, instead see `disposeElement`
    */
-  private notifyElementDisposedWhileDeferred( disposedElement: T ) {
+  private notifyElementDisposedWhileDeferred( disposedElement: T ): void {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
     assert && assert( this.deferredDisposals.indexOf( disposedElement ) >= 0, 'disposedElement should not have been already notified' );
     this.elementDisposedEmitter.emit( disposedElement );
@@ -379,7 +379,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
   /**
    * Should be called by subtypes upon element creation, see PhetioGroup as an example.
    */
-  protected notifyElementCreated( createdElement: T ) {
+  protected notifyElementCreated( createdElement: T ): void {
     if ( this.notificationsDeferred ) {
       this.deferredCreations.push( createdElement );
     }
@@ -393,7 +393,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
    * is only public to support specific order dependencies in the PhetioStateEngine, otherwise see `this.notifyElementCreated()`
    * (PhetioGroupTests, phet-io) - only the PhetioStateEngine should notify individual elements created.
    */
-  notifyElementCreatedWhileDeferred( createdElement: T ) {
+  notifyElementCreatedWhileDeferred( createdElement: T ): void {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
     assert && assert( this.deferredCreations.indexOf( createdElement ) >= 0, 'createdElement should not have been already notified' );
     this.elementCreatedEmitter.emit( createdElement );

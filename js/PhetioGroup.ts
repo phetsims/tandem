@@ -89,7 +89,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
 
   /**
    */
-  override dispose() {
+  override dispose(): void {
     assert && assert( false, 'PhetioGroup not intended for disposal' );
   }
 
@@ -104,7 +104,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param {T} element
    * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    */
-  override disposeElement( element: T, fromStateSetting = false ) {
+  override disposeElement( element: T, fromStateSetting = false ): void {
     assert && assert( !element.isDisposed, 'element already disposed' );
     arrayRemove( this._array, element );
 
@@ -117,7 +117,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * Gets a reference to the underlying array. DO NOT create/dispose elements while iterating, or otherwise modify
    * the array.  If you need to modify the array, use getArrayCopy.
    */
-  getArray() {
+  getArray(): T[] {
     return this._array;
   }
 
@@ -125,7 +125,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * Gets a copy of the underlying array. Use this method if you need to create/dispose elements while iterating,
    * or otherwise modify the group's array.
    */
-  getArrayCopy() {
+  getArrayCopy(): T[] {
     return this._array.slice();
   }
 
@@ -145,12 +145,12 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * Returns an array with elements that pass the filter predicate.
    * @param {function(PhetioObject)} predicate
    */
-  filter( predicate: ( t: T ) => boolean ) { return this._array.filter( predicate ); }
+  filter( predicate: ( t: T ) => boolean ): T[] { return this._array.filter( predicate ); }
 
   /**
    * Does the group include the specified element?
    */
-  includes( element: T ) { return this._array.includes( element ); }
+  includes( element: T ): boolean { return this._array.includes( element ); }
 
   /**
    * Gets the index of the specified element in the underlying array.
@@ -161,22 +161,22 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Runs the function on each element of the group.
    */
-  forEach( action: ( t: T ) => void ) { this._array.forEach( action ); }
+  forEach( action: ( t: T ) => void ): void { this._array.forEach( action ); }
 
   /**
    * Use the predicate to find the first matching occurrence in the array.
    */
-  find( predicate: ( t: T ) => boolean ) { return this._array.find( predicate ); }
+  find( predicate: ( t: T ) => boolean ): T | undefined { return this._array.find( predicate ); }
 
   /**
    * Returns an array with every element mapped to a new one.
    */
-  map<U>( f: ( t: T ) => U ) { return this._array.map( f ); }
+  map<U>( f: ( t: T ) => U ): U[] { return this._array.map( f ); }
 
   /**
    * Remove and dispose all registered group elements
    */
-  override clear( options?: any ) {
+  override clear( options?: any ): void {
     options = merge( {
 
       // used for validation during state setting (phet-io internal), see PhetioDynamicElementContainer.disposeElement for documentation
@@ -208,7 +208,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
    *                                      `stateToArgsForConstructor` method
    */
-  createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ) {
+  createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ): T {
 
     // @ts-ignore
     const index = window.phetio.PhetioIDUtils.getGroupElementIndex( tandemName );

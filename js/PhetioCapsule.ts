@@ -65,7 +65,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * @param {Array.<*>} [argsForCreateFunction]
    * @returns {Object}
    */
-  getElement( ...argsForCreateFunction: P ) {
+  getElement( ...argsForCreateFunction: P ): T | null {
     if ( !this.element ) {
       this.create( argsForCreateFunction );
     }
@@ -75,7 +75,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
   /**
    * @param {object} [options]
    */
-  override clear( options?: any ) {
+  override clear( options?: any ): void {
     options = merge( {
 
       // Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
