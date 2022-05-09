@@ -140,6 +140,10 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
     return this._array[ index ];
   }
 
+  getLastElement(): T | undefined {
+    return this._array[ this.count - 1 ];
+  }
+
   /**
    * Gets the number of elements in the group.
    */
