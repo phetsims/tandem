@@ -17,7 +17,8 @@
 import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
-import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
+import optionize from '../../phet-core/js/optionize.js';
+import PhetioDynamicElementContainer, { PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -28,6 +29,9 @@ const DEFAULT_CONTAINER_SUFFIX = 'Group';
 
 // Type of a derivation function, that returns T and takes the typed parameters (as a tuple type)
 // type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
+
+type SelfOptions = {};
+export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
 // A extends ( ...args: any[] ) => any, B extends Parameters<A>
 class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDynamicElementContainer<T, P> {
@@ -43,17 +47,17 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype.
    *                                       Note: if `createElement` supports options, but don't need options for this
    *                                       defaults array, you should pass an empty object here anyways.
-   * @param {Object} [options] - describe the Group itself
+   * @param {Object} [providedOptions] - describe the Group itself
    */
-  constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
+  constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioGroupOptions ) {
 
-    options = merge( {
+    const options = optionize<PhetioGroupOptions, SelfOptions, PhetioDynamicElementContainerOptions>()( {
       tandem: Tandem.OPTIONAL,
 
       // {string} The group's tandem name must have this suffix, and the base tandem name for elements of
       // the group will consist of the group's tandem name with this suffix stripped off.
       containerSuffix: DEFAULT_CONTAINER_SUFFIX
-    }, options );
+    }, providedOptions );
 
     super( createElement, defaultArguments, options );
 

@@ -44,10 +44,10 @@ type SelfOptions = {
   containerSuffix?: string;
 
   // tandem name for elements in the container is the container's tandem name without containerSuffix
-  phetioDynamicElementName: string;
+  phetioDynamicElementName?: string;
 }
 
-type PhetioDynamicElementContainerOptions = SelfOptions & PhetioObjectOptions & PickRequired<PhetioObjectOptions, 'phetioType'>;
+export type PhetioDynamicElementContainerOptions = SelfOptions & Omit<PhetioObjectOptions, 'phetioDynamicElement'> & PickRequired<PhetioObjectOptions, 'phetioType'>;
 
 
 type ClearOptions = {
@@ -92,7 +92,11 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
       // Many PhET-iO instrumented types live in common code used by multiple sims, and may only be instrumented in a subset of their usages.
       tandem: Tandem.OPTIONAL,
       supportsDynamicState: true,
-      containerSuffix: DEFAULT_CONTAINER_SUFFIX
+      containerSuffix: DEFAULT_CONTAINER_SUFFIX,
+
+      // TODO: https://github.com/phetsims/tandem/issues/254
+      // @ts-ignore - this is filled in below
+      phetioDynamicElementName: undefined
     }, providedOptions );
 
     assert && assert( typeof createElement === 'function', 'createElement should be a function' );
