@@ -137,11 +137,12 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * Returns the element at the specified index
    */
   getElement( index: number ): T {
+    assert && assert( index >= 0 && index < this.count, 'index out of bounds: ' + index + ', array length is ' + this.count );
     return this._array[ index ];
   }
 
-  getLastElement(): T | undefined {
-    return this._array[ this.count - 1 ];
+  getLastElement(): T {
+    return this.getElement( this.count - 1 );
   }
 
   /**
