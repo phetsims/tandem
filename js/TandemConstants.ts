@@ -35,17 +35,20 @@ export type PhetioTypes = {
     methods: Method[];
     supertype: string;
     typeName: string;
-    documentation: string,
-    events: string[],
-    metadataDefaults: PhetioObjectMetadata,
-    dataDefaults: Object,
+    documentation: string;
+    events: string[];
+    metadataDefaults: PhetioObjectMetadata;
+    dataDefaults: Object;
     methodOrder: string[];
-  }
+  };
 }
 
 // Like the generate API files
 export type API = {
-  version: { major: number, minor: number },
+  version: {
+    major: number;
+    minor: number;
+  };
   phetioFullAPI?: boolean;
   sim: string;
   phetioElements: PhetioElements;
@@ -54,7 +57,7 @@ export type API = {
 
 // Like the old API schema, where keys are the full, dot-separated phetioID
 export type APIFlat = {
-  [ name: string ]: PhetioElement
+  [ name: string ]: PhetioElement;
 }
 
 export type PhetioObjectMetadata = {
