@@ -13,7 +13,7 @@ const OBJECT_IO_TYPE_NAME = 'ObjectIO';
 const EVENT_TYPE_MODEL = 'MODEL';
 
 export type PhetioElementData = {
-  initialState: Object;
+  initialState: Record<string, unknown>;
 }
 
 export type PhetioElement = {
@@ -38,7 +38,7 @@ export type PhetioTypes = {
     documentation: string;
     events: string[];
     metadataDefaults: PhetioObjectMetadata;
-    dataDefaults: Object;
+    dataDefaults: Record<string, unknown>;
     methodOrder: string[];
   };
 }

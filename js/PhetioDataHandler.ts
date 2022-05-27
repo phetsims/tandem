@@ -177,7 +177,7 @@ class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
    * Gets the data that will be emitted to the PhET-iO data stream, for an instrumented simulation.
    * @returns the data, keys dependent on parameter metadata
    */
-  getPhetioData( ...args: T ): null | Object {
+  getPhetioData( ...args: T ): null | Record<string, unknown> {
 
     assert && assert( Tandem.PHET_IO_ENABLED, 'should only get phet-io data in phet-io brand' );
 

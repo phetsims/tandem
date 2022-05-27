@@ -302,7 +302,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
   /**
    * Emit a created or disposed event.
    */
-  private emitDataStreamEvent( dynamicElement: T, eventName: string, additionalData?: Object | null ): void {
+  private emitDataStreamEvent( dynamicElement: T, eventName: string, additionalData?: Record<string, unknown> | null ): void {
     this.phetioStartEvent( eventName, {
       data: merge( {
         phetioID: dynamicElement.tandem.phetioID
