@@ -14,7 +14,7 @@
  */
 
 import Emitter from '../../axon/js/Emitter.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
@@ -48,7 +48,7 @@ type SelfOptions = {
   phetioDynamicElementName?: string;
 }
 
-export type PhetioDynamicElementContainerOptions = SelfOptions & OmitStrict<PhetioObjectOptions, 'phetioDynamicElement'> & PickRequired<PhetioObjectOptions, 'phetioType'>;
+export type PhetioDynamicElementContainerOptions = SelfOptions & StrictOmit<PhetioObjectOptions, 'phetioDynamicElement'> & PickRequired<PhetioObjectOptions, 'phetioType'>;
 
 
 type ClearOptions = {

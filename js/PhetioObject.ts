@@ -13,7 +13,7 @@
  */
 
 import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
@@ -109,7 +109,7 @@ assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType )
   'phetioEventType must have the same default as the default metadata values.' );
 
 // Options for creating a PhetioObject
-export type PhetioObjectOptions = OmitStrict<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
+export type PhetioObjectOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
   'phetioIsArchetype' | 'phetioEventType'> & {
   tandem?: Tandem;
   phetioType?: IOType;
@@ -121,7 +121,7 @@ export type PhetioObjectOptions = OmitStrict<Partial<PhetioObjectMetadata>, 'phe
   };
 };
 
-type PhetioObjectMetadataKeys = keyof ( OmitStrict<PhetioObjectMetadata, 'phetioTypeName'> ) | 'phetioType';
+type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName'> ) | 'phetioType';
 export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
 
 export type LinkableElement = Pick<PhetioObject, 'phetioFeatured' | 'isPhetioInstrumented'>;

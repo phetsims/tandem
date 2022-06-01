@@ -17,7 +17,7 @@ import IOType from './types/IOType.js';
 import axon from '../../axon/js/axon.js';
 import validate from '../../axon/js/validate.js';
 import Validation, { Validator } from '../../axon/js/Validation.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
@@ -56,7 +56,7 @@ type SelfOptions = {
 
 // Use each subtype should provide its own phetioOuterType. That coupled with parameter IOTypes will result in the
 // phetioType. Don't pass this in!
-export type PhetioDataHandlerOptions = SelfOptions & OmitStrict<PhetioObjectOptions, 'phetioType'>;
+export type PhetioDataHandlerOptions = SelfOptions & StrictOmit<PhetioObjectOptions, 'phetioType'>;
 
 class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
 

@@ -22,7 +22,7 @@ import PhetioDataHandler, { Parameter, PhetioDataHandlerOptions } from './Phetio
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Emitter from '../../axon/js/Emitter.js';
 import PhetioObject from './PhetioObject.js';
-import OmitStrict from '../../phet-core/js/types/OmitStrict.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 
 const EMPTY_ARRAY: Parameter[] = [];
 
@@ -32,7 +32,7 @@ const PHET_IO_STATE_DEFAULT = false;
 // undefined and never are not allowed as parameters to PhetioAction
 type ActionParameter = Exclude<IntentionalAny, undefined | never>;
 
-export type ActionOptions = OmitStrict<PhetioDataHandlerOptions, 'phetioOuterType'>;
+export type ActionOptions = StrictOmit<PhetioDataHandlerOptions, 'phetioOuterType'>;
 
 class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T> {
 
