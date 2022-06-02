@@ -658,9 +658,9 @@ class PhetioObject {
    * JSONifiable metadata that describes the nature of the PhetioObject.  We must be able to read this
    * for baseline (before object fully constructed we use object) and after fully constructed
    * which includes overrides.
-   * @param {Object} [object] - used to get metadata keys, can be a PhetioObject, or an options object
+   * @param [object] - used to get metadata keys, can be a PhetioObject, or an options object
    *                          (see usage initializePhetioObject). If not provided, will instead use the value of "this"
-   * @returns {Object} - metadata plucked from the passed in parameter
+   * @returns - metadata plucked from the passed in parameter
    */
   getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
     object = object || this;

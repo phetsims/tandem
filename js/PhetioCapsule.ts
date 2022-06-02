@@ -63,7 +63,6 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
   /**
    * Creates the element if it has not been created yet, and returns it.
    * @param {Array.<*>} [argsForCreateFunction]
-   * @returns {Object}
    */
   getElement( ...argsForCreateFunction: P ): T | null {
     if ( !this.element ) {
@@ -91,7 +90,6 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * Primarily for internal use, clients should usually use getElement.
    * @param {Array.<*>} argsForCreateFunction
    * @param {boolean} [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
-   * @returns {Object}
    * (phet-io)
    */
   create( argsForCreateFunction: any, fromStateSetting = false ): T {
@@ -121,7 +119,6 @@ const cache = new Map();
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  * @param {IOType} parameterType
- * @returns {IOType}
  * @constructor
  */
 PhetioCapsule.PhetioCapsuleIO = parameterType => {

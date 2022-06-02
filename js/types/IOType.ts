@@ -30,7 +30,6 @@ let ObjectIO = null;
 /**
  * Estimate the core type name from a given IO Type name.
  * @param {string} ioTypeName
- * @returns {string}
  */
 const getCoreTypeName = ( ioTypeName: string ): string => {
   const index = ioTypeName.indexOf( PhetioConstants.IO_TYPE_SUFFIX );
@@ -383,7 +382,7 @@ class IOType<T = unknown> {
    * @param {boolean} toAssert=false - whether or not to assert when invalid
    * @param {string[]} publicSchemaKeys=[]
    * @param {string[]} privateSchemaKeys=[]
-   * @returns {boolean} if the stateObject is valid or not.
+   * @returns if the stateObject is valid or not.
    */
   isStateObjectValid( stateObject: any, toAssert = false, publicSchemaKeys: string[] = [], privateSchemaKeys: string[] = [] ): boolean {
 
@@ -456,7 +455,6 @@ class IOType<T = unknown> {
    * @param {function} CoreType - the PhET "core" type class/constructor associated with this IOType being created.
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param {Object} [options]
-   * @returns {IOType}
    */
   static fromCoreType<T>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T> ): IOType<T> {
 
