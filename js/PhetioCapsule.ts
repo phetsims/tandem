@@ -28,9 +28,9 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
   static PhetioCapsuleIO: ( parameterType: IOType ) => IOType;
 
   /**
-   * @param {function(Tandem, ...):PhetioObject} createElement - function that creates the encapsulated element
-   * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype
-   * @param {Object} [options]
+   * @param createElement - function that creates the encapsulated element
+   * @param defaultArguments - arguments passed to createElement when creating the archetype
+   * @param [options]
    */
   constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
 
@@ -51,7 +51,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
   /**
    * Dispose the underlying element.  Called by the PhetioStateEngine so the capsule element can be recreated with the
    * correct state.
-   * @param {boolean} [fromStateSetting] - Used for validation during state setting, see PhetioDynamicElementContainer.disposeElement()
+   * @param [fromStateSetting] - Used for validation during state setting, see PhetioDynamicElementContainer.disposeElement()
    */
   // @ts-ignore
   disposeElement( fromStateSetting = false ): void {
@@ -62,7 +62,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
 
   /**
    * Creates the element if it has not been created yet, and returns it.
-   * @param {Array.<*>} [argsForCreateFunction]
+   * @param [argsForCreateFunction]
    */
   getElement( ...argsForCreateFunction: P ): T | null {
     if ( !this.element ) {
@@ -72,7 +72,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
   }
 
   /**
-   * @param {object} [options]
+   * @param [options]
    */
   override clear( options?: any ): void {
     options = merge( {
@@ -88,8 +88,8 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
 
   /**
    * Primarily for internal use, clients should usually use getElement.
-   * @param {Array.<*>} argsForCreateFunction
-   * @param {boolean} [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
+   * @param argsForCreateFunction
+   * @param [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
    * (phet-io)
    */
   create( argsForCreateFunction: any, fromStateSetting = false ): T {
@@ -118,7 +118,7 @@ const cache = new Map();
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {IOType} parameterType
+ * @param parameterType
  * @constructor
  */
 PhetioCapsule.PhetioCapsuleIO = parameterType => {

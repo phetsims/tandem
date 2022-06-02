@@ -711,8 +711,8 @@ class LinkedElement extends PhetioObject {
   element: LinkableElement;
 
   /**
-   * @param {PhetioObject} coreElement
-   * @param {Object} [options]
+   * @param coreElement
+   * @param [options]
    */
   constructor( coreElement: LinkableElement, options?: any ) {
     assert && assert( !!coreElement, 'coreElement should be defined' );

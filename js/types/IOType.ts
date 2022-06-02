@@ -29,7 +29,6 @@ let ObjectIO = null;
 
 /**
  * Estimate the core type name from a given IO Type name.
- * @param {string} ioTypeName
  */
 const getCoreTypeName = ( ioTypeName: string ): string => {
   const index = ioTypeName.indexOf( PhetioConstants.IO_TYPE_SUFFIX );
@@ -95,14 +94,14 @@ class IOType<T = unknown> {
   isFunctionType: any;
 
   /**
-   * @param {string} ioTypeName - The name that this IOType will have in the public PhET-iO API. In general, this should
+   * @param ioTypeName - The name that this IOType will have in the public PhET-iO API. In general, this should
    *    only be word characters, ending in "IO". Parametric types are a special subset of IOTypes that include their
    *    parameters in their typeName. If an IOType's parameters are other IO Type(s), then they should be included within
    *    angle brackets, like "PropertyIO<BooleanIO>". Some other types use a more custom format for displaying their
    *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
    *    with an open paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
    *    Parameterized types should also include a `parameterTypes` field on the IOType.
-   * @param {Object} providedOptions
+   * @param providedOptions
    */
   constructor( ioTypeName: string, providedOptions: IOTypeOptions<T> ) {
     assert && assert( typeof ioTypeName === 'string', 'ioTypeName should be a string' );
@@ -378,10 +377,10 @@ class IOType<T = unknown> {
   }
 
   /**
-   * @param {Object} stateObject - the stateObject to validate against
-   * @param {boolean} toAssert=false - whether or not to assert when invalid
-   * @param {string[]} publicSchemaKeys=[]
-   * @param {string[]} privateSchemaKeys=[]
+   * @param stateObject - the stateObject to validate against
+   * @param toAssert=false - whether or not to assert when invalid
+   * @param publicSchemaKeys=[]
+   * @param privateSchemaKeys=[]
    * @returns if the stateObject is valid or not.
    */
   isStateObjectValid( stateObject: any, toAssert = false, publicSchemaKeys: string[] = [], privateSchemaKeys: string[] = [] ): boolean {
@@ -451,10 +450,10 @@ class IOType<T = unknown> {
    * For more information on how to support serialization and PhET-iO state, please see
    * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#serialization
    *
-   * @param {string} ioTypeName - see IOType constructor for details
-   * @param {function} CoreType - the PhET "core" type class/constructor associated with this IOType being created.
+   * @param ioTypeName - see IOType constructor for details
+   * @param CoreType - the PhET "core" type class/constructor associated with this IOType being created.
    *                              Likely this IOType will be set as the phetioType on the CoreType.
-   * @param {Object} [options]
+   * @param [options]
    */
   static fromCoreType<T>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T> ): IOType<T> {
 

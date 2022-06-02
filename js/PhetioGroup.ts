@@ -41,13 +41,13 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   static PhetioGroupIO: ( parameterType: any ) => any;
 
   /**
-   * @param {function(Tandem,...):PhetioObject} createElement - function that creates a dynamic element to be housed in
+   * @param createElement - function that creates a dynamic element to be housed in
    * this container. All of this dynamic element container's elements will be created from this function, including the
    * archetype.
-   * @param {Array.<*>|function():Array.<*>} defaultArguments - arguments passed to createElement when creating the archetype.
+   * @param defaultArguments - arguments passed to createElement when creating the archetype.
    *                                       Note: if `createElement` supports options, but don't need options for this
    *                                       defaults array, you should pass an empty object here anyways.
-   * @param {Object} [providedOptions] - describe the Group itself
+   * @param [providedOptions] - describe the Group itself
    */
   constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioGroupOptions ) {
 
@@ -105,8 +105,8 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * 3. element.dispose
    * 4. fire elementDisposedEmitter
    *
-   * @param {T} element
-   * @param {boolean} [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
+   * @param element
+   * @param [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    */
   override disposeElement( element: T, fromStateSetting = false ): void {
     assert && assert( !element.isDisposed, 'element already disposed' );
@@ -152,7 +152,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
 
   /**
    * Returns an array with elements that pass the filter predicate.
-   * @param {function(PhetioObject)} predicate
    */
   filter( predicate: ( t: T ) => boolean ): T[] { return this._array.filter( predicate ); }
 
@@ -163,7 +162,6 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
 
   /**
    * Gets the index of the specified element in the underlying array.
-   * @param {T} element
    */
   indexOf( element: T ): number { return this._array.indexOf( element ); }
 
@@ -282,7 +280,6 @@ const cache = new Map();
 
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
- * @param {IOType} parameterType
  */
 PhetioGroup.PhetioGroupIO = parameterType => {
 
