@@ -31,7 +31,6 @@ let ObjectIO = null;
  * Estimate the core type name from a given IO Type name.
  * @param {string} ioTypeName
  * @returns {string}
- * @private
  */
 const getCoreTypeName = ( ioTypeName: string ): string => {
   const index = ioTypeName.indexOf( PhetioConstants.IO_TYPE_SUFFIX );
