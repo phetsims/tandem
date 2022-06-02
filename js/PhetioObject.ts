@@ -141,21 +141,25 @@ class PhetioObject {
   // See documentation in DEFAULTS
   phetioIsArchetype!: boolean;
   phetioBaselineMetadata!: any | null;
-  _phetioType!: IOType;
-  _phetioState!: boolean;
-  _phetioReadOnly!: boolean;
-  _phetioDocumentation!: string;
-  _phetioEventType!: EventType;
-  _phetioHighFrequency!: boolean;
-  _phetioPlayback!: boolean;
-  _phetioDynamicElement!: boolean;
-  _phetioFeatured!: boolean;
-  _phetioEventMetadata!: any | null;
-  _phetioDesigned!: boolean;
+  private _phetioType!: IOType;
+  private _phetioState!: boolean;
+  private _phetioReadOnly!: boolean;
+  private _phetioDocumentation!: string;
+  private _phetioEventType!: EventType;
+  private _phetioHighFrequency!: boolean;
+  private _phetioPlayback!: boolean;
+  private _phetioDynamicElement!: boolean;
+  private _phetioFeatured!: boolean;
+  private _phetioEventMetadata!: any | null;
+  private _phetioDesigned!: boolean;
+
+  // Public only for PhetioObjectMetadataInput
   phetioArchetypePhetioID!: string | null;
+
+  // Public only for tests
   linkedElements!: LinkedElement[] | null;
   phetioNotifiedObjectCreated!: boolean;
-  phetioMessageStack!: number[];
+  private phetioMessageStack!: number[];
   static DEFAULT_OPTIONS: any;
 
   constructor( options?: PhetioObjectOptions ) {
@@ -235,13 +239,13 @@ class PhetioObject {
 
     assert && assert( this.linkedElements !== null, 'this means addLinkedElement was called before instrumentation of this PhetioObject' );
 
-    // {boolean} optional - Indicates that an object is a archetype for a dynamic class. Settable only by
+    // optional - Indicates that an object is a archetype for a dynamic class. Settable only by
     // PhetioEngine and by classes that create dynamic elements when creating their archetype (like PhetioGroup) through
     // PhetioObject.markDynamicElementArchetype().
     // if true, items will be excluded from phetioState. This applies recursively automatically.
     this.phetioIsArchetype = false;
 
-    // (phetioEngine) {Object|null}
+    // (phetioEngine)
     // Store the full baseline for usage in validation or for usage in studio.  Do this before applying overrides. The
     // baseline is created when a sim is run with assertions to assist in phetioAPIValidation.  However, even when
     // assertions are disabled, some wrappers such as studio need to generate the baseline anyway.
@@ -268,54 +272,52 @@ class PhetioObject {
       }
     }
 
-    // (read-only) {Tandem} - see docs at DEFAULTS declaration
+    // (read-only) see docs at DEFAULTS declaration
     this.tandem = options.tandem!;
 
-    // (read-only) {IOType} - see docs at DEFAULTS declaration
+    // (read-only) see docs at DEFAULTS declaration
     this._phetioType = options.phetioType;
 
-    // (read-only) {boolean} - see docs at DEFAULTS declaration
+    // (read-only) see docs at DEFAULTS declaration
     this._phetioState = options.phetioState;
 
-    // (read-only) {boolean} - see docs at DEFAULTS declaration
+    // (read-only) see docs at DEFAULTS declaration
     this._phetioReadOnly = options.phetioReadOnly;
 
-    // (read-only) {string} - see docs at DEFAULTS declaration
+    // (read-only) see docs at DEFAULTS declaration
     this._phetioDocumentation = options.phetioDocumentation;
 
-    // @private {EventType} - see docs at DEFAULTS declaration
+    // see docs at DEFAULTS declaration
     this._phetioEventType = options.phetioEventType;
 
-    // @private {boolean} - see docs at DEFAULTS declaration
+    // see docs at DEFAULTS declaration
     this._phetioHighFrequency = options.phetioHighFrequency;
 
-    // @private {boolean} - see docs at DEFAULTS declaration
+    // see docs at DEFAULTS declaration
     this._phetioPlayback = options.phetioPlayback;
 
-    // (PhetioEngine) {boolean} - see docs at DEFAULTS declaration - in order to recursively pass this value to
+    // (PhetioEngine) see docs at DEFAULTS declaration - in order to recursively pass this value to
     // children, the setPhetioDynamicElement() function must be used instead of setting this attribute directly
     this._phetioDynamicElement = options.phetioDynamicElement;
 
-    // (read-only) {boolean} - see docs at DEFAULTS declaration
+    // (read-only) see docs at DEFAULTS declaration
     this._phetioFeatured = options.phetioFeatured;
 
-    // @private {Object|null}
     this._phetioEventMetadata = options.phetioEventMetadata;
 
-    // @private {boolean}
     this._phetioDesigned = options.phetioDesigned;
 
-    // @private {string|null} - for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
+    // for phetioDynamicElements, the corresponding phetioID for the element in the archetype subtree
     this.phetioArchetypePhetioID = null;
 
-    // @private {LinkedElement[]|null} - keep track of LinkedElements for disposal. Null out to support asserting on
+    //keep track of LinkedElements for disposal. Null out to support asserting on
     // edge error cases, see this.addLinkedElement()
     this.linkedElements = [];
 
     // (phet-io) set to true when this PhetioObject has been sent over to the parent.
     this.phetioNotifiedObjectCreated = false;
 
-    // @private {Array.<number>} - tracks the indices of started messages so that dataStream can check that ends match starts.
+    // tracks the indices of started messages so that dataStream can check that ends match starts.
     this.phetioMessageStack = [];
 
     // Make sure playback shows in the phetioEventMetadata
@@ -704,7 +706,6 @@ const specifiesNonTandemPhetioObjectKey: ( options: any ) => boolean = ( options
 // Since PhetioObject is extended with inherit (e.g., SCENERY/Node), this cannot be an ES6 class
 /**
  * Internal class to avoid cyclic dependencies.
- * @private
  */
 class LinkedElement extends PhetioObject {
   element: LinkableElement;
