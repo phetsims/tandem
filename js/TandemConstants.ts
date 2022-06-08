@@ -103,8 +103,12 @@ const TandemConstants = {
 
   // Default metadata set for an ObjectIO in the PhET-iO API.  These are used as the default options in PhetioObject
   // and when outputting an API (since values that match the defaults are omitted)
-  PHET_IO_OBJECT_METADATA_DEFAULTS: metadataDefaults
-};
+  PHET_IO_OBJECT_METADATA_DEFAULTS: metadataDefaults,
+
+  METADATA_KEY_NAME: '_metadata',
+  DATA_KEY_NAME: '_data'
+
+} as const;
 
 tandemNamespace.register( 'TandemConstants', TandemConstants );
 export default TandemConstants;
