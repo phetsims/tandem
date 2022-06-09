@@ -53,15 +53,15 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
   private disposePhetioAction: () => void;
 
   // To listen to when the action has completed.
-  readonly executedEmitter: Emitter<T>;
+  public readonly executedEmitter: Emitter<T>;
 
-  static PhetioActionIO: ( parameterTypes: IOType[] ) => IOType;
+  public static PhetioActionIO: ( parameterTypes: IOType[] ) => IOType;
 
   /**
    * @param action - the function that is called when this PhetioAction occurs
    * @param providedOptions
    */
-  constructor( action: ( ...args: T ) => void, providedOptions?: ActionOptions ) {
+  public constructor( action: ( ...args: T ) => void, providedOptions?: ActionOptions ) {
     const options = optionize<ActionOptions, {}, PhetioDataHandlerOptions>()( {
 
       // We need to defined this here in addition to PhetioDataHandler to pass to executedEmitter
@@ -105,7 +105,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * Invokes the action.
    * @params - expected parameters are based on options.parameters, see constructor
    */
-  execute( ...args: T ): void {
+  public execute( ...args: T ): void {
     assert && assert( !this.isDisposed, 'should not be called if disposed' );
 
     // We delay the disposal of composed entities to handle reentrant cases of disposing ourself.
@@ -138,7 +138,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * Note: Be careful about adding disposal logic directly to this function, it is likely preferred to add it to
    * disposePhetioAction instead, see disposeOnExecuteCompletion for details.
    */
-  override dispose(): void {
+  public override dispose(): void {
     if ( this.isExecutingCount > 0 ) {
 
       // Defer disposing components until executing is completed, see disposeOnExecuteCompletion.

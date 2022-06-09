@@ -40,11 +40,11 @@ const getCoreTypeName = ( ioTypeName: string ): string => {
 // componenents
 // TODO: https://github.com/phetsims/tandem/issues/261 let's use string union literal probably
 class DeserializationMethod extends EnumerationValue {
-  static FROM_STATE_OBJECT = new DeserializationMethod();
-  static APPLY_STATE = new DeserializationMethod();
+  public static FROM_STATE_OBJECT = new DeserializationMethod();
+  public static APPLY_STATE = new DeserializationMethod();
 
   // Make sure this is last, once all EnumerationValues have been declared statically.
-  static enumeration = new Enumeration( DeserializationMethod );
+  public static enumeration = new Enumeration( DeserializationMethod );
 }
 
 type IOTypeOptions<T> = {
@@ -68,30 +68,30 @@ type IOTypeOptions<T> = {
 
 // TODO https://github.com/phetsims/tandem/issues/261 don't be unknown
 class IOType<T = unknown> {
-  readonly supertype?: IOType<unknown>;
-  readonly typeName: string;
-  readonly documentation?: any;
-  readonly methods?: any;
-  readonly events: string[];
-  readonly metadataDefaults?: { [ key: string ]: unknown };
-  readonly dataDefaults?: { [ key: string ]: unknown };
-  readonly methodOrder?: string[];
-  readonly parameterTypes?: any;
+  public readonly supertype?: IOType<unknown>;
+  public readonly typeName: string;
+  public readonly documentation?: any;
+  public readonly methods?: any;
+  public readonly events: string[];
+  public readonly metadataDefaults?: { [ key: string ]: unknown };
+  public readonly dataDefaults?: { [ key: string ]: unknown };
+  public readonly methodOrder?: string[];
+  public readonly parameterTypes?: any;
 
-  readonly toStateObject: any;
-  readonly fromStateObject: any;
-  readonly stateToArgsForConstructor: any;
-  readonly applyState: any;
-  readonly addChildElement: any;
-  readonly validator: any;
-  readonly defaultDeserializationMethod: DeserializationMethod;
+  public readonly toStateObject: any;
+  public readonly fromStateObject: any;
+  public readonly stateToArgsForConstructor: any;
+  public readonly applyState: any;
+  public readonly addChildElement: any;
+  public readonly validator: any;
+  public readonly defaultDeserializationMethod: DeserializationMethod;
 
   // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
   // see getAllStateSchema().
-  readonly stateSchema: StateSchema;
-  static ObjectIO: IOType<unknown>;
-  static DeserializationMethod: typeof DeserializationMethod;
-  isFunctionType: any;
+  public readonly stateSchema: StateSchema;
+  public static ObjectIO: IOType<unknown>;
+  public static DeserializationMethod: typeof DeserializationMethod;
+  public isFunctionType: any;
 
   /**
    * @param ioTypeName - The name that this IOType will have in the public PhET-iO API. In general, this should
@@ -103,7 +103,7 @@ class IOType<T = unknown> {
    *    Parameterized types should also include a `parameterTypes` field on the IOType.
    * @param providedOptions
    */
-  constructor( ioTypeName: string, providedOptions: IOTypeOptions<T> ) {
+  public constructor( ioTypeName: string, providedOptions: IOTypeOptions<T> ) {
     assert && assert( typeof ioTypeName === 'string', 'ioTypeName should be a string' );
 
     // For reference in the config
@@ -352,7 +352,7 @@ class IOType<T = unknown> {
   /**
    * Gets an array of IOTypes of the self type and all the supertype ancestors.
    */
-  getTypeHierarchy(): IOType[] {
+  private getTypeHierarchy(): IOType[] {
     const array = [];
     let ioType: IOType = this; // eslint-disable-line
     while ( ioType ) {
@@ -365,14 +365,14 @@ class IOType<T = unknown> {
   /**
    * Return all the metadata defaults (for the entire IO Type hierarchy)
    */
-  getAllMetadataDefaults(): { [ key: string ]: unknown } {
+  public getAllMetadataDefaults(): { [ key: string ]: unknown } {
     return _.merge( {}, this.supertype ? this.supertype.getAllMetadataDefaults() : {}, this.metadataDefaults );
   }
 
   /**
    * Return all the data defaults (for the entire IO Type hierarchy)
    */
-  getAllDataDefaults(): { [ key: string ]: unknown } {
+  public getAllDataDefaults(): { [ key: string ]: unknown } {
     return _.merge( {}, this.supertype ? this.supertype.getAllDataDefaults() : {}, this.dataDefaults );
   }
 
@@ -383,7 +383,7 @@ class IOType<T = unknown> {
    * @param privateSchemaKeys=[]
    * @returns if the stateObject is valid or not.
    */
-  isStateObjectValid( stateObject: any, toAssert = false, publicSchemaKeys: string[] = [], privateSchemaKeys: string[] = [] ): boolean {
+  public isStateObjectValid( stateObject: any, toAssert = false, publicSchemaKeys: string[] = [], privateSchemaKeys: string[] = [] ): boolean {
 
     // Set to false when invalid
     let valid = true;
@@ -429,7 +429,7 @@ class IOType<T = unknown> {
   /**
    * Assert if the provided stateObject is not valid to this IOType's stateSchema
    */
-  validateStateObject( stateObject: unknown ): void {
+  public validateStateObject( stateObject: unknown ): void {
     this.isStateObjectValid( stateObject, true );
   }
 
@@ -455,7 +455,7 @@ class IOType<T = unknown> {
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param [options]
    */
-  static fromCoreType<T>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T> ): IOType<T> {
+  public static fromCoreType<T>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T> ): IOType<T> {
 
     if ( assert && options ) {
       assert && assert( !options.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );

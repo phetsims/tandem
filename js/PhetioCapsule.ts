@@ -25,14 +25,14 @@ const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 
 class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
-  static PhetioCapsuleIO: ( parameterType: IOType ) => IOType;
+  public static PhetioCapsuleIO: ( parameterType: IOType ) => IOType;
 
   /**
    * @param createElement - function that creates the encapsulated element
    * @param defaultArguments - arguments passed to createElement when creating the archetype
    * @param [options]
    */
-  constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
+  public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
 
     options = merge( {
       tandem: Tandem.OPTIONAL,
@@ -54,7 +54,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * @param [fromStateSetting] - Used for validation during state setting, see PhetioDynamicElementContainer.disposeElement()
    */
   // @ts-ignore
-  disposeElement( fromStateSetting = false ): void {
+ public disposeElement( fromStateSetting = false ): void {
     assert && assert( this.element, 'cannot dispose if element is not defined' );
     super.disposeElement( this.element!, fromStateSetting );
     this.element = null;
@@ -64,7 +64,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * Creates the element if it has not been created yet, and returns it.
    * @param [argsForCreateFunction]
    */
-  getElement( ...argsForCreateFunction: P ): T | null {
+ public getElement( ...argsForCreateFunction: P ): T | null {
     if ( !this.element ) {
       this.create( argsForCreateFunction );
     }
@@ -74,7 +74,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
   /**
    * @param [options]
    */
-  override clear( options?: any ): void {
+ public override clear( options?: any ): void {
     options = merge( {
 
       // Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
@@ -92,7 +92,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * @param [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
    * (phet-io)
    */
-  create( argsForCreateFunction: any, fromStateSetting = false ): T {
+ public create( argsForCreateFunction: any, fromStateSetting = false ): T {
     assert && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioCapsules? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&

@@ -33,12 +33,14 @@ const DEFAULT_CONTAINER_SUFFIX = 'Group';
 type SelfOptions = {};
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
+// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
+const cache = new Map();
+
 // A extends ( ...args: any[] ) => any, B extends Parameters<A>
 class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDynamicElementContainer<T, P> {
   private readonly _array: T[];
-  groupElementIndex: number;
-  readonly countProperty: NumberProperty;
-  static PhetioGroupIO: ( parameterType: any ) => any;
+  private groupElementIndex: number;
+  public readonly countProperty: NumberProperty;
 
   /**
    * @param createElement - function that creates a dynamic element to be housed in
@@ -49,7 +51,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    *                                       defaults array, you should pass an empty object here anyways.
    * @param [providedOptions] - describe the Group itself
    */
-  constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioGroupOptions ) {
+  public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioGroupOptions ) {
 
     const options = optionize<PhetioGroupOptions, SelfOptions, PhetioDynamicElementContainerOptions>()( {
       tandem: Tandem.OPTIONAL,
@@ -93,7 +95,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
 
   /**
    */
-  override dispose(): void {
+  public override dispose(): void {
     assert && assert( false, 'PhetioGroup not intended for disposal' );
   }
 
@@ -108,7 +110,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param element
    * @param [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    */
-  override disposeElement( element: T, fromStateSetting = false ): void {
+  public override disposeElement( element: T, fromStateSetting = false ): void {
     assert && assert( !element.isDisposed, 'element already disposed' );
     arrayRemove( this._array, element );
 
@@ -121,7 +123,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * Gets a reference to the underlying array. DO NOT create/dispose elements while iterating, or otherwise modify
    * the array.  If you need to modify the array, use getArrayCopy.
    */
-  getArray(): T[] {
+  public getArray(): T[] {
     return this._array;
   }
 
@@ -129,61 +131,61 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * Gets a copy of the underlying array. Use this method if you need to create/dispose elements while iterating,
    * or otherwise modify the group's array.
    */
-  getArrayCopy(): T[] {
+  public getArrayCopy(): T[] {
     return this._array.slice();
   }
 
   /**
    * Returns the element at the specified index
    */
-  getElement( index: number ): T {
+  public getElement( index: number ): T {
     assert && assert( index >= 0 && index < this.count, 'index out of bounds: ' + index + ', array length is ' + this.count );
     return this._array[ index ];
   }
 
-  getLastElement(): T {
+  public getLastElement(): T {
     return this.getElement( this.count - 1 );
   }
 
   /**
    * Gets the number of elements in the group.
    */
-  get count(): number { return this.countProperty.value; }
+  public get count(): number { return this.countProperty.value; }
 
   /**
    * Returns an array with elements that pass the filter predicate.
    */
-  filter( predicate: ( t: T ) => boolean ): T[] { return this._array.filter( predicate ); }
+  public filter( predicate: ( t: T ) => boolean ): T[] { return this._array.filter( predicate ); }
 
   /**
    * Does the group include the specified element?
    */
-  includes( element: T ): boolean { return this._array.includes( element ); }
+  public includes( element: T ): boolean { return this._array.includes( element ); }
 
   /**
    * Gets the index of the specified element in the underlying array.
    */
-  indexOf( element: T ): number { return this._array.indexOf( element ); }
+  public indexOf( element: T ): number { return this._array.indexOf( element ); }
 
   /**
    * Runs the function on each element of the group.
    */
-  forEach( action: ( t: T ) => void ): void { this._array.forEach( action ); }
+  public forEach( action: ( t: T ) => void ): void { this._array.forEach( action ); }
 
   /**
    * Use the predicate to find the first matching occurrence in the array.
    */
-  find( predicate: ( t: T ) => boolean ): T | undefined { return this._array.find( predicate ); }
+  public find( predicate: ( t: T ) => boolean ): T | undefined { return this._array.find( predicate ); }
 
   /**
    * Returns an array with every element mapped to a new one.
    */
-  map<U>( f: ( t: T ) => U ): U[] { return this._array.map( f ); }
+  public map<U>( f: ( t: T ) => U ): U[] { return this._array.map( f ); }
 
   /**
    * Remove and dispose all registered group elements
    */
-  override clear( options?: any ): void {
+  public override clear( options?: any ): void {
     options = merge( {
 
       // used for validation during state setting (phet-io internal), see PhetioDynamicElementContainer.disposeElement for documentation
@@ -215,7 +217,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
    *                                      `stateToArgsForConstructor` method
    */
-  createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ): T {
+  public createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ): T {
 
     // @ts-ignore
     const index = window.phetio.PhetioIDUtils.getGroupElementIndex( tandemName );
@@ -233,7 +235,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
    *                                      `stateToArgsForConstructor` method
    */
-  createNextElement( ...argsForCreateFunction: P ): T {
+  public createNextElement( ...argsForCreateFunction: P ): T {
     return this.createIndexedElement( this.groupElementIndex++, argsForCreateFunction );
   }
 
@@ -250,7 +252,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
    * @param [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    * (PhetioGroupIO)
    */
-  createIndexedElement( index: number, argsForCreateFunction: P, fromStateSetting = false ): T {
+  public createIndexedElement( index: number, argsForCreateFunction: P, fromStateSetting = false ): T {
     assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
@@ -273,62 +275,59 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
 
     return groupElement;
   }
+
+  /**
+   * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
+   */
+  public static PhetioGroupIO = ( parameterType: IOType ) => {
+
+    assert && assert( parameterType instanceof IOType, 'element type should be defined' );
+
+    if ( !cache.has( parameterType ) ) {
+      cache.set( parameterType, new IOType( `PhetioGroupIO<${parameterType.typeName}>`, {
+
+        isValidValue: ( v: any ) => {
+
+          // @ts-ignore
+          const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
+          return v instanceof PhetioGroup;
+        },
+        documentation: 'An array that sends notifications when its values have changed.',
+
+        // This is always specified by PhetioGroup, and will never be this value.
+        // See documentation in PhetioCapsule
+        metadataDefaults: { phetioDynamicElementName: null },
+        parameterTypes: [ parameterType ],
+
+        /**
+         * Creates an element and adds it to the group
+         * @throws CouldNotYetDeserializeError - if it could not yet deserialize
+         * (PhetioStateEngine)
+         */
+        addChildElement( group: PhetioGroup<any>, componentName: string, stateObject: any ): PhetioObject {
+
+          // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
+          // element in the state needs to be created first, so we will try again on the next iteration of the state
+          // setting engine.
+          const args = parameterType.stateToArgsForConstructor( stateObject );
+
+          // @ts-ignore
+          const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
+
+          const groupElement = group.createIndexedElement( index, args, true );
+
+          // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
+          // no elements have been created in the sim, instead they have only been set via state.
+          group.groupElementIndex = Math.max( index + 1, group.groupElementIndex );
+
+          return groupElement;
+        }
+      } ) );
+    }
+
+    return cache.get( parameterType );
+  };
 }
-
-// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
-const cache = new Map();
-
-/**
- * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
- */
-PhetioGroup.PhetioGroupIO = parameterType => {
-
-  assert && assert( parameterType instanceof IOType, 'element type should be defined' );
-
-  if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType( `PhetioGroupIO<${parameterType.typeName}>`, {
-
-      isValidValue: ( v: any ) => {
-
-        // @ts-ignore
-        const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
-        return v instanceof PhetioGroup;
-      },
-      documentation: 'An array that sends notifications when its values have changed.',
-
-      // This is always specified by PhetioGroup, and will never be this value.
-      // See documentation in PhetioCapsule
-      metadataDefaults: { phetioDynamicElementName: null },
-      parameterTypes: [ parameterType ],
-
-      /**
-       * Creates an element and adds it to the group
-       * @throws CouldNotYetDeserializeError - if it could not yet deserialize
-       * (PhetioStateEngine)
-       */
-      addChildElement( group: PhetioGroup<any>, componentName: string, stateObject: any ): PhetioObject {
-
-        // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
-        // element in the state needs to be created first, so we will try again on the next iteration of the state
-        // setting engine.
-        const args = parameterType.stateToArgsForConstructor( stateObject );
-
-        // @ts-ignore
-        const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
-
-        const groupElement = group.createIndexedElement( index, args, true );
-
-        // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
-        // no elements have been created in the sim, instead they have only been set via state.
-        group.groupElementIndex = Math.max( index + 1, group.groupElementIndex );
-
-        return groupElement;
-      }
-    } ) );
-  }
-
-  return cache.get( parameterType );
-};
 
 tandemNamespace.register( 'PhetioGroup', PhetioGroup );
 export default PhetioGroup;

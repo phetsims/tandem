@@ -68,12 +68,12 @@ function archetypeCast<T>( archetype: T | null ): T {
 
 abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []> extends PhetioObject {
   private readonly _archetype: T | null;
-  readonly elementCreatedEmitter: Emitter<[ T ]>;
-  readonly elementDisposedEmitter: Emitter<[ T ]>;
+  public readonly elementCreatedEmitter: Emitter<[ T ]>;
+  public readonly elementDisposedEmitter: Emitter<[ T ]>;
   private notificationsDeferred: boolean;
   private readonly deferredCreations: T[];
   private readonly deferredDisposals: T[];
-  readonly supportsDynamicState: boolean; // (phet-io internal)
+  public readonly supportsDynamicState: boolean; // (phet-io internal)
   protected phetioDynamicElementName: string;
   protected createElement: any;
   protected defaultArguments: any;
@@ -85,7 +85,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
    * @param defaultArguments - arguments passed to createElement when creating the archetype
    * @param [providedOptions] - describe the Group itself
    */
-  constructor( createElement: ( t: Tandem, ...args: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioDynamicElementContainerOptions ) {
+  public constructor( createElement: ( t: Tandem, ...args: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioDynamicElementContainerOptions ) {
 
     let options = optionize<PhetioDynamicElementContainerOptions, SelfOptions, PhetioObjectOptions>()( {
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
@@ -257,7 +257,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
    * @param argsForCreateFunction
    * @param containerParameterType - null in PhET brand
    */
-  createDynamicElement( componentName: string, argsForCreateFunction: P, containerParameterType: IOType | null ): T {
+  public createDynamicElement( componentName: string, argsForCreateFunction: P, containerParameterType: IOType | null ): T {
     assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
     // create with default state and substructure, details will need to be set by setter methods.
@@ -329,7 +329,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
     this.emitDataStreamEvent( dynamicElement, 'disposed' );
   }
 
-  override dispose(): void {
+  public override dispose(): void {
 
     // If hitting this assertion because of nested dynamic element containers, please discuss with a phet-io team member.
     assert && assert( false, 'PhetioDynamicElementContainers are not intended for disposal' );
@@ -368,7 +368,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
   /**
    * @abstract
    */
-  abstract clear( options?: ClearOptions ): void;
+  public abstract clear( options?: ClearOptions ): void;
 
   /**
    * Flush a single element from the list of deferred disposals that have not yet notified about the disposal. This
@@ -398,7 +398,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
    * is only public to support specific order dependencies in the PhetioStateEngine, otherwise see `this.notifyElementCreated()`
    * (PhetioGroupTests, phet-io) - only the PhetioStateEngine should notify individual elements created.
    */
-  notifyElementCreatedWhileDeferred( createdElement: T ): void {
+  public notifyElementCreatedWhileDeferred( createdElement: T ): void {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
     assert && assert( this.deferredCreations.indexOf( createdElement ) >= 0, 'createdElement should not have been already notified' );
     this.elementCreatedEmitter.emit( createdElement );
@@ -410,7 +410,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
    * this function will flush all of the notifications for created and disposed elements (in that order) that occurred
    * while this container was deferring its notifications.
    */
-  setNotificationsDeferred( notificationsDeferred: boolean ): void {
+  public setNotificationsDeferred( notificationsDeferred: boolean ): void {
     assert && assert( notificationsDeferred !== this.notificationsDeferred, 'should not be the same as current value' );
 
     // Flush all notifications when setting to be no longer deferred
@@ -430,14 +430,14 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
   /**
    * @throws error if trying to access when archetypes aren't being created.
    */
-  get archetype(): T {
+  public get archetype(): T {
     return archetypeCast( this._archetype );
   }
 
   /**
    * Add the phetioDynamicElementName for API tracking
    */
-  override getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
+  public override getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
     const metadata = super.getMetadata( object );
     assert && assert(
       !metadata.hasOwnProperty( 'phetioDynamicElementName' ),
