@@ -23,6 +23,7 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Emitter from '../../axon/js/Emitter.js';
 import PhetioObject from './PhetioObject.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 
 const EMPTY_ARRAY: Parameter[] = [];
 
@@ -62,7 +63,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
    * @param providedOptions
    */
   public constructor( action: ( ...args: T ) => void, providedOptions?: ActionOptions ) {
-    const options = optionize<ActionOptions, {}, PhetioDataHandlerOptions>()( {
+    const options = optionize<ActionOptions, EmptyObjectType, PhetioDataHandlerOptions>()( {
 
       // We need to defined this here in addition to PhetioDataHandler to pass to executedEmitter
       parameters: EMPTY_ARRAY,

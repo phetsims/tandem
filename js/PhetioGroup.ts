@@ -18,6 +18,7 @@ import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
+import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 import PhetioDynamicElementContainer, { PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
@@ -30,7 +31,7 @@ const DEFAULT_CONTAINER_SUFFIX = 'Group';
 // Type of a derivation function, that returns T and takes the typed parameters (as a tuple type)
 // type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
 
-type SelfOptions = {};
+type SelfOptions = EmptyObjectType;
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
 // {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
