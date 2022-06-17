@@ -142,7 +142,7 @@
     getGroupElementIndex: function( componentName ) {
       assert && assert( componentName.indexOf( window.phetio.PhetioIDUtils.GROUP_SEPARATOR ) >= 0,
         'component name for phetioID should have group element syntax' );
-      return parseInt( componentName.split( window.phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ], 10 );
+      return Number( componentName.split( window.phetio.PhetioIDUtils.GROUP_SEPARATOR )[ 1 ] );
     },
 
     /**
