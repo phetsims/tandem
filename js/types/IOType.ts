@@ -539,7 +539,7 @@ ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE_NAME, 
   fromStateObject: stateObject => null,
   // @ts-ignore
   stateToArgsForConstructor: stateObject => [],
-  applyState: ( coreObject, stateObject ) => { },
+  applyState: _.noop,
   metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS,
   dataDefaults: {
     initialState: DEFAULT_STATE
