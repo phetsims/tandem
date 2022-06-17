@@ -315,6 +315,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
           // @ts-ignore
           const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 
+          // @ts-ignore
           const groupElement = group.createIndexedElement( index, args, true );
 
           // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where

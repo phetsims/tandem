@@ -12,7 +12,7 @@ import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 import ValueIO from './ValueIO.js';
 
-const BooleanIO = new IOType( 'BooleanIO', {
+const BooleanIO = new IOType<boolean, boolean>( 'BooleanIO', {
   supertype: ValueIO,
   valueType: 'boolean',
   documentation: 'IO Type for Javascript\'s boolean primitive type',

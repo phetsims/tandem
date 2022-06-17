@@ -14,6 +14,7 @@ import Enumeration from '../../../phet-core/js/Enumeration.js';
 import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
 import merge from '../../../phet-core/js/merge.js';
 import optionize from '../../../phet-core/js/optionize.js';
+import ConstructorOf from '../../../phet-core/js/types/ConstructorOf.js';
 import PhetioConstants from '../PhetioConstants.js';
 import TandemConstants from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
@@ -47,13 +48,14 @@ class DeserializationMethod extends EnumerationValue {
   public static enumeration = new Enumeration( DeserializationMethod );
 }
 
-type IOTypeOptions<T> = {
-  supertype?: IOType<any> | null;
-  toStateObject?: ( t: T ) => any;
-  fromStateObject?: any;
-  stateToArgsForConstructor?: any;
-  applyState?: ( t: T, state: any ) => void;
-  stateSchema?: ( ( ioType: IOType<T> ) => StateSchema ) | StateSchema | ( { [ key: string ]: IOType } ) | null;
+type IOTypeOptions<T, StateType> = {
+  valueType?: ConstructorOf<T> | string;
+  supertype?: IOType<unknown, unknown> | null;
+  toStateObject?: ( t: T ) => StateType;
+  fromStateObject?: ( s: StateType ) => T;
+  stateToArgsForConstructor?: ( s: StateType ) => unknown[];
+  applyState?: ( t: T, state: StateType ) => void;
+  stateSchema?: ( ( ioType: IOType<T, StateType> ) => StateSchema ) | StateSchema | ( { [ key: string ]: IOType<any, any> } ) | null;
   events?: string[];
   dataDefaults?: { [ key: string ]: unknown };
   metadataDefaults?: { [ key: string ]: unknown };
@@ -61,14 +63,13 @@ type IOTypeOptions<T> = {
   documentation?: string;
   methods?: unknown;
   methodOrder?: string[];
-  parameterTypes?: IOType<unknown>[];
+  parameterTypes?: IOType<unknown, unknown>[];
   isFunctionType?: boolean;
   addChildElement?: any;
 } & Validator<T>;
 
-// TODO https://github.com/phetsims/tandem/issues/261 don't be unknown
-class IOType<T = unknown> {
-  public readonly supertype?: IOType<unknown>;
+class IOType<T = any, StateType = any> {
+  public readonly supertype?: IOType<unknown, unknown>;
   public readonly typeName: string;
   public readonly documentation?: any;
   public readonly methods?: any;
@@ -78,9 +79,9 @@ class IOType<T = unknown> {
   public readonly methodOrder?: string[];
   public readonly parameterTypes?: any;
 
-  public readonly toStateObject: any;
+  public readonly toStateObject: ( t: T ) => StateType;
   public readonly fromStateObject: any;
-  public readonly stateToArgsForConstructor: any;
+  public readonly stateToArgsForConstructor: ( s: StateType ) => unknown[];
   public readonly applyState: any;
   public readonly addChildElement: any;
   public readonly validator: any;
@@ -89,7 +90,7 @@ class IOType<T = unknown> {
   // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
   // see getAllStateSchema().
   public readonly stateSchema: StateSchema;
-  public static ObjectIO: IOType<unknown>;
+  public static ObjectIO: IOType<PhetioObject, null>;
   public static DeserializationMethod: typeof DeserializationMethod;
   public isFunctionType: any;
 
@@ -103,7 +104,7 @@ class IOType<T = unknown> {
    *    Parameterized types should also include a `parameterTypes` field on the IOType.
    * @param providedOptions
    */
-  public constructor( ioTypeName: string, providedOptions: IOTypeOptions<T> ) {
+  public constructor( ioTypeName: string, providedOptions: IOTypeOptions<T, StateType> ) {
     assert && assert( typeof ioTypeName === 'string', 'ioTypeName should be a string' );
 
     // For reference in the config
@@ -256,7 +257,6 @@ class IOType<T = unknown> {
     this.toStateObject = ( coreObject: T ) => {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
 
-
       let toStateObject;
 
       // Only do this non-standard toStateObject function if there is a stateSchema but no toStateObject provided
@@ -327,7 +327,7 @@ class IOType<T = unknown> {
     } );
     assert && assert( typeof this.documentation === 'string' && this.documentation.length > 0, 'documentation must be provided' );
 
-    this.hasOwnProperty( 'methodOrder' ) && this.methodOrder.forEach( methodName => {
+    this.hasOwnProperty( 'methodOrder' ) && this.methodOrder!.forEach( methodName => {
       assert && assert( this.methods[ methodName ], `methodName not in public methods: ${methodName}` );
     } );
 
@@ -352,9 +352,11 @@ class IOType<T = unknown> {
   /**
    * Gets an array of IOTypes of the self type and all the supertype ancestors.
    */
-  private getTypeHierarchy(): IOType[] {
+  private getTypeHierarchy(): IOType<unknown, unknown>[] {
     const array = [];
-    let ioType: IOType = this; // eslint-disable-line
+
+    // @ts-ignore
+    let ioType: IOType<unknown, unknown> = this; // eslint-disable-line
     while ( ioType ) {
       array.push( ioType );
       ioType = ioType.supertype!;
@@ -455,7 +457,7 @@ class IOType<T = unknown> {
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param [options]
    */
-  public static fromCoreType<T>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T> ): IOType<T> {
+  public static fromCoreType<T, StateType>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
 
     if ( assert && options ) {
       assert && assert( !options.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
@@ -520,7 +522,7 @@ IOType.DeserializationMethod = DeserializationMethod;
 // default state value
 const DEFAULT_STATE = null;
 
-ObjectIO = new IOType( TandemConstants.OBJECT_IO_TYPE_NAME, {
+ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',

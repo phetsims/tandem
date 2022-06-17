@@ -12,7 +12,7 @@ import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 import ValueIO from './ValueIO.js';
 
-const StringIO = new IOType( 'StringIO', {
+const StringIO = new IOType<string, string>( 'StringIO', {
   supertype: ValueIO,
   valueType: 'string',
   documentation: 'IO Type for Javascript\'s string primitive type',

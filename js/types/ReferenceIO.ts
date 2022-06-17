@@ -17,11 +17,11 @@ import StringIO from './StringIO.js';
 // {Map.<cacheKey:string|*, IOType>} - Cache each parameterized ReferenceIO so that it is only created once
 const cache = new Map();
 
-/**
- * @param {IOType} parameterType
- * @returns {IOType}
- */
-const ReferenceIO = parameterType => {
+export type ReferenceIOState = {
+  phetioID: string;
+};
+
+const ReferenceIO = ( parameterType: IOType ) => {
   assert && assert( parameterType, 'ReferenceIO needs parameterType' );
 
   const cacheKey = parameterType;
@@ -38,7 +38,7 @@ const ReferenceIO = parameterType => {
        * Return the json that ReferenceIO is wrapping.  This can be overridden by subclasses, or types can use ReferenceIO type
        * directly to use this implementation.
        */
-      toStateObject( phetioObject ) {
+      toStateObject( phetioObject ): ReferenceIOState {
 
         // NOTE: We cannot assert that phetioObject.phetioState === false here because sometimes ReferenceIO is used statically like
         // ReferenceIO( Vector2IO ).toStateObject( myVector );
@@ -54,11 +54,9 @@ const ReferenceIO = parameterType => {
       /**
        * Decodes the object from a state, used in PhetioStateEngine.setState.  This can be overridden by subclasses, or types can
        * use ReferenceIO type directly to use this implementation.
-       * @param {{phetioID:string}} stateObject
-       * @returns {PhetioObject}
        * @throws CouldNotYetDeserializeError
        */
-      fromStateObject( stateObject ) {
+      fromStateObject( stateObject: ReferenceIOState ) {
         assert && assert( stateObject && typeof stateObject.phetioID === 'string', 'phetioID should be a string' );
         if ( phet.phetio.phetioEngine.hasPhetioObject( stateObject.phetioID ) ) {
           return phet.phetio.phetioEngine.getPhetioObject( stateObject.phetioID );
