@@ -13,15 +13,18 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
-import merge from '../../phet-core/js/merge.js';
-import PhetioDynamicElementContainer from './PhetioDynamicElementContainer.js';
+import PhetioDynamicElementContainer, { DynamicElementContainerClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import PhetioObject from './PhetioObject.js';
+import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import optionize from '../../phet-core/js/optionize.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
+
+export type PhetioCapsuleOptions = PhetioDynamicElementContainerOptions;
 
 class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
@@ -32,9 +35,9 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * @param defaultArguments - arguments passed to createElement when creating the archetype
    * @param [options]
    */
-  public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: any ) {
+  public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: PhetioCapsuleOptions ) {
 
-    options = merge( {
+    options = optionize<PhetioCapsuleOptions, EmptyObjectType>()( {
       tandem: Tandem.OPTIONAL,
 
       // {string} The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
@@ -54,7 +57,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * @param [fromStateSetting] - Used for validation during state setting, see PhetioDynamicElementContainer.disposeElement()
    */
   // @ts-ignore
- public disposeElement( fromStateSetting = false ): void {
+  public disposeElement( fromStateSetting = false ): void {
     assert && assert( this.element, 'cannot dispose if element is not defined' );
     super.disposeElement( this.element!, fromStateSetting );
     this.element = null;
@@ -62,24 +65,20 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
 
   /**
    * Creates the element if it has not been created yet, and returns it.
-   * @param [argsForCreateFunction]
    */
- public getElement( ...argsForCreateFunction: P ): T | null {
+  public getElement( ...argsForCreateFunction: P ): T | null {
     if ( !this.element ) {
       this.create( argsForCreateFunction );
     }
     return this.element;
   }
 
-  /**
-   * @param [options]
-   */
- public override clear( options?: any ): void {
-    options = merge( {
+  public override clear( providedOptions?: DynamicElementContainerClearOptions ): void {
+    const options = optionize<DynamicElementContainerClearOptions, EmptyObjectType>()( {
 
       // Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
       fromStateSetting: false
-    }, options );
+    }, providedOptions );
 
     if ( this.element ) {
       this.disposeElement( options.fromStateSetting );
@@ -92,7 +91,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * @param [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
    * (phet-io)
    */
- public create( argsForCreateFunction: any, fromStateSetting = false ): T {
+  public create( argsForCreateFunction: any, fromStateSetting = false ): T {
     assert && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioCapsules? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&

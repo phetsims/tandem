@@ -51,7 +51,7 @@ type SelfOptions = {
 export type PhetioDynamicElementContainerOptions = SelfOptions & StrictOmit<PhetioObjectOptions, 'phetioDynamicElement'> & PickRequired<PhetioObjectOptions, 'phetioType'>;
 
 
-type ClearOptions = {
+export type DynamicElementContainerClearOptions = {
 
   //  Used for validation during state setting. See this.disposeElement() for documentation
   fromStateSetting?: boolean;
@@ -121,7 +121,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
     }
 
     // options that depend on other options
-    options = merge( {
+    options = merge( { // eslint-disable-line bad-typescript-text
 
       phetioDynamicElementName: options.tandem.name.slice( 0, options.tandem.name.length - options.containerSuffix.length )
     }, options );
@@ -368,7 +368,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
   /**
    * @abstract
    */
-  public abstract clear( options?: ClearOptions ): void;
+  public abstract clear( options?: DynamicElementContainerClearOptions ): void;
 
   /**
    * Flush a single element from the list of deferred disposals that have not yet notified about the disposal. This

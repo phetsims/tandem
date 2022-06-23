@@ -12,8 +12,7 @@ import validate from '../../../axon/js/validate.js';
 import Validation, { Validator } from '../../../axon/js/Validation.js';
 import Enumeration from '../../../phet-core/js/Enumeration.js';
 import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
-import merge from '../../../phet-core/js/merge.js';
-import optionize from '../../../phet-core/js/optionize.js';
+import optionize, { combineOptions } from '../../../phet-core/js/optionize.js';
 import ConstructorOf from '../../../phet-core/js/types/ConstructorOf.js';
 import PhetioConstants from '../PhetioConstants.js';
 import TandemConstants from '../TandemConstants.js';
@@ -455,16 +454,16 @@ class IOType<T = any, StateType = any> {
    * @param ioTypeName - see IOType constructor for details
    * @param CoreType - the PhET "core" type class/constructor associated with this IOType being created.
    *                              Likely this IOType will be set as the phetioType on the CoreType.
-   * @param [options]
+   * @param [providedOptions]
    */
-  public static fromCoreType<T, StateType>( ioTypeName: string, CoreType: any, options?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
+  public static fromCoreType<T, StateType>( ioTypeName: string, CoreType: any, providedOptions?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
 
-    if ( assert && options ) {
-      assert && assert( !options.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
-      assert && assert( !options.hasOwnProperty( 'toStateObject' ), 'fromCoreType sets its own toStateObject' );
-      assert && assert( !options.hasOwnProperty( 'stateToArgsForConstructor' ), 'fromCoreType sets its own stateToArgsForConstructor' );
-      assert && assert( !options.hasOwnProperty( 'applyState' ), 'fromCoreType sets its own applyState' );
-      assert && assert( !options.hasOwnProperty( 'stateSchema' ), 'fromCoreType sets its own stateSchema' );
+    if ( assert && providedOptions ) {
+      assert && assert( !providedOptions.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
+      assert && assert( !providedOptions.hasOwnProperty( 'toStateObject' ), 'fromCoreType sets its own toStateObject' );
+      assert && assert( !providedOptions.hasOwnProperty( 'stateToArgsForConstructor' ), 'fromCoreType sets its own stateToArgsForConstructor' );
+      assert && assert( !providedOptions.hasOwnProperty( 'applyState' ), 'fromCoreType sets its own applyState' );
+      assert && assert( !providedOptions.hasOwnProperty( 'stateSchema' ), 'fromCoreType sets its own stateSchema' );
     }
 
     let coreTypeHasToStateObject = false;
@@ -487,9 +486,10 @@ class IOType<T = any, StateType = any> {
       proto = Object.getPrototypeOf( proto );
     }
 
-    options = merge( {
+    // This isn't really optionize here, since we don't expect defaults for all the options.
+    const options = combineOptions<IOTypeOptions<T, StateType>>( {
       valueType: CoreType
-    }, options );
+    }, providedOptions );
 
     // Only specify if supplying toStateObject, otherwise stateSchema will handle things for us.
     if ( coreTypeHasToStateObject ) {

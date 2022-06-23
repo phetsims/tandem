@@ -16,10 +16,9 @@
 
 import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
-import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
 import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
-import PhetioDynamicElementContainer, { PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
+import PhetioDynamicElementContainer, { DynamicElementContainerClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -27,6 +26,11 @@ import IOType from './types/IOType.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
+
+type ClearSelfOptions = {
+  resetIndex?: boolean;
+};
+type ClearOptions = ClearSelfOptions & DynamicElementContainerClearOptions;
 
 // Type of a derivation function, that returns T and takes the typed parameters (as a tuple type)
 // type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
@@ -186,15 +190,15 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
   /**
    * Remove and dispose all registered group elements
    */
-  public override clear( options?: any ): void {
-    options = merge( {
+  public override clear( providedOptions?: ClearOptions ): void {
+    const options = optionize<ClearOptions>()( {
 
       // used for validation during state setting (phet-io internal), see PhetioDynamicElementContainer.disposeElement for documentation
       fromStateSetting: false,
 
       // whether the group's index is reset to 0 for the next element created
       resetIndex: true
-    }, options );
+    }, providedOptions );
 
     while ( this._array.length > 0 ) {
 

@@ -18,7 +18,7 @@ import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
-import optionize, { OptionizeDefaults } from '../../phet-core/js/optionize.js';
+import optionize, { combineOptions, OptionizeDefaults } from '../../phet-core/js/optionize.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
@@ -26,6 +26,8 @@ import Tandem from './Tandem.js';
 import TandemConstants, { PhetioObjectMetadata } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
+import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
@@ -46,10 +48,15 @@ const OBJECT_VALIDATOR = { valueType: [ Object, null ] };
 
 const objectToPhetioID = ( phetioObject: PhetioObject ) => phetioObject.tandem.phetioID;
 
+type StartEventOptions = {
+  data?: Record<string, IntentionalAny> | null;
+  getData?: ( () => Record<string, IntentionalAny> ) | null;
+}
+
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
 
-const DEFAULTS = {
+const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
 
   // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
   tandem: Tandem.OPTIONAL,
@@ -104,6 +111,12 @@ const DEFAULTS = {
   phetioEventMetadata: null
 };
 
+type EventMetadata = {
+
+  // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
+  [ key: string ]: string | boolean | number | Array<string | boolean | number>;
+}
+
 // @ts-ignore
 assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType ) === TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioEventType,
   'phetioEventType must have the same default as the default metadata values.' );
@@ -114,11 +127,7 @@ export type PhetioObjectOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phe
   tandem?: Tandem;
   phetioType?: IOType;
   phetioEventType?: EventType;
-  phetioEventMetadata?: {
-
-    // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
-    [ key: string ]: string | boolean | number | Array<string | boolean | number>;
-  };
+  phetioEventMetadata?: EventMetadata | null;
 };
 
 type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName'> ) | 'phetioType';
@@ -220,7 +229,7 @@ class PhetioObject {
     // Guard validation on assert to avoid calling a large number of no-ops when assertions are disabled, see https://github.com/phetsims/tandem/issues/200
     assert && validate( providedOptions.tandem, { valueType: Tandem } );
 
-    const defaults: OptionizeDefaults<PhetioObjectOptions> = merge( {}, DEFAULTS, baseOptions );
+    const defaults = combineOptions<OptionizeDefaults<PhetioObjectOptions>>( {}, DEFAULTS, baseOptions );
 
     let options = optionize<PhetioObjectOptions>()( defaults, providedOptions );
 
@@ -268,7 +277,8 @@ class PhetioObject {
       if ( overrides ) {
 
         // No need to make a new object, since this "options" variable was created in the previous merge call above.
-        options = merge( options, overrides );
+        // @ts-ignore
+        options = optionize<PhetioObjectOptions>( options, overrides );
       }
     }
 
@@ -402,21 +412,21 @@ class PhetioObject {
    * Start an event for the nested PhET-iO data stream.
    *
    * @param event - the name of the event
-   * @param [options]
+   * @param [providedOptions]
    */
-  public phetioStartEvent( event: string, options?: any ): void {
+  public phetioStartEvent( event: string, providedOptions?: StartEventOptions ): void {
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
       // only one or the other can be provided
-      assert && assertMutuallyExclusiveOptions( options, [ 'data' ], [ 'getData' ] );
-      options = merge( {
+      assert && assertMutuallyExclusiveOptions( providedOptions, [ 'data' ], [ 'getData' ] );
+      const options = optionize<StartEventOptions>()( {
 
         // {Object|null} - the data
         data: null,
 
         // {function():Object|null} - function that, when called get's the data.
         getData: null
-      }, options );
+      }, providedOptions );
 
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
       assert && options.data && assert( typeof options.data === 'object' );
@@ -708,16 +718,12 @@ const specifiesNonTandemPhetioObjectKey: ( options: any ) => boolean = ( options
 class LinkedElement extends PhetioObject {
   public element: LinkableElement;
 
-  /**
-   * @param coreElement
-   * @param [options]
-   */
-  public constructor( coreElement: LinkableElement, options?: any ) {
+  public constructor( coreElement: LinkableElement, providedOptions?: PhetioObjectOptions ) {
     assert && assert( !!coreElement, 'coreElement should be defined' );
 
-    options = merge( {
+    const options = optionize<PhetioObjectOptions, EmptyObjectType>()( {
       phetioType: LinkedElementIO
-    }, options );
+    }, providedOptions );
 
     // References cannot be changed by PhET-iO
     assert && assert( !options.hasOwnProperty( 'phetioReadOnly' ), 'phetioReadOnly set by LinkedElement' );
