@@ -278,7 +278,7 @@ class PhetioObject {
 
         // No need to make a new object, since this "options" variable was created in the previous merge call above.
         // @ts-ignore
-        options = optionize<PhetioObjectOptions>( options, overrides );
+        options = optionize<PhetioObjectOptions>()( options, overrides );
       }
     }
 
