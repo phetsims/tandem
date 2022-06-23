@@ -419,7 +419,6 @@ class PhetioObject {
       }, options );
 
       assert && assert( this.phetioObjectInitialized, 'phetioObject should be initialized' );
-      assert && assert( typeof event === 'string' );
       assert && options.data && assert( typeof options.data === 'object' );
       assert && options.getData && assert( typeof options.getData === 'function' );
       assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
@@ -587,7 +586,6 @@ class PhetioObject {
    */
   public removeLinkedElements( potentiallyLinkedElement: PhetioObject ): void {
     if ( this.isPhetioInstrumented() && this.linkedElements ) {
-      assert && assert( potentiallyLinkedElement instanceof PhetioObject );
       assert && assert( potentiallyLinkedElement.isPhetioInstrumented() );
 
       const toRemove = this.linkedElements.filter( linkedElement => linkedElement.element === potentiallyLinkedElement );
