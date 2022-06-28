@@ -305,6 +305,7 @@ class Tandem {
     assert && assert( !this.isDisposed, 'already disposed' );
 
     this.parentTandem.removeChild( this.name );
+    this.parentTandem = null;
 
     this.isDisposed = true;
   }
