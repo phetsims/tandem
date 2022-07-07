@@ -145,8 +145,9 @@ class PhetioAPIValidation {
         }
         else {
 
-          // Compare the dynamic element to the archetype if creating them this runtime.
-          if ( phet.preloads.phetio.createArchetypes ) {
+          // Compare the dynamic element to the archetype if creating them this runtime. Don't check this if it has
+          // already been disposed.
+          if ( phet.preloads.phetio.createArchetypes && !phetioObject.isDisposed ) {
             const archetypeID = phetioObject.tandem.getArchetypalPhetioID();
             const archetypeMetadata = phet.phetio.phetioEngine.getPhetioObject( archetypeID ).getMetadata();
 
