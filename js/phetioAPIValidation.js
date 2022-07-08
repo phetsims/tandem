@@ -1,4 +1,4 @@
-// Copyright 2019-2021, University of Colorado Boulder
+// Copyright 2019-2022, University of Colorado Boulder
 
 /**
  * This singleton is responsible for ensuring that the PhET-iO API is correct through the lifetime of the simulation.
