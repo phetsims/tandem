@@ -8,6 +8,10 @@
  *
  * Clients should use myCapsule.getElement() instead of storing the element value itself.
  *
+ * NOTE: Be careful about treating the dynamic element as a singleton. When creating the archetype, problems can arise
+ * because the capsule creates two instances of the element: one as the archetype and one as the instance. This can
+ * result in trouble like in https://github.com/phetsims/joist/issues/821.
+ *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Chris Klusendorf (PhET Interactive Simulations)
