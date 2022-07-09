@@ -10,6 +10,8 @@
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
+import optionize from '../../phet-core/js/optionize.js';
+import PhetioObject from './PhetioObject.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // constants
@@ -36,60 +38,88 @@ const OPTIONAL_TANDEM_NAME = 'optionalTandem';
 const TEST_TANDEM_NAME = 'test';
 
 // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
-const missingTandems = {
+const missingTandems: {
+  required: Array<{ phetioID: string; stack: any }>;
+  optional: Array<{ phetioID: string; stack: any }>;
+} = {
   required: [],
   optional: []
 };
 
+type PhetioObjectListener = {
+  addPhetioObject: ( phetioObject: PhetioObject ) => void;
+  removePhetioObject: ( phetioObject: PhetioObject ) => void;
+};
+
 // Listeners that will be notified when items are registered/deregistered. See doc in addPhetioObjectListener
-const phetioObjectListeners = [];
+const phetioObjectListeners: Array<PhetioObjectListener> = [];
 
-// {PhetioObject[]} - PhetioObjects that have been added before listeners are ready.
-const bufferedPhetioObjects = [];
+// keep track of listeners to fire when Tandem.launch() is called.
+const launchListeners: Array<() => void> = [];
 
-// {Array<function():>} - keep track of listeners to fire when Tandem.launch() is called.
-const launchListeners = [];
+type TandemOptions = {
+  required?: boolean;
+  supplied?: boolean;
+};
 
 class Tandem {
+
+  // Treat as readonly.  Only marked as writable so it can be eliminated on dispose
+  public parentTandem: Tandem | null;
+
+  // the last part of the tandem (after the last .), used e.g., in Joist for creating button
+  // names dynamically based on screen names
+  public readonly name: string;
+  public readonly phetioID: string;
+  private readonly children: { [ key: string ]: Tandem } = {};
+  public readonly required: boolean;
+  public readonly supplied: boolean;
+  private isDisposed = false;
+
+  public static ROOT: RootTandem;
+  public static ROOT_TEST: Tandem;
+  public static GENERAL_MODEL: Tandem;
+  public static GENERAL_VIEW: Tandem;
+  public static GENERAL_CONTROLLER: Tandem;
+  public static GLOBAL_MODEL: Tandem;
+  public static GLOBAL_VIEW: Tandem;
+  public static COLORS: Tandem;
+  public static OPTIONAL: Tandem;
+  public static OPT_OUT: Tandem;
+  public static REQUIRED: Tandem;
 
   /**
    * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
    * a tandem must be created from scratch.
    *
-   * @param {Tandem|null} parentTandem - parent for a child tandem, or null for a root tandem
-   * @param {string} name - component name for this level, like 'resetAllButton'
-   * @param {Object} [options]
+   * @param parentTandem - parent for a child tandem, or null for a root tandem
+   * @param name - component name for this level, like 'resetAllButton'
+   * @param [providedOptions]
    */
-  constructor( parentTandem, name, options ) {
+  public constructor( parentTandem: Tandem | null, name: string, providedOptions?: TandemOptions ) {
     assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
     assert && assert( typeof name === 'string', 'name must be defined' );
     assert && assert( this.getTermRegex().test( name ), `name should match the regex pattern: ${name}` );
     assert && assert( name !== Tandem.METADATA_KEY, 'name cannot match Tandem.METADATA_KEY' );
 
-    // @public (read-only) {Tandem|null}
     this.parentTandem = parentTandem;
-
-    // @public (read-only) - the last part of the tandem (after the last .), used e.g., in Joist for creating button
-    // names dynamically based on screen names
     this.name = name;
 
-    // @public (read-only)
     this.phetioID = this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.phetioID, this.name )
                                       : this.name;
 
     // options (even subtype options) must be stored so they can be passed through to children
     // Note: Make sure that added options here are also added to options for inheritance and/or for composition
     // (createTandem/parentTandem/getExtendedOptions) as appropriate.
-    options = merge( {
+    const options = optionize<TandemOptions>()( {
 
       // required === false means it is an optional tandem
       required: true,
 
       // if the tandem is required but not supplied, an error will be thrown.
       supplied: true
-    }, options );
+    }, providedOptions );
 
-    // @private {Object.<string, Tandem>}
     this.children = {};
 
     if ( this.parentTandem ) {
@@ -97,47 +127,38 @@ class Tandem {
       this.parentTandem.addChild( name, this );
     }
 
-    // @private
     this.required = options.required;
-
-    // @public (read-only)
     this.supplied = options.supplied;
-
-    // @private
-    this.isDisposed = false;
   }
 
   /**
    * Returns the regular expression which can be used to test each term. The term must consist only of alpha-numeric
    * characters or tildes.
-   * @returns {RegExp}
-   * @protected
    */
-  getTermRegex() {
+  protected getTermRegex(): RegExp {
     return /^[a-zA-Z0-9[\],]+$/;
   }
 
   /**
    * If the provided tandem is not supplied, support the ?printMissingTandems query parameter for extra logging during
    * initial instrumentation.
-   * @public
-   * @param tandem
    */
-  static onMissingTandem( tandem ) {
-    assert && assert( tandem instanceof Tandem );
+  public static onMissingTandem( tandem: Tandem ): void {
 
     // When the query parameter phetioPrintMissingTandems is true, report tandems that are required but not supplied
     if ( PRINT_MISSING_TANDEMS && !tandem.supplied ) {
       const stackTrace = new Error().stack;
       if ( tandem.required ) {
-        missingTandems.required.push( { phetioID: this.phetioID, stack: stackTrace } );
+
+        // TODO: https://github.com/phetsims/tandem/issues/266 review logic change
+        missingTandems.required.push( { phetioID: tandem.phetioID, stack: stackTrace } );
       }
       else {
 
         // When the query parameter phetioPrintMissingTandems is true, report tandems that are optional but not
         // supplied, but not for Fonts because they are too numerous.
-        if ( stackTrace.indexOf( 'Font' ) === -1 ) {
-          missingTandems.optional.push( { phetioID: this.phetioID, stack: stackTrace } );
+        if ( stackTrace!.indexOf( 'Font' ) === -1 ) {
+          missingTandems.optional.push( { phetioID: tandem.phetioID, stack: stackTrace } );
         }
       }
     }
@@ -146,14 +167,8 @@ class Tandem {
   /**
    * Adds a PhetioObject.  For example, it could be an axon Property, SCENERY/Node or SUN/RoundPushButton.
    * phetioEngine listens for when PhetioObjects are added and removed to keep track of them for PhET-iO.
-   * @param {PhetioObject} phetioObject
-   * @public
    */
-  addPhetioObject( phetioObject ) {
-    assert && assert( arguments.length === 1, 'Tandem.addPhetioObject takes one argument' );
-
-    // Cannot use typical require statement for PhetioObject because it creates a module loading loop
-    assert && assert( phetioObject instanceof tandemNamespace.PhetioObject, 'argument should be of type PhetioObject' );
+  public addPhetioObject( phetioObject: PhetioObject ): void {
 
     if ( PHET_IO_ENABLED ) {
 
@@ -168,7 +183,7 @@ class Tandem {
       }
 
       if ( !Tandem.launched ) {
-        bufferedPhetioObjects.push( phetioObject );
+        Tandem.bufferedPhetioObjects.push( phetioObject );
       }
       else {
         for ( let i = 0; i < phetioObjectListeners.length; i++ ) {
@@ -180,20 +195,15 @@ class Tandem {
 
   /**
    * Returns true if this Tandem has the specified ancestor Tandem.
-   * @param {Tandem} ancestor
-   * @returns {boolean}
-   * @public
    */
-  hasAncestor( ancestor ) {
-    return this.parentTandem === ancestor || ( this.parentTandem && this.parentTandem.hasAncestor( ancestor ) );
+  public hasAncestor( ancestor: Tandem ): boolean {
+    return this.parentTandem === ancestor || !!( this.parentTandem && this.parentTandem.hasAncestor( ancestor ) );
   }
 
   /**
    * Removes a PhetioObject and signifies to listeners that it has been removed.
-   * @param {PhetioObject} phetioObject
-   * @public
    */
-  removePhetioObject( phetioObject ) {
+  public removePhetioObject( phetioObject: PhetioObject ): void {
 
     if ( !this.required && !this.supplied ) {
       return;
@@ -202,8 +212,8 @@ class Tandem {
     // Only active when running as phet-io
     if ( PHET_IO_ENABLED ) {
       if ( !Tandem.launched ) {
-        assert && assert( bufferedPhetioObjects.indexOf( phetioObject ) >= 0, 'should contain item' );
-        arrayRemove( bufferedPhetioObjects, phetioObject );
+        assert && assert( Tandem.bufferedPhetioObjects.indexOf( phetioObject ) >= 0, 'should contain item' );
+        arrayRemove( Tandem.bufferedPhetioObjects, phetioObject );
       }
       else {
         for ( let i = 0; i < phetioObjectListeners.length; i++ ) {
@@ -217,11 +227,8 @@ class Tandem {
 
   /**
    * Used for creating new tandems, extends this Tandem's options with the passed-in options.
-   * @param {Object} [options]
-   * @returns {Object} -extended options
-   * @public
    */
-  getExtendedOptions( options ) {
+  public getExtendedOptions( options?: TandemOptions ): TandemOptions {
 
     // Any child of something should be passed all inherited options. Make sure that this extend call includes all
     // that make sense from the constructor's extend call.
@@ -233,12 +240,8 @@ class Tandem {
 
   /**
    * Create a new Tandem by appending the given id, or if the child Tandem already exists, return it instead.
-   * @param {string} name
-   * @param {Object} [options]
-   * @returns {Tandem}
-   * @public
    */
-  createTandem( name, options ) {
+  public createTandem( name: string, options?: TandemOptions ): Tandem {
     assert && Tandem.VALIDATION && assert( !UNALLOWED_TANDEM_NAMES.includes( name ), 'tandem name is not allowed: ' + name );
 
     options = this.getExtendedOptions( options );
@@ -248,7 +251,6 @@ class Tandem {
       const currentChild = this.children[ name ];
       assert && assert( currentChild.required === options.required );
       assert && assert( currentChild.supplied === options.supplied );
-      assert && assert( currentChild instanceof Tandem );
       return currentChild;
     }
     else {
@@ -256,31 +258,19 @@ class Tandem {
     }
   }
 
-  /**
-   * @param {string} name
-   * @returns {boolean}
-   * @public
-   */
-  hasChild( name ) {
+  public hasChild( name: string ): boolean {
     return this.children.hasOwnProperty( name );
   }
 
-  /**
-   * @param {string} name
-   * @param {Tandem} tandem
-   * @public
-   */
-  addChild( name, tandem ) {
+  public addChild( name: string, tandem: Tandem ): void {
     assert && assert( !this.hasChild( name ) );
     this.children[ name ] = tandem;
   }
 
   /**
    * Fire a callback on all descendants of this Tandem
-   * @param {function(Tandem)} callback
-   * @public
    */
-  iterateDescendants( callback ) {
+  public iterateDescendants( callback: ( t: Tandem ) => void ): void {
     for ( const childName in this.children ) {
       if ( this.children.hasOwnProperty( childName ) ) {
         callback( this.children[ childName ] );
@@ -289,22 +279,15 @@ class Tandem {
     }
   }
 
-  /**
-   * @param {string} childName
-   * @private
-   */
-  removeChild( childName ) {
+  private removeChild( childName: string ): void {
     assert && assert( this.hasChild( childName ) );
     delete this.children[ childName ];
   }
 
-  /**
-   * @private
-   */
-  dispose() {
+  private dispose(): void {
     assert && assert( !this.isDisposed, 'already disposed' );
 
-    this.parentTandem.removeChild( this.name );
+    this.parentTandem!.removeChild( this.name );
     this.parentTandem = null;
 
     this.isDisposed = true;
@@ -313,10 +296,8 @@ class Tandem {
   /**
    * For API validation, each PhetioObject has a corresponding concrete PhetioObject for comparison. Non-dynamic
    * PhetioObjects have the trivial case where its archetypal phetioID is the same as its phetioID.
-   * @returns {string}
-   * @public
    */
-  getArchetypalPhetioID() {
+  public getArchetypalPhetioID(): string {
 
     // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
     return this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), this.name ) : this.phetioID;
@@ -331,55 +312,35 @@ class Tandem {
    *
    * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
    * have unique identifiers.
-   * @param {string} name
-   * @returns {GroupTandem}
-   * @public
    */
-  createGroupTandem( name ) {
+  public createGroupTandem( name: string ): GroupTandem {
     if ( this.children[ name ] ) {
-      return this.children[ name ];
+      return this.children[ name ] as GroupTandem;
     }
     return new GroupTandem( this, name );
   }
 
-  /**
-   * @param {Tandem} tandem
-   * @returns {boolean}
-   * @public
-   */
-  equals( tandem ) {
+  public equals( tandem: Tandem ): boolean {
     return this.phetioID === tandem.phetioID;
   }
 
   /**
    * Adds a listener that will be notified when items are registered/deregistered
-   * Listeners have the form
-   * {
-   *   addPhetioObject(id,phetioObject),
-   *   removePhetioObject(id,phetioObject)
-   * }
-   * where id is of type {string} and phetioObject is of type {PhetioObject}
-   *
-   * @param {Object} phetioObjectListener - described above
-   * @public
-   * @static
    */
-  static addPhetioObjectListener( phetioObjectListener ) {
+  public static addPhetioObjectListener( phetioObjectListener: PhetioObjectListener ): void {
     phetioObjectListeners.push( phetioObjectListener );
   }
 
   /**
    * After all listeners have been added, then Tandem can be launched.  This registers all of the buffered PhetioObjects
    * and subsequent PhetioObjects will be registered directly.
-   * @public (phetioEngine PhetioObjectTests)
-   * @static
    */
-  static launch() {
+  public static launch(): void {
     assert && assert( !Tandem.launched, 'Tandem cannot be launched twice' );
     Tandem.launched = true;
 
     while ( launchListeners.length > 0 ) {
-      launchListeners.shift()();
+      launchListeners.shift()!();
     }
     assert && assert( launchListeners.length === 0 );
   }
@@ -387,49 +348,76 @@ class Tandem {
   /**
    * ONLY FOR TESTING!!!!
    * This was created to "undo" launch so that tests can better expose cases around calling Tandem.launch()
-   * @public (tests only)
    */
-  static unlaunch() {
+  public static unlaunch(): void {
     Tandem.launched = false;
-    bufferedPhetioObjects.length = 0;
+    Tandem.bufferedPhetioObjects.length = 0;
     launchListeners.length = 0;
   }
 
   /**
    * Add a listener that will fire when Tandem is launched
-   * @public
-   * @param listener
    */
-  static addLaunchListener( listener ) {
+  public static addLaunchListener( listener: () => void ): void {
     assert && assert( !Tandem.launched, 'tandem has already been launched, cannot add listener for that hook.' );
     launchListeners.push( listener );
   }
+
+  /**
+   * Expose collected missing tandems only populated from specific query parameter, see phetioPrintMissingTandems
+   * (phet-io internal)
+   */
+  public static readonly missingTandems = missingTandems;
+
+  /**
+   * If PhET-iO is enabled in this runtime.
+   */
+  public static readonly PHET_IO_ENABLED = PHET_IO_ENABLED;
+
+  /**
+   * When generating an API (whether to output a file or for in-memory comparison), this is marked as true.
+   */
+  public static readonly API_GENERATION = Tandem.PHET_IO_ENABLED && ( phet.preloads.phetio.queryParameters.phetioPrintAPI ||
+                                                                      phet.preloads.phetio.queryParameters.phetioCompareAPI );
+
+  /**
+   * If PhET-iO is running with validation enabled.
+   */
+  public static readonly VALIDATION = VALIDATION;
+
+  /**
+   * For the API file, the key name for the metadata section.
+   */
+  public static readonly METADATA_KEY = '_metadata';
+
+  /**
+   * For the API file, the key name for the data section.
+   */
+  public static readonly DATA_KEY = '_data';
+
+  // Before listeners are wired up, tandems are buffered.  When listeners are wired up, Tandem.launch() is called and
+  // buffered tandems are flushed, then subsequent tandems are delivered to listeners directly
+  public static launched = false;
+
+  // a list of PhetioObjects ready to be sent out to listeners, but can't because Tandem hasn't been launched yet.
+  // TODO: https://github.com/phetsims/tandem/issues/266 can this be local?
+  public static bufferedPhetioObjects: PhetioObject[] = [];
 }
 
-
 Tandem.addLaunchListener( () => {
-  while ( bufferedPhetioObjects.length > 0 ) {
-    const phetioObject = bufferedPhetioObjects.shift();
-    phetioObject.tandem.addPhetioObject( phetioObject );
+  while ( Tandem.bufferedPhetioObjects.length > 0 ) {
+    const phetioObject = Tandem.bufferedPhetioObjects.shift();
+    phetioObject!.tandem.addPhetioObject( phetioObject! );
   }
-  assert && assert( bufferedPhetioObjects.length === 0, 'bufferedPhetioObjects should be empty' );
+  assert && assert( Tandem.bufferedPhetioObjects.length === 0, 'bufferedPhetioObjects should be empty' );
 } );
-
-// @public (read-only) - a list of PhetioObjects ready to be sent out to listeners, but can't because Tandem hasn't been
-// launched yet.
-Tandem.bufferedPhetioObjects = bufferedPhetioObjects;
 
 class RootTandem extends Tandem {
 
   /**
    * RootTandems only accept specifically named children.
-   * @override
-   * @param {string} name
-   * @param {Object} [options]
-   * @returns {Tandem}
-   * @public
    */
-  createTandem( name, options ) {
+  public override createTandem( name: string, options?: TandemOptions ): Tandem {
     if ( Tandem.VALIDATION ) {
       const allowedOnRoot = name === window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME ||
                             name === REQUIRED_TANDEM_NAME ||
@@ -444,13 +432,8 @@ class RootTandem extends Tandem {
   }
 }
 
-// The next few statics are created outside the static block because they instantiate Tandem instances.
-
 /**
  * The root tandem for a simulation
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.ROOT = new RootTandem( null, _.camelCase( packageJSON.name ) );
 
@@ -465,35 +448,21 @@ const GENERAL = Tandem.ROOT.createTandem( window.phetio.PhetioIDUtils.GENERAL_CO
 
 /**
  * Used in unit tests
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.ROOT_TEST = Tandem.ROOT.createTandem( TEST_TANDEM_NAME );
+
 /**
  * Tandem for model simulation elements that are general to all sims.
- *
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.GENERAL_MODEL = GENERAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
 
 /**
  * Tandem for view simulation elements that are general to all sims.
- *
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.GENERAL_VIEW = GENERAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
 
 /**
  * Tandem for controller simulation elements that are general to all sims.
- *
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.GENERAL_CONTROLLER = GENERAL.createTandem( window.phetio.PhetioIDUtils.CONTROLLER_COMPONENT_NAME );
 
@@ -511,38 +480,23 @@ const GLOBAL = Tandem.ROOT.createTandem( window.phetio.PhetioIDUtils.GLOBAL_COMP
 /**
  * Model simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
  * tandem should only have simulation specific elements in them.
- *
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.GLOBAL_MODEL = GLOBAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
 
 /**
  * View simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
  * tandem should only have simulation specific elements in them.
- *
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.GLOBAL_VIEW = GLOBAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
 
 /**
  * Colors used in the simulation.
- *
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.COLORS = Tandem.GLOBAL_VIEW.createTandem( window.phetio.PhetioIDUtils.COLORS_COMPONENT_NAME );
 
 /**
  * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
  * passed in, then it will not be instrumented.
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.OPTIONAL = Tandem.ROOT.createTandem( OPTIONAL_TANDEM_NAME, {
   required: false,
@@ -550,19 +504,12 @@ Tandem.OPTIONAL = Tandem.ROOT.createTandem( OPTIONAL_TANDEM_NAME, {
 } );
 
 /**
- * To be used exclusively to opt out of situations where a tandem is required.
- * See https://github.com/phetsims/tandem/issues/97.
- * @public
- * @constant
- * @type {Tandem}
+ * To be used exclusively to opt out of situations where a tandem is required, see https://github.com/phetsims/tandem/issues/97.
  */
 Tandem.OPT_OUT = Tandem.OPTIONAL;
 
 /**
  * Some common code (such as Checkbox or RadioButton) must always be instrumented.
- * @public
- * @constant
- * @type {Tandem}
  */
 Tandem.REQUIRED = Tandem.ROOT.createTandem( REQUIRED_TANDEM_NAME, {
 
@@ -572,85 +519,33 @@ Tandem.REQUIRED = Tandem.ROOT.createTandem( REQUIRED_TANDEM_NAME, {
 } );
 
 /**
- * Expose collected missing tandems only populated from specific query parameter, see phetioPrintMissingTandems
- * @public (phet-io internal)
- * @type {Object}
- */
-Tandem.missingTandems = missingTandems;
-
-/**
- * If PhET-iO is enabled in this runtime.
- * @public
- * @type {boolean}
- */
-Tandem.PHET_IO_ENABLED = PHET_IO_ENABLED;
-
-/**
- * When generating an API (whether to output a file or for in-memory comparison), this is marked as true.
- * @public
- * @type {boolean}
- */
-Tandem.API_GENERATION = Tandem.PHET_IO_ENABLED && ( phet.preloads.phetio.queryParameters.phetioPrintAPI ||
-                                                    phet.preloads.phetio.queryParameters.phetioCompareAPI );
-
-/**
- * If PhET-iO is running with validation enabled.
- * @public
- * @type {boolean}
- */
-Tandem.VALIDATION = VALIDATION;
-
-/**
- * For the API file, the key name for the metadata section.
- * @type {string}
- * @public
- */
-Tandem.METADATA_KEY = '_metadata';
-
-/**
- * For the API file, the key name for the data section.
- * @type {string}
- * @public
- */
-Tandem.DATA_KEY = '_data';
-
-/**
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
  */
 class GroupTandem extends Tandem {
+  private readonly groupName: string;
+
+  // for generating indices from a pool
+  private groupMemberIndex: number;
 
   /**
-   * @param {Tandem} parentTandem
-   * @param {string} name
-   * @constructor
-   * @private create with Tandem.createGroupTandem
+   * create with Tandem.createGroupTandem
    */
-  constructor( parentTandem, name ) {
+  public constructor( parentTandem: Tandem, name: string ) {
     super( parentTandem, name );
 
-    // @private
     this.groupName = name;
-
-    // @private for generating indices from a pool
     this.groupMemberIndex = 0;
   }
 
   /**
    * Creates the next tandem in the group.
-   * @returns {Tandem}
-   * @public
    */
-  createNextTandem() {
-    const tandem = this.parentTandem.createTandem( `${this.groupName}${this.groupMemberIndex}` );
+  public createNextTandem(): Tandem {
+    const tandem = this.parentTandem!.createTandem( `${this.groupName}${this.groupMemberIndex}` );
     this.groupMemberIndex++;
     return tandem;
   }
 }
-
-// @public (read-only) Before listeners are wired up, tandems are buffered.  When listeners are wired up,
-// Tandem.launch() is called and buffered tandems are flushed, then subsequent tandems are delivered to listeners
-// directly
-Tandem.launched = false;
 
 tandemNamespace.register( 'Tandem', Tandem );
 export default Tandem;
