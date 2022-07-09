@@ -400,7 +400,6 @@ class Tandem {
   public static launched = false;
 
   // a list of PhetioObjects ready to be sent out to listeners, but can't because Tandem hasn't been launched yet.
-  // TODO: https://github.com/phetsims/tandem/issues/266 can this be local?
   public static bufferedPhetioObjects: PhetioObject[] = [];
 }
 
