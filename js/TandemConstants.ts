@@ -14,12 +14,12 @@ const EVENT_TYPE_MODEL = 'MODEL';
 
 export type PhetioElementData = {
   initialState: Record<string, unknown>;
-}
+};
 
 export type PhetioElement = {
   _metadata: PhetioObjectMetadata;
   _data?: PhetioElementData;
-}
+};
 export type PhetioElements = {
   [ name: string ]: PhetioElements;
 } & PhetioElement;
@@ -28,7 +28,7 @@ export type Method = {
   returnType: string;
   parameterTypes: string[];
   documentation: string;
-}
+};
 
 export type PhetioTypes = {
   [ name: string ]: {
@@ -41,7 +41,7 @@ export type PhetioTypes = {
     dataDefaults: Record<string, unknown>;
     methodOrder: string[];
   };
-}
+};
 
 // Like the generate API files
 export type API = {
@@ -53,12 +53,12 @@ export type API = {
   sim: string;
   phetioElements: PhetioElements;
   phetioTypes: PhetioTypes;
-}
+};
 
 // Like the old API schema, where keys are the full, dot-separated phetioID
 export type APIFlat = {
   [ name: string ]: PhetioElement;
-}
+};
 
 export type PhetioObjectMetadata = {
 
@@ -77,7 +77,7 @@ export type PhetioObjectMetadata = {
   phetioTypeName: string;
   phetioIsArchetype: boolean;
   phetioArchetypePhetioID?: string | null;
-}
+};
 
 const metadataDefaults: PhetioObjectMetadata = {
   phetioTypeName: OBJECT_IO_TYPE_NAME,

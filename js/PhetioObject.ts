@@ -51,7 +51,7 @@ const objectToPhetioID = ( phetioObject: PhetioObject ) => phetioObject.tandem.p
 type StartEventOptions = {
   data?: Record<string, IntentionalAny> | null;
   getData?: ( () => Record<string, IntentionalAny> ) | null;
-}
+};
 
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
@@ -115,7 +115,7 @@ type EventMetadata = {
 
   // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
   [ key: string ]: string | boolean | number | Array<string | boolean | number>;
-}
+};
 
 // @ts-ignore
 assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType ) === TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioEventType,

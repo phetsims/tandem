@@ -46,7 +46,7 @@ type SelfOptions = {
 
   // tandem name for elements in the container is the container's tandem name without containerSuffix
   phetioDynamicElementName?: string;
-}
+};
 
 export type PhetioDynamicElementContainerOptions = SelfOptions & StrictOmit<PhetioObjectOptions, 'phetioDynamicElement'> & PickRequired<PhetioObjectOptions, 'phetioType'>;
 
@@ -55,7 +55,7 @@ export type DynamicElementContainerClearOptions = {
 
   //  Used for validation during state setting. See this.disposeElement() for documentation
   fromStateSetting?: boolean;
-}
+};
 
 
 function archetypeCast<T>( archetype: T | null ): T {
