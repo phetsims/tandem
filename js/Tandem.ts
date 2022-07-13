@@ -71,7 +71,7 @@ class Tandem {
   // names dynamically based on screen names
   public readonly name: string;
   public readonly phetioID: string;
-  private readonly children: { [ key: string ]: Tandem } = {};
+  private readonly children: Record<string, Tandem> = {};
   public readonly required: boolean;
   public readonly supplied: boolean;
   private isDisposed = false;

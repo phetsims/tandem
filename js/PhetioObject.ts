@@ -111,11 +111,8 @@ const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
   phetioEventMetadata: null
 };
 
-type EventMetadata = {
-
-  // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
-  [ key: string ]: string | boolean | number | Array<string | boolean | number>;
-};
+// If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
+type EventMetadata = Record<string, string | boolean | number | Array<string | boolean | number>>;
 
 // @ts-ignore
 assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType ) === TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioEventType,

@@ -54,10 +54,10 @@ type IOTypeOptions<T, StateType> = {
   fromStateObject?: ( s: StateType ) => T;
   stateToArgsForConstructor?: ( s: StateType ) => unknown[];
   applyState?: ( t: T, state: StateType ) => void;
-  stateSchema?: ( ( ioType: IOType<T, StateType> ) => StateSchema ) | StateSchema | ( { [ key: string ]: IOType<any, any> } ) | null;
+  stateSchema?: ( ( ioType: IOType<T, StateType> ) => StateSchema ) | StateSchema | ( Record<string, IOType<any, any>> ) | null;
   events?: string[];
-  dataDefaults?: { [ key: string ]: unknown };
-  metadataDefaults?: { [ key: string ]: unknown };
+  dataDefaults?: Record<string, unknown>;
+  metadataDefaults?: Record<string, unknown>;
   defaultDeserializationMethod?: DeserializationMethod;
   documentation?: string;
   methods?: unknown;
@@ -73,8 +73,8 @@ class IOType<T = any, StateType = any> {
   public readonly documentation?: any;
   public readonly methods?: any;
   public readonly events: string[];
-  public readonly metadataDefaults?: { [ key: string ]: unknown };
-  public readonly dataDefaults?: { [ key: string ]: unknown };
+  public readonly metadataDefaults?: Record<string, unknown>;
+  public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
   public readonly parameterTypes?: any;
 
@@ -381,14 +381,14 @@ class IOType<T = any, StateType = any> {
   /**
    * Return all the metadata defaults (for the entire IO Type hierarchy)
    */
-  public getAllMetadataDefaults(): { [ key: string ]: unknown } {
+  public getAllMetadataDefaults(): Record<string, unknown> {
     return _.merge( {}, this.supertype ? this.supertype.getAllMetadataDefaults() : {}, this.metadataDefaults );
   }
 
   /**
    * Return all the data defaults (for the entire IO Type hierarchy)
    */
-  public getAllDataDefaults(): { [ key: string ]: unknown } {
+  public getAllDataDefaults(): Record<string, unknown> {
     return _.merge( {}, this.supertype ? this.supertype.getAllDataDefaults() : {}, this.dataDefaults );
   }
 
