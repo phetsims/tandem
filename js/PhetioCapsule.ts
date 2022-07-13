@@ -67,14 +67,19 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
     this.element = null;
   }
 
+  public hasElement(): boolean {
+    return this.element !== null;
+  }
+
   /**
    * Creates the element if it has not been created yet, and returns it.
    */
-  public getElement( ...argsForCreateFunction: P ): T | null {
+  public getElement( ...argsForCreateFunction: P ): T {
     if ( !this.element ) {
       this.create( argsForCreateFunction );
     }
-    return this.element;
+    assert && assert( this.element !== null );
+    return this.element!;
   }
 
   public override clear( providedOptions?: DynamicElementContainerClearOptions ): void {

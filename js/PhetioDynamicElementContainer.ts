@@ -281,7 +281,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
       // @ts-ignore
       validate( createdObject, containerParameterType.validator );
 
-      assert && assert( createdObject.phetioType === containerParameterType,
+      assert && assert( createdObject.phetioType.extends( containerParameterType ),
         'dynamic element container expected its created instance\'s phetioType to match its parameterType.' );
     }
 
