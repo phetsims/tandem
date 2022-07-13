@@ -149,8 +149,6 @@ class Tandem {
     if ( PRINT_MISSING_TANDEMS && !tandem.supplied ) {
       const stackTrace = new Error().stack;
       if ( tandem.required ) {
-
-        // TODO: https://github.com/phetsims/tandem/issues/266 review logic change
         missingTandems.required.push( { phetioID: tandem.phetioID, stack: stackTrace } );
       }
       else {
