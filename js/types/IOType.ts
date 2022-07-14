@@ -259,8 +259,8 @@ class IOType<T = any, StateType = any> {
       let toStateObject;
 
       // Only do this non-standard toStateObject function if there is a stateSchema but no toStateObject provided
-      if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema!.isComposite() ) {
-        toStateObject = this.stateSchema!.defaultToStateObject( coreObject );
+      if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema.isComposite() ) {
+        toStateObject = this.stateSchema.defaultToStateObject( coreObject );
       }
       else {
         toStateObject = config.toStateObject!( coreObject );

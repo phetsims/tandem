@@ -265,7 +265,7 @@ class PhetioObject {
 
     // Dynamic elements should compare to their "archetypal" counterparts.  For example, this means that a Particle
     // in a PhetioGroup will take its overrides from the PhetioGroup archetype.
-    const archetypalPhetioID = options.tandem!.getArchetypalPhetioID();
+    const archetypalPhetioID = options.tandem.getArchetypalPhetioID();
 
     // Overrides are only defined for simulations, not for unit tests.  See https://github.com/phetsims/phet-io/issues/1461
     // Patch in the desired values from overrides, if any.
@@ -342,67 +342,67 @@ class PhetioObject {
   // throws an assertion error in brands other than PhET-iO
   public get phetioType(): IOType {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioType only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioType!;
+    return this._phetioType;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioState(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioState only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioState!;
+    return this._phetioState;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioReadOnly(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioReadOnly only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioReadOnly!;
+    return this._phetioReadOnly;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioDocumentation(): string {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDocumentation only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioDocumentation!;
+    return this._phetioDocumentation;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioEventType(): EventType {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventType only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioEventType!;
+    return this._phetioEventType;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioHighFrequency(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioHighFrequency only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioHighFrequency!;
+    return this._phetioHighFrequency;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioPlayback(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioPlayback only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioPlayback!;
+    return this._phetioPlayback;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioDynamicElement(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDynamicElement only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioDynamicElement!;
+    return this._phetioDynamicElement;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioFeatured(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioFeatured only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioFeatured!;
+    return this._phetioFeatured;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioEventMetadata(): any {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventMetadata only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioEventMetadata!;
+    return this._phetioEventMetadata;
   }
 
   // throws an assertion error in brands other than PhET-iO
   public get phetioDesigned(): boolean {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioDesigned only accessible for instrumented objects in PhET-iO brand.' );
-    return this._phetioDesigned!;
+    return this._phetioDesigned;
   }
 
   /**
@@ -445,14 +445,14 @@ class PhetioObject {
 
       // @ts-ignore
       if ( skipHighFrequencyEvent || this.phetioEventType === EventType.OPT_OUT || skipFromUndefinedDatastream ) {
-        this.phetioMessageStack!.push( SKIPPING_MESSAGE );
+        this.phetioMessageStack.push( SKIPPING_MESSAGE );
         return;
       }
 
       // Only get the args if we are actually going to send the event.
       const data = options.getData ? options.getData() : options.data;
 
-      this.phetioMessageStack!.push(
+      this.phetioMessageStack.push(
         phet.phetio.dataStream.start( this.phetioEventType, this.tandem.phetioID, this.phetioType, event, data, this.phetioEventMetadata, this.phetioHighFrequency )
       );
 
@@ -470,8 +470,8 @@ class PhetioObject {
   public phetioEndEvent(): void {
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
-      assert && assert( this.phetioMessageStack!.length > 0, 'Must have messages to pop' );
-      const topMessageIndex = this.phetioMessageStack!.pop();
+      assert && assert( this.phetioMessageStack.length > 0, 'Must have messages to pop' );
+      const topMessageIndex = this.phetioMessageStack.pop();
 
       // The message was started as a high frequency event to be skipped, so the end is a no-op
       if ( topMessageIndex === SKIPPING_MESSAGE ) {
@@ -638,7 +638,7 @@ class PhetioObject {
     assert && animationFrameTimer.runOnNextTick( () => {
 
       // Uninstrumented PhetioObjects don't have a phetioMessageStack attribute.
-      assert && assert( !this.hasOwnProperty( 'phetioMessageStack' ) || this.phetioMessageStack!.length === 0,
+      assert && assert( !this.hasOwnProperty( 'phetioMessageStack' ) || this.phetioMessageStack.length === 0,
         'phetioMessageStack should be clear' );
 
       descendants.forEach( descendant => {
