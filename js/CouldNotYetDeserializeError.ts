@@ -15,7 +15,7 @@
 import tandemNamespace from './tandemNamespace.js';
 
 class CouldNotYetDeserializeError extends Error {
-  constructor() {
+  public constructor() {
     super( 'CouldNotYetDeserializeError' );  // Do not change this message without consulting appropriate usages.
   }
 }

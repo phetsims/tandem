@@ -22,11 +22,11 @@ const PHET_IO_ENABLED = _.hasIn( window, 'phet.preloads.phetio' );
 const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintMissingTandems;
 
 // Validation defaults to true, but can be overridden to be false in package.json.
-const IS_VALIDATION_DEFAULT = _.hasIn( packageJSON, 'phet.phet-io.validation' ) ? packageJSON.phet[ 'phet-io' ].validation : true;
+const IS_VALIDATION_DEFAULT = _.hasIn( packageJSON, 'phet.phet-io.validation' ) ? !!packageJSON.phet[ 'phet-io' ].validation : true;
 
 // The default value for validation can be overridden with a query parameter ?phetioValidation={true|false}.
 const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = window.QueryStringMachine && QueryStringMachine.containsKey( 'phetioValidation' );
-const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? phet.preloads.phetio.queryParameters.phetioValidation :
+const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? !!phet.preloads.phetio.queryParameters.phetioValidation :
                                 ( PHET_IO_ENABLED && IS_VALIDATION_DEFAULT );
 
 const VALIDATION = PHET_IO_ENABLED && IS_VALIDATION_SPECIFIED && !PRINT_MISSING_TANDEMS;
@@ -57,7 +57,7 @@ const phetioObjectListeners: Array<PhetioObjectListener> = [];
 // keep track of listeners to fire when Tandem.launch() is called.
 const launchListeners: Array<() => void> = [];
 
-type TandemOptions = {
+export type TandemOptions = {
   required?: boolean;
   supplied?: boolean;
 };

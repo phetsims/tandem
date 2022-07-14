@@ -34,6 +34,9 @@
 import DynamicTandem from './DynamicTandem.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
+import IOType from './types/IOType.js';
+import PhetioObject from './PhetioObject.js';
+import { PhetioObjectMetadata } from './TandemConstants.js';
 
 // constants
 // The API-tracked and validated metadata keys
@@ -47,45 +50,38 @@ const KEYS_TO_CHECK = [
   'phetioTypeName'
 ];
 
+// Feel free to add any other JSONifyable keys to this to make the error more clear! All mismatches are printed
+// at once for clarity, see PhetioEngine.
+type APIMismatch = {
+  phetioID: string;
+  ruleInViolation: string; // one of the numbered list in the header doc.
+  message?: string; // specific problem
+  source?: any;
+};
+
 class PhetioAPIValidation {
+  private readonly apiMismatches: APIMismatch[] = [];
 
-  constructor() {
+  // keep track of when the sim has started.
+  private simHasStarted = false;
 
-    /**
-     * {Object[]} - Each object holds a single "API mismatch" with the following keys:
-     *                phetioID: {string}
-     *                stack: {string} - for a stack trace
-     *                ruleInViolation: {string} - one of the numbered list in the header doc.
-     *                [message]: {string} - specific problem
-     *
-     * Feel free to add any other JSONifyable keys to this to make the error more clear! All mismatches are printed
-     * at once for clarity, see PhetioEngine.
-     * @private
-     */
-    this.apiMismatches = [];
+  // settable by qunitStart.js. Validation is only enabled when all screens are present.
+  public enabled: boolean = !!assert && Tandem.VALIDATION;
 
-    // @private - keep track of when the sim has started.
-    this.simHasStarted = false;
 
-    // @public {boolean} - settable by qunitStart.js. Validation is only enabled when all screens are present.
-    this.enabled = assert && Tandem.VALIDATION;
-
-    // @private {Object.<typeName:string, IOType>} - this must be all phet-io types so that the
-    // following would fail: add a phetioType, then remove it, then add a different one under the same typeName.
-    // A Note about memory: Every IOType that is loaded as a module is already loaded on the namespace. Therefore
-    // this map doesn't add any memory by storing these. The exception to this is parametric IOTypes. It should be
-    // double checked that anything being passed into a parametric type is memory safe. As of this writing, only IOTypes
-    // are passed to parametric IOTypes, so this pattern remains memory leak free. Furthermore, this list is only
-    // populated when `this.enabled`.
-    this.everyPhetioType = {};
-  }
+  // this must be all phet-io types so that the
+  // following would fail: add a phetioType, then remove it, then add a different one under the same typeName.
+  // A Note about memory: Every IOType that is loaded as a module is already loaded on the namespace. Therefore
+  // this map doesn't add any memory by storing these. The exception to this is parametric IOTypes. It should be
+  // double checked that anything being passed into a parametric type is memory safe. As of this writing, only IOTypes
+  // are passed to parametric IOTypes, so this pattern remains memory leak free. Furthermore, this list is only
+  // populated when `this.enabled`.
+  private everyPhetioType: Record<string, IOType> = {};
 
   /**
    * Callback when the simulation is ready to go, and all static PhetioObjects have been created.
-   * @param {PhetioEngine} phetioEngine
-   * @public
    */
-  onSimStarted( phetioEngine ) {
+  public onSimStarted(): void {
     this.simHasStarted = true;
     if ( this.enabled && phet.joist.sim.allScreensCreated ) {
       this.validateOverridesFile();
@@ -94,10 +90,8 @@ class PhetioAPIValidation {
 
   /**
    * Checks if a removed phetioObject is part of a Group
-   * @param {PhetioObject} phetioObject
-   * @public
    */
-  onPhetioObjectRemoved( phetioObject ) {
+  public onPhetioObjectRemoved( phetioObject: PhetioObject ): void {
     if ( !this.enabled ) {
       return;
     }
@@ -115,10 +109,8 @@ class PhetioAPIValidation {
 
   /**
    * Should be called from phetioEngine when a PhetioObject is added to the PhET-iO
-   * @param {PhetioObject} phetioObject
-   * @public
    */
-  onPhetioObjectAdded( phetioObject ) {
+  public onPhetioObjectAdded( phetioObject: PhetioObject ): void {
     if ( !this.enabled ) {
       return;
     }
@@ -152,17 +144,14 @@ class PhetioAPIValidation {
             const archetypeMetadata = phet.phetio.phetioEngine.getPhetioObject( archetypeID ).getMetadata();
 
             // Compare to the simulation-defined archetype
-            checkDynamicInstanceAgainstArchetype( this, phetioObject, archetypeMetadata, 'simulation archetype' );
+            this.checkDynamicInstanceAgainstArchetype( phetioObject, archetypeMetadata, 'simulation archetype' );
           }
         }
       } );
     }
   }
 
-  /**
-   * @private
-   */
-  validateOverridesFile() {
+  private validateOverridesFile(): void {
 
     // import phetioEngine causes a cycle and cannot be used, hence we must use the namespace
     const entireBaseline = phet.phetio.phetioEngine.getPhetioElementsBaseline();
@@ -217,44 +206,43 @@ class PhetioAPIValidation {
 
   /**
    * Assert out the failed API validation rule.
-   * @param {Object} apiErrorObject - see doc for this.apiMismatches
-   * @private
    */
-  assertAPIError( apiErrorObject ) {
+  private assertAPIError( apiErrorObject: APIMismatch ): void {
 
     const mismatchMessage = apiErrorObject.phetioID ? `${apiErrorObject.phetioID}:  ${apiErrorObject.ruleInViolation}` :
                             `${apiErrorObject.ruleInViolation}`;
 
+    this.apiMismatches.push( apiErrorObject );
+
     console.log( 'error data:', apiErrorObject );
     assert && assert( false, `PhET-iO API error:\n${mismatchMessage}` );
   }
+
+
+  /**
+   * Compare a dynamic phetioObject's metadata to the expected metadata
+   */
+  private checkDynamicInstanceAgainstArchetype( phetioObject: PhetioObject, archetypeMetadata: PhetioObjectMetadata, source: string ): void {
+    const actualMetadata = phetioObject.getMetadata();
+    KEYS_TO_CHECK.forEach( key => {
+
+      // These attributes are different for archetype vs actual
+      if ( key !== 'phetioDynamicElement' && key !== 'phetioArchetypePhetioID' && key !== 'phetioIsArchetype' ) {
+
+        // @ts-ignore
+        if ( archetypeMetadata[ key ] !== actualMetadata[ key ] && phetioObject.tandem ) {
+          this.assertAPIError( {
+            phetioID: phetioObject.tandem.phetioID,
+            ruleInViolation: '5. Dynamic element metadata should match the archetype in the API.',
+            source: source,
+            message: `mismatched metadata: ${key}`
+          } );
+        }
+      }
+    } );
+  };
 }
 
-/**
- * Compare a dynamic phetioObject's metadata to the expected metadata
- * @param {phetioAPIValidation} phetioAPIValidation
- * @param {PhetioObject} phetioObject
- * @param {Object} archetypeMetadata - from an archetype of the dynamic element
- * @param {string} source - where the archetype came from, for debugging
- */
-const checkDynamicInstanceAgainstArchetype = ( phetioAPIValidation, phetioObject, archetypeMetadata, source ) => {
-  const actualMetadata = phetioObject.getMetadata();
-  KEYS_TO_CHECK.forEach( key => {
-
-    // These attributes are different for archetype vs actual
-    if ( key !== 'phetioDynamicElement' && key !== 'phetioArchetypePhetioID' && key !== 'phetioIsArchetype' ) {
-
-      if ( archetypeMetadata[ key ] !== actualMetadata[ key ] ) {
-        phetioAPIValidation.assertAPIError( {
-          phetioID: phetioObject.tandem.phetioID,
-          ruleInViolation: '5. Dynamic element metadata should match the archetype in the API.',
-          source: source,
-          message: `mismatched metadata: ${key}`
-        } );
-      }
-    }
-  } );
-};
 
 const phetioAPIValidation = new PhetioAPIValidation();
 tandemNamespace.register( 'phetioAPIValidation', phetioAPIValidation );

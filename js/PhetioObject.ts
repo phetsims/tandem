@@ -667,7 +667,7 @@ class PhetioObject {
    *                          (see usage initializePhetioObject). If not provided, will instead use the value of "this"
    * @returns - metadata plucked from the passed in parameter
    */
-  public getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
+  public getMetadata( object?: PhetioObjectMetadataInput ): PhetioObjectMetadata {
     object = object || this;
     const metadata: PhetioObjectMetadata = {
       phetioTypeName: object.phetioType.typeName,

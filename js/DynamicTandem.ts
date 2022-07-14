@@ -8,20 +8,17 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import Tandem from './Tandem.js';
+import Tandem, { TandemOptions } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // constants
 const DYNAMIC_ARCHETYPE_NAME = 'archetype';
 
+type DynamicTandemOptions = TandemOptions;
+
 class DynamicTandem extends Tandem {
 
-  /**
-   * @param {Tandem} parentTandem
-   * @param {string} name
-   * @param {Object} [options]
-   */
-  constructor( parentTandem, name, options ) {
+  public constructor( parentTandem: Tandem, name: string, options?: DynamicTandemOptions ) {
     assert && assert( parentTandem, 'DynamicTandem must have a parentTandem' );
     super( parentTandem, name, options );
   }
@@ -29,11 +26,8 @@ class DynamicTandem extends Tandem {
   /**
    * Returns the regular expression which can be used to test each term. The term must consist only of alpha-numeric
    * characters or underscores.
-   * @returns {RegExp}
-   * @protected
-   * @override
    */
-  getTermRegex() {
+  protected override getTermRegex(): RegExp {
     return /^[a-zA-Z0-9_]+$/;
   }
 
@@ -41,18 +35,14 @@ class DynamicTandem extends Tandem {
    * See Tandem.getArchetypalPhetioID, in this case, look up the corresponding archetype.
    * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
    * This method looks up the corresponding archetype like..'sim.screen1.particles.archetype.visibleProperty'
-   * @returns {string}
-   * @public
-   * @override
    */
-  getArchetypalPhetioID() {
+  public override getArchetypalPhetioID(): string {
     assert && assert( this.parentTandem, 'Group elements must be in a Group' );
-    return window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), DYNAMIC_ARCHETYPE_NAME );
+    return window.phetio.PhetioIDUtils.append( this.parentTandem!.getArchetypalPhetioID(), DYNAMIC_ARCHETYPE_NAME );
   }
-}
 
-// @public {string}
-DynamicTandem.DYNAMIC_ARCHETYPE_NAME = DYNAMIC_ARCHETYPE_NAME;
+  public static readonly DYNAMIC_ARCHETYPE_NAME = DYNAMIC_ARCHETYPE_NAME;
+}
 
 tandemNamespace.register( 'DynamicTandem', DynamicTandem );
 export default DynamicTandem;

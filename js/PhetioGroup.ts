@@ -268,7 +268,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
     const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
     // Don't access phetioType in PhET brand
-    const containerParameterType = Tandem.PHET_IO_ENABLED ? this.phetioType.parameterTypes[ 0 ] : null;
+    const containerParameterType = Tandem.PHET_IO_ENABLED ? this.phetioType.parameterTypes![ 0 ] : null;
 
     const groupElement = this.createDynamicElement( componentName, argsForCreateFunction, containerParameterType );
 

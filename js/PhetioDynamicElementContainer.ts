@@ -111,9 +111,9 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
     assert && Tandem.VALIDATION && assert( !!options.phetioType, 'phetioType must be supplied' );
     assert && Tandem.VALIDATION && assert( Array.isArray( options.phetioType.parameterTypes ),
       'phetioType must supply its parameter types' );
-    assert && Tandem.VALIDATION && assert( options.phetioType.parameterTypes.length === 1,
+    assert && Tandem.VALIDATION && assert( options.phetioType.parameterTypes!.length === 1,
       'PhetioDynamicElementContainer\'s phetioType must have exactly one parameter type' );
-    assert && Tandem.VALIDATION && assert( !!options.phetioType.parameterTypes[ 0 ],
+    assert && Tandem.VALIDATION && assert( !!options.phetioType.parameterTypes![ 0 ],
       'PhetioDynamicElementContainer\'s phetioType\'s parameterType must be truthy' );
     if ( assert && options.tandem.supplied ) {
       assert && Tandem.VALIDATION && assert( options.tandem.name.endsWith( options.containerSuffix ),
@@ -317,6 +317,8 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
    */
   private createdEventListener( dynamicElement: T ): void {
     const additionalData = dynamicElement.phetioState ? {
+
+      // @ts-ignore
       state: this.phetioType.parameterTypes[ 0 ].toStateObject( dynamicElement )
     } : null;
     this.emitDataStreamEvent( dynamicElement, 'created', additionalData );

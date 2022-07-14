@@ -15,12 +15,14 @@ QUnit.module( 'PhetioGroup' );
 
 QUnit.test( 'PhetioGroup creation and disposal', assert => {
 
-  const createElement = ( tandem, otherField ) => {
+  const createElement = ( tandem: Tandem, otherField: string ) => {
     const element = new PhetioObject( {
       tandem: tandem,
       phetioDynamicElement: true,
       phetioState: false
     } );
+
+    // @ts-ignore
     element.otherField = otherField;
     return element;
   };
@@ -31,6 +33,8 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
 
   phetioGroup.elementCreatedEmitter.addListener( element => {
     assert.ok( phetioGroup.includes( element ), 'element should be in container data structure' );
+
+    // @ts-ignore
     assert.ok( phetioGroup.countProperty.value === phetioGroup._array.length, 'element should be in container data structure' );
   } );
   phetioGroup.elementDisposedEmitter.addListener( element => {
@@ -47,6 +51,8 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
   assert.ok( phetioGroup.countProperty.value === 0, 'no elements left now' );
 
   phetioGroup.elementCreatedEmitter.addListener( element => {
+
+    // @ts-ignore
     if ( element.otherField === 'disposeMe!' ) {
       phetioGroup.disposeElement( element );
     }
@@ -65,7 +71,7 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
 
 QUnit.test( 'PhetioGroup deferring notifications', assert => {
 
-  const createElement = tandem => {
+  const createElement = ( tandem: Tandem ) => {
     return new PhetioObject( {
       tandem: tandem,
       phetioDynamicElement: true,

@@ -111,7 +111,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
     this.element = this.createDynamicElement(
       this.phetioDynamicElementName,
       argsForCreateFunction,
-      Tandem.PHET_IO_ENABLED ? this.phetioType.parameterTypes[ 0 ] : null // Don't access phetioType in PhET brand
+      Tandem.PHET_IO_ENABLED ? this.phetioType.parameterTypes![ 0 ] : null // Don't access phetioType in PhET brand
     );
 
     this.notifyElementCreated( this.element );

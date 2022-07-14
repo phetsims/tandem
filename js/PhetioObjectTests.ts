@@ -64,6 +64,8 @@ Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instru
   obj.addLinkedElement( new PhetioObject() );
 
   window.assert && assert.throws( () => {
+
+    // @ts-ignore - I don't want to prefix with an underscore, and I don't want this to be public
     obj.initializePhetioObject( {
       tandem: Tandem.ROOT_TEST.createTandem( 'myObject' )
     } );

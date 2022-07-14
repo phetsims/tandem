@@ -21,9 +21,13 @@ QUnit.test( 'serialization', assert => {
   assert.ok( NumberIO.fromStateObject( NumberIO.toStateObject( Number.NEGATIVE_INFINITY ) ) === Number.NEGATIVE_INFINITY, 'deserialization negative infinity' );
 
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     NumberIO.toStateObject( 4 * 'oh hello' );
   } );
   window.assert && assert.throws( () => {
+
+    // @ts-ignore
     NumberIO.toStateObject( 'oh hello' );
   } );
 } );

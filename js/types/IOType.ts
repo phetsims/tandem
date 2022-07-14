@@ -76,7 +76,7 @@ class IOType<T = any, StateType = any> {
   public readonly metadataDefaults?: Record<string, unknown>;
   public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
-  public readonly parameterTypes?: any;
+  public readonly parameterTypes?: IOType[];
 
   public readonly toStateObject: ( t: T ) => StateType;
   public readonly fromStateObject: any;
