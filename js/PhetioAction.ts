@@ -174,13 +174,7 @@ PhetioAction.PhetioActionIO = ( parameterTypes: IOType[] ) => {
         execute: {
           returnType: VoidIO,
           parameterTypes: parameterTypes,
-
-          // Match `PhetioAction.execute`'s dynamic number of arguments
-          implementation: function( ...args: any[] ) {
-
-            // @ts-ignore
-            this.execute( ...args );
-          },
+          implementation: PhetioAction.prototype.execute,
           documentation: 'Executes the function the PhetioAction is wrapping.',
           invocableForReadOnlyElements: false
         }
