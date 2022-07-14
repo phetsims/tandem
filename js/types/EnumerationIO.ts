@@ -28,7 +28,7 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: Enumer
     const keys = enumeration.keys;
     const values = enumeration.values;
 
-    cache.set( enumeration, new IOType( `EnumerationIO(${joinKeys( keys )})`, {
+    cache.set( enumeration, new IOType<T, string>( `EnumerationIO(${joinKeys( keys )})`, {
       validValues: values,
       documentation: `Possible values: ${keys.join( ', ' )}.${additionalDocs}`,
       toStateObject: ( t: T ) => enumeration.getKey( t ),
