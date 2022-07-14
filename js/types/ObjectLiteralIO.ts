@@ -5,7 +5,7 @@ import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 import ValueIO from './ValueIO.js';
 
-const noExtraPrototype = object => Object.getPrototypeOf( object ) === Object.prototype;
+const noExtraPrototype = (object:object) => Object.getPrototypeOf( object ) === Object.prototype;
 /**
  * IO Type intended for usage with object literals, primarily for toStateObject/fromStateObject.
  * @author Sam Reid (PhET Interactive Simulations)

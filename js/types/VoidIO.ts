@@ -13,14 +13,11 @@ import IOType from './IOType.js';
 /**
  * We sometimes use VoidIO as a workaround to indicate that an argument is passed in the simulation side, but
  * that it shouldn't be leaked to the PhET-iO client.
- *
- * @override
- * @public
  */
 const VoidIO = new IOType( 'VoidIO', {
   isValidValue: () => true,
   documentation: 'Type for which there is no instance, usually to mark functions without a return value',
-  toStateObject: object => undefined
+  toStateObject: () => undefined
 } );
 
 tandemNamespace.register( 'VoidIO', VoidIO );
