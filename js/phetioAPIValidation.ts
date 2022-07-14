@@ -56,7 +56,7 @@ type APIMismatch = {
   phetioID: string;
   ruleInViolation: string; // one of the numbered list in the header doc.
   message?: string; // specific problem
-  source?: any;
+  source?: string;
 };
 
 class PhetioAPIValidation {

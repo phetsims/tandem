@@ -146,7 +146,7 @@ class PhetioObject {
 
   // See documentation in DEFAULTS
   public phetioIsArchetype!: boolean;
-  public phetioBaselineMetadata!: any | null;
+  public phetioBaselineMetadata!: PhetioObjectMetadata | null;
   private _phetioType!: IOType;
   private _phetioState!: boolean;
   private _phetioReadOnly!: boolean;
@@ -156,7 +156,7 @@ class PhetioObject {
   private _phetioPlayback!: boolean;
   private _phetioDynamicElement!: boolean;
   private _phetioFeatured!: boolean;
-  private _phetioEventMetadata!: any | null;
+  private _phetioEventMetadata!: EventMetadata | null;
   private _phetioDesigned!: boolean;
 
   // Public only for PhetioObjectMetadataInput
@@ -166,7 +166,7 @@ class PhetioObject {
   public linkedElements!: LinkedElement[] | null;
   public phetioNotifiedObjectCreated!: boolean;
   private phetioMessageStack!: number[];
-  public static DEFAULT_OPTIONS: any;
+  public static DEFAULT_OPTIONS = DEFAULTS;
 
   public constructor( options?: PhetioObjectOptions ) {
 
@@ -394,7 +394,7 @@ class PhetioObject {
   }
 
   // throws an assertion error in brands other than PhET-iO
-  public get phetioEventMetadata(): any {
+  public get phetioEventMetadata(): EventMetadata | null {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioEventMetadata only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioEventMetadata;
   }
@@ -569,7 +569,7 @@ class PhetioObject {
    *                               - otherwise it gracefully opts out
    * @param [options]
    */
-  public addLinkedElement( element: LinkableElement, options?: any ): void {
+  public addLinkedElement( element: LinkableElement, options?: LinkedElementOptions ): void {
     if ( !this.isPhetioInstrumented() ) {
 
       // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrument
@@ -692,14 +692,12 @@ class PhetioObject {
   }
 }
 
-PhetioObject.DEFAULT_OPTIONS = DEFAULTS; // the default options for the phet-io object
-
 /**
  * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to
  * _.intersection( _.keys( options ), _.keys( DEFAULTS) ).length>0 but implemented imperatively to avoid memory or
  * performance issues. Also handles options.tandem differently.
  */
-const specifiesNonTandemPhetioObjectKey: ( options: any ) => boolean = ( options: any ) => {
+const specifiesNonTandemPhetioObjectKey = ( options: Record<string, IntentionalAny> ): boolean => {
   for ( const key in options ) {
     if ( key !== 'tandem' && options.hasOwnProperty( key ) && DEFAULTS.hasOwnProperty( key ) ) {
       return true;
@@ -708,6 +706,8 @@ const specifiesNonTandemPhetioObjectKey: ( options: any ) => boolean = ( options
   return false;
 };
 
+type LinkedElementOptions = PhetioObjectOptions;
+
 // Since PhetioObject is extended with inherit (e.g., SCENERY/Node), this cannot be an ES6 class
 /**
  * Internal class to avoid cyclic dependencies.
@@ -715,10 +715,10 @@ const specifiesNonTandemPhetioObjectKey: ( options: any ) => boolean = ( options
 class LinkedElement extends PhetioObject {
   public element: LinkableElement;
 
-  public constructor( coreElement: LinkableElement, providedOptions?: PhetioObjectOptions ) {
+  public constructor( coreElement: LinkableElement, providedOptions?: LinkedElementOptions ) {
     assert && assert( !!coreElement, 'coreElement should be defined' );
 
-    const options = optionize<PhetioObjectOptions, EmptyObjectType>()( {
+    const options = optionize<LinkedElementOptions, EmptyObjectType, PhetioObjectOptions>()( {
       phetioType: LinkedElementIO
     }, providedOptions );
 
@@ -744,10 +744,9 @@ class LinkedElement extends PhetioObject {
    *                          (see usage initializePhetioObject)
    * @returns - metadata plucked from the passed in parameter
    */
-  public override getMetadata( object: any ): PhetioObjectMetadata {
+  public override getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
     const phetioObjectMetadata = super.getMetadata( object );
 
-    // @ts-ignore
     delete phetioObjectMetadata.phetioFeatured;
     return phetioObjectMetadata;
   }

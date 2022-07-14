@@ -1,5 +1,6 @@
 // Copyright 2021-2022, University of Colorado Boulder
 
+import PickRequired from '../../phet-core/js/types/PickRequired.js';
 import tandemNamespace from './tandemNamespace.js';
 
 /**
@@ -65,7 +66,7 @@ export type PhetioObjectMetadata = {
   phetioDocumentation: string;
   phetioHighFrequency: boolean; // @deprecated
   phetioPlayback: boolean;
-  phetioFeatured: boolean;
+  phetioFeatured?: boolean; // LinkedElements have no phetioFeatured because they defer to their core element
   phetioDynamicElement: boolean;
   phetioDesigned: boolean;
 
@@ -75,7 +76,7 @@ export type PhetioObjectMetadata = {
   phetioArchetypePhetioID?: string | null;
 };
 
-const metadataDefaults: PhetioObjectMetadata = {
+const metadataDefaults: PhetioObjectMetadata & PickRequired<PhetioObjectMetadata, 'phetioFeatured'> = {
   phetioTypeName: OBJECT_IO_TYPE_NAME,
   phetioDocumentation: '',
   phetioState: true,

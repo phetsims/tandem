@@ -18,6 +18,7 @@ import axon from '../../axon/js/axon.js';
 import validate from '../../axon/js/validate.js';
 import Validation, { Validator } from '../../axon/js/Validation.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
@@ -58,7 +59,7 @@ type SelfOptions = {
 // phetioType. Don't pass this in!
 export type PhetioDataHandlerOptions = SelfOptions & StrictOmit<PhetioObjectOptions, 'phetioType'>;
 
-class PhetioDataHandler<T extends any[] = []> extends PhetioObject {
+class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
 
   private readonly parameters: Parameter[];
 

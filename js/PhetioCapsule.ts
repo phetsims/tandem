@@ -24,13 +24,14 @@ import IOType from './types/IOType.js';
 import PhetioObject from './PhetioObject.js';
 import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
 import optionize from '../../phet-core/js/optionize.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 
 export type PhetioCapsuleOptions = PhetioDynamicElementContainerOptions;
 
-class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends PhetioDynamicElementContainer<T, P> {
+class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
   public static PhetioCapsuleIO: ( parameterType: IOType ) => IOType;
 
@@ -100,7 +101,7 @@ class PhetioCapsule<T extends PhetioObject, P extends any[] = []> extends Phetio
    * @param [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
    * (phet-io)
    */
-  public create( argsForCreateFunction: any, fromStateSetting = false ): T {
+  public create( argsForCreateFunction: P, fromStateSetting = false ): T {
     assert && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioCapsules? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&

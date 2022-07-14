@@ -39,8 +39,8 @@ const TEST_TANDEM_NAME = 'test';
 
 // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
 const missingTandems: {
-  required: Array<{ phetioID: string; stack: any }>;
-  optional: Array<{ phetioID: string; stack: any }>;
+  required: Array<{ phetioID: string; stack: string }>;
+  optional: Array<{ phetioID: string; stack: string }>;
 } = {
   required: [],
   optional: []
@@ -147,7 +147,7 @@ class Tandem {
 
     // When the query parameter phetioPrintMissingTandems is true, report tandems that are required but not supplied
     if ( PRINT_MISSING_TANDEMS && !tandem.supplied ) {
-      const stackTrace = new Error().stack;
+      const stackTrace = new Error().stack!;
       if ( tandem.required ) {
         missingTandems.required.push( { phetioID: tandem.phetioID, stack: stackTrace } );
       }

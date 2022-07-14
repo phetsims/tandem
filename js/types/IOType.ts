@@ -19,6 +19,7 @@ import TandemConstants from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 import StateSchema from './StateSchema.js';
 import PhetioObject from '../PhetioObject.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -35,6 +36,22 @@ const getCoreTypeName = ( ioTypeName: string ): string => {
   assert && assert( index >= 0, 'IO should be in the type name' );
   return ioTypeName.substring( 0, index );
 };
+
+export type IOTypeMethod = {
+  returnType: IOType;
+  parameterTypes: IOType[];
+
+  //the function to execute when this method is called. This function's parameters will be based on `parameterTypes`,
+  // and should return the type specified by `returnType`
+  implementation: ( ...args: IntentionalAny[] ) => IntentionalAny;
+  documentation: string;
+
+  // by default, all methods are invocable for all elements. However, for some read-only elements, certain methods
+  // should not be invocable. In that case, they are marked as invocableForReadOnlyElements: false.
+  invocableForReadOnlyElements?: boolean;
+};
+
+type Methods = Record<string, IOTypeMethod>;
 
 // Currently, this is only the list of methods that default stateSchema applyState functions support when deserializing
 // componenents
@@ -54,13 +71,13 @@ type IOTypeOptions<T, StateType> = {
   fromStateObject?: ( s: StateType ) => T;
   stateToArgsForConstructor?: ( s: StateType ) => unknown[];
   applyState?: ( t: T, state: StateType ) => void;
-  stateSchema?: ( ( ioType: IOType<T, StateType> ) => StateSchema ) | StateSchema | ( Record<string, IOType<any, any>> ) | null;
+  stateSchema?: ( ( ioType: IOType<T, StateType> ) => StateSchema ) | StateSchema | ( Record<string, IOType> ) | null;
   events?: string[];
   dataDefaults?: Record<string, unknown>;
   metadataDefaults?: Record<string, unknown>;
   defaultDeserializationMethod?: DeserializationMethod;
   documentation?: string;
-  methods?: unknown;
+  methods?: Methods;
   methodOrder?: string[];
   parameterTypes?: IOType<unknown, unknown>[];
   isFunctionType?: boolean;
@@ -70,8 +87,8 @@ type IOTypeOptions<T, StateType> = {
 class IOType<T = any, StateType = any> {
   public readonly supertype?: IOType<unknown, unknown>;
   public readonly typeName: string;
-  public readonly documentation?: any;
-  public readonly methods?: any;
+  public readonly documentation?: string;
+  public readonly methods?: Methods;
   public readonly events: string[];
   public readonly metadataDefaults?: Record<string, unknown>;
   public readonly dataDefaults?: Record<string, unknown>;
@@ -79,11 +96,11 @@ class IOType<T = any, StateType = any> {
   public readonly parameterTypes?: IOType[];
 
   public readonly toStateObject: ( t: T ) => StateType;
-  public readonly fromStateObject: any;
-  public readonly stateToArgsForConstructor: ( s: StateType ) => unknown[];
-  public readonly applyState: any;
+  public readonly fromStateObject: ( state: StateType ) => T;
+  public readonly stateToArgsForConstructor: ( s: StateType ) => unknown[]; // TODO: instead of unknown this is the second parameter type for PhetioDynamicElementContainer. How? https://github.com/phetsims/tandem/issues/261
+  public readonly applyState: ( object: T, state: StateType ) => void;
   public readonly addChildElement: any;
-  public readonly validator: any;
+  public readonly validator: Validator;
   public readonly defaultDeserializationMethod: DeserializationMethod;
 
   // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
@@ -91,7 +108,7 @@ class IOType<T = any, StateType = any> {
   public readonly stateSchema: StateSchema;
   public static ObjectIO: IOType<PhetioObject, null>;
   public static DeserializationMethod: typeof DeserializationMethod;
-  public isFunctionType: any;
+  public isFunctionType: boolean;
 
   /**
    * @param ioTypeName - The name that this IOType will have in the public PhET-iO API. In general, this should
@@ -315,7 +332,7 @@ class IOType<T = any, StateType = any> {
     assert && assert( this.hasOwnProperty( 'typeName' ), 'this.typeName is required' );
 
     // assert that each public method adheres to the expected schema
-    Object.values( this.methods ).forEach( ( methodObject: any ) => {
+    this.methods && Object.values( this.methods ).forEach( ( methodObject: IOTypeMethod ) => {
       if ( typeof methodObject === 'object' ) {
         assert && assert( Array.isArray( methodObject.parameterTypes ), `parameter types must be an array: ${methodObject.parameterTypes}` );
         assert && assert( typeof methodObject.implementation === 'function', `implementation must be of type function: ${methodObject.implementation}` );
@@ -326,8 +343,8 @@ class IOType<T = any, StateType = any> {
     } );
     assert && assert( typeof this.documentation === 'string' && this.documentation.length > 0, 'documentation must be provided' );
 
-    this.hasOwnProperty( 'methodOrder' ) && this.methodOrder!.forEach( methodName => {
-      assert && assert( this.methods[ methodName ], `methodName not in public methods: ${methodName}` );
+    this.methods && this.hasOwnProperty( 'methodOrder' ) && this.methodOrder!.forEach( methodName => {
+      assert && assert( this.methods![ methodName ], `methodName not in public methods: ${methodName}` );
     } );
 
     // Make sure events are not listed again
@@ -471,7 +488,7 @@ class IOType<T = any, StateType = any> {
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param [providedOptions]
    */
-  public static fromCoreType<T, StateType>( ioTypeName: string, CoreType: any, providedOptions?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
+  public static fromCoreType<T, StateType>( ioTypeName: string, CoreType: T, providedOptions?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
 
     if ( assert && providedOptions ) {
       assert && assert( !providedOptions.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
@@ -503,6 +520,8 @@ class IOType<T = any, StateType = any> {
 
     // This isn't really optionize here, since we don't expect defaults for all the options.
     const options = combineOptions<IOTypeOptions<T, StateType>>( {
+
+      // @ts-ignore
       valueType: CoreType
     }, providedOptions );
 
@@ -518,17 +537,29 @@ class IOType<T = any, StateType = any> {
       // @ts-ignore
       options.applyState = ( coreType, stateObject ) => coreType.applyState( stateObject );
     }
+
+    // @ts-ignore
     if ( CoreType.fromStateObject ) {
+
+      // @ts-ignore
       options.fromStateObject = CoreType.fromStateObject;
     }
+
+    // @ts-ignore
     if ( CoreType.stateToArgsForConstructor ) {
+
+      // @ts-ignore
       options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
     }
+
+    // @ts-ignore
     if ( CoreType.STATE_SCHEMA ) {
+
+      // @ts-ignore
       options.stateSchema = CoreType.STATE_SCHEMA;
     }
 
-    return new IOType( ioTypeName, options );
+    return new IOType<T, StateType>( ioTypeName, options );
   }
 }
 
@@ -564,17 +595,10 @@ ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE_NAME, 
 
 IOType.ObjectIO = ObjectIO;
 
-/**
- * @typedef {Object} MethodObject
- * @property {string} documentation
- * @property {function} implementation - the function to execute when this method is called. This function's parameters
- *                                  will be based on `parameterTypes`, and should return the type specified by `returnType`
- * @property {IOType} returnType - the return IO Type of the method
- * @property {IOType[]} parameterTypes - the parameter IO Types for the method
- * @property {boolean} [invocableForReadOnlyElements=true] - by default, all methods are invocable for all elements.
- *    However, for some read-only elements, certain methods should not be invocable. In that case, they are marked as
- *    invocableForReadOnlyElements: false.
- */
+
+// @ts-ignore I'm not sure if this will stick around, but it seems helpful to keep for now
+// export type getStateTypeFromIOType<Type extends IOType> = Type extends IOType<infer A, infer StateType> ? StateType : never;
+
 
 tandemNamespace.register( 'IOType', IOType );
 export default IOType;

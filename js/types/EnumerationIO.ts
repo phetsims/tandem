@@ -12,7 +12,7 @@ import StateSchema from './StateSchema.js';
 import tandemNamespace from '../tandemNamespace.js';
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new Map<IEnumeration<any>, IOType>();
+const cache = new Map<IEnumeration<EnumerationValue>, IOType>();
 
 const joinKeys = ( keys: string[] ) => keys.join( '|' );
 

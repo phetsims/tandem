@@ -18,6 +18,7 @@ import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import optionize from '../../phet-core/js/optionize.js';
 import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import PhetioDynamicElementContainer, { DynamicElementContainerClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
@@ -32,17 +33,13 @@ type ClearSelfOptions = {
 };
 type ClearOptions = ClearSelfOptions & DynamicElementContainerClearOptions;
 
-// Type of a derivation function, that returns T and takes the typed parameters (as a tuple type)
-// type Derivation<T, Parameters extends any[]> = ( ...params: Parameters ) => T;
-
 type SelfOptions = EmptyObjectType;
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
 // {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
 const cache = new Map();
 
-// A extends ( ...args: any[] ) => any, B extends Parameters<A>
-class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDynamicElementContainer<T, P> {
+class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private readonly _array: T[];
   private groupElementIndex: number;
   public readonly countProperty: NumberProperty;
@@ -89,7 +86,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
 
     // countProperty can be overwritten during state set, see PhetioGroup.createIndexedElement(), and so this assertion
     // makes sure that the final length of the elements array matches the expected count from the state.
-    assert && Tandem.VALIDATION && phet.phetio.phetioEngine.phetioStateEngine.stateSetEmitter.addListener( ( state: any ) => {
+    assert && Tandem.VALIDATION && phet.phetio.phetioEngine.phetioStateEngine.stateSetEmitter.addListener( ( state: Record<string, IntentionalAny> ) => {
 
       // This supports cases when only partial state is being set
       if ( state[ this.countProperty.tandem.phetioID ] ) {
@@ -291,7 +288,7 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
     if ( !cache.has( parameterType ) ) {
       cache.set( parameterType, new IOType( `PhetioGroupIO<${parameterType.typeName}>`, {
 
-        isValidValue: ( v: any ) => {
+        isValidValue: ( v: IntentionalAny ) => {
 
           // @ts-ignore
           const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
@@ -308,8 +305,10 @@ class PhetioGroup<T extends PhetioObject, P extends any[] = []> extends PhetioDy
          * Creates an element and adds it to the group
          * @throws CouldNotYetDeserializeError - if it could not yet deserialize
          * (PhetioStateEngine)
+         *
+         * TODO: for the stateObject any I want something like : `getStateTypeFromIOType<typeof parameterType>`, https://github.com/phetsims/tandem/issues/261
          */
-        addChildElement( group: PhetioGroup<any>, componentName: string, stateObject: any ): PhetioObject {
+        addChildElement( group: PhetioGroup<PhetioObject>, componentName: string, stateObject: any ): PhetioObject {
 
           // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
           // element in the state needs to be created first, so we will try again on the next iteration of the state

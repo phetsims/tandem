@@ -26,6 +26,7 @@ import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import { PhetioObjectMetadata } from './TandemConstants.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
@@ -66,7 +67,7 @@ function archetypeCast<T>( archetype: T | null ): T {
 }
 
 
-abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends any[] = []> extends PhetioObject {
+abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioObject {
   private readonly _archetype: T | null;
   public readonly elementCreatedEmitter: Emitter<[ T ]>;
   public readonly elementDisposedEmitter: Emitter<[ T ]>;
@@ -75,8 +76,10 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
   private readonly deferredDisposals: T[];
   public readonly supportsDynamicState: boolean; // (phet-io internal)
   protected phetioDynamicElementName: string;
-  protected createElement: any;
-  protected defaultArguments: any;
+  protected createElement: ( t: Tandem, ...args: P ) => T;
+
+  // Arguments passed to the archetype when creating it.
+  protected defaultArguments: P | ( () => P );
 
   /**
    * @param createElement - function that creates a dynamic readonly element to be housed in
@@ -281,7 +284,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends a
       // @ts-ignore
       validate( createdObject, containerParameterType.validator );
 
-      assert && assert( createdObject.phetioType.extends( containerParameterType ),
+      assert && assert( createdObject.phetioType.extends( containerParameterType! ),
         'dynamic element container expected its created instance\'s phetioType to match its parameterType.' );
     }
 
