@@ -416,7 +416,7 @@ class IOType<T = any, StateType = any> {
    * @param privateSchemaKeys=[]
    * @returns if the stateObject is valid or not.
    */
-  public isStateObjectValid( stateObject: any, toAssert = false, publicSchemaKeys: string[] = [], privateSchemaKeys: string[] = [] ): boolean {
+  public isStateObjectValid( stateObject: StateType, toAssert = false, publicSchemaKeys: string[] = [], privateSchemaKeys: string[] = [] ): boolean {
 
     // Set to false when invalid
     let valid = true;
@@ -452,6 +452,7 @@ class IOType<T = any, StateType = any> {
       Object.keys( stateObject ).filter( key => key !== '_private' ).forEach( key => check( 'public', key ) );
 
       // Visit the private state, if any
+      // @ts-ignore stateObjects can take a variety of forms, they don't have to be a record, thus, it is challenging to be graceful to a `_private` key
       stateObject._private && Object.keys( stateObject._private ).forEach( key => check( 'private', key ) );
 
       return valid;
@@ -462,7 +463,7 @@ class IOType<T = any, StateType = any> {
   /**
    * Assert if the provided stateObject is not valid to this IOType's stateSchema
    */
-  public validateStateObject( stateObject: unknown ): void {
+  public validateStateObject( stateObject: StateType ): void {
     this.isStateObjectValid( stateObject, true );
   }
 
