@@ -37,7 +37,7 @@ const BOOLEAN_VALIDATOR = { valueType: 'boolean' };
 // use "<br>" instead of newlines
 const PHET_IO_DOCUMENTATION_VALIDATOR = {
   valueType: 'string',
-  isValidValue: ( doc: string ) => doc.indexOf( '\n' ) === -1,
+  isValidValue: ( doc: string ) => !doc.includes( '\n' ),
   validationMessage: 'phetioDocumentation must be provided in the right format'
 };
 const PHET_IO_EVENT_TYPE_VALIDATOR = {

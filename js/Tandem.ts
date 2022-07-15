@@ -155,7 +155,7 @@ class Tandem {
 
         // When the query parameter phetioPrintMissingTandems is true, report tandems that are optional but not
         // supplied, but not for Fonts because they are too numerous.
-        if ( stackTrace!.indexOf( 'Font' ) === -1 ) {
+        if ( !stackTrace!.includes( 'Font' ) ) {
           missingTandems.optional.push( { phetioID: tandem.phetioID, stack: stackTrace } );
         }
       }
@@ -210,7 +210,7 @@ class Tandem {
     // Only active when running as phet-io
     if ( PHET_IO_ENABLED ) {
       if ( !Tandem.launched ) {
-        assert && assert( Tandem.bufferedPhetioObjects.indexOf( phetioObject ) >= 0, 'should contain item' );
+        assert && assert( Tandem.bufferedPhetioObjects.includes( phetioObject ), 'should contain item' );
         arrayRemove( Tandem.bufferedPhetioObjects, phetioObject );
       }
       else {

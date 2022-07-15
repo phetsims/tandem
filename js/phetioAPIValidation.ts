@@ -157,7 +157,7 @@ class PhetioAPIValidation {
     const entireBaseline = phet.phetio.phetioEngine.getPhetioElementsBaseline();
 
     for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
-      const isArchetype = phetioID.indexOf( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ) >= 0;
+      const isArchetype = phetioID.includes( DynamicTandem.DYNAMIC_ARCHETYPE_NAME );
       if ( !phet.preloads.phetio.createArchetypes && !entireBaseline.hasOwnProperty( phetioID ) ) {
         assert && assert( isArchetype, `phetioID missing from the baseline that was not an archetype: ${phetioID}` );
       }

@@ -378,7 +378,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
    */
   private notifyElementDisposedWhileDeferred( disposedElement: T ): void {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
-    assert && assert( this.deferredDisposals.indexOf( disposedElement ) >= 0, 'disposedElement should not have been already notified' );
+    assert && assert( this.deferredDisposals.includes( disposedElement ), 'disposedElement should not have been already notified' );
     this.elementDisposedEmitter.emit( disposedElement );
     arrayRemove( this.deferredDisposals, disposedElement );
   }
@@ -402,7 +402,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
    */
   public notifyElementCreatedWhileDeferred( createdElement: T ): void {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
-    assert && assert( this.deferredCreations.indexOf( createdElement ) >= 0, 'createdElement should not have been already notified' );
+    assert && assert( this.deferredCreations.includes( createdElement ), 'createdElement should not have been already notified' );
     this.elementCreatedEmitter.emit( createdElement );
     arrayRemove( this.deferredCreations, createdElement );
   }
