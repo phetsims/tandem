@@ -1,4 +1,4 @@
-// Copyright 2021, University of Colorado Boulder
+// Copyright 2021-2022, University of Colorado Boulder
 
 /**
  * DynamicMarkerIO makes sure that the phetioID for the element is in state. This is necessary for the state engine
