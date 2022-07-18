@@ -79,7 +79,7 @@ type IOTypeOptions<T, StateType> = {
   documentation?: string;
   methods?: Methods;
   methodOrder?: string[];
-  parameterTypes?: IOType<unknown, unknown>[];
+  parameterTypes?: IOType[];
   isFunctionType?: boolean;
   addChildElement?: any;
 } & Validator<T>;
