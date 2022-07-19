@@ -170,7 +170,7 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
 
       // valueType overrides the phetioType validator so we don't use that one if there is a valueType
       if ( parameter.phetioType && !parameter.valueType ) {
-        assert && validate( args[ i ], parameter.phetioType.validator as Validator, VALIDATE_OPTIONS_FALSE );
+        assert && validate( args[ i ], parameter.phetioType.validator, VALIDATE_OPTIONS_FALSE );
       }
     }
   }

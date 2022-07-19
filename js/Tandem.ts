@@ -155,7 +155,7 @@ class Tandem {
 
         // When the query parameter phetioPrintMissingTandems is true, report tandems that are optional but not
         // supplied, but not for Fonts because they are too numerous.
-        if ( !stackTrace!.includes( 'Font' ) ) {
+        if ( !stackTrace.includes( 'Font' ) ) {
           missingTandems.optional.push( { phetioID: tandem.phetioID, stack: stackTrace } );
         }
       }
