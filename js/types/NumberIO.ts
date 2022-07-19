@@ -22,7 +22,7 @@ const NumberIO = new IOType<number, NumberStateObject>( 'NumberIO', {
   fromStateObject: stateObject => stateObject === 'POSITIVE_INFINITY' ? Number.POSITIVE_INFINITY :
                                   stateObject === 'NEGATIVE_INFINITY' ? Number.NEGATIVE_INFINITY :
                                   stateObject,
-  stateSchema: StateSchema.asValue( '\'POSITIVE_INFINITY\'|\'NEGATIVE_INFINITY\'|number', {
+  stateSchema: StateSchema.asValue<number>( '\'POSITIVE_INFINITY\'|\'NEGATIVE_INFINITY\'|number', {
     isValidValue: ( value: NumberStateObject ) => value === 'POSITIVE_INFINITY' || value === 'NEGATIVE_INFINITY' || ( typeof value === 'number' && !isNaN( value ) )
   } )
 } );

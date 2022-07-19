@@ -18,7 +18,6 @@ import assertMutuallyExclusiveOptions from '../../../phet-core/js/assertMutually
 import optionize from '../../../phet-core/js/optionize.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
-import PhetioObject from '../PhetioObject.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 
 type CompositeSchema = Record<string, IOType> & {
@@ -36,7 +35,7 @@ type StateSchemaOptions = {
 
 type GeneralStateObject = Record<string, IntentionalAny>;
 
-class StateSchema {
+class StateSchema<T> {
   private readonly displayString: string;
   private readonly validator: Validator<IntentionalAny> | null;
 
@@ -92,7 +91,7 @@ class StateSchema {
     }
   }
 
-  public defaultApplyState( coreObject: PhetioObject, stateObject: GeneralStateObject ): void {
+  public defaultApplyState( coreObject: T, stateObject: GeneralStateObject ): void {
 
     const applyStateForLevel = ( schema: CompositeSchema, stateObjectLevel: GeneralStateObject ) => {
       assert && assert( this.isComposite(), 'defaultApplyState from stateSchema only applies to composite stateSchemas' );
@@ -127,7 +126,7 @@ class StateSchema {
     applyStateForLevel( this.compositeSchema!, stateObject );
   }
 
-  public defaultToStateObject( coreObject: PhetioObject ): Record<string, any> {
+  public defaultToStateObject( coreObject: T ): Record<string, any> {
     assert && assert( this.isComposite(), 'defaultToStateObject from stateSchema only applies to composite stateSchemas' );
 
     const toStateObjectForSchemaLevel = ( schema: CompositeSchema ) => {
@@ -141,6 +140,8 @@ class StateSchema {
             stateObject._private = toStateObjectForSchemaLevel( schema._private );
           }
           else {
+
+            // @ts-ignore
             assert && assert( coreObject.hasOwnProperty( stateKey ),
               `cannot get state because coreObject does not have expected schema key: ${stateKey}` );
 
@@ -248,9 +249,9 @@ class StateSchema {
    * Factory function for StateSchema instances that represent a single value of state. This is opposed to a composite
    * schema of sub-components.
    */
-  public static asValue( displayString: string, validator: Validator<IntentionalAny> ): StateSchema {
+  public static asValue<T>( displayString: string, validator: Validator<IntentionalAny> ): StateSchema<T> {
     assert && assert( validator, 'validator required' );
-    return new StateSchema( {
+    return new StateSchema<T>( {
       validator: validator,
       displayString: displayString
     } );

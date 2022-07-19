@@ -71,7 +71,7 @@ type IOTypeOptions<T, StateType> = {
   fromStateObject?: ( s: StateType ) => T;
   stateToArgsForConstructor?: ( s: StateType ) => unknown[];
   applyState?: ( t: T, state: StateType ) => void;
-  stateSchema?: ( ( ioType: IOType<T, StateType> ) => StateSchema ) | StateSchema | ( Record<string, IOType> ) | null;
+  stateSchema?: ( ( ioType: IOType<T, StateType> ) => StateSchema<T> ) | StateSchema<T> | ( Record<string, IOType> ) | null;
   events?: string[];
   dataDefaults?: Record<string, unknown>;
   metadataDefaults?: Record<string, unknown>;
@@ -105,7 +105,7 @@ class IOType<T = any, StateType = any> {
 
   // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
   // see getAllStateSchema().
-  public readonly stateSchema: StateSchema;
+  public readonly stateSchema: StateSchema<T>;
   public static ObjectIO: IOType<PhetioObject, null>;
   public static DeserializationMethod: typeof DeserializationMethod;
   public isFunctionType: boolean;

@@ -1,5 +1,6 @@
 // Copyright 2021-2022, University of Colorado Boulder
 
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
@@ -14,7 +15,7 @@ const ObjectLiteralIO = new IOType( 'ObjectLiteralIO', {
   documentation: 'IO Type for object literals',
   isValidValue: noExtraPrototype,
   supertype: ValueIO,
-  stateSchema: StateSchema.asValue( 'object', { valueType: Object, isValidValue: noExtraPrototype } ),
+  stateSchema: StateSchema.asValue<Record<string, IntentionalAny>>( 'object', { valueType: Object, isValidValue: noExtraPrototype } ),
   toStateObject: _.identity
 } );
 

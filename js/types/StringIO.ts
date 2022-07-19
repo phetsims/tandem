@@ -16,7 +16,7 @@ const StringIO = new IOType<string, string>( 'StringIO', {
   supertype: ValueIO,
   valueType: 'string',
   documentation: 'IO Type for Javascript\'s string primitive type',
-  stateSchema: StateSchema.asValue( 'string', { valueType: 'string' } ),
+  stateSchema: StateSchema.asValue<string>( 'string', { valueType: 'string' } ),
   toStateObject: _.identity
 } );
 

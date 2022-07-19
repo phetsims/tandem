@@ -37,7 +37,7 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: Enumer
         assert && assert( keys.includes( stateObject ), `Unrecognized value: ${stateObject}` );
         return enumeration.getValue( stateObject )!;
       },
-      stateSchema: StateSchema.asValue( `${joinKeys( keys )}`, {
+      stateSchema: StateSchema.asValue<EnumerationValue>( `${joinKeys( keys )}`, {
         isValidValue: ( key: string ) => keys.includes( key )
       } )
     } ) );

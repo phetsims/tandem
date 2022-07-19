@@ -16,7 +16,7 @@ const BooleanIO = new IOType<boolean, boolean>( 'BooleanIO', {
   supertype: ValueIO,
   valueType: 'boolean',
   documentation: 'IO Type for Javascript\'s boolean primitive type',
-  stateSchema: StateSchema.asValue( 'boolean', { valueType: 'boolean' } ),
+  stateSchema: StateSchema.asValue<boolean>( 'boolean', { valueType: 'boolean' } ),
   toStateObject: _.identity
 } );
 
