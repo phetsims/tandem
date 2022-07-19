@@ -1,5 +1,6 @@
 // Copyright 2021-2022, University of Colorado Boulder
 
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import PickRequired from '../../phet-core/js/types/PickRequired.js';
 import tandemNamespace from './tandemNamespace.js';
 
@@ -29,18 +30,26 @@ export type Method = {
   returnType: string;
   parameterTypes: string[];
   documentation: string;
+  invocableForReadOnlyElements?: boolean;
 };
 
-export type PhetioTypes = Record<string, {
-  methods: Method[];
-  supertype: string;
+export type PhetioObjectState = Record<string, IntentionalAny>;
+
+export type Methods = Record<string, Method>;
+
+export type PhetioType = {
+  methods: Methods;
+  supertype?: string; // no supertype for root of hierarchy
   typeName: string;
-  documentation: string;
+  documentation?: string;
   events: string[];
-  metadataDefaults: PhetioObjectMetadata;
-  dataDefaults: Record<string, unknown>;
-  methodOrder: string[];
-}>;
+  metadataDefaults?: PhetioObjectMetadata;
+  dataDefaults?: Record<string, unknown>;
+  methodOrder?: string[];
+  stateSchema?: PhetioObjectState;
+  parameterTypes?: string[]; // each typeName
+};
+export type PhetioTypes = Record<string, PhetioType>;
 
 // Like the generate API files
 export type API = {

@@ -15,7 +15,7 @@ import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
 import optionize, { combineOptions } from '../../../phet-core/js/optionize.js';
 import ConstructorOf from '../../../phet-core/js/types/ConstructorOf.js';
 import PhetioConstants from '../PhetioConstants.js';
-import TandemConstants from '../TandemConstants.js';
+import TandemConstants, { PhetioObjectMetadata } from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 import StateSchema from './StateSchema.js';
 import PhetioObject from '../PhetioObject.js';
@@ -90,7 +90,7 @@ class IOType<T = any, StateType = any> {
   public readonly documentation?: string;
   public readonly methods?: Methods;
   public readonly events: string[];
-  public readonly metadataDefaults?: Record<string, unknown>;
+  public readonly metadataDefaults?: PhetioObjectMetadata;
   public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
   public readonly parameterTypes?: IOType[];
@@ -398,7 +398,7 @@ class IOType<T = any, StateType = any> {
   /**
    * Return all the metadata defaults (for the entire IO Type hierarchy)
    */
-  public getAllMetadataDefaults(): Record<string, unknown> {
+  public getAllMetadataDefaults(): PhetioObjectMetadata {
     return _.merge( {}, this.supertype ? this.supertype.getAllMetadataDefaults() : {}, this.metadataDefaults );
   }
 
