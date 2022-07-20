@@ -15,7 +15,7 @@
 
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import optionize from '../../phet-core/js/optionize.js';
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import Tandem from './Tandem.js';
 import VoidIO from './types/VoidIO.js';
 import PhetioDataHandler, { Parameter, PhetioDataHandlerOptions } from './PhetioDataHandler.js';
@@ -23,7 +23,6 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Emitter from '../../axon/js/Emitter.js';
 import PhetioObject from './PhetioObject.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 
 const EMPTY_ARRAY: Parameter[] = [];
 
