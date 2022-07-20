@@ -85,7 +85,7 @@ type IOTypeOptions<T, StateType> = {
 } & Validator<T>;
 
 class IOType<T = any, StateType = any> {
-  public readonly supertype?: IOType<any, any>;
+  public readonly supertype?: IOType;
   public readonly typeName: string;
   public readonly documentation?: string;
   public readonly methods?: Methods;
