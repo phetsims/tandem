@@ -26,7 +26,7 @@ import Tandem from './Tandem.js';
 import TandemConstants, { PhetioObjectMetadata } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // constants
@@ -718,7 +718,7 @@ class LinkedElement extends PhetioObject {
   public constructor( coreElement: LinkableElement, providedOptions?: LinkedElementOptions ) {
     assert && assert( !!coreElement, 'coreElement should be defined' );
 
-    const options = optionize<LinkedElementOptions, EmptyObjectType, PhetioObjectOptions>()( {
+    const options = optionize<LinkedElementOptions, EmptySelfOptions, PhetioObjectOptions>()( {
       phetioType: LinkedElementIO
     }, providedOptions );
 

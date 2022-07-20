@@ -17,7 +17,7 @@
 import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import optionize from '../../phet-core/js/optionize.js';
-import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import PhetioDynamicElementContainer, { DynamicElementContainerClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
@@ -33,7 +33,7 @@ type ClearSelfOptions = {
 };
 type ClearOptions = ClearSelfOptions & DynamicElementContainerClearOptions;
 
-type SelfOptions = EmptyObjectType;
+type SelfOptions = EmptySelfOptions;
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
 // {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.

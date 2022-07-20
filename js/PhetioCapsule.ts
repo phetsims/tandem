@@ -22,7 +22,7 @@ import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import PhetioObject from './PhetioObject.js';
-import EmptyObjectType from '../../phet-core/js/types/EmptyObjectType.js';
+import { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
@@ -42,7 +42,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
    */
   public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: PhetioCapsuleOptions ) {
 
-    options = optionize<PhetioCapsuleOptions, EmptyObjectType>()( {
+    options = optionize<PhetioCapsuleOptions, EmptySelfOptions>()( {
       tandem: Tandem.OPTIONAL,
 
       // {string} The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
@@ -84,7 +84,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
   }
 
   public override clear( providedOptions?: DynamicElementContainerClearOptions ): void {
-    const options = optionize<DynamicElementContainerClearOptions, EmptyObjectType>()( {
+    const options = optionize<DynamicElementContainerClearOptions, EmptySelfOptions>()( {
 
       // Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
       fromStateSetting: false
