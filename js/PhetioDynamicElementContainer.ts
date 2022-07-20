@@ -27,6 +27,7 @@ import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import { PhetioObjectMetadata } from './TandemConstants.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import IEmitter from '../../axon/js/IEmitter.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
@@ -49,7 +50,10 @@ type SelfOptions = {
   phetioDynamicElementName?: string;
 };
 
-export type PhetioDynamicElementContainerOptions = SelfOptions & StrictOmit<PhetioObjectOptions, 'phetioDynamicElement'> & PickRequired<PhetioObjectOptions, 'phetioType'>;
+export type PhetioDynamicElementContainerOptions =
+  SelfOptions
+  & StrictOmit<PhetioObjectOptions, 'phetioDynamicElement'>
+  & PickRequired<PhetioObjectOptions, 'phetioType'>;
 
 
 export type DynamicElementContainerClearOptions = {
@@ -69,8 +73,8 @@ function archetypeCast<T>( archetype: T | null ): T {
 
 abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioObject {
   private readonly _archetype: T | null;
-  public readonly elementCreatedEmitter: Emitter<[ T ]>;
-  public readonly elementDisposedEmitter: Emitter<[ T ]>;
+  public readonly elementCreatedEmitter: IEmitter<[ T ]>;
+  public readonly elementDisposedEmitter: IEmitter<[ T ]>;
   private notificationsDeferred: boolean;
   private readonly deferredCreations: T[];
   private readonly deferredDisposals: T[];
