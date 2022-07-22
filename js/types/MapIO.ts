@@ -15,25 +15,20 @@ import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 
 // {Map.<keyType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once.
-const cache = new Map();
+const cache = new Map<string, IOType>();
 
 const ARRAY_OF_ARRAY_VALIDATOR = {
   valueType: Array,
   arrayElementType: Array
 };
 
+export type MapStateObject<K, V> = Array<[ K, V ]>;
+
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns an appropriate map IO Type.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {IOType} keyType
- * @param {IOType} valueType
- * @returns {IOType}
  */
-const MapIO = ( keyType, valueType ) => {
-  assert && assert( !!keyType, 'keyType should be defined' );
-  assert && assert( !!valueType, 'valueType should be defined' );
-  assert && assert( keyType instanceof IOType, 'keyType should be an IOType' );
-  assert && assert( valueType instanceof IOType, 'valueType should be an IOType' );
+function MapIO<K extends IOType, V extends IOType>( keyType: K, valueType: V ): IOType {
 
   const cacheKey = keyType.typeName + ',' + valueType.typeName;
   if ( !cache.has( cacheKey ) ) {
@@ -63,6 +58,8 @@ const MapIO = ( keyType, valueType ) => {
         const result = outerArray.map( tuple => {
           return [ keyType.fromStateObject( tuple[ 0 ] ), valueType.fromStateObject( tuple[ 1 ] ) ];
         } );
+
+        // @ts-ignore
         return new Map( result );
       },
       documentation: 'IO Type for the built-in JS Map type, with the key and value types specified.',
@@ -87,8 +84,8 @@ const MapIO = ( keyType, valueType ) => {
     } ) );
   }
 
-  return cache.get( cacheKey );
-};
+  return cache.get( cacheKey )!;
+}
 
 tandemNamespace.register( 'MapIO', MapIO );
 export default MapIO;
