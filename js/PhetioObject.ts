@@ -99,7 +99,7 @@ const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
 
   // {boolean} Marking phetioDesigned: true opts-in to API change detection tooling that can be used to catch inadvertent
   // changes to a designed API.  A phetioDesigned:true PhetioObject (or any of its tandem descendants) will throw
-  // assertion errors on CT (or when running with ?phetioCompareAPI) when:
+  // assertion errors on CT (or when running with ?phetioCompareAPI) when the following are true:
   // (a) its package.json lists compareDesignedAPIChanges:true in the "phet-io" section
   // (b) the simulation is listed in perennial/data/phet-io-api-stable
   // (c) any of its metadata values deviate from the reference API
