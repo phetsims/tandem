@@ -10,6 +10,7 @@
  */
 
 import Validation from '../../../axon/js/Validation.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
@@ -22,18 +23,18 @@ const ARRAY_OF_ARRAY_VALIDATOR = {
   arrayElementType: Array
 };
 
-export type MapStateObject<K, V> = Array<[ K, V ]>;
+export type MapStateObject<KState, VState> = Array<[ KState, VState ]>;
 
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns an appropriate map IO Type.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
  */
-function MapIO<K extends IOType, V extends IOType>( keyType: K, valueType: V ): IOType {
+function MapIO<K extends IOType, V extends IOType, KState = IntentionalAny, VState = IntentionalAny>( keyType: K, valueType: V ): IOType {
 
   const cacheKey = keyType.typeName + ',' + valueType.typeName;
   if ( !cache.has( cacheKey ) ) {
 
-    cache.set( cacheKey, new IOType( `MapIO<${keyType.typeName},${valueType.typeName}>`, {
+    cache.set( cacheKey, new IOType<Map<IntentionalAny, IntentionalAny>, [ KState, VState ][]>( `MapIO<${keyType.typeName},${valueType.typeName}>`, {
       valueType: Map,
       isValidValue: map => {
         for ( const [ key, value ] of map ) {
@@ -48,7 +49,7 @@ function MapIO<K extends IOType, V extends IOType>( keyType: K, valueType: V ): 
       },
       parameterTypes: [ keyType, valueType ],
       toStateObject: map => {
-        const array = [];
+        const array: MapStateObject<KState, VState> = [];
         for ( const [ key, value ] of map ) {
           array.push( [ keyType.toStateObject( key ), valueType.toStateObject( value ) ] );
         }

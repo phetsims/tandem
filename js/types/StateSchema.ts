@@ -27,6 +27,10 @@ type CompositeSchemaAPI = Record<string, string> & {
   _private?: Record<string, string>;
 };
 
+export type CompositeStateObjectType = Record<string, IntentionalAny> & {
+  _private?: Record<string, IntentionalAny>;
+};
+
 type StateSchemaOptions = {
   displayString?: string;
   validator?: Validator<IntentionalAny> | null;
@@ -35,9 +39,9 @@ type StateSchemaOptions = {
 
 type GeneralStateObject = Record<string, IntentionalAny>;
 
-class StateSchema<T> {
+class StateSchema<T, StateType> {
   private readonly displayString: string;
-  private readonly validator: Validator<IntentionalAny> | null;
+  private readonly validator: Validator<StateType> | null;
 
   // "composite" state schemas are treated differently that value state schemas
   private readonly compositeSchema: null | CompositeSchema;
@@ -91,7 +95,7 @@ class StateSchema<T> {
     }
   }
 
-  public defaultApplyState( coreObject: T, stateObject: GeneralStateObject ): void {
+  public defaultApplyState( coreObject: T, stateObject: CompositeStateObjectType ): void {
 
     const applyStateForLevel = ( schema: CompositeSchema, stateObjectLevel: GeneralStateObject ) => {
       assert && assert( this.isComposite(), 'defaultApplyState from stateSchema only applies to composite stateSchemas' );
@@ -126,12 +130,12 @@ class StateSchema<T> {
     applyStateForLevel( this.compositeSchema!, stateObject );
   }
 
-  public defaultToStateObject( coreObject: T ): Record<string, any> {
+  public defaultToStateObject( coreObject: T ): StateType {
     assert && assert( this.isComposite(), 'defaultToStateObject from stateSchema only applies to composite stateSchemas' );
 
     const toStateObjectForSchemaLevel = ( schema: CompositeSchema ) => {
 
-      const stateObject = {};
+      const stateObject = {} as StateType;
       for ( const stateKey in schema ) {
         if ( schema.hasOwnProperty( stateKey ) ) {
           if ( stateKey === '_private' ) {
@@ -173,8 +177,9 @@ class StateSchema<T> {
    * @param privateSchemaKeys - to be populated with any private keys this StateSchema is responsible for
    * @returns boolean if validity can be checked, null if valid, but next in the hierarchy is needed
    */
-  public checkStateObjectValid( stateObject: GeneralStateObject, toAssert: boolean, publicSchemaKeys: string[], privateSchemaKeys: string[] ): boolean | null {
+  public checkStateObjectValid( stateObject: StateType, toAssert: boolean, publicSchemaKeys: string[], privateSchemaKeys: string[] ): boolean | null {
     if ( this.isComposite() ) {
+      const compositeStateObject = stateObject as CompositeStateObjectType;
       const schema = this.compositeSchema!;
 
       let valid = null;
@@ -191,16 +196,18 @@ class StateSchema<T> {
         } );
       };
 
-      checkLevel( schema, stateObject, publicSchemaKeys, '_private' );
-      schema._private && checkLevel( schema._private, stateObject._private, privateSchemaKeys, null );
+      checkLevel( schema, compositeStateObject, publicSchemaKeys, '_private' );
+      schema._private && checkLevel( schema._private, compositeStateObject._private!, privateSchemaKeys, null );
       return valid;
     }
     else {
       assert && assert( this.validator, 'validator must be present if not composite' );
+      const valueStateObject = stateObject as StateType;
       if ( toAssert ) {
-        validate( stateObject, this.validator! );
+        validate( valueStateObject, this.validator! );
       }
-      return Validation.isValueValid( stateObject, this.validator! );
+
+      return Validation.isValueValid( valueStateObject, this.validator! );
     }
   }
 
@@ -246,12 +253,12 @@ class StateSchema<T> {
 
 
   /**
-   * Factory function for StateSchema instances that represent a single value of state. This is opposed to a composite
+   * Factory function for StateKSchema instances that represent a single value of state. This is opposed to a composite
    * schema of sub-components.
    */
-  public static asValue<T>( displayString: string, validator: Validator<IntentionalAny> ): StateSchema<T> {
+  public static asValue<T, StateType>( displayString: string, validator: Validator<IntentionalAny> ): StateSchema<T, StateType> {
     assert && assert( validator, 'validator required' );
-    return new StateSchema<T>( {
+    return new StateSchema<T, StateType>( {
       validator: validator,
       displayString: displayString
     } );
