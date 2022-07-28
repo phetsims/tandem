@@ -87,7 +87,8 @@ type IOTypeOptions<T, StateType> = {
   addChildElement?: AddChildElement;
 } & Validator<T>;
 
-class IOType<T = any, StateType = any> {
+// TODO: not any, but do we have to serialize type parameters? https://github.com/phetsims/tandem/issues/263
+class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   public readonly supertype?: IOType;
   public readonly typeName: string;
   public readonly documentation?: string;
