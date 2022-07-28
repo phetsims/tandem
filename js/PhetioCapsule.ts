@@ -28,11 +28,13 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 
+// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
+const cache = new Map();
+
 export type PhetioCapsuleOptions = PhetioDynamicElementContainerOptions;
 
 class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
-  public static PhetioCapsuleIO: ( parameterType: IOType ) => IOType;
 
   /**
    * @param createElement - function that creates the encapsulated element
@@ -118,46 +120,46 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
 
     return this.element;
   }
+
+  /**
+   * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
+   * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
+   * @param parameterType
+   * @constructor
+   */
+  public static PhetioCapsuleIO = <ParameterType extends PhetioObject, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ) => {
+
+    assert && assert( parameterType instanceof IOType, 'element type should be an IO Type' );
+
+    if ( !cache.has( parameterType ) ) {
+      cache.set( parameterType, new IOType<PhetioCapsule<ParameterType>, IntentionalAny>( `PhetioCapsuleIO<${parameterType.typeName}>`, {
+        valueType: PhetioCapsule,
+        documentation: 'An array that sends notifications when its values have changed.',
+        parameterTypes: [ parameterType ],
+
+        // This is always specified by PhetioCapsule, and will never be this value. Yes, it is odd to have a default value
+        // that can never be the actual value, but we thought it would be simplest to reuse the "options" pipeline
+        // rather than inventing a new "required" pipeline.
+        metadataDefaults: { phetioDynamicElementName: null },
+
+        // @ts-ignore The group is a group, not just a PhetioDynamicElementContainer
+        addChildElement( capsule: PhetioCapsule<ParameterType>, componentName: string, stateObject: ParameterStateType ) {
+
+          // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
+          // element in the state needs to be created first, so we will try again on the next iteration of the state
+          // setting engine.
+          const args = parameterType.stateToArgsForConstructor( stateObject );
+
+          // @ts-ignore args is of type P, but we can't really communicate that here
+          return capsule.create( args, true );
+        }
+      } ) );
+    }
+
+    return cache.get( parameterType );
+  };
 }
 
-// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
-const cache = new Map();
-
-/**
- * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
- * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param parameterType
- * @constructor
- */
-PhetioCapsule.PhetioCapsuleIO = parameterType => {
-
-  assert && assert( parameterType instanceof IOType, 'element type should be an IO Type' );
-
-  if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType( `PhetioCapsuleIO<${parameterType.typeName}>`, {
-      valueType: PhetioCapsule,
-      documentation: 'An array that sends notifications when its values have changed.',
-      parameterTypes: [ parameterType ],
-
-      // This is always specified by PhetioCapsule, and will never be this value. Yes, it is odd to have a default value
-      // that can never be the actual value, but we thought it would be simplest to reuse the "options" pipeline
-      // rather than inventing a new "required" pipeline.
-      metadataDefaults: { phetioDynamicElementName: null },
-
-      // @ts-ignore
-      addChildElement( capsule, componentName, stateObject ) {
-
-        // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
-        // element in the state needs to be created first, so we will try again on the next iteration of the state
-        // setting engine.
-        const args = parameterType.stateToArgsForConstructor( stateObject );
-        return capsule.create( args, true );
-      }
-    } ) );
-  }
-
-  return cache.get( parameterType );
-};
 
 tandemNamespace.register( 'PhetioCapsule', PhetioCapsule );
 export default PhetioCapsule;

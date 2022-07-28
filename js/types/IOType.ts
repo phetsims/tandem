@@ -20,6 +20,7 @@ import tandemNamespace from '../tandemNamespace.js';
 import StateSchema, { CompositeStateObjectType } from './StateSchema.js';
 import PhetioObject from '../PhetioObject.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
+import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -36,6 +37,8 @@ const getCoreTypeName = ( ioTypeName: string ): string => {
   assert && assert( index >= 0, 'IO should be in the type name' );
   return ioTypeName.substring( 0, index );
 };
+type AddChildElement = ( group: PhetioDynamicElementContainer<PhetioObject>, componentName: string, stateObject: IntentionalAny ) => PhetioObject;
+
 
 export type IOTypeMethod = {
   returnType: IOType;
@@ -81,7 +84,7 @@ type IOTypeOptions<T, StateType> = {
   methodOrder?: string[];
   parameterTypes?: IOType[];
   isFunctionType?: boolean;
-  addChildElement?: any;
+  addChildElement?: AddChildElement;
 } & Validator<T>;
 
 class IOType<T = any, StateType = any> {
@@ -99,7 +102,7 @@ class IOType<T = any, StateType = any> {
   public readonly fromStateObject: ( state: StateType ) => T;
   public readonly stateToArgsForConstructor: ( s: StateType ) => unknown[]; // TODO: instead of unknown this is the second parameter type for PhetioDynamicElementContainer. How? https://github.com/phetsims/tandem/issues/261
   public readonly applyState: ( object: T, state: StateType ) => void;
-  public readonly addChildElement: any;
+  public readonly addChildElement: AddChildElement;
   public readonly validator: Validator;
   public readonly defaultDeserializationMethod: DeserializationMethod;
 

@@ -280,12 +280,12 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   /**
    * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
    */
-  public static PhetioGroupIO = ( parameterType: IOType ) => {
+  public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ) => {
 
     assert && assert( parameterType instanceof IOType, 'element type should be defined' );
 
     if ( !cache.has( parameterType ) ) {
-      cache.set( parameterType, new IOType( `PhetioGroupIO<${parameterType.typeName}>`, {
+      cache.set( parameterType, new IOType<PhetioGroup<ParameterType>, IntentionalAny>( `PhetioGroupIO<${parameterType.typeName}>`, {
 
         isValidValue: ( v: IntentionalAny ) => {
 
@@ -304,20 +304,18 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
          * Creates an element and adds it to the group
          * @throws CouldNotYetDeserializeError - if it could not yet deserialize
          * (PhetioStateEngine)
-         *
-         * TODO: for the stateObject any I want something like : `getStateTypeFromIOType<typeof parameterType>`, https://github.com/phetsims/tandem/issues/261
          */
-        addChildElement( group: PhetioGroup<PhetioObject>, componentName: string, stateObject: any ): PhetioObject {
+        // @ts-ignore The group is a group, not just a PhetioDynamicElementContainer
+        addChildElement( group: PhetioGroup<PhetioObject>, componentName: string, stateObject: ParameterStateType ): PhetioObject {
 
           // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
           // element in the state needs to be created first, so we will try again on the next iteration of the state
           // setting engine.
           const args = parameterType.stateToArgsForConstructor( stateObject );
 
-          // @ts-ignore
           const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 
-          // @ts-ignore
+          // @ts-ignore args is of type P, but we can't really communicate that here
           const groupElement = group.createIndexedElement( index, args, true );
 
           // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
