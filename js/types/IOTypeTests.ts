@@ -7,10 +7,11 @@
  */
 
 import merge from '../../../phet-core/js/merge.js';
-import PhetioObject from '../PhetioObject.js';
+import { combineOptions } from '../../../phet-core/js/optionize.js';
+import PhetioObject, { PhetioObjectOptions } from '../PhetioObject.js';
 import Tandem from '../Tandem.js';
 import IOType from './IOType.js';
-import NumberIO from './NumberIO.js';
+import NumberIO, { NumberStateObject } from './NumberIO.js';
 import StateSchema from './StateSchema.js';
 
 QUnit.module( 'IOType' );
@@ -23,11 +24,15 @@ if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'fromCoreType', assert => {
 
     window.assert && assert.throws( () => {
+
+      // @ts-ignore
       return new IOType();
     }, 'need args in config' );
 
     class XHolder extends PhetioObject {
-      constructor( x ) {
+      public x: number;
+
+      public constructor( x: number ) {
         super( {
           phetioType: XHolderIO,
 
@@ -36,17 +41,14 @@ if ( Tandem.PHET_IO_ENABLED ) {
         this.x = x;
       }
 
-      /**
-       * @public
-       */
-      static get STATE_SCHEMA() {
+      public static get STATE_SCHEMA() {
         return {
           x: NumberIO
         };
       }
     }
 
-    const XHolderIO = IOType.fromCoreType( 'XHolderIO', XHolder );
+    const XHolderIO = IOType.fromCoreType<XHolder, { x: NumberStateObject }>( 'XHolderIO', XHolder );
 
     const xHolder = new XHolder( 4 );
     const stateObject = XHolderIO.toStateObject( xHolder );
@@ -60,18 +62,15 @@ if ( Tandem.PHET_IO_ENABLED ) {
     ///////////////////////////////////////////////////////////////
 
     class ParticularParticle extends PhetioObject {
-      constructor( options ) {
-        options = merge( {
+      public constructor( options: PhetioObjectOptions ) {
+        options = combineOptions<PhetioObjectOptions>( {
           phetioType: ParticularParticleIO
 
         }, options );
         super( options );
       }
 
-      /**
-       * @public
-       */
-      static get STATE_SCHEMA() {
+      public static get STATE_SCHEMA() {
         return StateSchema.asValue( 'particularParticle', { isValidValue: value => value === 'particularParticle' } );
       }
     }
@@ -80,6 +79,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
       return IOType.fromCoreType( 'ParticularParticleIO', ParticularParticle );
     }, 'no toStateObject on value StateSchema\'ed IOType.' );
 
+    // @ts-ignore we are testing, lets hack!
     ParticularParticle.prototype.toStateObject = () => 'particularParticle';
 
     const ParticularParticleIO = IOType.fromCoreType( 'ParticularParticleIO', ParticularParticle );
@@ -95,8 +95,10 @@ if ( Tandem.PHET_IO_ENABLED ) {
   QUnit.test( 'fromCoreType with Class hierarchy', assert => {
 
     class Parent extends PhetioObject {
-      constructor( parentNumber, options ) {
-        options = merge( {
+      public readonly parentNumber: number;
+
+      public constructor( parentNumber: number, options: PhetioObjectOptions ) {
+        options = combineOptions<PhetioObjectOptions>( {
 
           phetioType: ParentIO,
 
@@ -107,18 +109,18 @@ if ( Tandem.PHET_IO_ENABLED ) {
         this.parentNumber = parentNumber;
       }
 
-      /**
-       * @public
-       */
-      static get STATE_SCHEMA() {
+      public static get STATE_SCHEMA() {
         return {
           parentNumber: NumberIO
         };
       }
     }
 
+    // @ts-ignore
     class Child extends Parent {
-      constructor( childNumber ) {
+      public readonly childNumber: number;
+
+      public constructor( childNumber: number ) {
         super( 10, {
           phetioType: ChildIO,
 
@@ -128,20 +130,22 @@ if ( Tandem.PHET_IO_ENABLED ) {
         this.childNumber = childNumber;
       }
 
-      /**
-       * @public
-       */
-      static get STATE_SCHEMA() {
+      public static override get STATE_SCHEMA() {
         return {
           childNumber: NumberIO
         };
       }
     }
 
-    const ParentIO = IOType.fromCoreType( 'ParentIO', Parent );
-    const ChildIO = IOType.fromCoreType( 'ChildIO', Child, {
-      supertype: ParentIO
-    } );
+    type ParentState = { parentNumber: NumberStateObject };
+    type ChildState = { childNumber: NumberStateObject };
+    const ParentIO = IOType.fromCoreType<Parent, ParentState>( 'ParentIO', Parent );
+    const ChildIO = IOType.fromCoreType<Child, ChildState & ParentState>(
+      'ChildIO', Child, {
+
+        // @ts-ignore
+        supertype: ParentIO
+      } );
 
     const child = new Child( 4 );
     const parentStateObject = ParentIO.toStateObject( child );
@@ -158,8 +162,12 @@ if ( Tandem.PHET_IO_ENABLED ) {
     //
     // Like this example below
 
+    // @ts-ignore
     class ChildThatUsesParentState extends Parent {
-      constructor( childNumber ) {
+
+      public readonly childNumber: number;
+
+      public constructor( childNumber: number ) {
         super( 10, {
           phetioType: ChildThatUsesParentStateIO,
 
@@ -169,26 +177,20 @@ if ( Tandem.PHET_IO_ENABLED ) {
         this.childNumber = childNumber;
       }
 
-      /**
-       * @public
-       */
-      toStateObject() {
+      public toStateObject(): ParentState & ChildState {
         const parentState = ParentIO.toStateObject( this );
         const childSelfState = ChildThatUsesParentStateIO.stateSchema.defaultToStateObject( this );
-        return merge( {}, parentState, childSelfState );
+        return merge( {}, parentState, childSelfState ) as ParentState & ChildState;
       }
 
-      /**
-       * @public
-       */
-      static get STATE_SCHEMA() {
-        return {
-          childNumber: NumberIO
-        };
-      }
+      public static override STATE_SCHEMA = {
+        childNumber: NumberIO
+      };
     }
 
-    const ChildThatUsesParentStateIO = IOType.fromCoreType( 'ChildThatUsesParentStateIO', ChildThatUsesParentState, {
+    const ChildThatUsesParentStateIO = IOType.fromCoreType<ChildThatUsesParentState, ChildState & ParentState>( 'ChildThatUsesParentStateIO', ChildThatUsesParentState, {
+
+      // @ts-ignore
       supertype: ParentIO
     } );
 

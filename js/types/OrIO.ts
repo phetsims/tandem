@@ -15,6 +15,7 @@
  */
 
 import Validation from '../../../axon/js/Validation.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
@@ -24,17 +25,16 @@ const cache = new Map();
 
 /**
  * Parametric type constructor function, do not use `new`
- * @param {Array.<IOType>} parameterTypes - a list of IO Type to combine into a single composite
- * @returns {IOType} - the IO Type that supports null
+ * @param parameterTypes - a list of IO Type to combine into a single composite
  */
-const OrIO = parameterTypes => {
+const OrIO = ( parameterTypes: IOType[] ) => {
   assert && assert( Array.isArray( parameterTypes ), 'OrIO needs to be an array' );
   assert && assert( parameterTypes.length > 0, 'OrIO needs parameterTypes' );
   const typeNames = parameterTypes.map( parameterType => parameterType.typeName );
   const key = typeNames.join( ',' );
 
   if ( !cache.has( key ) ) {
-    const isValidValue = instance => {
+    const isValidValue = ( instance: IntentionalAny ) => {
       for ( let i = 0; i < parameterTypes.length; i++ ) {
         const parameterType = parameterTypes[ i ];
         if ( Validation.isValueValid( instance, parameterType.validator ) ) {
@@ -61,7 +61,7 @@ const OrIO = parameterTypes => {
         throw new Error( 'somehow the instance was not valid, we should not get here. Why was isValidValue not used before this step?' );
       },
 
-      fromStateObject: stateObject => {
+      fromStateObject: ( stateObject: IntentionalAny ) => {
         assert && assert( stateObject.hasOwnProperty( 'index' ), 'index required for deserialization' );
         assert && assert( stateObject.hasOwnProperty( 'state' ), 'state required for deserialization' );
         return parameterTypes[ stateObject.index ].fromStateObject( stateObject.state );

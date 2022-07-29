@@ -10,6 +10,7 @@
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 
+
 // {Map.<parameterTypeName:string, IOType>} - cache each parameterized IOType so that it is only created once
 const cache = new Map();
 
@@ -17,10 +18,10 @@ const cache = new Map();
  * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapped IO Type for
  * that "class" of functions. "Class" here refers to the supported parameter and return IO Types.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {IOType} returnType - IO Type of the return type of the function that can support cross-frame serialization
- * @param {IOType[]} functionParameterTypes - IO Types for the individual arguments of the function.
+ * @param returnType - IO Type of the return type of the function that can support cross-frame serialization
+ * @param functionParameterTypes - IO Types for the individual arguments of the function.
  */
-const FunctionIO = ( returnType, functionParameterTypes ) => {
+const FunctionIO = ( returnType: IOType, functionParameterTypes: IOType[] ) => {
   for ( let i = 0; i < functionParameterTypes.length; i++ ) {
     assert && assert( functionParameterTypes[ i ], 'parameter type was not truthy' );
   }
