@@ -493,7 +493,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param [providedOptions]
    */
-  public static fromCoreType<T, StateType>( ioTypeName: string, CoreType: T, providedOptions?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
+  public static fromCoreType<T, StateType>( ioTypeName: string, CoreType: ConstructorOf<T>, providedOptions?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
 
     if ( assert && providedOptions ) {
       assert && assert( !providedOptions.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
