@@ -110,7 +110,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
   // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
   // see getAllStateSchema().
   public readonly stateSchema: StateSchema<T, StateType>;
-  public static ObjectIO: IOType<PhetioObject, null>;
+  public static ObjectIO: IOType<IntentionalAny, IntentionalAny>;
   public static DeserializationMethod: typeof DeserializationMethod;
   public isFunctionType: boolean;
 

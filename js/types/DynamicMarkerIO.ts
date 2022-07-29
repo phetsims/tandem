@@ -9,8 +9,9 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 
-const DynamicMarkerIO = new IOType( 'DynamicMarkerIO', {
+const DynamicMarkerIO = new IOType<IntentionalAny, object>( 'DynamicMarkerIO', {
   supertype: IOType.ObjectIO,
   applyState: _.noop,
   toStateObject: () => {

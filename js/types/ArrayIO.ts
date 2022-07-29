@@ -18,14 +18,12 @@ const cache = new Map();
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns an appropriate array IO Type.
  * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param {IOType} parameterType
- * @returns {IOType}
  */
-const ArrayIO = parameterType => {
+const ArrayIO = <ParameterType, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ): IOType<ParameterType[], ParameterStateType[]> => {
   assert && assert( !!parameterType, 'parameterType should be defined' );
   assert && assert( parameterType instanceof IOType, 'parameterType should be an IOType' );
   if ( !cache.has( parameterType ) ) {
-    cache.set( parameterType, new IOType( `ArrayIO<${parameterType.typeName}>`, {
+    cache.set( parameterType, new IOType<ParameterType[], ParameterStateType[]>( `ArrayIO<${parameterType.typeName}>`, {
       valueType: Array,
       isValidValue: array => {
         return _.every( array, element => Validation.isValueValid( element, parameterType.validator ) );
