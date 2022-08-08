@@ -21,7 +21,7 @@ const cache = new Map();
  * @param returnType - IO Type of the return type of the function that can support cross-frame serialization
  * @param functionParameterTypes - IO Types for the individual arguments of the function.
  */
-const FunctionIO = ( returnType: IOType, functionParameterTypes: IOType[] ) => {
+const FunctionIO = ( returnType: IOType, functionParameterTypes: IOType[] ): IOType => {
   for ( let i = 0; i < functionParameterTypes.length; i++ ) {
     assert && assert( functionParameterTypes[ i ], 'parameter type was not truthy' );
   }

@@ -280,7 +280,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   /**
    * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
    */
-  public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ) => {
+  public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ): IOType => {
 
     assert && assert( parameterType instanceof IOType, 'element type should be defined' );
 

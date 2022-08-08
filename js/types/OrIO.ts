@@ -27,7 +27,7 @@ const cache = new Map();
  * Parametric type constructor function, do not use `new`
  * @param parameterTypes - a list of IO Type to combine into a single composite
  */
-const OrIO = ( parameterTypes: IOType[] ) => {
+const OrIO = ( parameterTypes: IOType[] ): IOType => {
   assert && assert( Array.isArray( parameterTypes ), 'OrIO needs to be an array' );
   assert && assert( parameterTypes.length > 0, 'OrIO needs parameterTypes' );
   const typeNames = parameterTypes.map( parameterType => parameterType.typeName );

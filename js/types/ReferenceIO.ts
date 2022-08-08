@@ -21,7 +21,7 @@ export type ReferenceIOState = {
   phetioID: string;
 };
 
-const ReferenceIO = ( parameterType: IOType ) => {
+const ReferenceIO = ( parameterType: IOType ): IOType => {
   assert && assert( parameterType, 'ReferenceIO needs parameterType' );
 
   const cacheKey = parameterType;
