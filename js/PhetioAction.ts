@@ -128,7 +128,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
 
     this.isExecutingCount--;
 
-    if ( this.disposeOnExecuteCompletion === true && this.isExecutingCount === 0 ) {
+    if ( this.disposeOnExecuteCompletion && this.isExecutingCount === 0 ) {
       this.disposePhetioAction();
       this.disposeOnExecuteCompletion = false;
     }
