@@ -6,13 +6,13 @@
  */
 
 import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
-import IEnumeration, { EnumerationContainer } from '../../../phet-core/js/IEnumeration.js';
+import TEnumeration, { EnumerationContainer } from '../../../phet-core/js/TEnumeration.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 import tandemNamespace from '../tandemNamespace.js';
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new Map<IEnumeration<EnumerationValue>, IOType>();
+const cache = new Map<TEnumeration<EnumerationValue>, IOType>();
 
 const joinKeys = ( keys: string[] ) => keys.join( '|' );
 
