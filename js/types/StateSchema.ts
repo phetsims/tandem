@@ -202,7 +202,7 @@ class StateSchema<T, StateType> {
     }
     else {
       assert && assert( this.validator, 'validator must be present if not composite' );
-      const valueStateObject = stateObject as StateType;
+      const valueStateObject = stateObject;
       if ( toAssert ) {
         validate( valueStateObject, this.validator! );
       }

@@ -180,7 +180,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
       public toStateObject(): ParentState & ChildState {
         const parentState = ParentIO.toStateObject( this );
         const childSelfState = ChildThatUsesParentStateIO.stateSchema.defaultToStateObject( this );
-        return merge( {}, parentState, childSelfState ) as ParentState & ChildState;
+        return merge( {}, parentState, childSelfState );
       }
 
       public static override STATE_SCHEMA = {
