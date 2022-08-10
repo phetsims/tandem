@@ -9,7 +9,7 @@
  *
  *  this.ageProperty = new Property( null, {
  *    tandem: tandem.createTandem( 'ageProperty' ),
- *    phetioType: Property.PropertyIO( NullableIO( NumberIO ) ) // signifies that the Property can be Number or null
+ *    phetioValueType: NullableIO( NumberIO ) // signifies that the Property can be Number or null
  * } );
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)

@@ -8,7 +8,7 @@
  *
  * window.numberOrStringProperty = new Property( 'I am currently a string', {
       tandem: Tandem.GENERAL_MODEL.createTandem( 'numberOrStringProperty' ),
-      phetioType: Property.PropertyIO( OrIO( [ StringIO, NumberIO ] ) )
+      phetioValueType: OrIO( [ StringIO, NumberIO ] )
     } );
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
