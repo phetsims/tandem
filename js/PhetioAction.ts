@@ -64,7 +64,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
   public constructor( action: ( ...args: T ) => void, providedOptions?: ActionOptions ) {
     const options = optionize<ActionOptions, EmptySelfOptions, PhetioDataHandlerOptions>()( {
 
-      // We need to defined this here in addition to PhetioDataHandler to pass to executedEmitter
+      // We need to define this here in addition to PhetioDataHandler to pass to executedEmitter
       parameters: EMPTY_ARRAY,
 
       // PhetioDataHandler
