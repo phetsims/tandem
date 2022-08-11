@@ -25,8 +25,7 @@ if ( Tandem.PHET_IO_ENABLED ) {
 
     window.assert && assert.throws( () => {
 
-      // @ts-ignore
-      return new IOType();
+      return new IOType( 'something', { valueType: 'string' } );
     }, 'need args in config' );
 
     class XHolder extends PhetioObject {

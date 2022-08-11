@@ -64,9 +64,7 @@ Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instru
   obj.addLinkedElement( new PhetioObject() );
 
   window.assert && assert.throws( () => {
-
-    // @ts-ignore - I don't want to prefix with an underscore, and I don't want this to be public
-    obj.initializePhetioObject( {
+    obj[ 'initializePhetioObject' ]( {}, {
       tandem: Tandem.ROOT_TEST.createTandem( 'myObject' )
     } );
   }, 'Should throw an assertion because you should not link elements before instrumentation' );
