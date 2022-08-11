@@ -160,9 +160,7 @@ class PhetioObject {
 
   // Public only for PhetioObjectMetadataInput
   public phetioArchetypePhetioID!: string | null;
-
-  // Public only for tests
-  public linkedElements!: LinkedElement[] | null;
+  private linkedElements!: LinkedElement[] | null;
   public phetioNotifiedObjectCreated!: boolean;
   private phetioMessageStack!: number[];
   public static DEFAULT_OPTIONS = DEFAULTS;
