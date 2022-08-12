@@ -10,6 +10,7 @@
  */
 
 import Validation from '../../../axon/js/Validation.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
@@ -19,7 +20,7 @@ const cache = new Map<string, IOType>();
 
 const ARRAY_OF_ARRAY_VALIDATOR = {
   valueType: Array,
-  arrayElementType: Array
+  isValidValue: ( value: IntentionalAny ) => Array.isArray( value ) && value.every( element => Array.isArray( element ) )
 };
 
 export type MapStateObject<KState, VState> = Array<[ KState, VState ]>;
