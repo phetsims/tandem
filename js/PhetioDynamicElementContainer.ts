@@ -27,7 +27,7 @@ import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import { PhetioObjectMetadata } from './TandemConstants.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import IEmitter from '../../axon/js/IEmitter.js';
+import TEmitter from '../../axon/js/TEmitter.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
@@ -73,8 +73,8 @@ function archetypeCast<T>( archetype: T | null ): T {
 
 abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioObject {
   private readonly _archetype: T | null;
-  public readonly elementCreatedEmitter: IEmitter<[ T ]>;
-  public readonly elementDisposedEmitter: IEmitter<[ T ]>;
+  public readonly elementCreatedEmitter: TEmitter<[ T ]>;
+  public readonly elementDisposedEmitter: TEmitter<[ T ]>;
   private notificationsDeferred: boolean;
   private readonly deferredCreations: T[];
   private readonly deferredDisposals: T[];
