@@ -26,6 +26,7 @@
   const VIEW_COMPONENT_NAME = 'view';
   const COLORS_COMPONENT_NAME = 'colors';
   const CONTROLLER_COMPONENT_NAME = 'controller';
+  const SCREEN_COMPONENT_NAME = 'Screen';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -120,9 +121,8 @@
       for ( let i = 0; i < phetioIDParts.length; i++ ) {
         const componentPart = phetioIDParts[ i ];
         screenIDParts.push( componentPart );
-        const screenMarker = 'Screen';
-        const indexOfScreenMarker = componentPart.indexOf( screenMarker );
-        if ( indexOfScreenMarker > 0 && indexOfScreenMarker + screenMarker.length === componentPart.length ) { // endsWith proxy
+        const indexOfScreenMarker = componentPart.indexOf( SCREEN_COMPONENT_NAME );
+        if ( indexOfScreenMarker > 0 && indexOfScreenMarker + SCREEN_COMPONENT_NAME.length === componentPart.length ) { // endsWith proxy
           return screenIDParts.join( SEPARATOR );
         }
       }

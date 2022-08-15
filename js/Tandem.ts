@@ -88,6 +88,8 @@ class Tandem {
   public static OPT_OUT: Tandem;
   public static REQUIRED: Tandem;
 
+  public static readonly SCREEN_TANDEM_NAME_SUFFIX = 'Screen';
+
   /**
    * Typically, sims will create tandems using `tandem.createTandem`.  This constructor is used internally or when
    * a tandem must be created from scratch.
@@ -421,7 +423,7 @@ class RootTandem extends Tandem {
                             name === OPTIONAL_TANDEM_NAME ||
                             name === TEST_TANDEM_NAME ||
                             name === window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME ||
-                            _.endsWith( name, 'Screen' );
+                            _.endsWith( name, Tandem.SCREEN_TANDEM_NAME_SUFFIX );
       assert && assert( allowedOnRoot, `tandem name not allowed on root: "${name}"; perhaps try putting it under general or global` );
     }
 
