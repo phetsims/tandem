@@ -28,6 +28,7 @@ import IOType from './types/IOType.js';
 import { PhetioObjectMetadata } from './TandemConstants.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import TEmitter from '../../axon/js/TEmitter.js';
+import StringIO from './types/StringIO.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
@@ -73,8 +74,8 @@ function archetypeCast<T>( archetype: T | null ): T {
 
 abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioObject {
   private readonly _archetype: T | null;
-  public readonly elementCreatedEmitter: TEmitter<[ T ]>;
-  public readonly elementDisposedEmitter: TEmitter<[ T ]>;
+  public readonly elementCreatedEmitter: TEmitter<[ T, string ]>;
+  public readonly elementDisposedEmitter: TEmitter<[ T, string ]>;
   private notificationsDeferred: boolean;
   private readonly deferredCreations: T[];
   private readonly deferredDisposals: T[];
@@ -143,10 +144,24 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
     this._archetype = this.createArchetype();
 
     // subtypes expected to fire this according to individual implementations
-    this.elementCreatedEmitter = new Emitter<[ T ]>( { parameters: [ { valueType: PhetioObject } ] } );
+    this.elementCreatedEmitter = new Emitter<[ T, string ]>( {
+      parameters: [
+        { valueType: PhetioObject, phetioType: options.phetioType.parameterTypes![ 0 ], name: 'element' },
+        { name: 'phetioID', phetioType: StringIO }
+      ],
+      tandem: options.tandem.createTandem( 'elementCreatedEmitter' ),
+      phetioDocumentation: 'Emitter that fires whenever a new dynamic element is added to the container.'
+    } );
 
     // called on disposal of an element
-    this.elementDisposedEmitter = new Emitter<[ T ]>( { parameters: [ { valueType: PhetioObject } ] } );
+    this.elementDisposedEmitter = new Emitter<[ T, string ]>( {
+      parameters: [
+        { valueType: PhetioObject, phetioType: options.phetioType.parameterTypes![ 0 ], name: 'element' },
+        { name: 'phetioID', phetioType: StringIO }
+      ],
+      tandem: options.tandem.createTandem( 'elementDisposedEmitter' ),
+      phetioDocumentation: 'Emitter that fires whenever a dynamic element is removed from the container.'
+    } );
 
     // Emit to the data stream on element creation/disposal, no need to do this in PhET brand
     if ( Tandem.PHET_IO_ENABLED ) {
@@ -367,7 +382,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       this.deferredDisposals.push( element );
     }
     else {
-      this.elementDisposedEmitter.emit( element );
+      this.elementDisposedEmitter.emit( element, element.tandem.phetioID );
     }
   }
 
@@ -383,7 +398,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
   private notifyElementDisposedWhileDeferred( disposedElement: T ): void {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
     assert && assert( this.deferredDisposals.includes( disposedElement ), 'disposedElement should not have been already notified' );
-    this.elementDisposedEmitter.emit( disposedElement );
+    this.elementDisposedEmitter.emit( disposedElement, disposedElement.tandem.phetioID );
     arrayRemove( this.deferredDisposals, disposedElement );
   }
 
@@ -395,7 +410,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       this.deferredCreations.push( createdElement );
     }
     else {
-      this.elementCreatedEmitter.emit( createdElement );
+      this.elementCreatedEmitter.emit( createdElement, createdElement.tandem.phetioID );
     }
   }
 
@@ -407,7 +422,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
   public notifyElementCreatedWhileDeferred( createdElement: T ): void {
     assert && assert( this.notificationsDeferred, 'should only be called when notifications are deferred' );
     assert && assert( this.deferredCreations.includes( createdElement ), 'createdElement should not have been already notified' );
-    this.elementCreatedEmitter.emit( createdElement );
+    this.elementCreatedEmitter.emit( createdElement, createdElement.tandem.phetioID );
     arrayRemove( this.deferredCreations, createdElement );
   }
 
