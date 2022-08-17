@@ -11,6 +11,10 @@ import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import StringIO from './types/StringIO.js';
 
+export type LinkedElementState = {
+  elementID: string;
+};
+
 const LinkedElementIO = new IOType( 'LinkedElementIO', {
   isValidValue: () => true,
   documentation: 'A LinkedElement',

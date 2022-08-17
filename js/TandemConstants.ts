@@ -51,8 +51,12 @@ export type PhetioType = {
 };
 export type PhetioTypes = Record<string, PhetioType>;
 
+export type PhetioOverrides = Record<string, Partial<PhetioObjectMetadata>>;
+
+export type PhetioState = Record<string, object>;
+
 // Like the generate API files
-export type API = {
+export type PhetioAPI = {
   version: {
     major: number;
     minor: number;
