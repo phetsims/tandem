@@ -60,6 +60,7 @@ const launchListeners: Array<() => void> = [];
 export type TandemOptions = {
   required?: boolean;
   supplied?: boolean;
+  isValidTandemName?: ( name: string ) => boolean;
 };
 
 class Tandem {
@@ -101,7 +102,6 @@ class Tandem {
   public constructor( parentTandem: Tandem | null, name: string, providedOptions?: TandemOptions ) {
     assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
     assert && assert( typeof name === 'string', 'name must be defined' );
-    assert && assert( this.getTermRegex().test( name ), `name should match the regex pattern: ${name}` );
     assert && assert( name !== Tandem.METADATA_KEY, 'name cannot match Tandem.METADATA_KEY' );
 
     this.parentTandem = parentTandem;
@@ -119,8 +119,12 @@ class Tandem {
       required: true,
 
       // if the tandem is required but not supplied, an error will be thrown.
-      supplied: true
+      supplied: true,
+
+      isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],]+$/.test( name )
     }, providedOptions );
+
+    assert && assert( options.isValidTandemName( name ), `invalid tandem name: ${name}` );
 
     this.children = {};
 
@@ -137,9 +141,9 @@ class Tandem {
    * Returns the regular expression which can be used to test each term. The term must consist only of alpha-numeric
    * characters or tildes.
    */
-  protected getTermRegex(): RegExp {
-    return /^[a-zA-Z0-9[\],]+$/;
-  }
+  // protected getTermRegex(): RegExp {
+  //   return /^[a-zA-Z0-9[\],-]+$/;
+  // }
 
   /**
    * If the provided tandem is not supplied, support the ?printMissingTandems query parameter for extra logging during
@@ -401,6 +405,14 @@ class Tandem {
 
   // a list of PhetioObjects ready to be sent out to listeners, but can't because Tandem hasn't been launched yet.
   public static bufferedPhetioObjects: PhetioObject[] = [];
+
+  public createTandemFromPhetioID( phetioID: string ): Tandem {
+    return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( '-' ), {
+
+      // TODO: https://github.com/phetsims/chipper/issues/1302 no more commas
+      isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],-]+$/.test( name )
+    } );
+  }
 }
 
 Tandem.addLaunchListener( () => {

@@ -8,27 +8,23 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import Tandem, { TandemOptions } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // constants
 const DYNAMIC_ARCHETYPE_NAME = 'archetype';
 
-type DynamicTandemOptions = TandemOptions;
+type DynamicTandemOptions = StrictOmit<TandemOptions, 'isValidTandemName'>;
 
 class DynamicTandem extends Tandem {
 
   public constructor( parentTandem: Tandem, name: string, options?: DynamicTandemOptions ) {
     assert && assert( parentTandem, 'DynamicTandem must have a parentTandem' );
-    super( parentTandem, name, options );
-  }
-
-  /**
-   * Returns the regular expression which can be used to test each term. The term must consist only of alpha-numeric
-   * characters or underscores.
-   */
-  protected override getTermRegex(): RegExp {
-    return /^[a-zA-Z0-9_]+$/;
+    super( parentTandem, name, {
+      ...options,
+      isValidTandemName: ( name: string ) => /^[a-zA-Z0-9_]+$/.test( name )
+    } );
   }
 
   /**
