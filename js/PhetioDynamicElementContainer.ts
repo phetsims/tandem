@@ -22,7 +22,7 @@ import PickRequired from '../../phet-core/js/types/PickRequired.js';
 import optionize from '../../phet-core/js/optionize.js';
 import DynamicTandem from './DynamicTandem.js';
 import PhetioObject, { PhetioObjectMetadataInput, PhetioObjectOptions } from './PhetioObject.js';
-import Tandem from './Tandem.js';
+import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import { PhetioObjectMetadata } from './TandemConstants.js';
@@ -257,7 +257,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       // The create function takes a tandem plus the default args
       assert && assert( this.createElement.length === defaultArgs.length + 1, 'mismatched number of arguments' );
 
-      const archetype = this.createElement( this.tandem.createTandem( DynamicTandem.DYNAMIC_ARCHETYPE_NAME ), ...defaultArgs );
+      const archetype = this.createElement( this.tandem.createTandem( DYNAMIC_ARCHETYPE_NAME ), ...defaultArgs );
 
       // Mark the archetype for inclusion in the baseline schema
       if ( this.isPhetioInstrumented() ) {

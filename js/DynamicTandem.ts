@@ -9,11 +9,8 @@
  */
 
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import Tandem, { TandemOptions } from './Tandem.js';
+import Tandem, { DYNAMIC_ARCHETYPE_NAME, TandemOptions } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
-
-// constants
-const DYNAMIC_ARCHETYPE_NAME = 'archetype';
 
 type DynamicTandemOptions = StrictOmit<TandemOptions, 'isValidTandemName'>;
 

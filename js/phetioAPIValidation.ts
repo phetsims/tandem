@@ -31,8 +31,7 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
-import DynamicTandem from './DynamicTandem.js';
-import Tandem from './Tandem.js';
+import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import PhetioObject from './PhetioObject.js';
@@ -157,7 +156,7 @@ class PhetioAPIValidation {
     const entireBaseline = phet.phetio.phetioEngine.getPhetioElementsBaseline();
 
     for ( const phetioID in window.phet.preloads.phetio.phetioElementsOverrides ) {
-      const isArchetype = phetioID.includes( DynamicTandem.DYNAMIC_ARCHETYPE_NAME );
+      const isArchetype = phetioID.includes( DYNAMIC_ARCHETYPE_NAME );
       if ( !phet.preloads.phetio.createArchetypes && !entireBaseline.hasOwnProperty( phetioID ) ) {
         assert && assert( isArchetype, `phetioID missing from the baseline that was not an archetype: ${phetioID}` );
       }

@@ -36,6 +36,8 @@ const UNALLOWED_TANDEM_NAMES = [ 'pickableProperty' ];
 const REQUIRED_TANDEM_NAME = 'requiredTandem';
 const OPTIONAL_TANDEM_NAME = 'optionalTandem';
 const TEST_TANDEM_NAME = 'test';
+const INTER_TERM_SEPARATOR = '-'; // when a phetioID is put into one tandem.name
+export const DYNAMIC_ARCHETYPE_NAME = 'archetype';
 
 // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
 const missingTandems: {
@@ -304,7 +306,17 @@ class Tandem {
   public getArchetypalPhetioID(): string {
 
     // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
-    return this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), this.name ) : this.phetioID;
+    const result: string = this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), this.name ) : this.phetioID;
+
+    // For https://github.com/phetsims/axon/issues/408, we need to access archetypes for Tandems from createTandemFromPhetioID
+    if ( result.includes( '_' ) ) {
+      const terms = result.split( INTER_TERM_SEPARATOR );
+      const mapped = terms.map( term => term.includes( '_' ) ? DYNAMIC_ARCHETYPE_NAME : term );
+      return mapped.join( INTER_TERM_SEPARATOR );
+    }
+    else {
+      return result;
+    }
   }
 
   /**
@@ -407,7 +419,7 @@ class Tandem {
   public static bufferedPhetioObjects: PhetioObject[] = [];
 
   public createTandemFromPhetioID( phetioID: string ): Tandem {
-    return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( '-' ), {
+    return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( INTER_TERM_SEPARATOR ), {
 
       // TODO: https://github.com/phetsims/chipper/issues/1302 no more commas
       isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],-_]+$/.test( name )
