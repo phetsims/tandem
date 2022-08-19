@@ -410,7 +410,7 @@ class Tandem {
     return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( '-' ), {
 
       // TODO: https://github.com/phetsims/chipper/issues/1302 no more commas
-      isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],-]+$/.test( name )
+      isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],-_]+$/.test( name )
     } );
   }
 }
