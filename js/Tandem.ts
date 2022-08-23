@@ -420,8 +420,6 @@ class Tandem {
 
   public createTandemFromPhetioID( phetioID: string ): Tandem {
     return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( INTER_TERM_SEPARATOR ), {
-
-      // TODO: https://github.com/phetsims/chipper/issues/1302 no more commas
       isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],-_]+$/.test( name )
     } );
   }
