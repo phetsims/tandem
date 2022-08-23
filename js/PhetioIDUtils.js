@@ -19,6 +19,7 @@
   // constants
   const SEPARATOR = '.';
   const GROUP_SEPARATOR = '_';
+  const INTER_TERM_SEPARATOR = '-';
   const GENERAL_COMPONENT_NAME = 'general';
   const GLOBAL_COMPONENT_NAME = 'global';
   const HOME_SCREEN_COMPONENT_NAME = 'homeScreen';
@@ -182,6 +183,17 @@
      * @public
      */
     GROUP_SEPARATOR: GROUP_SEPARATOR,
+
+    /**
+     * The separator used to specify terms in a phetioID that is used by another phetioID. For example:
+     *
+     * sim.general.view.sim-global-otherID
+     *
+     * @type {string}
+     * @constant
+     * @public
+     */
+    INTER_TERM_SEPARATOR: INTER_TERM_SEPARATOR,
 
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**

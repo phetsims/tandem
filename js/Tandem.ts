@@ -36,7 +36,7 @@ const UNALLOWED_TANDEM_NAMES = [ 'pickableProperty' ];
 const REQUIRED_TANDEM_NAME = 'requiredTandem';
 const OPTIONAL_TANDEM_NAME = 'optionalTandem';
 const TEST_TANDEM_NAME = 'test';
-const INTER_TERM_SEPARATOR = '-'; // when a phetioID is put into one tandem.name
+const INTER_TERM_SEPARATOR = phetio.PhetioIDUtils.INTER_TERM_SEPARATOR;
 export const DYNAMIC_ARCHETYPE_NAME = 'archetype';
 
 // used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
