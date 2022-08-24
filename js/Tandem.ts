@@ -90,6 +90,7 @@ class Tandem {
   public static OPTIONAL: Tandem;
   public static OPT_OUT: Tandem;
   public static REQUIRED: Tandem;
+  public static PREFERENCES: Tandem;
 
   public static readonly SCREEN_TANDEM_NAME_SUFFIX = 'Screen';
 
@@ -538,6 +539,11 @@ Tandem.REQUIRED = Tandem.ROOT.createTandem( REQUIRED_TANDEM_NAME, {
   required: VALIDATION || PRINT_MISSING_TANDEMS,
   supplied: false
 } );
+
+/**
+ * Use this as the parent tandem for Properties that are related to sim-specific preferences.
+ */
+Tandem.PREFERENCES = Tandem.GLOBAL_MODEL.createTandem( 'preferences' );
 
 /**
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
