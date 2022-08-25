@@ -705,12 +705,11 @@ const specifiesNonTandemPhetioObjectKey = ( options: Record<string, IntentionalA
 
 type LinkedElementOptions = PhetioObjectOptions;
 
-// Since PhetioObject is extended with inherit (e.g., SCENERY/Node), this cannot be an ES6 class
 /**
  * Internal class to avoid cyclic dependencies.
  */
 class LinkedElement extends PhetioObject {
-  public element: LinkableElement;
+  public readonly element: LinkableElement;
 
   public constructor( coreElement: LinkableElement, providedOptions?: LinkedElementOptions ) {
     assert && assert( !!coreElement, 'coreElement should be defined' );
@@ -730,7 +729,6 @@ class LinkedElement extends PhetioObject {
 
     super( options );
 
-    // (read-only)
     this.element = coreElement;
   }
 
