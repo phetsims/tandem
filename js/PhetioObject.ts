@@ -107,7 +107,9 @@ const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
 
   // {Object|null} optional - delivered with each event, if specified. phetioPlayback is appended here, if true.
   // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
-  phetioEventMetadata: null
+  phetioEventMetadata: null,
+
+  tandemSuffix: null
 };
 
 // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
@@ -124,6 +126,11 @@ export type PhetioObjectOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phe
   phetioType?: IOType;
   phetioEventType?: EventType;
   phetioEventMetadata?: EventMetadata | null;
+
+  // Require that the given tandem matches the convention. First character is not case sensitive to support cases like
+  // sim.screen1.view.thermometerNode
+  // sim.screen1.view.upperThermometerNode
+  tandemSuffix?: string | string[] | null;
 };
 
 type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName'> ) | 'phetioType';
@@ -334,6 +341,22 @@ class PhetioObject {
     // Alert that this PhetioObject is ready for cross-frame communication (thus becoming a "PhET-iO element" on the wrapper side.
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
+
+    if ( assert && this.isPhetioInstrumented() && options.tandemSuffix ) {
+
+      const suffixArray = Array.isArray( options.tandemSuffix ) ? options.tandemSuffix : [ options.tandemSuffix ];
+      const matches = suffixArray.filter( suffix => {
+        return this.tandem.name.endsWith( suffix ) ||
+               this.tandem.name.endsWith( PhetioObject.swapCaseOfFirstCharacter( suffix ) );
+      } );
+      assert && assert( matches.length > 0, 'Incorrect Tandem suffix, expected = ' + suffixArray.join( ', ' ) + '. actual = ' + this.tandem.phetioID );
+    }
+  }
+
+  public static swapCaseOfFirstCharacter( string: string ): string {
+    const firstChar = string[ 0 ];
+    const newFirstChar = firstChar === firstChar.toLowerCase() ? firstChar.toUpperCase() : firstChar.toLowerCase();
+    return newFirstChar + string.substring( 1 );
   }
 
   // throws an assertion error in brands other than PhET-iO
