@@ -303,6 +303,8 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     };
     this.fromStateObject = config.fromStateObject;
     this.stateToArgsForConstructor = config.stateToArgsForConstructor;
+
+    // @ts-ignore see https://github.com/phetsims/studio/issues/273
     this.applyState = ( coreObject: T, stateObject: CompositeStateObjectType ) => {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
 
