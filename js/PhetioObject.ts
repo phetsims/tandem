@@ -171,10 +171,12 @@ class PhetioObject {
   public phetioNotifiedObjectCreated!: boolean;
   private phetioMessageStack!: number[];
   public static DEFAULT_OPTIONS = DEFAULTS;
+  public phetioID: string;
 
   public constructor( options?: PhetioObjectOptions ) {
 
     this.tandem = DEFAULTS.tandem;
+    this.phetioID = this.tandem.phetioID;
     this.phetioObjectInitialized = false;
     this.isDisposed = false;
 
@@ -219,6 +221,7 @@ class PhetioObject {
       // creating the Tandem tree.
       if ( providedOptions.tandem ) {
         this.tandem = providedOptions.tandem;
+        this.phetioID = this.tandem.phetioID;
       }
       return;
     }
@@ -285,6 +288,7 @@ class PhetioObject {
 
     // (read-only) see docs at DEFAULTS declaration
     this.tandem = options.tandem!;
+    this.phetioID = this.tandem.phetioID;
 
     // (read-only) see docs at DEFAULTS declaration
     this._phetioType = options.phetioType;
