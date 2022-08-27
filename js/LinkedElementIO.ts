@@ -15,7 +15,15 @@ export type LinkedElementState = {
   elementID: string;
 };
 
-const LinkedElementIO = new IOType( 'LinkedElementIO', {
+class LinkedElementIOType extends IOType {
+  public override readonly applyState = () => {
+
+    // Linked element state is one-way (written to state but not read back for deserialization).
+    // Override this method to avoid crashes for missing linked element state in version migration
+  };
+}
+
+const LinkedElementIO = new LinkedElementIOType( 'LinkedElementIO', {
   isValidValue: () => true,
   documentation: 'A LinkedElement',
   toStateObject: linkedElement => {
