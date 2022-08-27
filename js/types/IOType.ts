@@ -36,7 +36,7 @@ const getCoreTypeName = ( ioTypeName: string ): string => {
   return ioTypeName.substring( 0, index );
 };
 
-type AddChildElement = ( group: PhetioDynamicElementContainer<PhetioObject>, componentName: string, stateObject: IntentionalAny ) => PhetioObject;
+type AddChildElement = ( group: PhetioDynamicElementContainer<PhetioObject>, componentName: string, stateObject: unknown ) => PhetioObject;
 
 export type IOTypeMethod = {
   returnType: IOType;
