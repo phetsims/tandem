@@ -507,7 +507,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     let coreTypeHasToStateObject = false;
     let coreTypeHasApplyState = false;
 
-    // @ts-ignore
     let proto = CoreType.prototype;
     while ( proto ) {
       assert && assert( !proto.hasOwnProperty( 'fromStateObject' ),
@@ -589,7 +588,6 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
   },
   // @ts-ignore
   fromStateObject: stateObject => null,
-  // @ts-ignore
   stateToArgsForConstructor: stateObject => [],
   applyState: _.noop,
   metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS,
@@ -599,7 +597,7 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
   stateSchema: null
 } );
 
-// @ts-ignore I'm not sure if this will stick around, but it seems helpful to keep for now
+// I'm not sure if this will stick around, but it seems helpful to keep for now
 // export type getStateTypeFromIOType<Type extends IOType> = Type extends IOType<infer A, infer StateType> ? StateType : never;
 
 tandemNamespace.register( 'IOType', IOType );
