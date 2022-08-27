@@ -111,13 +111,13 @@ class StateSchema<T, StateType> {
             assert && assert( stateObjectLevel.hasOwnProperty( stateKey ), `stateObject does not have expected schema key: ${stateKey}` );
 
             // Using fromStateObject to deserialize sub-component
-            if ( schemaIOType.defaultDeserializationMethod === IOType.DeserializationMethod.FROM_STATE_OBJECT ) {
+            if ( schemaIOType.defaultDeserializationMethod === 'fromStateObject' ) {
 
               // @ts-ignore, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
               coreObject[ stateKey ] = schema[ stateKey ].fromStateObject( stateObjectLevel[ stateKey ] );
             }
             else {
-              assert && assert( schemaIOType.defaultDeserializationMethod === IOType.DeserializationMethod.APPLY_STATE, 'unexpected deserialization method' );
+              assert && assert( schemaIOType.defaultDeserializationMethod === 'applyState', 'unexpected deserialization method' );
 
               // Using applyState to deserialize sub-component
               // @ts-ignore, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.

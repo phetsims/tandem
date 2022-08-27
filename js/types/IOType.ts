@@ -10,8 +10,6 @@
 
 import validate from '../../../axon/js/validate.js';
 import Validation, { Validator } from '../../../axon/js/Validation.js';
-import Enumeration from '../../../phet-core/js/Enumeration.js';
-import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
 import optionize, { combineOptions } from '../../../phet-core/js/optionize.js';
 import ConstructorOf from '../../../phet-core/js/types/ConstructorOf.js';
 import PhetioConstants from '../PhetioConstants.js';
@@ -53,17 +51,7 @@ export type IOTypeMethod = {
 };
 
 type Methods = Record<string, IOTypeMethod>;
-
-// Currently, this is only the list of methods that default stateSchema applyState functions support when deserializing
-// componenents
-// TODO: https://github.com/phetsims/tandem/issues/261 let's use string union literal probably
-class DeserializationMethod extends EnumerationValue {
-  public static FROM_STATE_OBJECT = new DeserializationMethod();
-  public static APPLY_STATE = new DeserializationMethod();
-
-  // Make sure this is last, once all EnumerationValues have been declared statically.
-  public static enumeration = new Enumeration( DeserializationMethod );
-}
+type DeserializationMethod = 'fromStateObject' | 'applyState';
 
 type IOTypeOptions<T, StateType> = {
   valueType?: ConstructorOf<T> | string;
@@ -109,7 +97,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
   // see getAllStateSchema().
   public readonly stateSchema: StateSchema<T, StateType>;
   public static ObjectIO: IOType;
-  public static DeserializationMethod: typeof DeserializationMethod;
   public isFunctionType: boolean;
 
   /**
@@ -218,7 +205,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       // can take a variety of forms, and this will vary based on the IOType. In most cases deserialization of a component
       // is done via fromStateObject. If not, specify this option so that the stateSchema will be able to know to call
       // the appropriate deserialization method when deserializing something of this IOType.
-      defaultDeserializationMethod: DeserializationMethod.FROM_STATE_OBJECT,
+      defaultDeserializationMethod: 'fromStateObject',
 
       // For dynamic element containers, see examples in IOTypes for PhetioDynamicElementContainer classes
       addChildElement: supertype && supertype.addChildElement
@@ -237,8 +224,8 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
       } );
     }
-    assert && assert( config.defaultDeserializationMethod === DeserializationMethod.FROM_STATE_OBJECT ||
-                      config.defaultDeserializationMethod === DeserializationMethod.APPLY_STATE,
+    assert && assert( config.defaultDeserializationMethod === 'fromStateObject' ||
+                      config.defaultDeserializationMethod === 'applyState',
       'StateSchema\'s default serialization only supports fromStateObject or applyState' );
 
     this.supertype = supertype;
@@ -562,8 +549,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     return new IOType<T, StateType>( ioTypeName, options );
   }
 }
-
-IOType.DeserializationMethod = DeserializationMethod;
 
 // default state value
 const DEFAULT_STATE = null;
