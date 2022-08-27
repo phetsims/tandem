@@ -123,7 +123,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
    * @param providedOptions
    */
   public constructor( ioTypeName: string, providedOptions: IOTypeOptions<T, StateType> ) {
-    assert && assert( typeof ioTypeName === 'string', 'ioTypeName should be a string' );
 
     // For reference in the config
     const supertype = providedOptions.supertype || IOType.ObjectIO;
@@ -339,9 +338,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     // assert that each public method adheres to the expected schema
     this.methods && Object.values( this.methods ).forEach( ( methodObject: IOTypeMethod ) => {
       if ( typeof methodObject === 'object' ) {
-        assert && assert( Array.isArray( methodObject.parameterTypes ), `parameter types must be an array: ${methodObject.parameterTypes}` );
-        assert && assert( typeof methodObject.implementation === 'function', `implementation must be of type function: ${methodObject.implementation}` );
-        assert && assert( typeof methodObject.documentation === 'string', `documentation must be of type string: ${methodObject.documentation}` );
         assert && methodObject.invocableForReadOnlyElements && assert( typeof methodObject.invocableForReadOnlyElements === 'boolean',
           `invocableForReadOnlyElements must be of type boolean: ${methodObject.invocableForReadOnlyElements}` );
       }
@@ -443,8 +439,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     // When we reach the root, make sure there isn't anything in the stateObject that isn't described by a schema
     if ( !this.supertype && stateObject && typeof stateObject !== 'string' && !Array.isArray( stateObject ) ) {
 
-      const check = ( type: string, key: string ) => {
-        assert && assert( type === 'public' || type === 'private', `bad type: ${type}` );
+      const check = ( type: 'public' | 'private', key: string ) => {
         const keys = type === 'public' ? publicSchemaKeys : privateSchemaKeys;
         const keyValid = keys.includes( key );
         if ( !keyValid ) {
