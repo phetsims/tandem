@@ -126,7 +126,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     assert && assert( typeof ioTypeName === 'string', 'ioTypeName should be a string' );
 
     // For reference in the config
-    // @ts-ignore
     const supertype = providedOptions.supertype || IOType.ObjectIO;
     const toStateObjectSupplied = !!( providedOptions.toStateObject );
     const applyStateSupplied = !!( providedOptions.applyState );
