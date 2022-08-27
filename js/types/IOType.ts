@@ -35,8 +35,8 @@ const getCoreTypeName = ( ioTypeName: string ): string => {
   assert && assert( index >= 0, 'IO should be in the type name' );
   return ioTypeName.substring( 0, index );
 };
-type AddChildElement = ( group: PhetioDynamicElementContainer<PhetioObject>, componentName: string, stateObject: IntentionalAny ) => PhetioObject;
 
+type AddChildElement = ( group: PhetioDynamicElementContainer<PhetioObject>, componentName: string, stateObject: IntentionalAny ) => PhetioObject;
 
 export type IOTypeMethod = {
   returnType: IOType;
@@ -44,7 +44,7 @@ export type IOTypeMethod = {
 
   //the function to execute when this method is called. This function's parameters will be based on `parameterTypes`,
   // and should return the type specified by `returnType`
-  implementation: ( ...args: IntentionalAny[] ) => IntentionalAny;
+  implementation: ( ...args: IntentionalAny[] ) => unknown;
   documentation: string;
 
   // by default, all methods are invocable for all elements. However, for some read-only elements, certain methods
