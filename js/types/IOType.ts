@@ -26,8 +26,6 @@ import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 // Defined at the bottom of this file
-// @ts-ignore
-let ObjectIO = null;
 
 /**
  * Estimate the core type name from a given IO Type name.
@@ -129,7 +127,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
 
     // For reference in the config
     // @ts-ignore
-    const supertype = providedOptions.supertype || ObjectIO;
+    const supertype = providedOptions.supertype || IOType.ObjectIO;
     const toStateObjectSupplied = !!( providedOptions.toStateObject );
     const applyStateSupplied = !!( providedOptions.applyState );
     const stateSchemaSupplied = !!( providedOptions.stateSchema );
@@ -145,7 +143,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       /***** OPTIONAL ****/
 
       // @ts-ignore
-      supertype: ObjectIO,
+      supertype: IOType.ObjectIO,
 
       // The public methods available for this IO Type. Each method is not just a function,
       // but a collection of metadata about the method to be able to serialize parameters and return types and provide
@@ -235,6 +233,8 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     if ( assert && supertype ) {
       Object.keys( config.metadataDefaults ).forEach( metadataDefaultKey => {
         assert && supertype.getAllMetadataDefaults().hasOwnProperty( metadataDefaultKey ) &&
+
+        // @ts-ignore
         assert( supertype.getAllMetadataDefaults()[ metadataDefaultKey ] !== config.metadataDefaults[ metadataDefaultKey ],
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
       } );
@@ -575,7 +575,7 @@ IOType.DeserializationMethod = DeserializationMethod;
 // default state value
 const DEFAULT_STATE = null;
 
-ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE_NAME, {
+IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,
   documentation: 'The root of the IO Type hierarchy',
@@ -600,12 +600,8 @@ ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE_NAME, 
   stateSchema: null
 } );
 
-IOType.ObjectIO = ObjectIO;
-
-
 // @ts-ignore I'm not sure if this will stick around, but it seems helpful to keep for now
 // export type getStateTypeFromIOType<Type extends IOType> = Type extends IOType<infer A, infer StateType> ? StateType : never;
-
 
 tandemNamespace.register( 'IOType', IOType );
 export default IOType;
