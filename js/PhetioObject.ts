@@ -63,7 +63,7 @@ const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
   // Defines API methods, events and serialization
   phetioType: IOType.ObjectIO,
 
-  // {string} Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper. It's an html
+  // Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper. It's an html
   // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio
   phetioDocumentation: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDocumentation,
 
@@ -92,12 +92,12 @@ const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
   // When true, this is categorized as an important "featured" element in Studio.
   phetioFeatured: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioFeatured,
 
-  // {boolean} optional - indicates that an object may or may not have been created. Applies recursively automatically
+  // indicates that an object may or may not have been created. Applies recursively automatically
   // and should only be set manually on the root dynamic element. Dynamic archetypes will have this overwritten to
   // false even if explicitly provided as true, as archetypes cannot be dynamic.
   phetioDynamicElement: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDynamicElement,
 
-  // {boolean} Marking phetioDesigned: true opts-in to API change detection tooling that can be used to catch inadvertent
+  // Marking phetioDesigned: true opts-in to API change detection tooling that can be used to catch inadvertent
   // changes to a designed API.  A phetioDesigned:true PhetioObject (or any of its tandem descendants) will throw
   // assertion errors on CT (or when running with ?phetioCompareAPI) when the following are true:
   // (a) its package.json lists compareDesignedAPIChanges:true in the "phet-io" section
@@ -105,7 +105,7 @@ const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
   // (c) any of its metadata values deviate from the reference API
   phetioDesigned: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDesigned,
 
-  // {Object|null} optional - delivered with each event, if specified. phetioPlayback is appended here, if true.
+  // delivered with each event, if specified. phetioPlayback is appended here, if true.
   // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
   phetioEventMetadata: null,
 
@@ -227,7 +227,6 @@ class PhetioObject {
     }
 
     // assert this after the `specifiesPhetioObjectKey check to support something like:
-    // `new Node( {tandem: tandem}).mutate({})`
     assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
     // Guard validation on assert to avoid calling a large number of no-ops when assertions are disabled, see https://github.com/phetsims/tandem/issues/200
@@ -442,10 +441,9 @@ class PhetioObject {
       assert && assertMutuallyExclusiveOptions( providedOptions, [ 'data' ], [ 'getData' ] );
       const options = optionize<StartEventOptions>()( {
 
-        // {Object|null} - the data
         data: null,
 
-        // {function():Object|null} - function that, when called get's the data.
+        // function that, when called get's the data.
         getData: null
       }, providedOptions );
 

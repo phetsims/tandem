@@ -11,8 +11,8 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 
 
-// {Map.<parameterTypeName:string, IOType>} - cache each parameterized IOType so that it is only created once
-const cache = new Map();
+// cache each parameterized IOType so that it is only created once
+const cache = new Map<string, IOType>();
 
 /**
  * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapped IO Type for
@@ -55,7 +55,7 @@ const FunctionIO = ( returnType: IOType, functionParameterTypes: IOType[] ): IOT
     } ) );
   }
 
-  return cache.get( cacheKey );
+  return cache.get( cacheKey )!;
 };
 
 tandemNamespace.register( 'FunctionIO', FunctionIO );

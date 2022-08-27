@@ -15,7 +15,7 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 
-// {Map.<keyType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once.
+// Cache each parameterized IOType so that it is only created once.
 const cache = new Map<string, IOType>();
 
 const ARRAY_OF_ARRAY_VALIDATOR = {

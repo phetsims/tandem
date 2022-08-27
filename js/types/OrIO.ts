@@ -20,8 +20,8 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 
-// {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once
-const cache = new Map();
+// cache each parameterized IOType so that it is only created once
+const cache = new Map<string, IOType>();
 
 /**
  * Parametric type constructor function, do not use `new`
@@ -79,7 +79,7 @@ const OrIO = ( parameterTypes: IOType[] ): IOType => {
     } ) );
   }
 
-  return cache.get( key );
+  return cache.get( key )!;
 };
 
 tandemNamespace.register( 'OrIO', OrIO );

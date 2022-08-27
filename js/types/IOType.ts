@@ -147,32 +147,32 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       // @ts-ignore
       supertype: ObjectIO,
 
-      // {Object.<string,MethodObject>} The public methods available for this IO Type. Each method is not just a function,
+      // The public methods available for this IO Type. Each method is not just a function,
       // but a collection of metadata about the method to be able to serialize parameters and return types and provide
       // better documentation.
       methods: {},
 
-      // {string[]} The list of events that can be emitted at this level (does not include events from supertypes).
+      // The list of events that can be emitted at this level (does not include events from supertypes).
       events: [],
 
-      // {Object} Key/value pairs indicating the defaults for the IO Type metadata. If anything is provided here, then
+      // Key/value pairs indicating the defaults for the IO Type metadata. If anything is provided here, then
       // corresponding PhetioObjects that use this IOType should override PhetioObject.getMetadata() to add what keys
       // they need for their specific type.  Cannot specify redundant values (that an ancestor already specified).
       metadataDefaults: {},
 
-      // {Object} Key/value pairs indicating the defaults for the IO Type data. Most likely this will remain PhET-iO internal,
+      // Key/value pairs indicating the defaults for the IO Type data. Most likely this will remain PhET-iO internal,
       // and shouldn't need to be used when creating IOTypes outside of tandem/.
       dataDefaults: {},
 
-      // {string} IO Types can specify the order that methods appear in the documentation by putting their names in this
+      // IO Types can specify the order that methods appear in the documentation by putting their names in this
       // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
       // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
       methodOrder: [],
 
-      // {IOType[]} For parametric types, they must indicate the types of the parameters here. 0 if nonparametric.
+      // For parametric types, they must indicate the types of the parameters here. 0 if nonparametric.
       parameterTypes: [],
 
-      // {string} Documentation that appears in PhET-iO Studio, supports HTML markup.
+      // Documentation that appears in PhET-iO Studio, supports HTML markup.
       documentation: `IO Type for ${getCoreTypeName( ioTypeName )}`,
 
       // Functions cannot be sent from one iframe to another, so must be wrapped.  See phetioCommandProcessor.wrapFunction
@@ -180,17 +180,17 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
 
       /**** STATE ****/
 
-      // {function(coreObject:*):*)} Serialize the core object. Most often this looks like an object literal that holds
+      // Serialize the core object. Most often this looks like an object literal that holds
       // data about the PhetioObject instance. This is likely superfluous to just providing a stateSchema of composite
       // key/IOType values, which will create a default toStateObject based on the schema.
       toStateObject: supertype && supertype.toStateObject,
 
-      // {function(stateObject:*):*} For Data Type Deserialization. Decodes the object from a state (see toStateObject)
+      // For Data Type Deserialization. Decodes the object from a state (see toStateObject)
       // into an instance of the core type.
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       fromStateObject: supertype && supertype.fromStateObject,
 
-      // {function(stateObject:*):Array[*]} For Dynamic Element Deserialization: converts the state object to arguments
+      // For Dynamic Element Deserialization: converts the state object to arguments
       // for a `create` function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that
       // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
       // to be implemented on IO Types who's core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
@@ -198,7 +198,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       stateToArgsForConstructor: supertype && supertype.stateToArgsForConstructor,
 
-      // {function(coreObject:*,stateObject:*)} For Reference Type Deserialization:  Applies the state (see toStateObject)
+      // For Reference Type Deserialization:  Applies the state (see toStateObject)
       // value to the instance. When setting PhET-iO state, this function will be called on an instrumented instance to set the
       // stateObject's value to it. StateSchema makes this method often superfluous. A composite stateSchema can be used
       // to automatically formulate the applyState function. If using stateSchema for the applyState method, make sure that
@@ -208,7 +208,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
-      // {Object|StateSchema|function(IOType):Object|function(IOType):StateSchema|null} - the specification for how the
+      // the specification for how the
       // PhET-iO state will look for instances of this type. null specifies that the object is not serialized. A composite
       // StateSchema can supply a toStateObject and applyState serialization strategy. This default serialization strategy
       // only applies to this level, and does not recurse to parents. If you need to add serialization from parent levels,
@@ -217,7 +217,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       // per IOType with defaultDeserializationMethod.
       stateSchema: null,
 
-      // {DeserializationMethod} For use when this IOType is pare of a composite stateSchema in another IOType.  When
+      // For use when this IOType is pare of a composite stateSchema in another IOType.  When
       // using serialization methods by supplying only stateSchema, then deserialization
       // can take a variety of forms, and this will vary based on the IOType. In most cases deserialization of a component
       // is done via fromStateObject. If not, specify this option so that the stateSchema will be able to know to call
@@ -253,7 +253,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     this.methodOrder = config.methodOrder;
     this.parameterTypes = config.parameterTypes;
 
-    // {Validator}
+    // Validation
     this.validator = _.pick( config, Validation.VALIDATOR_KEYS );
     this.validator.validationMessage = this.validator.validationMessage || `Validation failed IOType Validator: ${this.typeName}`;
 

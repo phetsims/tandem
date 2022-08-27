@@ -55,7 +55,7 @@ class StateSchema<T, StateType> {
       displayString: '',
       validator: null,
 
-      // {Object.<string,IOType>} - an object literal of keys that correspond to an IOType
+      // an object literal of keys that correspond to an IOType
       compositeSchema: null
     }, providedOptions );
 

@@ -12,8 +12,8 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 
-// {Map.<parameterType:IOType, IOType>} - Cache each parameterized IOType so that it is only created once.
-const cache = new Map();
+// Cache each parameterized IOType so that it is only created once.
+const cache = new Map<IOType, IOType>();
 
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns an appropriate array IO Type.
@@ -38,7 +38,7 @@ const ArrayIO = <ParameterType, ParameterStateType>( parameterType: IOType<Param
     } ) );
   }
 
-  return cache.get( parameterType );
+  return cache.get( parameterType )!;
 };
 
 tandemNamespace.register( 'ArrayIO', ArrayIO );

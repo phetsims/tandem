@@ -15,7 +15,7 @@ import IOType from './IOType.js';
 import StringIO from './StringIO.js';
 
 // {Map.<cacheKey:string|*, IOType>} - Cache each parameterized ReferenceIO so that it is only created once
-const cache = new Map();
+const cache = new Map<IOType, IOType>();
 
 export type ReferenceIOState = {
   phetioID: string;
@@ -75,7 +75,7 @@ const ReferenceIO = ( parameterType: IOType ): IOType => {
     } ) );
   }
 
-  return cache.get( cacheKey );
+  return cache.get( cacheKey )!;
 };
 
 tandemNamespace.register( 'ReferenceIO', ReferenceIO );

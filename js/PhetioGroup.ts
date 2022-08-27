@@ -35,13 +35,13 @@ type ClearOptions = ClearSelfOptions & DynamicElementContainerClearOptions;
 type SelfOptions = EmptySelfOptions;
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
-// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
-const cache = new Map();
+// cache each parameterized IOType so that it is only created once.
+const cache = new Map<IOType, IOType>();
 
 class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private readonly _array: T[];
   private groupElementIndex: number;
-  public readonly countProperty: NumberProperty;
+  public readonly countProperty: NumberProperty; // (read-only)
 
   /**
    * @param createElement - function that creates a dynamic element to be housed in
@@ -64,13 +64,12 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
 
     super( createElement, defaultArguments, options );
 
-    // (PhetioGroupTests only) {PhetioObject[]} access using getArray or getArrayCopy
+    // (PhetioGroupTests only) access using getArray or getArrayCopy
     this._array = [];
 
     // (only for PhetioGroupIO) - for generating indices from a pool
     this.groupElementIndex = 0;
 
-    // (read-only)
     this.countProperty = new NumberProperty( 0, {
       tandem: options.tandem.createTandem( 'countProperty' ),
       phetioDocumentation: 'the number of elements in the group',
@@ -327,7 +326,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
       } ) );
     }
 
-    return cache.get( parameterType );
+    return cache.get( parameterType )!;
   };
 }
 

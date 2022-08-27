@@ -34,11 +34,11 @@ assert && Object.freeze( EMPTY_ARRAY );
 
 // allowed keys to options.parameters
 const PARAMETER_KEYS = [
-  'name', // {string} - required for phet-io instrumented Actions
-  'phetioType', // {IOType} - required for phet-io instrumented Actions
-  'phetioDocumentation', // {string} - optional, additional documentation for this specific parameter
+  'name', // required for phet-io instrumented Actions
+  'phetioType', // required for phet-io instrumented Actions
+  'phetioDocumentation', // optional, additional documentation for this specific parameter
 
-  // {boolean=true} - specify this to keep the parameter private to the PhET-iO API. To support emitting and executing over
+  // specify this to keep the parameter private to the PhET-iO API. To support emitting and executing over
   // the PhET-iO API, phetioPrivate parameters must not ever be before a public one. For example
   // `emit1( public1, private1, public2)` is not allowed. Instead it must be ordered like `emit( public1, public2, private1 )`
   'phetioPrivate'
@@ -66,7 +66,7 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
   public constructor( providedOptions?: PhetioDataHandlerOptions ) {
     const options = optionize<PhetioDataHandlerOptions, SelfOptions, PhetioObjectOptions>()( {
 
-      // {Object[]} - see PARAMETER_KEYS for a list of legal keys, their types, and documentation
+      // see PARAMETER_KEYS for a list of legal keys, their types, and documentation
       parameters: EMPTY_ARRAY,
 
       // phet-io - see PhetioObject.js for doc
@@ -80,7 +80,7 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
     assert && assert( options.phetioType === undefined,
       'PhetioDataHandler sets its own phetioType. Instead provide parameter phetioTypes through `options.parameters` with a phetioOuterType' );
 
-    // {Object[]} - list of parameters, see options.parameters. Filter out phetioPrivate parameters, all `phetioPrivate`
+    // list of parameters, see options.parameters. Filter out phetioPrivate parameters, all `phetioPrivate`
     // parameters will not have a `phetioType`, see `validateParameters`.
     const phetioPublicParameters = options.parameters.filter( paramToPhetioType );
 

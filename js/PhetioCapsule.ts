@@ -28,8 +28,8 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 
-// {Map.<parameterType:IOType, IOType>} - cache each parameterized IOType so that it is only created once.
-const cache = new Map();
+// cache each parameterized IOType so that it is only created once.
+const cache = new Map<IOType, IOType>();
 
 export type PhetioCapsuleOptions = PhetioDynamicElementContainerOptions;
 
@@ -46,14 +46,13 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
     options = optionize<PhetioCapsuleOptions, EmptySelfOptions>()( {
       tandem: Tandem.OPTIONAL,
 
-      // {string} The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
+      // The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
       // will consist of the capsule's tandem name with this suffix stripped off.
       containerSuffix: DEFAULT_CONTAINER_SUFFIX
     }, options );
 
     super( createElement, defaultArguments, options );
 
-    // (read-only PhetioCapsuleIO) {PhetioObject}
     this.element = null;
   }
 
@@ -156,7 +155,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
       } ) );
     }
 
-    return cache.get( parameterType );
+    return cache.get( parameterType )!;
   };
 }
 

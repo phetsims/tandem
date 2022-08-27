@@ -39,7 +39,7 @@ const TEST_TANDEM_NAME = 'test';
 const INTER_TERM_SEPARATOR = phetio.PhetioIDUtils.INTER_TERM_SEPARATOR;
 export const DYNAMIC_ARCHETYPE_NAME = 'archetype';
 
-// used to keep track of missing tandems.  Each element has type {{phetioID:{string}, stack:{string}}
+// used to keep track of missing tandems
 const missingTandems: {
   required: Array<{ phetioID: string; stack: string }>;
   optional: Array<{ phetioID: string; stack: string }>;
