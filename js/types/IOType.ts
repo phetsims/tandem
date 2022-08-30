@@ -289,8 +289,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     this.fromStateObject = config.fromStateObject;
     this.stateToArgsForConstructor = config.stateToArgsForConstructor;
 
-    // @ts-ignore see https://github.com/phetsims/studio/issues/273
-    this.applyState = ( coreObject: T, stateObject: CompositeStateObjectType ) => {
+    this.applyState = ( coreObject: T, stateObject: StateType ) => {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
 
       // Validate, but only if this IOType instance has more to validate than the supertype
@@ -305,7 +304,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
 
       // Only do this non-standard applyState function from stateSchema if there is a stateSchema but no applyState provided
       if ( !applyStateSupplied && stateSchemaSupplied && this.stateSchema.isComposite() ) {
-        this.stateSchema.defaultApplyState( coreObject, stateObject );
+        this.stateSchema.defaultApplyState( coreObject, stateObject as CompositeStateObjectType );
       }
       else {
         config.applyState( coreObject, stateObject );
