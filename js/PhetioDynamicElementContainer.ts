@@ -56,21 +56,12 @@ export type PhetioDynamicElementContainerOptions =
   & StrictOmit<PhetioObjectOptions, 'phetioDynamicElement'>
   & PickRequired<PhetioObjectOptions, 'phetioType'>;
 
-
-export type DynamicElementContainerClearOptions = {
-
-  //  Used for validation during state setting. See this.disposeElement() for documentation
-  fromStateSetting?: boolean;
-};
-
-
 function archetypeCast<T>( archetype: T | null ): T {
   if ( archetype === null ) {
     throw new Error( 'archetype should exist' );
   }
   return archetype;
 }
-
 
 abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioObject {
   private readonly _archetype: T | null;
@@ -195,7 +186,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
 
         // Only clear if this PhetioDynamicElementContainer is in scope of the state to be set
         if ( this.tandem.hasAncestor( scopeTandem ) ) {
-          this.clear( { fromStateSetting: true } );
+          this.clear();
           this.setNotificationsDeferred( true );
         }
       } );
@@ -359,23 +350,12 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
   /**
    * Dispose a contained element
    * @param element
-   * @param [fromStateSetting] - Used for validation during state setting. This should only be true when this
-   * function is being called from setting PhET-iO state in PhetioStateEngine.js. This flag is used purely for validation.
-   * If this function is called during PhET-iO state setting, but not from the state engine, then it is from sim-specific,
-   * non-PhET-iO code, and will most likely be buggy. As an example let's think about this in terms of PhetioGroup. If
-   * the state to be set has {3} elements, and sets modelProperty to be `X`, then that is because the upstream sim is in
-   * that state. If modelProperty's listener responds to the setting of it by deleting an element (in the downstream sim),
-   * then this flag will throw an error, because it would yield only {2} elements in the downstream sim after state set.
-   * The solution to this error would be to guard modelProperty's listener by making sure it only deletes an element when
-   * the listener is changed because of a force that isn't the PhET-iO state engine (see Sim.isSettingPhetioStateProperty
-   * and its usages). This helps catch complicated and obfuscated state bugs in an easy way. After reading this, it
-   * should go without saying that sim code should NOT set this flag to be true!
    */
-  protected disposeElement( element: T, fromStateSetting = false ): void {
+  protected disposeElement( element: T ): void {
     element.dispose();
 
-    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
-    phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
+    assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) && assert(
+      !phet.joist.sim.isSettingPhetioStateProperty.value,
       'should not dispose a dynamic element while setting phet-io state' );
 
     if ( this.notificationsDeferred ) {
@@ -386,10 +366,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
     }
   }
 
-  /**
-   * @abstract
-   */
-  public abstract clear( options?: DynamicElementContainerClearOptions ): void;
+  public abstract clear(): void;
 
   /**
    * Flush a single element from the list of deferred disposals that have not yet notified about the disposal. This

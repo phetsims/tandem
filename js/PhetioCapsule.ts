@@ -17,7 +17,7 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
-import PhetioDynamicElementContainer, { DynamicElementContainerClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
+import PhetioDynamicElementContainer, { PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
@@ -59,12 +59,11 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
   /**
    * Dispose the underlying element.  Called by the PhetioStateEngine so the capsule element can be recreated with the
    * correct state.
-   * @param [fromStateSetting] - Used for validation during state setting, see PhetioDynamicElementContainer.disposeElement()
    */
   // @ts-ignore
-  public disposeElement( fromStateSetting = false ): void {
+  public disposeElement(): void {
     assert && assert( this.element, 'cannot dispose if element is not defined' );
-    super.disposeElement( this.element!, fromStateSetting );
+    super.disposeElement( this.element! );
     this.element = null;
   }
 
@@ -83,15 +82,10 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
     return this.element!;
   }
 
-  public override clear( providedOptions?: DynamicElementContainerClearOptions ): void {
-    const options = optionize<DynamicElementContainerClearOptions, EmptySelfOptions>()( {
-
-      // Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
-      fromStateSetting: false
-    }, providedOptions );
+  public override clear(): void {
 
     if ( this.element ) {
-      this.disposeElement( options.fromStateSetting );
+      this.disposeElement();
     }
   }
 

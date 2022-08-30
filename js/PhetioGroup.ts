@@ -18,7 +18,7 @@ import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import PhetioDynamicElementContainer, { DynamicElementContainerClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
+import PhetioDynamicElementContainer, { PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -30,7 +30,7 @@ const DEFAULT_CONTAINER_SUFFIX = 'Group';
 type ClearSelfOptions = {
   resetIndex?: boolean;
 };
-type ClearOptions = ClearSelfOptions & DynamicElementContainerClearOptions;
+type ClearOptions = ClearSelfOptions;
 
 type SelfOptions = EmptySelfOptions;
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
@@ -108,15 +108,14 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
    * 4. fire elementDisposedEmitter
    *
    * @param element
-   * @param [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
    */
-  public override disposeElement( element: T, fromStateSetting = false ): void {
+  public override disposeElement( element: T ): void {
     assert && assert( !element.isDisposed, 'element already disposed' );
     arrayRemove( this._array, element );
 
     this.countProperty.value = this._array.length;
 
-    super.disposeElement( element, fromStateSetting );
+    super.disposeElement( element );
   }
 
   /**
@@ -188,9 +187,6 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   public override clear( providedOptions?: ClearOptions ): void {
     const options = optionize<ClearOptions>()( {
 
-      // used for validation during state setting (phet-io internal), see PhetioDynamicElementContainer.disposeElement for documentation
-      fromStateSetting: false,
-
       // whether the group's index is reset to 0 for the next element created
       resetIndex: true
     }, providedOptions );
@@ -202,7 +198,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
       // by default (since the first removal requires skimming over the entire list). Hence we prefer First In, First
       // Out, so that listeners will have O(n) behavior for removal from associated lists.
       // See https://github.com/phetsims/natural-selection/issues/252
-      this.disposeElement( this._array[ 0 ], options.fromStateSetting );
+      this.disposeElement( this._array[ 0 ] );
     }
 
     if ( options.resetIndex ) {
@@ -249,7 +245,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
    *
    * @param index - the number of the individual element
    * @param argsForCreateFunction
-   * @param [fromStateSetting] - Used for validation during state setting. See PhetioDynamicElementContainer.disposeElement() for documentation
+   * @param [fromStateSetting] - Used for validation during state setting.
    * (PhetioGroupIO)
    */
   public createIndexedElement( index: number, argsForCreateFunction: P, fromStateSetting = false ): T {
