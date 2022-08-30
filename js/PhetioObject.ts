@@ -740,7 +740,8 @@ class LinkedElement extends PhetioObject {
     assert && assert( !!coreElement, 'coreElement should be defined' );
 
     const options = optionize<LinkedElementOptions, EmptySelfOptions, PhetioObjectOptions>()( {
-      phetioType: LinkedElementIO
+      phetioType: LinkedElementIO,
+      phetioState: false
     }, providedOptions );
 
     // References cannot be changed by PhET-iO
