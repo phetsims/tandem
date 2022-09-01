@@ -81,10 +81,12 @@ class PhetioAPIValidation {
    * Callback when the simulation is ready to go, and all static PhetioObjects have been created.
    */
   public onSimStarted(): void {
-    this.simHasStarted = true;
     if ( this.enabled && phet.joist.sim.allScreensCreated ) {
       this.validateOverridesFile();
     }
+
+    // After the overrides validation to support ?phetioPrintAPIProblems on errors with overrides.
+    this.simHasStarted = true;
   }
 
   /**
@@ -213,8 +215,12 @@ class PhetioAPIValidation {
 
     this.apiMismatches.push( apiErrorObject );
 
-    console.log( 'error data:', apiErrorObject );
-    assert && assert( false, `PhET-iO API error:\n${mismatchMessage}` );
+    console.log( 'api problems:', this.apiMismatches );
+
+    // If ?phetioPrintAPIProblems is present, then ignore assertions until the sim has started up.
+    if ( this.simHasStarted || !phet.preloads.phetio.queryParameters.phetioPrintAPIProblems ) {
+      assert && assert( false, `PhET-iO API error:\n${mismatchMessage}` );
+    }
   }
 
 
