@@ -558,6 +558,8 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
   documentation: 'The root of the IO Type hierarchy',
   toStateObject: ( coreObject: PhetioObject ) => {
 
+    assert && assert( coreObject.tandem, 'coreObject must be PhET-iO object' );
+
     assert && assert( !coreObject.phetioState,
       `fell back to root serialization state for ${coreObject.tandem.phetioID}. Potential solutions:
        * mark the type as phetioState: false
