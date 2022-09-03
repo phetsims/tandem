@@ -28,7 +28,14 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: Enumer
     const keys = enumeration.keys;
     const values = enumeration.values;
 
-    cache.set( enumeration, new IOType<T, string>( `EnumerationIO(${joinKeys( keys )})`, {
+    const ioTypeName = `EnumerationIO(${joinKeys( keys )})`;
+
+    assert && assert(
+      !Array.from( cache.values() ).find( ioType => ioType.typeName === ioTypeName ),
+      'There was already another IO Type with the same name: ' + ioTypeName
+    );
+
+    cache.set( enumeration, new IOType<T, string>( ioTypeName, {
       validValues: values,
       documentation: `Possible values: ${keys.join( ', ' )}.${additionalDocs}`,
       toStateObject: ( t: T ) => enumeration.getKey( t ),
