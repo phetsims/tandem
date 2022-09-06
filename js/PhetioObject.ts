@@ -452,8 +452,15 @@ class PhetioObject {
       assert && options.getData && assert( typeof options.getData === 'function' );
       assert && assert( arguments.length === 1 || arguments.length === 2, 'Prevent usage of incorrect signature' );
 
-      // If you hit this, then it is likely related to https://github.com/phetsims/scenery/issues/1124 and we would like to know about it!
-      assert && assert( phet && phet.phetio && phet.phetio.dataStream, 'trying to create an event before the data stream exists' );
+      // TODO: don't drop PhET-iO events if they are created before we have a dataStream global. https://github.com/phetsims/phet-io/issues/1875
+      if ( !_.hasIn( window, 'phet.phetio.dataStream' ) ) {
+
+        // If you hit this, then it is likely related to https://github.com/phetsims/scenery/issues/1124 and we would like to know about it!
+        // assert && assert( false, 'trying to create an event before the data stream exists' );
+
+        this.phetioMessageStack.push( SKIPPING_MESSAGE );
+        return;
+      }
 
       // Opt out of certain events if queryParameter override is provided. Even for a low frequency data stream, high
       // frequency events can still be emitted when they have a low frequency ancestor.
