@@ -719,6 +719,10 @@ class PhetioObject {
     }
     return metadata;
   }
+
+  public static create( options?: PhetioObjectOptions ): PhetioObject {
+    return new PhetioObject( options );
+  }
 }
 
 /**
