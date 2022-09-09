@@ -77,7 +77,7 @@ function MapIO<KType, KStateType, VType, VStateType>( keyType: IOType<KType, KSt
             if ( mapElementArray.length !== 2 ) {
               return false;
             }
-            // TODO: check each entry based on the key and value IOType stateSchema, https://github.com/phetsims/tandem/issues/244
+            // TODO: check each entry based on the key and value IOType stateSchema, https://github.com/phetsims/tandem/issues/271
           }
           return true;
         }
