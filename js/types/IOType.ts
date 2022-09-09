@@ -117,7 +117,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     const applyStateSupplied = !!( providedOptions.applyState );
     const stateSchemaSupplied = !!( providedOptions.stateSchema );
 
-    // TODO: https://github.com/phetsims/phet-core/issues/114
     // @ts-ignore
     const config = optionize<IOTypeOptions<T>, IOTypeOptions<T>, IOTypeOptions<T>>()( {
 
