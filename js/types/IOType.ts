@@ -54,7 +54,6 @@ type Methods = Record<string, IOTypeMethod>;
 type DeserializationMethod = 'fromStateObject' | 'applyState';
 
 type IOTypeOptions<T, StateType> = {
-  valueType?: ConstructorOf<T> | string;
   supertype?: IOType<unknown, unknown> | null;
   toStateObject?: ( t: T ) => StateType;
   fromStateObject?: ( s: StateType ) => T;
