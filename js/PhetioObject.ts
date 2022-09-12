@@ -347,7 +347,7 @@ class PhetioObject {
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
 
-    if ( assert && this.isPhetioInstrumented() && options.tandemNameSuffix ) {
+    if ( assert && Tandem.VALIDATION && this.isPhetioInstrumented() && options.tandemNameSuffix ) {
 
       const suffixArray = Array.isArray( options.tandemNameSuffix ) ? options.tandemNameSuffix : [ options.tandemNameSuffix ];
       const matches = suffixArray.filter( suffix => {
