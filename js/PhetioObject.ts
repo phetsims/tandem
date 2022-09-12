@@ -109,7 +109,7 @@ const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
   // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
   phetioEventMetadata: null,
 
-  tandemSuffix: null
+  tandemNameSuffix: null
 };
 
 // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
@@ -127,10 +127,12 @@ export type PhetioObjectOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phe
   phetioEventType?: EventType;
   phetioEventMetadata?: EventMetadata | null;
 
-  // Require that the given tandem matches the convention. First character is not case sensitive to support cases like
+  // Require that the given tandem's name ends in the provided string. This is help with naming conventions. If an
+  // array of multiple suffixes are provided, require that the provided tandem matches any of the supplied
+  // tandemNameSuffix values. First character is not case sensitive to support cases like
   // sim.screen1.view.thermometerNode
   // sim.screen1.view.upperThermometerNode
-  tandemSuffix?: string | string[] | null;
+  tandemNameSuffix?: string | string[] | null;
 };
 
 type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName'> ) | 'phetioType';
@@ -345,9 +347,9 @@ class PhetioObject {
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
 
-    if ( assert && this.isPhetioInstrumented() && options.tandemSuffix ) {
+    if ( assert && this.isPhetioInstrumented() && options.tandemNameSuffix ) {
 
-      const suffixArray = Array.isArray( options.tandemSuffix ) ? options.tandemSuffix : [ options.tandemSuffix ];
+      const suffixArray = Array.isArray( options.tandemNameSuffix ) ? options.tandemNameSuffix : [ options.tandemNameSuffix ];
       const matches = suffixArray.filter( suffix => {
         return this.tandem.name.endsWith( suffix ) ||
                this.tandem.name.endsWith( PhetioObject.swapCaseOfFirstCharacter( suffix ) );
