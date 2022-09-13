@@ -85,6 +85,10 @@ class PhetioAPIValidation {
       this.validateOverridesFile();
     }
 
+    if ( phet.preloads.phetio.queryParameters.phetioPrintAPIProblems && this.apiMismatches ) {
+      console.log( 'PhET-iO api problems detected: ', this.apiMismatches );
+    }
+
     // After the overrides validation to support ?phetioPrintAPIProblems on errors with overrides.
     this.simHasStarted = true;
   }
@@ -214,8 +218,6 @@ class PhetioAPIValidation {
                             `${apiErrorObject.ruleInViolation}`;
 
     this.apiMismatches.push( apiErrorObject );
-
-    console.log( 'api problems:', this.apiMismatches );
 
     // If ?phetioPrintAPIProblems is present, then ignore assertions until the sim has started up.
     if ( this.simHasStarted || !phet.preloads.phetio.queryParameters.phetioPrintAPIProblems ) {
