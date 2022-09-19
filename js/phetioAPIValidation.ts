@@ -34,7 +34,7 @@
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import PhetioObject from './PhetioObject.js';
+import PhetioObject, { LinkedElement } from './PhetioObject.js';
 import { PhetioObjectMetadata } from './TandemConstants.js';
 
 // constants
@@ -83,6 +83,7 @@ class PhetioAPIValidation {
   public onSimStarted(): void {
     if ( this.enabled && phet.joist.sim.allScreensCreated ) {
       this.validateOverridesFile();
+      this.validatePreferencesModel();
     }
 
     if ( phet.preloads.phetio.queryParameters.phetioPrintAPIProblems && this.apiMismatches ) {
@@ -91,6 +92,24 @@ class PhetioAPIValidation {
 
     // After the overrides validation to support ?phetioPrintAPIProblems on errors with overrides.
     this.simHasStarted = true;
+  }
+
+  /**
+   * All core elements in the preferencesModel should be phetioReadOnly: false so they can be set over the API
+   * or from within studio, but phetioState: false so they are not captured with save states.
+   */
+  public validatePreferencesModel(): void {
+    Object.keys( phet.phetio.phetioEngine.phetioObjectMap ).filter( key => key.includes( '.preferencesModel.' ) )
+      .forEach( preferencesKey => {
+
+        let phetioObject = phet.phetio.phetioEngine.phetioObjectMap[ preferencesKey ];
+
+        while ( phetioObject instanceof LinkedElement ) {
+          phetioObject = phetioObject.element;
+        }
+        assert && assert( !phetioObject.phetioReadOnly, 'preferences model and its descendants should be phetioReadOnly: false, key=' + preferencesKey );
+        // assert && assert( !phetioObject.phetioState, 'preferences model and its descendants should be phetioState: false, key=' + preferencesKey );
+      } );
   }
 
   /**
