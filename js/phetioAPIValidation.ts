@@ -108,6 +108,8 @@ class PhetioAPIValidation {
           phetioObject = phetioObject.element;
         }
         assert && assert( !phetioObject.phetioReadOnly, 'preferences model and its descendants should be phetioReadOnly: false, key=' + preferencesKey );
+
+        // Audio manager, color profile property and localeProperty are supposed to be stateful.
         // assert && assert( !phetioObject.phetioState, 'preferences model and its descendants should be phetioState: false, key=' + preferencesKey );
       } );
   }
