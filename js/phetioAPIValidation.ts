@@ -114,7 +114,10 @@ class PhetioAPIValidation {
         assert && assert( phetioObject.phetioState ===
                           ( phetioObject.phetioID.endsWith( '.colorProfileProperty' ) ||
                             phetioObject.phetioID.endsWith( '.audioEnabledProperty' ) ||
-                            phetioObject.phetioID.endsWith( '.localeProperty' ) ),
+                            phetioObject.phetioID.endsWith( '.localeProperty' ) ||
+
+                            // Sim preferences should also be stateful
+                            preferencesKey.includes( '.simulationModel.' ) ),
           'most preferences should be phetioState: false, key=' + preferencesKey );
       } );
   }
