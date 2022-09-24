@@ -202,12 +202,21 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       phetioStateEngine.addSetStateHelper( ( state, stillToSetIDs ) => {
         let creationNotified = false;
 
+        let iterationCount = 0;
+
         while ( this.deferredCreations.length > 0 ) {
+
+          if ( iterationCount > 200 ) {
+            throw new Error( 'Too many iterations in deferred creations, stillToSetIDs = ' + stillToSetIDs.join( ', ' ) );
+          }
+
           const deferredCreatedElement = this.deferredCreations[ 0 ];
           if ( this.stateSetOnAllChildrenOfDynamicElement( deferredCreatedElement.tandem.phetioID, stillToSetIDs ) ) {
             this.notifyElementCreatedWhileDeferred( deferredCreatedElement );
             creationNotified = true;
           }
+
+          iterationCount++;
         }
         return creationNotified;
       } );
