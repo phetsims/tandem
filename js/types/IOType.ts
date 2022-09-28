@@ -23,8 +23,6 @@ import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
-// Defined at the bottom of this file
-
 /**
  * Estimate the core type name from a given IO Type name.
  */
@@ -50,8 +48,7 @@ export type IOTypeMethod = {
   invocableForReadOnlyElements?: boolean;
 };
 
-type Methods = Record<string, IOTypeMethod>;
-type DeserializationMethod = 'fromStateObject' | 'applyState';
+type DeserializationType = 'fromStateObject' | 'applyState';
 
 type SelfOptions<T, StateType> = {
   supertype?: IOType | null;
@@ -67,9 +64,9 @@ type SelfOptions<T, StateType> = {
   events?: string[];
   dataDefaults?: Record<string, unknown>;
   metadataDefaults?: Partial<PhetioObjectMetadata>;
-  defaultDeserializationMethod?: DeserializationMethod;
+  defaultDeserializationMethod?: DeserializationType;
   documentation?: string;
-  methods?: Methods;
+  methods?: Record<string, IOTypeMethod>;
   methodOrder?: string[];
   parameterTypes?: IOType[];
   isFunctionType?: boolean;
@@ -82,8 +79,16 @@ type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
 class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   public readonly supertype?: IOType;
   public readonly documentation?: string;
-  public readonly methods?: Methods;
+
+  // The public methods available for this IO Type. Each method is not just a function,
+  // but a collection of metadata about the method to be able to serialize parameters and return types and provide
+  // better documentation.
+  public readonly methods?: Record<string, IOTypeMethod>;
+
+  // The list of events that can be emitted at this level (does not include events from supertypes).
   public readonly events: string[];
+
+  // Key/value pairs indicating the defaults for the IO Type metadata.
   public readonly metadataDefaults?: Partial<PhetioObjectMetadata>;
   public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
@@ -95,10 +100,11 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
   public readonly applyState: ( object: T, state: StateType ) => void;
   public readonly addChildElement: AddChildElement;
   public readonly validator: Validator<T>;
-  public readonly defaultDeserializationMethod: DeserializationMethod;
+  public readonly defaultDeserializationMethod: DeserializationType;
 
   // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
   // see getAllStateSchema().
+  // TODO: https://github.com/phetsims/tandem/issues/263 Should null be allowed here?
   public readonly stateSchema: StateSchema<T, StateType>;
   public static ObjectIO: IOType;
   public isFunctionType: boolean;
@@ -123,25 +129,13 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
 
     const config = optionize<IOTypeOptions<T, StateType>, SelfOptions<T, StateType>>()( {
 
-      /***** REQUIRED ****/
-
-      // a validator, such as isValidValue | valueType | validValues
-
-      /***** OPTIONAL ****/
-
       supertype: IOType.ObjectIO,
-
-      // The public methods available for this IO Type. Each method is not just a function,
-      // but a collection of metadata about the method to be able to serialize parameters and return types and provide
-      // better documentation.
       methods: {},
-
-      // The list of events that can be emitted at this level (does not include events from supertypes).
       events: [],
 
-      // Key/value pairs indicating the defaults for the IO Type metadata. If anything is provided here, then
-      // corresponding PhetioObjects that use this IOType should override PhetioObject.getMetadata() to add what keys
-      // they need for their specific type.  Cannot specify redundant values (that an ancestor already specified).
+      // If anything is provided here, then corresponding PhetioObjects that use this IOType should override
+      // PhetioObject.getMetadata() to add what keys they need for their specific type.  Cannot specify redundant values
+      // (that an ancestor already specified).
       metadataDefaults: {},
 
       // Key/value pairs indicating the defaults for the IO Type data. Most likely this will remain PhET-iO internal,
@@ -212,9 +206,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       addChildElement: supertype && supertype.addChildElement
     }, providedOptions );
 
-    assert && assert( Validation.containsValidatorKey( config ), 'Validator is required' );
-    assert && assert( Object.getPrototypeOf( config.metadataDefaults ) === Object.prototype, 'Extra prototype on metadata keys' );
-    assert && assert( Object.getPrototypeOf( config.dataDefaults ) === Object.prototype, 'Extra prototype on data defaults' );
     if ( assert && supertype ) {
       Object.keys( config.metadataDefaults ).forEach( metadataDefaultKey => {
         assert && supertype.getAllMetadataDefaults().hasOwnProperty( metadataDefaultKey ) &&
@@ -224,10 +215,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
       } );
     }
-    assert && assert( config.defaultDeserializationMethod === 'fromStateObject' ||
-                      config.defaultDeserializationMethod === 'applyState',
-      'StateSchema\'s default serialization only supports fromStateObject or applyState' );
-
     this.supertype = supertype;
     this.documentation = config.documentation;
     this.methods = config.methods;
@@ -318,9 +305,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
 
     assert && assert( supertype || this.typeName === 'ObjectIO', 'supertype is required' );
     assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
-
-    const splitOnParameters = this.typeName.split( /[<(]/ )[ 0 ];
-    assert && assert( splitOnParameters.endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IO Type name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
+    assert && assert( this.typeName.split( /[<(]/ )[ 0 ].endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IO Type name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
     assert && assert( this.hasOwnProperty( 'typeName' ), 'this.typeName is required' );
 
     // assert that each public method adheres to the expected schema
@@ -330,7 +315,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
           `invocableForReadOnlyElements must be of type boolean: ${methodObject.invocableForReadOnlyElements}` );
       }
     } );
-    assert && assert( typeof this.documentation === 'string' && this.documentation.length > 0, 'documentation must be provided' );
+    assert && assert( this.documentation.length > 0, 'documentation must be provided' );
 
     this.methods && this.hasOwnProperty( 'methodOrder' ) && this.methodOrder.forEach( methodName => {
       assert && assert( this.methods![ methodName ], `methodName not in public methods: ${methodName}` );
