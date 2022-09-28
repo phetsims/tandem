@@ -493,8 +493,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
 
     // This isn't really optionize here, since we don't expect defaults for all the options.
     const options = combineOptions<IOTypeOptions<T, StateType>>( {
-
-      // @ts-ignore
       valueType: CoreType
     }, providedOptions );
 
