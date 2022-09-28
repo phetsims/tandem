@@ -512,20 +512,14 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     }
 
     if ( CoreType.fromStateObject ) {
-
-      // @ts-ignore
       options.fromStateObject = CoreType.fromStateObject;
     }
 
     if ( CoreType.stateToArgsForConstructor ) {
-
-      // @ts-ignore
       options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
     }
 
     if ( CoreType.STATE_SCHEMA ) {
-
-      // @ts-ignore
       options.stateSchema = CoreType.STATE_SCHEMA;
     }
 
