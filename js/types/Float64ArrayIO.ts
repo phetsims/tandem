@@ -11,7 +11,7 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 
 const Float64ArrayIO = new IOType<Float64Array, number[]>( 'Float64ArrayIO', {
-  isValidValue: value => value instanceof Float64Array,
+  valueType: Float64Array,
   toStateObject: array => {
     const result: number[] = [];
     array.forEach( float => result.push( float ) );
