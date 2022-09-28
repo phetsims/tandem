@@ -43,7 +43,7 @@ export type PhetioType = {
   typeName: string;
   documentation?: string;
   events: string[];
-  metadataDefaults?: PhetioObjectMetadata;
+  metadataDefaults?: Partial<PhetioObjectMetadata>;
   dataDefaults?: Record<string, unknown>;
   methodOrder?: string[];
   stateSchema?: PhetioObjectState;
@@ -87,6 +87,9 @@ export type PhetioObjectMetadata = {
   phetioTypeName: string;
   phetioIsArchetype: boolean;
   phetioArchetypePhetioID?: string | null;
+
+  // For PhetioDynamicElementContainer.  TODO: https://github.com/phetsims/tandem/issues/263 can this be elsewhere?
+  phetioDynamicElementName?: string | null;
 };
 
 const metadataDefaults: PhetioObjectMetadata & PickRequired<PhetioObjectMetadata, 'phetioFeatured'> = {

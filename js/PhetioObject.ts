@@ -55,7 +55,7 @@ type StartEventOptions = {
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
 
-const DEFAULTS: OptionizeDefaults<PhetioObjectOptions> = {
+const DEFAULTS: OptionizeDefaults<StrictOmit<PhetioObjectOptions, 'phetioDynamicElementName'>> = {
 
   // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
   tandem: Tandem.OPTIONAL,
@@ -135,7 +135,7 @@ export type PhetioObjectOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phe
   tandemNameSuffix?: string | string[] | null;
 };
 
-type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName'> ) | 'phetioType';
+type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName' | 'phetioDynamicElementName'> ) | 'phetioType';
 export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
 
 export type LinkableElement = Pick<PhetioObject, 'phetioFeatured' | 'isPhetioInstrumented'>;

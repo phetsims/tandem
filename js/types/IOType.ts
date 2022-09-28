@@ -53,16 +53,20 @@ export type IOTypeMethod = {
 type Methods = Record<string, IOTypeMethod>;
 type DeserializationMethod = 'fromStateObject' | 'applyState';
 
-type IOTypeOptions<T, StateType> = {
+type SelfOptions<T, StateType> = {
   supertype?: IOType | null;
   toStateObject?: ( t: T ) => StateType;
   fromStateObject?: ( s: StateType ) => T;
   stateToArgsForConstructor?: ( s: StateType ) => unknown[];
   applyState?: ( t: T, state: StateType ) => void;
-  stateSchema?: ( ( ioType: IOType<T, StateType> ) => StateSchema<T, StateType> ) | StateSchema<T, StateType> | ( Record<string, IOType> ) | null;
+  stateSchema?: (
+    ( ioType: IOType<T, StateType> ) => StateSchema<T, StateType> ) |
+    StateSchema<T, StateType> |
+    Record<string, IOType> |
+    null;
   events?: string[];
   dataDefaults?: Record<string, unknown>;
-  metadataDefaults?: Record<string, unknown>;
+  metadataDefaults?: Partial<PhetioObjectMetadata>;
   defaultDeserializationMethod?: DeserializationMethod;
   documentation?: string;
   methods?: Methods;
@@ -70,7 +74,9 @@ type IOTypeOptions<T, StateType> = {
   parameterTypes?: IOType[];
   isFunctionType?: boolean;
   addChildElement?: AddChildElement;
-} & Validator<T>;
+};
+
+type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
 
 // TODO: not any, but do we have to serialize type parameters? https://github.com/phetsims/tandem/issues/263
 class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -78,7 +84,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
   public readonly documentation?: string;
   public readonly methods?: Methods;
   public readonly events: string[];
-  public readonly metadataDefaults?: PhetioObjectMetadata;
+  public readonly metadataDefaults?: Partial<PhetioObjectMetadata>;
   public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
   public readonly parameterTypes?: IOType[];
@@ -88,7 +94,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
   public readonly stateToArgsForConstructor: ( s: StateType ) => unknown[]; // TODO: instead of unknown this is the second parameter type for PhetioDynamicElementContainer. How? https://github.com/phetsims/tandem/issues/261
   public readonly applyState: ( object: T, state: StateType ) => void;
   public readonly addChildElement: AddChildElement;
-  public readonly validator: Validator;
+  public readonly validator: Validator<T>;
   public readonly defaultDeserializationMethod: DeserializationMethod;
 
   // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
@@ -115,8 +121,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     const applyStateSupplied = !!( providedOptions.applyState );
     const stateSchemaSupplied = !!( providedOptions.stateSchema );
 
-    // @ts-ignore
-    const config = optionize<IOTypeOptions<T>, IOTypeOptions<T>, IOTypeOptions<T>>()( {
+    const config = optionize<IOTypeOptions<T, StateType>, SelfOptions<T, StateType>>()( {
 
       /***** REQUIRED ****/
 
@@ -238,13 +243,17 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
 
     this.defaultDeserializationMethod = config.defaultDeserializationMethod;
 
-    let stateSchema = config.stateSchema;
-    if ( stateSchema !== null && !( stateSchema instanceof StateSchema ) ) {
-      const compositeSchema = typeof stateSchema === 'function' ? stateSchema( this ) : stateSchema;
-      stateSchema = new StateSchema<T, StateType>( { compositeSchema: compositeSchema } );
-    }
+    if ( config.stateSchema !== null && !( config.stateSchema instanceof StateSchema ) ) {
+      const compositeSchema = typeof config.stateSchema === 'function' ? config.stateSchema( this ) : config.stateSchema;
 
-    this.stateSchema = stateSchema;
+      // @ts-ignore
+      this.stateSchema = new StateSchema<T, StateType>( { compositeSchema: compositeSchema } );
+    }
+    else {
+
+      // @ts-ignore
+      this.stateSchema = config.stateSchema;
+    }
 
     // Assert that toStateObject method is provided for value StateSchemas. Do this with the following logic:
     // 1. It is acceptable to not provide a stateSchema (for IOTypes that aren't stateful)
@@ -262,7 +271,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
         toStateObject = this.stateSchema.defaultToStateObject( coreObject );
       }
       else {
-        toStateObject = config.toStateObject!( coreObject );
+        toStateObject = config.toStateObject( coreObject );
       }
 
       // Validate, but only if this IOType instance has more to validate than the supertype
@@ -323,7 +332,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     } );
     assert && assert( typeof this.documentation === 'string' && this.documentation.length > 0, 'documentation must be provided' );
 
-    this.methods && this.hasOwnProperty( 'methodOrder' ) && this.methodOrder!.forEach( methodName => {
+    this.methods && this.hasOwnProperty( 'methodOrder' ) && this.methodOrder.forEach( methodName => {
       assert && assert( this.methods![ methodName ], `methodName not in public methods: ${methodName}` );
     } );
 
@@ -378,7 +387,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
   /**
    * Return all the metadata defaults (for the entire IO Type hierarchy)
    */
-  public getAllMetadataDefaults(): PhetioObjectMetadata {
+  public getAllMetadataDefaults(): Partial<PhetioObjectMetadata> {
     return _.merge( {}, this.supertype ? this.supertype.getAllMetadataDefaults() : {}, this.metadataDefaults );
   }
 
