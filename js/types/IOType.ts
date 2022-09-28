@@ -125,7 +125,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
 
       /***** OPTIONAL ****/
 
-      // @ts-ignore
       supertype: IOType.ObjectIO,
 
       // The public methods available for this IO Type. Each method is not just a function,
@@ -248,7 +247,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       stateSchema = new StateSchema<T, StateType>( { compositeSchema: compositeSchema } );
     }
 
-    // @ts-ignore
     this.stateSchema = stateSchema;
 
     // Assert that toStateObject method is provided for value StateSchemas. Do this with the following logic:
