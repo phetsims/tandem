@@ -19,6 +19,7 @@ import StateSchema, { CompositeStateObjectType } from './StateSchema.js';
 import PhetioObject from '../PhetioObject.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
+import StrictOmit from '../../../phet-core/js/types/StrictOmit.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -462,25 +463,22 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param [providedOptions]
    */
-  public static fromCoreType<T, StateType>( typeName: string, CoreType: ConstructorOf<T>, providedOptions?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
-
-    if ( assert && providedOptions ) {
-      assert && assert( !providedOptions.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
-      assert && assert( !providedOptions.hasOwnProperty( 'toStateObject' ), 'fromCoreType sets its own toStateObject' );
-      assert && assert( !providedOptions.hasOwnProperty( 'stateToArgsForConstructor' ), 'fromCoreType sets its own stateToArgsForConstructor' );
-      assert && assert( !providedOptions.hasOwnProperty( 'applyState' ), 'fromCoreType sets its own applyState' );
-      assert && assert( !providedOptions.hasOwnProperty( 'stateSchema' ), 'fromCoreType sets its own stateSchema' );
-    }
+  public static fromCoreType<T, StateType>( typeName: string, CoreType: ConstructorOf<T>,
+                                            providedOptions?: StrictOmit<IOTypeOptions<T, StateType>,
+                                              'valueType' |
+                                              'toStateObject' |
+                                              'stateToArgsForConstructor' |
+                                              'applyState' |
+                                              'stateSchema'> ): IOType<T, StateType> {
 
     let coreTypeHasToStateObject = false;
     let coreTypeHasApplyState = false;
 
+    // Check supertypes
     let proto = CoreType.prototype;
     while ( proto ) {
-      assert && assert( !proto.hasOwnProperty( 'fromStateObject' ),
-        'fromStateObject should be a static on the Class, and not on the prototype.' );
-      assert && assert( !proto.hasOwnProperty( 'STATE_SCHEMA' ),
-        'STATE_SCHEMA should be a static on the Class, and not on the prototype.' );
+      assert && assert( !proto.hasOwnProperty( 'fromStateObject' ), 'fromStateObject should be a static on the Class, and not on the prototype.' );
+      assert && assert( !proto.hasOwnProperty( 'STATE_SCHEMA' ), 'STATE_SCHEMA should be a static on the Class, and not on the prototype.' );
 
       if ( typeof proto.toStateObject === 'function' ) {
         coreTypeHasToStateObject = true;
