@@ -463,13 +463,15 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param [providedOptions]
    */
-  public static fromCoreType<T, StateType>( typeName: string, CoreType: ConstructorOf<T>,
-                                            providedOptions?: StrictOmit<IOTypeOptions<T, StateType>,
-                                              'valueType' |
-                                              'toStateObject' |
-                                              'stateToArgsForConstructor' |
-                                              'applyState' |
-                                              'stateSchema'> ): IOType<T, StateType> {
+  public static fromCoreType<T, StateType>(
+    typeName: string,
+    CoreType: ConstructorOf<T> & Pick<SelfOptions<T, StateType>, 'fromStateObject' | 'stateToArgsForConstructor'> & { STATE_SCHEMA?: SelfOptions<T, StateType>['stateSchema'] },
+    providedOptions?: StrictOmit<IOTypeOptions<T, StateType>,
+      'valueType' |
+      'toStateObject' |
+      'stateToArgsForConstructor' |
+      'applyState' |
+      'stateSchema'> ): IOType<T, StateType> {
 
     let coreTypeHasToStateObject = false;
     let coreTypeHasApplyState = false;
@@ -509,21 +511,18 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       options.applyState = ( coreType, stateObject ) => coreType.applyState( stateObject );
     }
 
-    // @ts-ignore
     if ( CoreType.fromStateObject ) {
 
       // @ts-ignore
       options.fromStateObject = CoreType.fromStateObject;
     }
 
-    // @ts-ignore
     if ( CoreType.stateToArgsForConstructor ) {
 
       // @ts-ignore
       options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
     }
 
-    // @ts-ignore
     if ( CoreType.STATE_SCHEMA ) {
 
       // @ts-ignore
