@@ -75,7 +75,6 @@ type IOTypeOptions<T, StateType> = {
 // TODO: not any, but do we have to serialize type parameters? https://github.com/phetsims/tandem/issues/263
 class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   public readonly supertype?: IOType;
-  public readonly typeName: string;
   public readonly documentation?: string;
   public readonly methods?: Methods;
   public readonly events: string[];
@@ -99,7 +98,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
   public isFunctionType: boolean;
 
   /**
-   * @param ioTypeName - The name that this IOType will have in the public PhET-iO API. In general, this should
+   * @param typeName - The name that this IOType will have in the public PhET-iO API. In general, this should
    *    only be word characters, ending in "IO". Parametric types are a special subset of IOTypes that include their
    *    parameters in their typeName. If an IOType's parameters are other IO Type(s), then they should be included within
    *    angle brackets, like "PropertyIO<BooleanIO>". Some other types use a more custom format for displaying their
@@ -108,7 +107,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
    *    Parameterized types should also include a `parameterTypes` field on the IOType.
    * @param providedOptions
    */
-  public constructor( ioTypeName: string, providedOptions: IOTypeOptions<T, StateType> ) {
+  public constructor( public readonly typeName: string, providedOptions: IOTypeOptions<T, StateType> ) {
 
     // For reference in the config
     const supertype = providedOptions.supertype || IOType.ObjectIO;
@@ -153,7 +152,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       parameterTypes: [],
 
       // Documentation that appears in PhET-iO Studio, supports HTML markup.
-      documentation: `IO Type for ${getCoreTypeName( ioTypeName )}`,
+      documentation: `IO Type for ${getCoreTypeName( typeName )}`,
 
       // Functions cannot be sent from one iframe to another, so must be wrapped.  See phetioCommandProcessor.wrapFunction
       isFunctionType: false,
@@ -209,7 +208,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     }, providedOptions );
 
     assert && assert( Validation.containsValidatorKey( config ), 'Validator is required' );
-    assert && assert( Array.isArray( config.events ) );
     assert && assert( Object.getPrototypeOf( config.metadataDefaults ) === Object.prototype, 'Extra prototype on metadata keys' );
     assert && assert( Object.getPrototypeOf( config.dataDefaults ) === Object.prototype, 'Extra prototype on data defaults' );
     if ( assert && supertype ) {
@@ -226,7 +224,6 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       'StateSchema\'s default serialization only supports fromStateObject or applyState' );
 
     this.supertype = supertype;
-    this.typeName = ioTypeName;
     this.documentation = config.documentation;
     this.methods = config.methods;
     this.events = config.events;
@@ -466,12 +463,12 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
    * For more information on how to support serialization and PhET-iO state, please see
    * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#serialization
    *
-   * @param ioTypeName - see IOType constructor for details
+   * @param typeName - see IOType constructor for details
    * @param CoreType - the PhET "core" type class/constructor associated with this IOType being created.
    *                              Likely this IOType will be set as the phetioType on the CoreType.
    * @param [providedOptions]
    */
-  public static fromCoreType<T, StateType>( ioTypeName: string, CoreType: ConstructorOf<T>, providedOptions?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
+  public static fromCoreType<T, StateType>( typeName: string, CoreType: ConstructorOf<T>, providedOptions?: IOTypeOptions<T, StateType> ): IOType<T, StateType> {
 
     if ( assert && providedOptions ) {
       assert && assert( !providedOptions.hasOwnProperty( 'valueType' ), 'fromCoreType sets its own valueType' );
@@ -541,7 +538,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       options.stateSchema = CoreType.STATE_SCHEMA;
     }
 
-    return new IOType<T, StateType>( ioTypeName, options );
+    return new IOType<T, StateType>( typeName, options );
   }
 }
 
