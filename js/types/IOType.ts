@@ -462,8 +462,9 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
        * perhaps you have everything right, but forgot to pass in the IOType via phetioType in the constructor` );
     return DEFAULT_STATE;
   },
-  // @ts-ignore
-  fromStateObject: stateObject => null,
+  fromStateObject: stateObject => {
+    throw new Error( 'ObjectIO.fromStateObject should not be called' );
+  },
   stateToArgsForConstructor: stateObject => [],
   applyState: _.noop,
   metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS,
