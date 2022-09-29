@@ -67,25 +67,33 @@ type StateSchemaOption<T, StateType> = (
   Record<string, IOType> |
   null;
 
-type SerializationOptions<T, StateType> = {
+type StateOptions<T, StateType> = {
 
   // TODO: Remove the question marks to make this mutually exclusive, see https://github.com/phetsims/tandem/issues/274
   toStateObject?: ( t: T ) => StateType;
   stateSchema?: StateSchemaOption<T, StateType>;
-} | {
-  toStateObject?: never;
-  stateSchema?: never;
-};
 
-type StateOptions<T, StateType> = {
+  // If it is serializable, then it is optionally deserializable via one of these methods
   fromStateObject?: ( s: StateType ) => T;
   stateToArgsForConstructor?: ( s: StateType ) => unknown[];
   applyState?: ( t: T, state: StateType ) => void;
   defaultDeserializationMethod?: DeserializationType;
   addChildElement?: AddChildElement;
-} & SerializationOptions<T, StateType>;
+} | {
 
-type SelfOptions<T, StateType> = MainOptions & StateOptions<T, StateType>;
+  // Otherwise it cannot have any stateful parts
+  toStateObject?: never;
+  stateSchema?: never;
+  fromStateObject?: never;
+  stateToArgsForConstructor?: never;
+  applyState?: never;
+  defaultDeserializationMethod?: never;
+  addChildElement?: never;
+};
+
+type SelfOptions<T, StateType> =
+  MainOptions &
+  StateOptions<T, StateType>;
 
 type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
 
