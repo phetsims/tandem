@@ -89,8 +89,16 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 
   // Key/value pairs indicating the defaults for the IO Type metadata.
   public readonly metadataDefaults?: Partial<PhetioObjectMetadata>;
+
+  // Key/value pairs indicating the defaults for the IO Type data.
   public readonly dataDefaults?: Record<string, unknown>;
+
+  // IO Types can specify the order that methods appear in the documentation by putting their names in this
+  // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
+  // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
   public readonly methodOrder?: string[];
+
+  // For parametric types, they must indicate the types of the parameters here. Empty array if non-parametric
   public readonly parameterTypes?: IOType[];
 
   public readonly toStateObject: ( t: T ) => StateType;
@@ -138,16 +146,9 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       // (that an ancestor already specified).
       metadataDefaults: {},
 
-      // Key/value pairs indicating the defaults for the IO Type data. Most likely this will remain PhET-iO internal,
-      // and shouldn't need to be used when creating IOTypes outside of tandem/.
+      //  Most likely this will remain PhET-iO internal, and shouldn't need to be used when creating IOTypes outside of tandem/.
       dataDefaults: {},
-
-      // IO Types can specify the order that methods appear in the documentation by putting their names in this
-      // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
-      // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
       methodOrder: [],
-
-      // For parametric types, they must indicate the types of the parameters here. 0 if nonparametric.
       parameterTypes: [],
 
       // Documentation that appears in PhET-iO Studio, supports HTML markup.
