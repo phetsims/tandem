@@ -77,7 +77,7 @@ type SelfOptions<T, StateType> = {
 type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
 
 // TODO: not any, but do we have to serialize type parameters? https://github.com/phetsims/tandem/issues/263
-class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
+export default class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   public readonly supertype?: IOType;
   public readonly documentation?: string;
 
@@ -562,4 +562,3 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
 // export type getStateTypeFromIOType<Type extends IOType> = Type extends IOType<infer A, infer StateType> ? StateType : never;
 
 tandemNamespace.register( 'IOType', IOType );
-export default IOType;

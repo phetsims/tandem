@@ -39,7 +39,7 @@ type StateSchemaOptions = {
 
 type GeneralStateObject = Record<string, IntentionalAny>;
 
-class StateSchema<T, StateType> {
+export default class StateSchema<T, StateType> {
   private readonly displayString: string;
   private readonly validator: Validator<StateType> | null;
 
@@ -266,4 +266,3 @@ class StateSchema<T, StateType> {
 }
 
 tandemNamespace.register( 'StateSchema', StateSchema );
-export default StateSchema;
