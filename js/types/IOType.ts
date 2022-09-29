@@ -324,20 +324,21 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     } );
 
     // Make sure events are not listed again
-    if ( supertype ) {
-      const typeHierarchy = supertype.getTypeHierarchy();
-      assert && this.events && this.events.forEach( event => {
-        assert && assert( !_.some( typeHierarchy, t => t.events.includes( event ) ),
-          `this IOType should not declare event that parent also has: ${event}` );
-      } );
-    }
-    else {
+    if ( assert ) {
+      if ( supertype ) {
+        const typeHierarchy = supertype.getTypeHierarchy();
+        assert && this.events && this.events.forEach( event => {
+          assert && assert( !_.some( typeHierarchy, t => t.events.includes( event ) ), `IOType should not declare event that parent also has: ${event}` );
+        } );
+      }
+      else {
 
-      // The root IOType must supply all 4 state methods.
-      assert && assert( typeof options.toStateObject === 'function', 'toStateObject must be defined' );
-      assert && assert( typeof options.fromStateObject === 'function', 'fromStateObject must be defined' );
-      assert && assert( typeof options.stateToArgsForConstructor === 'function', 'stateToArgsForConstructor must be defined' );
-      assert && assert( typeof options.applyState === 'function', 'applyState must be defined' );
+        // The root IOType must supply all 4 state methods.
+        assert && assert( typeof options.toStateObject === 'function', 'toStateObject must be defined' );
+        assert && assert( typeof options.fromStateObject === 'function', 'fromStateObject must be defined' );
+        assert && assert( typeof options.stateToArgsForConstructor === 'function', 'stateToArgsForConstructor must be defined' );
+        assert && assert( typeof options.applyState === 'function', 'applyState must be defined' );
+      }
     }
   }
 
