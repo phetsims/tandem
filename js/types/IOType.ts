@@ -460,6 +460,10 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
   public validateStateObject( stateObject: StateType ): void {
     this.isStateObjectValid( stateObject, true );
   }
+
+  public toString(): string {
+    return this.typeName;
+  }
 }
 
 // default state value
