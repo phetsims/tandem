@@ -361,15 +361,9 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
    * Returns true if this IOType is a subtype of the passed-in type (or if they are the same).
    */
   public extends( type: IOType<unknown, unknown> ): boolean {
-    if ( this === type ) {
-      return true;
-    }
-    else if ( this.supertype ) {
-      return this.supertype.extends( type );
-    }
-    else {
-      return false;
-    }
+
+    // memory-based implementation OK since this method is only used in assertions
+    return this.getTypeHierarchy().includes( type );
   }
 
   /**
