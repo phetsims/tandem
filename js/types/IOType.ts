@@ -69,9 +69,9 @@ type StateSchemaOption<T, StateType> = (
 
 type StateOptions<T, StateType> = {
 
-  // TODO: Remove the question marks to make this mutually exclusive, see https://github.com/phetsims/tandem/issues/274
-  toStateObject?: ( t: T ) => StateType;
+  // Should be required, but sometimes this is only in the parent IOType, like in DerivedPropertyIO
   stateSchema?: StateSchemaOption<T, StateType>;
+  toStateObject?: ( t: T ) => StateType;
 
   // If it is serializable, then it is optionally deserializable via one of these methods
   fromStateObject?: ( s: StateType ) => T;
