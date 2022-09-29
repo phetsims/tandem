@@ -61,20 +61,27 @@ type MainOptions = {
   isFunctionType?: boolean;
 };
 
-type StateOptions<T, StateType> = {
-  toStateObject?: ( t: T ) => StateType;
-  stateSchema?: (
-    ( ioType: IOType<T, StateType> ) => StateSchema<T, StateType> ) |
-    StateSchema<T, StateType> |
-    Record<string, IOType> |
-    null;
+type StateSchemaOption<T, StateType> = (
+  ( ioType: IOType<T, StateType> ) => StateSchema<T, StateType> ) |
+  StateSchema<T, StateType> |
+  Record<string, IOType> |
+  null;
 
+type StateOutputOptions<T, StateType> = {
+  toStateObject?: ( t: T ) => StateType;
+  stateSchema?: StateSchemaOption<T, StateType>;
+} | {
+  toStateObject?: never;
+  stateSchema?: never;
+};
+
+type StateOptions<T, StateType> = {
   fromStateObject?: ( s: StateType ) => T;
   stateToArgsForConstructor?: ( s: StateType ) => unknown[];
   applyState?: ( t: T, state: StateType ) => void;
   defaultDeserializationMethod?: DeserializationType;
   addChildElement?: AddChildElement;
-};
+} & StateOutputOptions<T, StateType>;
 
 type SelfOptions<T, StateType> = MainOptions & StateOptions<T, StateType>;
 
