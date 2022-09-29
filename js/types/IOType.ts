@@ -500,13 +500,13 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     if ( coreTypeHasToStateObject ) {
 
       // @ts-ignore
-      options.toStateObject = coreType => coreType.toStateObject();
+      options.toStateObject = instance => instance.toStateObject();
     }
 
     if ( coreTypeHasApplyState ) {
 
       // @ts-ignore
-      options.applyState = ( coreType, stateObject ) => coreType.applyState( stateObject );
+      options.applyState = ( instance, stateObject ) => instance.applyState( stateObject );
     }
 
     if ( CoreType.fromStateObject ) {
