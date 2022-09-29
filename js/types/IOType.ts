@@ -305,29 +305,31 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     this.isFunctionType = options.isFunctionType;
     this.addChildElement = options.addChildElement;
 
-    assert && assert( supertype || this.typeName === 'ObjectIO', 'supertype is required' );
-    assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
-    assert && assert( this.typeName.split( /[<(]/ )[ 0 ].endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IO Type name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
-    assert && assert( this.hasOwnProperty( 'typeName' ), 'this.typeName is required' );
-
-    // assert that each public method adheres to the expected schema
-    this.methods && Object.values( this.methods ).forEach( ( methodObject: IOTypeMethod ) => {
-      if ( typeof methodObject === 'object' ) {
-        assert && methodObject.invocableForReadOnlyElements && assert( typeof methodObject.invocableForReadOnlyElements === 'boolean',
-          `invocableForReadOnlyElements must be of type boolean: ${methodObject.invocableForReadOnlyElements}` );
-      }
-    } );
-    assert && assert( this.documentation.length > 0, 'documentation must be provided' );
-
-    this.methods && this.hasOwnProperty( 'methodOrder' ) && this.methodOrder.forEach( methodName => {
-      assert && assert( this.methods![ methodName ], `methodName not in public methods: ${methodName}` );
-    } );
-
-    // Make sure events are not listed again
     if ( assert ) {
+
+      assert && assert( supertype || this.typeName === 'ObjectIO', 'supertype is required' );
+      assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
+      assert && assert( this.typeName.split( /[<(]/ )[ 0 ].endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IO Type name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
+      assert && assert( this.hasOwnProperty( 'typeName' ), 'this.typeName is required' );
+
+      // assert that each public method adheres to the expected schema
+      this.methods && Object.values( this.methods ).forEach( ( methodObject: IOTypeMethod ) => {
+        if ( typeof methodObject === 'object' ) {
+          assert && methodObject.invocableForReadOnlyElements && assert( typeof methodObject.invocableForReadOnlyElements === 'boolean',
+            `invocableForReadOnlyElements must be of type boolean: ${methodObject.invocableForReadOnlyElements}` );
+        }
+      } );
+      assert && assert( this.documentation.length > 0, 'documentation must be provided' );
+
+      this.methods && this.hasOwnProperty( 'methodOrder' ) && this.methodOrder.forEach( methodName => {
+        assert && assert( this.methods![ methodName ], `methodName not in public methods: ${methodName}` );
+      } );
+
       if ( supertype ) {
         const typeHierarchy = supertype.getTypeHierarchy();
         assert && this.events && this.events.forEach( event => {
+
+          // Make sure events are not listed again
           assert && assert( !_.some( typeHierarchy, t => t.events.includes( event ) ), `IOType should not declare event that parent also has: ${event}` );
         } );
       }
