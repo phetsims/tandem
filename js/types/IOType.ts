@@ -49,28 +49,34 @@ export type IOTypeMethod = {
 
 type DeserializationType = 'fromStateObject' | 'applyState';
 
-type SelfOptions<T, StateType> = {
+type MainOptions = {
   supertype?: IOType | null;
-  toStateObject?: ( t: T ) => StateType;
-  fromStateObject?: ( s: StateType ) => T;
-  stateToArgsForConstructor?: ( s: StateType ) => unknown[];
-  applyState?: ( t: T, state: StateType ) => void;
-  stateSchema?: (
-    ( ioType: IOType<T, StateType> ) => StateSchema<T, StateType> ) |
-    StateSchema<T, StateType> |
-    Record<string, IOType> |
-    null;
   events?: string[];
   dataDefaults?: Record<string, unknown>;
   metadataDefaults?: Partial<PhetioObjectMetadata>;
-  defaultDeserializationMethod?: DeserializationType;
   documentation?: string;
   methods?: Record<string, IOTypeMethod>;
   methodOrder?: string[];
   parameterTypes?: IOType[];
   isFunctionType?: boolean;
+};
+
+type StateOptions<T, StateType> = {
+  toStateObject?: ( t: T ) => StateType;
+  stateSchema?: (
+    ( ioType: IOType<T, StateType> ) => StateSchema<T, StateType> ) |
+    StateSchema<T, StateType> |
+    Record<string, IOType> |
+    null;
+
+  fromStateObject?: ( s: StateType ) => T;
+  stateToArgsForConstructor?: ( s: StateType ) => unknown[];
+  applyState?: ( t: T, state: StateType ) => void;
+  defaultDeserializationMethod?: DeserializationType;
   addChildElement?: AddChildElement;
 };
+
+type SelfOptions<T, StateType> = MainOptions & StateOptions<T, StateType>;
 
 type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
 
