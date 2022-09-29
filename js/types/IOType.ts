@@ -107,8 +107,9 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
   // see getAllStateSchema().
   // TODO: https://github.com/phetsims/tandem/issues/263 Should null be allowed here?
   public readonly stateSchema: StateSchema<T, StateType>;
+  public readonly isFunctionType: boolean;
+
   public static ObjectIO: IOType;
-  public isFunctionType: boolean;
 
   /**
    * @param typeName - The name that this IOType will have in the public PhET-iO API. In general, this should
@@ -122,13 +123,13 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
    */
   public constructor( public readonly typeName: string, providedOptions: IOTypeOptions<T, StateType> ) {
 
-    // For reference in the config
+    // For reference in the options
     const supertype = providedOptions.supertype || IOType.ObjectIO;
     const toStateObjectSupplied = !!( providedOptions.toStateObject );
     const applyStateSupplied = !!( providedOptions.applyState );
     const stateSchemaSupplied = !!( providedOptions.stateSchema );
 
-    const config = optionize<IOTypeOptions<T, StateType>, SelfOptions<T, StateType>>()( {
+    const options = optionize<IOTypeOptions<T, StateType>, SelfOptions<T, StateType>>()( {
 
       supertype: IOType.ObjectIO,
       methods: {},
@@ -183,7 +184,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       // to automatically formulate the applyState function. If using stateSchema for the applyState method, make sure that
       // each compose IOType has the correct defaultDeserializationMethod. Most of the time, composite IOTypes use fromStateObject
       // to deserialize each sub-component, but in some circumstances, you will want your child to deserialize by also using applyState.
-      // See config.defaultDeserializationMethod to configure this case.
+      // See options.defaultDeserializationMethod to configure this case.
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
@@ -208,31 +209,31 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     }, providedOptions );
 
     if ( assert && supertype ) {
-      Object.keys( config.metadataDefaults ).forEach( metadataDefaultKey => {
+      Object.keys( options.metadataDefaults ).forEach( metadataDefaultKey => {
         assert && supertype.getAllMetadataDefaults().hasOwnProperty( metadataDefaultKey ) &&
 
         // @ts-ignore
-        assert( supertype.getAllMetadataDefaults()[ metadataDefaultKey ] !== config.metadataDefaults[ metadataDefaultKey ],
+        assert( supertype.getAllMetadataDefaults()[ metadataDefaultKey ] !== options.metadataDefaults[ metadataDefaultKey ],
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
       } );
     }
     this.supertype = supertype;
-    this.documentation = config.documentation;
-    this.methods = config.methods;
-    this.events = config.events;
-    this.metadataDefaults = config.metadataDefaults; // just for this level, see getAllMetadataDefaults()
-    this.dataDefaults = config.dataDefaults; // just for this level, see getAllDataDefaults()
-    this.methodOrder = config.methodOrder;
-    this.parameterTypes = config.parameterTypes;
+    this.documentation = options.documentation;
+    this.methods = options.methods;
+    this.events = options.events;
+    this.metadataDefaults = options.metadataDefaults; // just for this level, see getAllMetadataDefaults()
+    this.dataDefaults = options.dataDefaults; // just for this level, see getAllDataDefaults()
+    this.methodOrder = options.methodOrder;
+    this.parameterTypes = options.parameterTypes;
 
     // Validation
-    this.validator = _.pick( config, Validation.VALIDATOR_KEYS );
+    this.validator = _.pick( options, Validation.VALIDATOR_KEYS );
     this.validator.validationMessage = this.validator.validationMessage || `Validation failed IOType Validator: ${this.typeName}`;
 
-    this.defaultDeserializationMethod = config.defaultDeserializationMethod;
+    this.defaultDeserializationMethod = options.defaultDeserializationMethod;
 
-    if ( config.stateSchema !== null && !( config.stateSchema instanceof StateSchema ) ) {
-      const compositeSchema = typeof config.stateSchema === 'function' ? config.stateSchema( this ) : config.stateSchema;
+    if ( options.stateSchema !== null && !( options.stateSchema instanceof StateSchema ) ) {
+      const compositeSchema = typeof options.stateSchema === 'function' ? options.stateSchema( this ) : options.stateSchema;
 
       // @ts-ignore
       this.stateSchema = new StateSchema<T, StateType>( { compositeSchema: compositeSchema } );
@@ -240,7 +241,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     else {
 
       // @ts-ignore
-      this.stateSchema = config.stateSchema;
+      this.stateSchema = options.stateSchema;
     }
 
     // Assert that toStateObject method is provided for value StateSchemas. Do this with the following logic:
@@ -259,7 +260,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
         toStateObject = this.stateSchema.defaultToStateObject( coreObject );
       }
       else {
-        toStateObject = config.toStateObject( coreObject );
+        toStateObject = options.toStateObject( coreObject );
       }
 
       // Validate, but only if this IOType instance has more to validate than the supertype
@@ -276,8 +277,8 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       }
       return toStateObject;
     };
-    this.fromStateObject = config.fromStateObject;
-    this.stateToArgsForConstructor = config.stateToArgsForConstructor;
+    this.fromStateObject = options.fromStateObject;
+    this.stateToArgsForConstructor = options.stateToArgsForConstructor;
 
     this.applyState = ( coreObject: T, stateObject: StateType ) => {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
@@ -286,7 +287,7 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
       if ( applyStateSupplied || stateSchemaSupplied ) {
 
         // Validate that the provided stateObject is of the expected schema
-        // NOTE: Cannot use this.validateStateObject because config adopts supertype.applyState, which is bounds to the
+        // NOTE: Cannot use this.validateStateObject because options adopts supertype.applyState, which is bounds to the
         // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
         // @ts-ignore
         assert && coreObject.phetioType.validateStateObject( stateObject );
@@ -297,12 +298,12 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
         this.stateSchema.defaultApplyState( coreObject, stateObject as CompositeStateObjectType );
       }
       else {
-        config.applyState( coreObject, stateObject );
+        options.applyState( coreObject, stateObject );
       }
     };
 
-    this.isFunctionType = config.isFunctionType;
-    this.addChildElement = config.addChildElement;
+    this.isFunctionType = options.isFunctionType;
+    this.addChildElement = options.addChildElement;
 
     assert && assert( supertype || this.typeName === 'ObjectIO', 'supertype is required' );
     assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
@@ -333,10 +334,10 @@ class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-esli
     else {
 
       // The root IOType must supply all 4 state methods.
-      assert && assert( typeof config.toStateObject === 'function', 'toStateObject must be defined' );
-      assert && assert( typeof config.fromStateObject === 'function', 'fromStateObject must be defined' );
-      assert && assert( typeof config.stateToArgsForConstructor === 'function', 'stateToArgsForConstructor must be defined' );
-      assert && assert( typeof config.applyState === 'function', 'applyState must be defined' );
+      assert && assert( typeof options.toStateObject === 'function', 'toStateObject must be defined' );
+      assert && assert( typeof options.fromStateObject === 'function', 'fromStateObject must be defined' );
+      assert && assert( typeof options.stateToArgsForConstructor === 'function', 'stateToArgsForConstructor must be defined' );
+      assert && assert( typeof options.applyState === 'function', 'applyState must be defined' );
     }
   }
 
