@@ -10,8 +10,7 @@
 
 import validate from '../../../axon/js/validate.js';
 import Validation, { Validator } from '../../../axon/js/Validation.js';
-import optionize, { combineOptions } from '../../../phet-core/js/optionize.js';
-import ConstructorOf from '../../../phet-core/js/types/ConstructorOf.js';
+import optionize from '../../../phet-core/js/optionize.js';
 import PhetioConstants from '../PhetioConstants.js';
 import TandemConstants, { PhetioObjectMetadata } from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
@@ -19,7 +18,6 @@ import StateSchema, { CompositeStateObjectType } from './StateSchema.js';
 import PhetioObject from '../PhetioObject.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
-import StrictOmit from '../../../phet-core/js/types/StrictOmit.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
@@ -443,89 +441,6 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
    */
   public validateStateObject( stateObject: StateType ): void {
     this.isStateObjectValid( stateObject, true );
-  }
-
-  /**
-   * Convenience method for creating an IOType that forwards its "state methods" over to be handled by the core type.
-   * This function assumes that it is creating an IOType that supports serialization and deserialization. This function
-   * will gracefully forward the following items from the core type into options pased to the IOType constructor:
-   *
-   * - STATE_SCHEMA: This is required for stateful phetioTypes for API tracking. Should be static on the CoreType
-   * - toStateObject: It is required that a serialization-supported IOType have a way to serialize, if this method is
-   *                  not provided, then the default serialization gathered from STATE_SCHEMA will be used. Should be
-   *                  on the prototype of the CoreType.
-   * - fromStateObject: if using data-type serialization, this method is used to reconstitute an instance from its
-   *                    serialization object. Should be static on the CoreType
-   * - applyState: if using references-type serialization, this method is used to apply the serialization-object state
-   *                 onto an already existence PhET-iO element instance. Should be on the prototype of the CoreType.
-   *
-   * For more information on how to support serialization and PhET-iO state, please see
-   * https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#serialization
-   *
-   * @param typeName - see IOType constructor for details
-   * @param CoreType - the PhET "core" type class/constructor associated with this IOType being created.
-   *                              Likely this IOType will be set as the phetioType on the CoreType.
-   * @param [providedOptions]
-   */
-  public static fromCoreType<T, StateType>(
-    typeName: string,
-    CoreType: ConstructorOf<T> & Pick<SelfOptions<T, StateType>, 'fromStateObject' | 'stateToArgsForConstructor'> & { STATE_SCHEMA?: SelfOptions<T, StateType>['stateSchema'] },
-    providedOptions?: StrictOmit<IOTypeOptions<T, StateType>,
-      'valueType' |
-      'toStateObject' |
-      'stateToArgsForConstructor' |
-      'applyState' |
-      'stateSchema'> ): IOType<T, StateType> {
-
-    let coreTypeHasToStateObject = false;
-    let coreTypeHasApplyState = false;
-
-    // Check supertypes
-    let proto = CoreType.prototype;
-    while ( proto ) {
-      assert && assert( !proto.hasOwnProperty( 'fromStateObject' ), 'fromStateObject should be a static on the Class, and not on the prototype.' );
-      assert && assert( !proto.hasOwnProperty( 'STATE_SCHEMA' ), 'STATE_SCHEMA should be a static on the Class, and not on the prototype.' );
-
-      if ( typeof proto.toStateObject === 'function' ) {
-        coreTypeHasToStateObject = true;
-      }
-      if ( typeof proto.applyState === 'function' ) {
-        coreTypeHasApplyState = true;
-      }
-      proto = Object.getPrototypeOf( proto );
-    }
-
-    // This isn't really optionize here, since we don't expect defaults for all the options.
-    const options = combineOptions<IOTypeOptions<T, StateType>>( {
-      valueType: CoreType
-    }, providedOptions );
-
-    // Only specify if supplying toStateObject, otherwise stateSchema will handle things for us.
-    if ( coreTypeHasToStateObject ) {
-
-      // @ts-ignore
-      options.toStateObject = instance => instance.toStateObject();
-    }
-
-    if ( coreTypeHasApplyState ) {
-
-      // @ts-ignore
-      options.applyState = ( instance, stateObject ) => instance.applyState( stateObject );
-    }
-
-    if ( CoreType.fromStateObject ) {
-      options.fromStateObject = CoreType.fromStateObject;
-    }
-
-    if ( CoreType.stateToArgsForConstructor ) {
-      options.stateToArgsForConstructor = CoreType.stateToArgsForConstructor;
-    }
-
-    if ( CoreType.STATE_SCHEMA ) {
-      options.stateSchema = CoreType.STATE_SCHEMA;
-    }
-
-    return new IOType<T, StateType>( typeName, options );
   }
 }
 

@@ -44,7 +44,7 @@ export default class StateSchema<T, StateType> {
   private readonly validator: Validator<StateType> | null;
 
   // "composite" state schemas are treated differently that value state schemas
-  private readonly compositeSchema: null | CompositeSchema;
+  public readonly compositeSchema: null | CompositeSchema;
 
   public constructor( providedOptions?: StateSchemaOptions ) {
 
