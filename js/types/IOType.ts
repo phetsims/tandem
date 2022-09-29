@@ -68,6 +68,8 @@ type StateSchemaOption<T, StateType> = (
   null;
 
 type StateOutputOptions<T, StateType> = {
+
+  // TODO: Remove the question marks to make this mutually exclusive, see https://github.com/phetsims/tandem/issues/274
   toStateObject?: ( t: T ) => StateType;
   stateSchema?: StateSchemaOption<T, StateType>;
 } | {
