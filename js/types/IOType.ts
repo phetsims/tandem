@@ -67,7 +67,7 @@ type StateSchemaOption<T, StateType> = (
   Record<string, IOType> |
   null;
 
-type StateOutputOptions<T, StateType> = {
+type SerializationOptions<T, StateType> = {
 
   // TODO: Remove the question marks to make this mutually exclusive, see https://github.com/phetsims/tandem/issues/274
   toStateObject?: ( t: T ) => StateType;
@@ -83,7 +83,7 @@ type StateOptions<T, StateType> = {
   applyState?: ( t: T, state: StateType ) => void;
   defaultDeserializationMethod?: DeserializationType;
   addChildElement?: AddChildElement;
-} & StateOutputOptions<T, StateType>;
+} & SerializationOptions<T, StateType>;
 
 type SelfOptions<T, StateType> = MainOptions & StateOptions<T, StateType>;
 
