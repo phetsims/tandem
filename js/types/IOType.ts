@@ -474,7 +474,4 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
   stateSchema: null
 } );
 
-// I'm not sure if this will stick around, but it seems helpful to keep for now
-// export type getStateTypeFromIOType<Type extends IOType> = Type extends IOType<infer A, infer StateType> ? StateType : never;
-
 tandemNamespace.register( 'IOType', IOType );
