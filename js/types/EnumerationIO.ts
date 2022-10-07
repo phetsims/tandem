@@ -38,7 +38,7 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: Enumer
     cache.set( enumeration, new IOType<T, string>( ioTypeName, {
       validValues: values,
       documentation: `Possible values: ${keys.join( ', ' )}.${additionalDocs}`,
-      toStateObject: ( t: T ) => enumeration.getKey( t ),
+      toStateObject: ( value: T ) => enumeration.getKey( value ),
       fromStateObject: ( stateObject: string ): T => {
         assert && assert( typeof stateObject === 'string', 'unsupported EnumerationIO value type, expected string' );
         assert && assert( keys.includes( stateObject ), `Unrecognized value: ${stateObject}` );
