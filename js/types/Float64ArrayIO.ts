@@ -20,7 +20,7 @@ const Float64ArrayIO = new IOType<Float64Array, number[]>( 'Float64ArrayIO', {
   },
   fromStateObject: stateObject => new Float64Array( stateObject ),
   stateSchema: StateSchema.asValue<Float64Array, number[]>( 'Float64Array', {
-    isValidValue: ( value: number[] ) => Array.isArray( value ) && !value.find( v => typeof v === 'number' )
+    isValidValue: ( value: number[] ) => Array.isArray( value ) && value.find( v => typeof v !== 'number' ) === undefined
   } ),
 
   // Float64ArrayIO is a data type, and uses the toStateObject/fromStateObject exclusively for data type serialization.
