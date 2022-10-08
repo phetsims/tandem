@@ -475,13 +475,16 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
   documentation: 'The root of the IO Type hierarchy',
   toStateObject: ( coreObject: PhetioObject ) => {
 
-    assert && assert( coreObject.tandem, 'coreObject must be PhET-iO object' );
+    if ( phet && phet.tandem && phet.tandem.phetioAPIValidation && phet.tandem.phetioAPIValidation.enabled ) {
 
-    assert && assert( !coreObject.phetioState,
-      `fell back to root serialization state for ${coreObject.tandem.phetioID}. Potential solutions:
-       * mark the type as phetioState: false
-       * create a custom toStateObject method in your IO Type
-       * perhaps you have everything right, but forgot to pass in the IOType via phetioType in the constructor` );
+      assert && assert( coreObject.tandem, 'coreObject must be PhET-iO object' );
+
+      assert && assert( !coreObject.phetioState,
+        `fell back to root serialization state for ${coreObject.tandem.phetioID}. Potential solutions:
+         * mark the type as phetioState: false
+         * create a custom toStateObject method in your IO Type
+         * perhaps you have everything right, but forgot to pass in the IOType via phetioType in the constructor` );
+    }
     return DEFAULT_STATE;
   },
   fromStateObject: stateObject => {
