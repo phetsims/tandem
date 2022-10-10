@@ -475,7 +475,7 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
   documentation: 'The root of the IO Type hierarchy',
   toStateObject: ( coreObject: PhetioObject ) => {
 
-    if ( phet && phet.tandem && phet.tandem.phetioAPIValidation && phet.tandem.Tandem.VALIDATION ) {
+    if ( phet && phet.tandem && phet.tandem.Tandem.VALIDATION ) {
 
       assert && assert( coreObject.tandem, 'coreObject must be PhET-iO object' );
 
