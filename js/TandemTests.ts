@@ -13,24 +13,24 @@ QUnit.module( 'Tandem' );
 
 QUnit.test( 'Tandem validation on ROOT', assert => {
 
-  let p = new NumberProperty( 0, {
+  let property = new NumberProperty( 0, {
     tandem: Tandem.ROOT_TEST.createTandem( 'aProperty' )
   } );
-  assert.ok( p.isPhetioInstrumented(), 'should be instrumented' );
+  assert.ok( property.isPhetioInstrumented(), 'should be instrumented' );
 
-  p = new NumberProperty( 0, {
+  property = new NumberProperty( 0, {
     tandem: Tandem.ROOT_TEST.createTandem( 'bProperty' )
   } );
-  assert.ok( p.isPhetioInstrumented(), 'should be instrumented' );
+  assert.ok( property.isPhetioInstrumented(), 'should be instrumented' );
 
-  p = new NumberProperty( 0, {
+  property = new NumberProperty( 0, {
     tandem: Tandem.ROOT_TEST.createTandem( 'cProperty' )
   } );
-  assert.ok( p.isPhetioInstrumented(), 'should be instrumented' );
+  assert.ok( property.isPhetioInstrumented(), 'should be instrumented' );
 
   // Only specific tandems allowed on root when validating tandems
   window.assert && Tandem.VALIDATION && assert.throws( () => {
-    p = new NumberProperty( 0, {
+    property = new NumberProperty( 0, {
       tandem: Tandem.ROOT.createTandem( 'aProperty' ) // Should fail because aProperty is not allowed on ROOT Tandem
     } );
   } );
