@@ -445,7 +445,7 @@ class PhetioObject {
 
         data: null,
 
-        // function that, when called get's the data.
+        // function that, when called gets the data.
         getData: null
       }, providedOptions );
 
