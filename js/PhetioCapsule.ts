@@ -122,8 +122,6 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
    */
   public static PhetioCapsuleIO = <ParameterType extends PhetioObject, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ): IOType => {
 
-    assert && assert( parameterType instanceof IOType, 'element type should be an IO Type' );
-
     if ( !cache.has( parameterType ) ) {
       cache.set( parameterType, new IOType<PhetioCapsule<ParameterType>, IntentionalAny>( `PhetioCapsuleIO<${parameterType.typeName}>`, {
         valueType: PhetioCapsule,

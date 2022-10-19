@@ -21,7 +21,6 @@ const cache = new Map<IOType, IOType>();
  */
 const ArrayIO = <ParameterType, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ): IOType<ParameterType[], ParameterStateType[]> => {
   assert && assert( !!parameterType, 'parameterType should be defined' );
-  assert && assert( parameterType instanceof IOType, 'parameterType should be an IOType' );
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType<ParameterType[], ParameterStateType[]>( `ArrayIO<${parameterType.typeName}>`, {
       valueType: Array,

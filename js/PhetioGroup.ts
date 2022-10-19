@@ -277,8 +277,6 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
    */
   public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ): IOType => {
 
-    assert && assert( parameterType instanceof IOType, 'element type should be defined' );
-
     if ( !cache.has( parameterType ) ) {
       cache.set( parameterType, new IOType<PhetioGroup<ParameterType>, IntentionalAny>( `PhetioGroupIO<${parameterType.typeName}>`, {
 

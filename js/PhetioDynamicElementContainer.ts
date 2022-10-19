@@ -99,7 +99,6 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       phetioDynamicElementName: undefined
     }, providedOptions );
 
-    assert && assert( typeof createElement === 'function', 'createElement should be a function' );
     assert && assert( Array.isArray( defaultArguments ) || typeof defaultArguments === 'function', 'defaultArguments should be an array or a function' );
     if ( Array.isArray( defaultArguments ) ) {
 
@@ -287,14 +286,14 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
     }
     else {
       createdObjectTandem = this.tandem.createTandem( componentName, this.tandem.getExtendedOptions() );
-      assert && assert( createdObjectTandem instanceof DynamicTandem, 'createdObjectTandem should be an instance of DynamicTandem' );
+      assert && assert( createdObjectTandem instanceof DynamicTandem, 'createdObjectTandem should be an instance of DynamicTandem' ); // eslint-disable-line no-simple-type-checking-assertions
     }
 
     const createdObject = this.createElement( createdObjectTandem, ...argsForCreateFunction );
 
     // This validation is only needed for PhET-iO brand
     if ( Tandem.PHET_IO_ENABLED ) {
-      assert && assert( containerParameterType instanceof IOType, 'containerParameterType must be provided in PhET-iO brand' );
+      assert && assert( containerParameterType !== null, 'containerParameterType must be provided in PhET-iO brand' );
 
       // Make sure the new group element matches the schema for elements.
       // @ts-ignore

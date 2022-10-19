@@ -104,7 +104,6 @@ class Tandem {
    */
   public constructor( parentTandem: Tandem | null, name: string, providedOptions?: TandemOptions ) {
     assert && assert( parentTandem === null || parentTandem instanceof Tandem, 'parentTandem should be null or Tandem' );
-    assert && assert( typeof name === 'string', 'name must be defined' );
     assert && assert( name !== Tandem.METADATA_KEY, 'name cannot match Tandem.METADATA_KEY' );
 
     this.parentTandem = parentTandem;

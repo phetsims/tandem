@@ -86,10 +86,6 @@ export default class StateSchema<T, StateType> {
             assert && assert( stateSchemaValue, 'should not be undefined' );
             this.validateStateSchema( stateSchemaValue! );
           }
-          else {
-            const stateSchemaValue = stateSchema[ stateSchemaKey ];
-            assert && assert( stateSchemaValue instanceof IOType, `${stateSchemaValue} expected to be an IOType` );
-          }
         }
       }
     }
