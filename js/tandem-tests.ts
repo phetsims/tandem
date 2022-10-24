@@ -12,6 +12,6 @@ import './PhetioGroupTests.js';
 import './PhetioObjectTests.js';
 import './TandemTests.js';
 import './types/IOTypeTests.js';
-import './types/NumberIOTests.js';
+import './types/InfiniteNumberIOTests.js';
 
 qunitStart();
