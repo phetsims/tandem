@@ -168,7 +168,7 @@ export default class StateSchema<T, StateType> {
    * needs more checking up and down the hierarchy.
    *
    * @param stateObject - the stateObject to validate against
-   * @param toAssert - whether or not to assert when invalid
+   * @param toAssert - whether to assert when invalid
    * @param publicSchemaKeys - to be populated with any public keys this StateSchema is responsible for
    * @param privateSchemaKeys - to be populated with any private keys this StateSchema is responsible for
    * @returns boolean if validity can be checked, null if valid, but next in the hierarchy is needed

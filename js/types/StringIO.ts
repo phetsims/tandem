@@ -20,7 +20,5 @@ const StringIO = new IOType<string, string>( 'StringIO', {
   toStateObject: _.identity
 } );
 
-export type StringStateObject = string;
-
 tandemNamespace.register( 'StringIO', StringIO );
 export default StringIO;

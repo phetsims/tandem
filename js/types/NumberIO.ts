@@ -11,19 +11,13 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 
-export type NumberStateObject = number | 'POSITIVE_INFINITY' | 'NEGATIVE_INFINITY';
-
-const NumberIO = new IOType<number, NumberStateObject>( 'NumberIO', {
+const NumberIO = new IOType<number, number>( 'NumberIO', {
   valueType: 'number',
   documentation: 'IO Type for Javascript\'s number primitive type',
-  toStateObject: value => value === Number.POSITIVE_INFINITY ? 'POSITIVE_INFINITY' :
-                          value === Number.NEGATIVE_INFINITY ? 'NEGATIVE_INFINITY' :
-                          value,
-  fromStateObject: stateObject => stateObject === 'POSITIVE_INFINITY' ? Number.POSITIVE_INFINITY :
-                                  stateObject === 'NEGATIVE_INFINITY' ? Number.NEGATIVE_INFINITY :
-                                  stateObject,
-  stateSchema: StateSchema.asValue<number, NumberStateObject>( '\'POSITIVE_INFINITY\'|\'NEGATIVE_INFINITY\'|number', {
-    isValidValue: ( value: NumberStateObject ) => value === 'POSITIVE_INFINITY' || value === 'NEGATIVE_INFINITY' || ( typeof value === 'number' && !isNaN( value ) )
+  toStateObject: _.identity,
+  fromStateObject: stateObject => stateObject,
+  stateSchema: StateSchema.asValue<number, number>( 'number', {
+    isValidValue: ( value: number ) => ( typeof value === 'number' && !isNaN( value ) && value !== Number.POSITIVE_INFINITY && value !== Number.NEGATIVE_INFINITY )
   } )
 } );
 
