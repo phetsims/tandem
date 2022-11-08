@@ -24,6 +24,7 @@ import Emitter from '../../axon/js/Emitter.js';
 import PhetioObject from './PhetioObject.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 
+
 const EMPTY_ARRAY: Parameter[] = [];
 
 // By default, PhetioActions are not stateful
@@ -173,7 +174,16 @@ PhetioAction.PhetioActionIO = ( parameterTypes: IOType[] ) => {
         execute: {
           returnType: VoidIO,
           parameterTypes: parameterTypes,
-          implementation: PhetioAction.prototype.execute,
+          implementation: function( this: PhetioAction<unknown[]>, ...values: unknown[] ) {
+            const errors = this.getValidationErrors( ...values );
+
+            if ( errors.length > 0 ) {
+              throw new Error( `Validation errors: ${errors.join( ', ' )}` );
+            }
+            else {
+              this.execute( values );
+            }
+          },
           documentation: 'Executes the function the PhetioAction is wrapping.',
           invocableForReadOnlyElements: false
         }
