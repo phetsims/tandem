@@ -27,6 +27,7 @@ import TandemConstants, { PhetioObjectMetadata } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
@@ -55,7 +56,7 @@ type StartEventOptions = {
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
 
-const DEFAULTS: OptionizeDefaults<StrictOmit<PhetioObjectOptions, 'phetioDynamicElementName'>> = {
+const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementName'>> = {
 
   // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
   tandem: Tandem.OPTIONAL,
@@ -120,7 +121,7 @@ assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType )
   'phetioEventType must have the same default as the default metadata values.' );
 
 // Options for creating a PhetioObject
-export type PhetioObjectOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
+type SelfOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
   'phetioIsArchetype' | 'phetioEventType'> & {
   tandem?: Tandem;
   phetioType?: IOType;
@@ -134,13 +135,15 @@ export type PhetioObjectOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phe
   // sim.screen1.view.upperThermometerNode
   tandemNameSuffix?: string | string[] | null;
 };
+type ParentOptions = DisposableOptions;
+export type PhetioObjectOptions = SelfOptions & ParentOptions;
 
 type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName' | 'phetioDynamicElementName'> ) | 'phetioType';
 export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
 
 export type LinkableElement = Pick<PhetioObject, 'phetioFeatured' | 'isPhetioInstrumented'>;
 
-class PhetioObject {
+class PhetioObject extends Disposable {
 
   // assigned in initializePhetioObject - see docs at DEFAULTS declaration
   public tandem: Tandem;
@@ -148,9 +151,6 @@ class PhetioObject {
   // track whether the object has been initialized.  This is necessary because initialization can happen in the
   // constructor or in a subsequent call to initializePhetioObject (to support scenery Node)
   private phetioObjectInitialized: boolean;
-
-  // Has it been disposed?
-  public isDisposed: boolean;
 
   // See documentation in DEFAULTS
   public phetioIsArchetype!: boolean;
@@ -176,26 +176,14 @@ class PhetioObject {
   public phetioID: string;
 
   public constructor( options?: PhetioObjectOptions ) {
+    super( options );
 
     this.tandem = DEFAULTS.tandem;
     this.phetioID = this.tandem.phetioID;
     this.phetioObjectInitialized = false;
-    this.isDisposed = false;
 
     if ( options ) {
       this.initializePhetioObject( {}, options );
-    }
-
-    if ( assert ) {
-
-      // Wrap the prototype dispose method with a check. NOTE: We will not catch devious cases where the dispose() is
-      // overridden after the Node constructor (which may happen).
-      const protoDispose = this.dispose;
-      this.dispose = () => {
-        assert && assert( !this.isDisposed, 'This PhetioObject has already been disposed, and cannot be disposed again' );
-        protoDispose.call( this );
-        assert && assert( this.isDisposed, 'PhetioObject.dispose() call is missing from an overridden dispose method' );
-      };
     }
   }
 
@@ -647,9 +635,7 @@ class PhetioObject {
    * Remove this phetioObject from PhET-iO. After disposal, this object is no longer interoperable. Also release any
    * other references created during its lifetime.
    */
-  public dispose(): void {
-    assert && assert( !this.isDisposed, 'PhetioObject can only be disposed once' );
-
+  public override dispose(): void {
     const descendants: PhetioObject[] = [];
     if ( Tandem.PHET_IO_ENABLED && this.tandem.supplied ) {
       const phetioEngine = phet.phetio.phetioEngine;
@@ -687,7 +673,7 @@ class PhetioObject {
       this.linkedElements.length = 0;
     }
 
-    this.isDisposed = true;
+    super.dispose();
   }
 
   /**

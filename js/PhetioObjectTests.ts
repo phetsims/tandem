@@ -57,6 +57,20 @@ QUnit.test( 'PhetioObject end without start', assert => {
   }
 } );
 
+QUnit.test( 'PhetioObject disposer', assert => {
+  const object1 = new PhetioObject();
+  const object2 = new PhetioObject( {
+    disposer: object1
+  } );
+
+  assert.ok( !object1.isDisposed, '1 is not disposed' );
+  assert.ok( !object2.isDisposed, '2 is not disposed' );
+
+  object1.dispose();
+  assert.ok( object1.isDisposed, '1 is disposed' );
+  assert.ok( object2.isDisposed, '2 is disposed' );
+} );
+
 Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instrumentation', assert => {
   assert.ok( true, 'always run one test' );
 
