@@ -4,9 +4,9 @@
  * Class responsible for storing information about the schema of PhET-iO state. See IOType stateSchema option for usage
  * and more information.
  *
- * There are two types of StateSchema, the first serves a "value", when the state of an IOType is just a value. The second
- * is a "composite", where the state of an IOType is made from sub-components, each of which have an IOType. Check
- * which type of StateSchema your instance is with StateSchema.isComposite().
+ * There are two types of StateSchema, the first serves as a "value", when the state of an IOType is just a value.
+ * The second is a "composite", where the state of an IOType is made from sub-components, each of which have an IOType.
+ * Check which type of StateSchema your instance is with StateSchema.isComposite().
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)

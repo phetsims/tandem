@@ -219,7 +219,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       // per IOType with defaultDeserializationMethod.
       stateSchema: null,
 
-      // For use when this IOType is pare of a composite stateSchema in another IOType.  When
+      // For use when this IOType is part of a composite stateSchema in another IOType.  When
       // using serialization methods by supplying only stateSchema, then deserialization
       // can take a variety of forms, and this will vary based on the IOType. In most cases deserialization of a component
       // is done via fromStateObject. If not, specify this option so that the stateSchema will be able to know to call
