@@ -195,7 +195,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       // For Dynamic Element Deserialization: converts the state object to arguments
       // for a `create` function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that
       // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
-      // to be implemented on IO Types who's core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
+      // to be implemented on IO Types whose core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
       // elements.
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       stateToArgsForConstructor: supertype && supertype.stateToArgsForConstructor,
