@@ -20,7 +20,7 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 
-type CompositeSchema = Record<string, IOType> & {
+export type CompositeSchema = Record<string, IOType> & {
   _private?: CompositeSchema;
 };
 type CompositeSchemaAPI = Record<string, string> & {
