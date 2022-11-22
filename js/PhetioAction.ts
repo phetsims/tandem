@@ -56,7 +56,39 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
   // To listen to when the action has completed.
   public readonly executedEmitter: Emitter<T>;
 
-  public static PhetioActionIO: ( parameterTypes: IOType[] ) => IOType;
+  public static readonly PhetioActionIO = ( parameterTypes: IOType[] ): IOType => {
+    const key = parameterTypes.map( getTypeName ).join( ',' );
+    if ( !cache.has( key ) ) {
+      cache.set( key, new IOType( `PhetioActionIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
+        valueType: PhetioAction,
+        documentation: 'Executes when an event occurs',
+        events: [ 'executed' ],
+        parameterTypes: parameterTypes,
+        metadataDefaults: {
+          phetioState: PHET_IO_STATE_DEFAULT
+        },
+        methods: {
+          execute: {
+            returnType: VoidIO,
+            parameterTypes: parameterTypes,
+            implementation: function( this: PhetioAction<unknown[]>, ...values: unknown[] ) {
+              const errors = this.getValidationErrors( ...values );
+
+              if ( errors.length > 0 ) {
+                throw new Error( `Validation errors: ${errors.join( ', ' )}` );
+              }
+              else {
+                this.execute( values );
+              }
+            },
+            documentation: 'Executes the function the PhetioAction is wrapping.',
+            invocableForReadOnlyElements: false
+          }
+        }
+      } ) );
+    }
+    return cache.get( key )!;
+  };
 
   /**
    * @param action - the function that is called when this PhetioAction occurs
@@ -158,40 +190,6 @@ const getTypeName = ( ioType: IOType ) => ioType.typeName;
 
 // cache each parameterized IOType so that it is only created once.
 const cache = new Map<string, IOType>();
-
-PhetioAction.PhetioActionIO = ( parameterTypes: IOType[] ) => {
-  const key = parameterTypes.map( getTypeName ).join( ',' );
-  if ( !cache.has( key ) ) {
-    cache.set( key, new IOType( `PhetioActionIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
-      valueType: PhetioAction,
-      documentation: 'Executes when an event occurs',
-      events: [ 'executed' ],
-      parameterTypes: parameterTypes,
-      metadataDefaults: {
-        phetioState: PHET_IO_STATE_DEFAULT
-      },
-      methods: {
-        execute: {
-          returnType: VoidIO,
-          parameterTypes: parameterTypes,
-          implementation: function( this: PhetioAction<unknown[]>, ...values: unknown[] ) {
-            const errors = this.getValidationErrors( ...values );
-
-            if ( errors.length > 0 ) {
-              throw new Error( `Validation errors: ${errors.join( ', ' )}` );
-            }
-            else {
-              this.execute( values );
-            }
-          },
-          documentation: 'Executes the function the PhetioAction is wrapping.',
-          invocableForReadOnlyElements: false
-        }
-      }
-    } ) );
-  }
-  return cache.get( key )!;
-};
 
 tandemNamespace.register( 'PhetioAction', PhetioAction );
 export default PhetioAction;
