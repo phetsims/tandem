@@ -1,7 +1,9 @@
 // Copyright 2018-2022, University of Colorado Boulder
 
 /**
- * IO Type for JS's built-in number type.
+ * IO Type for JS's built-in number type, but adds explicit support for positive and negative infinity.
+ * Typical use cases should use NumberIO, but if you have a case that must support infinities, please
+ * use this instead.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
