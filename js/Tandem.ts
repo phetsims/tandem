@@ -416,7 +416,7 @@ class Tandem {
   public static launched = false;
 
   // a list of PhetioObjects ready to be sent out to listeners, but can't because Tandem hasn't been launched yet.
-  public static bufferedPhetioObjects: PhetioObject[] = [];
+  public static readonly bufferedPhetioObjects: PhetioObject[] = [];
 
   public createTandemFromPhetioID( phetioID: string ): Tandem {
     return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( INTER_TERM_SEPARATOR ), {

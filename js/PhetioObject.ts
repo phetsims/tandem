@@ -172,7 +172,7 @@ class PhetioObject extends Disposable {
   private linkedElements!: LinkedElement[] | null;
   public phetioNotifiedObjectCreated!: boolean;
   private phetioMessageStack!: number[];
-  public static DEFAULT_OPTIONS = DEFAULTS;
+  public static readonly DEFAULT_OPTIONS = DEFAULTS;
   public phetioID: string;
 
   public constructor( options?: PhetioObjectOptions ) {
