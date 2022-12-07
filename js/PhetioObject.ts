@@ -79,7 +79,6 @@ const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementN
 
   // Category of event type, can be overridden in phetioStartEvent options.  Cannot be supplied through TandemConstants because
   // that would create an import loop
-  // @ts-ignore
   phetioEventType: EventType.MODEL,
 
   // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents
@@ -116,7 +115,6 @@ const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementN
 // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
 type EventMetadata = Record<string, string | boolean | number | Array<string | boolean | number>>;
 
-// @ts-ignore
 assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType ) === TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioEventType,
   'phetioEventType must have the same default as the default metadata values.' );
 
@@ -270,7 +268,6 @@ class PhetioObject extends Disposable {
       if ( overrides ) {
 
         // No need to make a new object, since this "options" variable was created in the previous merge call above.
-        // @ts-ignore
         options = optionize<PhetioObjectOptions>()( options, overrides );
       }
     }
@@ -462,7 +459,6 @@ class PhetioObject extends Disposable {
       // TODO: If there is no dataStream global defined, then we should handle this differently as to not drop the event that is triggered, see https://github.com/phetsims/phet-io/issues/1846
       const skipFromUndefinedDatastream = !assert && !_.hasIn( window, 'phet.phetio.dataStream' );
 
-      // @ts-ignore
       if ( skipHighFrequencyEvent || this.phetioEventType === EventType.OPT_OUT || skipFromUndefinedDatastream ) {
         this.phetioMessageStack.push( SKIPPING_MESSAGE );
         return;
@@ -691,8 +687,6 @@ class PhetioObject extends Disposable {
       phetioDocumentation: object.phetioDocumentation,
       phetioState: object.phetioState,
       phetioReadOnly: object.phetioReadOnly,
-
-      // @ts-ignore
       phetioEventType: EventType.phetioType.toStateObject( object.phetioEventType ),
       phetioHighFrequency: object.phetioHighFrequency,
       phetioPlayback: object.phetioPlayback,

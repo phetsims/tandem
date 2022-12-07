@@ -60,7 +60,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
    * Dispose the underlying element.  Called by the PhetioStateEngine so the capsule element can be recreated with the
    * correct state.
    */
-  // @ts-ignore
+  // @ts-expect-error
   public disposeElement(): void {
     assert && assert( this.element, 'cannot dispose if element is not defined' );
     super.disposeElement( this.element! );
@@ -133,7 +133,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
         // rather than inventing a new "required" pipeline.
         metadataDefaults: { phetioDynamicElementName: null },
 
-        // @ts-ignore The group is a group, not just a PhetioDynamicElementContainer
+        // @ts-expect-error The group is a group, not just a PhetioDynamicElementContainer
         addChildElement( capsule: PhetioCapsule<ParameterType>, componentName: string, stateObject: ParameterStateType ) {
 
           // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
@@ -141,7 +141,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
           // setting engine.
           const args = parameterType.stateToArgsForConstructor( stateObject );
 
-          // @ts-ignore args is of type P, but we can't really communicate that here
+          // @ts-expect-error args is of type P, but we can't really communicate that here
           return capsule.create( args, true );
         }
       } ) );

@@ -43,7 +43,6 @@ const PARAMETER_KEYS = [
   // `emit1( public1, private1, public2)` is not allowed. Instead it must be ordered like `emit( public1, public2, private1 )`
   'phetioPrivate'
 
-  // @ts-ignore
 ].concat( Validation.VALIDATOR_KEYS );
 
 // helper closures
@@ -137,7 +136,6 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
         'name', 'phetioType', 'phetioDocumentation'
       ] );
 
-      // @ts-ignore
       assert && assert( _.intersection( Object.keys( parameter ), Validation.VALIDATOR_KEYS ).length > 0,
         `validator must be specified for parameter ${i}` );
 
@@ -149,7 +147,6 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
       assert && Object.freeze( parameters[ i ] );
 
       // validate the options passed in to validate each PhetioDataHandler argument
-      // @ts-ignore
       Validation.validateValidator( parameter );
     }
 
@@ -215,7 +212,7 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
         const element = this.parameters[ i ];
         if ( !element.phetioPrivate ) {
 
-          // @ts-ignore
+          // @ts-expect-error
           data[ element.name ] = element.phetioType.toStateObject( args[ i ] );
         }
       }

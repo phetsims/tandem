@@ -234,7 +234,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       Object.keys( options.metadataDefaults ).forEach( metadataDefaultKey => {
         assert && supertype.getAllMetadataDefaults().hasOwnProperty( metadataDefaultKey ) &&
 
-        // @ts-ignore
+        // @ts-expect-error
         assert( supertype.getAllMetadataDefaults()[ metadataDefaultKey ] !== options.metadataDefaults[ metadataDefaultKey ],
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
       } );
@@ -257,12 +257,12 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     if ( options.stateSchema !== null && !( options.stateSchema instanceof StateSchema ) ) {
       const compositeSchema = typeof options.stateSchema === 'function' ? options.stateSchema( this ) : options.stateSchema;
 
-      // @ts-ignore
+      // @ts-expect-error
       this.stateSchema = new StateSchema<T, StateType>( { compositeSchema: compositeSchema } );
     }
     else {
 
-      // @ts-ignore
+      // @ts-expect-error
       this.stateSchema = options.stateSchema;
     }
 
@@ -311,7 +311,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
         // Validate that the provided stateObject is of the expected schema
         // NOTE: Cannot use this.validateStateObject because options adopts supertype.applyState, which is bounds to the
         // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
-        // @ts-ignore
+        // @ts-expect-error
         assert && coreObject.phetioType.validateStateObject( stateObject );
       }
 
@@ -372,7 +372,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
   private getTypeHierarchy(): IOType<unknown, unknown>[] {
     const array = [];
 
-    // @ts-ignore
+    // @ts-expect-error
     let ioType: IOType<unknown, unknown> = this; // eslint-disable-line consistent-this, @typescript-eslint/no-this-alias
     while ( ioType ) {
       array.push( ioType );
@@ -446,7 +446,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       Object.keys( stateObject ).filter( key => key !== '_private' ).forEach( key => check( 'public', key ) );
 
       // Visit the private state, if any
-      // @ts-ignore stateObjects can take a variety of forms, they don't have to be a record, thus, it is challenging to be graceful to a `_private` key
+      // @ts-expect-error stateObjects can take a variety of forms, they don't have to be a record, thus, it is challenging to be graceful to a `_private` key
       stateObject._private && Object.keys( stateObject._private ).forEach( key => check( 'private', key ) );
 
       return valid;

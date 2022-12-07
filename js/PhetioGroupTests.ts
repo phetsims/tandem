@@ -22,7 +22,7 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
       phetioState: false
     } );
 
-    // @ts-ignore
+    // @ts-expect-error
     element.otherField = otherField;
     return element;
   };
@@ -50,7 +50,7 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
 
   phetioGroup.elementCreatedEmitter.addListener( element => {
 
-    // @ts-ignore
+    // @ts-expect-error
     if ( element.otherField === 'disposeMe!' ) {
       phetioGroup.disposeElement( element );
     }

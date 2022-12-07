@@ -22,12 +22,12 @@ QUnit.test( 'serialization', assert => {
 
   window.assert && assert.throws( () => {
 
-    // @ts-ignore
+    // @ts-expect-error
     InfiniteNumberIO.toStateObject( 4 * 'oh hello' );
   } );
   window.assert && assert.throws( () => {
 
-    // @ts-ignore
+    // @ts-expect-error
     InfiniteNumberIO.toStateObject( 'oh hello' );
   } );
 } );

@@ -95,7 +95,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       containerSuffix: DEFAULT_CONTAINER_SUFFIX,
 
       // TODO: https://github.com/phetsims/tandem/issues/254
-      // @ts-ignore - this is filled in below
+      // @ts-expect-error - this is filled in below
       phetioDynamicElementName: undefined
     }, providedOptions );
 
@@ -180,7 +180,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
 
       // On state start, clear out the container and set to defer notifications.
-      // @ts-ignore
+      // @ts-expect-error
       phetioStateEngine.onBeforeStateSetEmitter.addListener( ( state, scopeTandem ) => {
 
         // Only clear if this PhetioDynamicElementContainer is in scope of the state to be set
@@ -197,7 +197,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
         }
       } );
 
-      // @ts-ignore
+      // @ts-expect-error
       phetioStateEngine.addSetStateHelper( ( state, stillToSetIDs ) => {
         let creationNotified = false;
 
@@ -228,7 +228,6 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
   private stateSetOnAllChildrenOfDynamicElement( dynamicElementID: string, stillToSetIDs: string[] ): boolean {
     for ( let i = 0; i < stillToSetIDs.length; i++ ) {
 
-      // @ts-ignore
       if ( phetio.PhetioIDUtils.isAncestor( dynamicElementID, stillToSetIDs[ i ] ) ) {
         return false;
       }
@@ -296,7 +295,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       assert && assert( containerParameterType !== null, 'containerParameterType must be provided in PhET-iO brand' );
 
       // Make sure the new group element matches the schema for elements.
-      // @ts-ignore
+      // @ts-expect-error
       validate( createdObject, containerParameterType.validator );
 
       assert && assert( createdObject.phetioType.extends( containerParameterType! ),
@@ -336,7 +335,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
   private createdEventListener( dynamicElement: T ): void {
     const additionalData = dynamicElement.phetioState ? {
 
-      // @ts-ignore
+      // @ts-expect-error
       state: this.phetioType.parameterTypes[ 0 ].toStateObject( dynamicElement )
     } : null;
     this.emitDataStreamEvent( dynamicElement, 'created', additionalData );

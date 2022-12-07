@@ -109,14 +109,14 @@ export default class StateSchema<T, StateType> {
             // Using fromStateObject to deserialize sub-component
             if ( schemaIOType.defaultDeserializationMethod === 'fromStateObject' ) {
 
-              // @ts-ignore, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
+              // @ts-expect-error, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
               coreObject[ stateKey ] = schema[ stateKey ].fromStateObject( stateObjectLevel[ stateKey ] );
             }
             else {
               assert && assert( schemaIOType.defaultDeserializationMethod === 'applyState', 'unexpected deserialization method' );
 
               // Using applyState to deserialize sub-component
-              // @ts-ignore, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
+              // @ts-expect-error, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
               schema[ stateKey ].applyState( coreObject[ stateKey ], stateObjectLevel[ stateKey ] );
             }
           }
@@ -136,16 +136,16 @@ export default class StateSchema<T, StateType> {
         if ( schema.hasOwnProperty( stateKey ) ) {
           if ( stateKey === '_private' ) {
 
-            // @ts-ignore
+            // @ts-expect-error
             stateObject._private = toStateObjectForSchemaLevel( schema._private );
           }
           else {
 
-            // @ts-ignore
+            // @ts-expect-error
             assert && assert( coreObject.hasOwnProperty( stateKey ),
               `cannot get state because coreObject does not have expected schema key: ${stateKey}` );
 
-            // @ts-ignore
+            // @ts-expect-error
             stateObject[ stateKey ] = schema[ stateKey ].toStateObject( coreObject[ stateKey ] );
           }
         }

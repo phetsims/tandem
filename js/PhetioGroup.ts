@@ -215,7 +215,6 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
    */
   public createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ): T {
 
-    // @ts-ignore
     const index = window.phetio.PhetioIDUtils.getGroupElementIndex( tandemName );
 
     // If the specified index overlapped with the next available index, bump it up so there is no collision on the
@@ -255,7 +254,6 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     assert && phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
       'dynamic elements should only be created by the state engine when setting state.' );
 
-    // @ts-ignore
     const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
 
     // Don't access phetioType in PhET brand
@@ -282,7 +280,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
 
         isValidValue: ( v: IntentionalAny ) => {
 
-          // @ts-ignore
+          // @ts-expect-error
           const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
           return v instanceof PhetioGroup;
         },
@@ -298,7 +296,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
          * @throws CouldNotYetDeserializeError - if it could not yet deserialize
          * (PhetioStateEngine)
          */
-        // @ts-ignore The group is a group, not just a PhetioDynamicElementContainer
+        // @ts-expect-error The group is a group, not just a PhetioDynamicElementContainer
         addChildElement( group: PhetioGroup<PhetioObject>, componentName: string, stateObject: ParameterStateType ): PhetioObject {
 
           // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
@@ -308,7 +306,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
 
           const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 
-          // @ts-ignore args is of type P, but we can't really communicate that here
+          // @ts-expect-error args is of type P, but we can't really communicate that here
           const groupElement = group.createIndexedElement( index, args, true );
 
           // Keep the groupElementIndex in sync so that the next index is set appropriately. This covers the case where
