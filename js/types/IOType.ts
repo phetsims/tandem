@@ -373,7 +373,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     const array = [];
 
     // @ts-ignore
-    let ioType: IOType<unknown, unknown> = this; // eslint-disable-line
+    let ioType: IOType<unknown, unknown> = this; // eslint-disable-line consistent-this, @typescript-eslint/no-this-alias
     while ( ioType ) {
       array.push( ioType );
       ioType = ioType.supertype!;
