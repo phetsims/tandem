@@ -14,8 +14,8 @@ import optionize from '../../../phet-core/js/optionize.js';
 import PhetioConstants from '../PhetioConstants.js';
 import TandemConstants, { PhetioObjectMetadata } from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
-import StateSchema, { CompositeStateObjectType } from './StateSchema.js';
-import PhetioObject from '../PhetioObject.js';
+import StateSchema, { CompositeSchema, CompositeStateObjectType } from './StateSchema.js';
+import type PhetioObject from '../PhetioObject.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
 
@@ -62,9 +62,9 @@ type MainOptions = {
 };
 
 type StateSchemaOption<T, StateType> = (
-  ( ioType: IOType<T, StateType> ) => StateSchema<T, StateType> ) |
+  ( ioType: IOType<T, StateType> ) => CompositeSchema ) |
   StateSchema<T, StateType> |
-  Record<string, IOType> |
+  CompositeSchema |
   null;
 
 type StateOptions<T, StateType> = {
@@ -134,7 +134,6 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 
   // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
   // see getAllStateSchema().
-  // TODO: https://github.com/phetsims/tandem/issues/263 Should null be allowed here?
   public readonly stateSchema: StateSchema<T, StateType>;
   public readonly isFunctionType: boolean;
 
@@ -231,10 +230,8 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     }, providedOptions );
 
     if ( assert && supertype ) {
-      Object.keys( options.metadataDefaults ).forEach( metadataDefaultKey => {
+      ( Object.keys( options.metadataDefaults ) as ( keyof PhetioObjectMetadata )[] ).forEach( metadataDefaultKey => {
         assert && supertype.getAllMetadataDefaults().hasOwnProperty( metadataDefaultKey ) &&
-
-        // @ts-expect-error
         assert( supertype.getAllMetadataDefaults()[ metadataDefaultKey ] !== options.metadataDefaults[ metadataDefaultKey ],
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
       } );
@@ -254,16 +251,14 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 
     this.defaultDeserializationMethod = options.defaultDeserializationMethod;
 
-    if ( options.stateSchema !== null && !( options.stateSchema instanceof StateSchema ) ) {
-      const compositeSchema = typeof options.stateSchema === 'function' ? options.stateSchema( this ) : options.stateSchema;
-
-      // @ts-expect-error
-      this.stateSchema = new StateSchema<T, StateType>( { compositeSchema: compositeSchema } );
+    if ( options.stateSchema === null || options.stateSchema instanceof StateSchema ) {
+      // @ts-expect-error https://github.com/phetsims/tandem/issues/263
+      this.stateSchema = options.stateSchema;
     }
     else {
+      const compositeSchema = typeof options.stateSchema === 'function' ? options.stateSchema( this ) : options.stateSchema;
 
-      // @ts-expect-error
-      this.stateSchema = options.stateSchema;
+      this.stateSchema = new StateSchema<T, StateType>( { compositeSchema: compositeSchema } );
     }
 
     // Assert that toStateObject method is provided for value StateSchemas. Do this with the following logic:
@@ -278,7 +273,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       let toStateObject;
 
       // Only do this non-standard toStateObject function if there is a stateSchema but no toStateObject provided
-      if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema.isComposite() ) {
+      if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
         toStateObject = this.stateSchema.defaultToStateObject( coreObject );
       }
       else {
@@ -311,12 +306,12 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
         // Validate that the provided stateObject is of the expected schema
         // NOTE: Cannot use this.validateStateObject because options adopts supertype.applyState, which is bounds to the
         // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
-        // @ts-expect-error
+        // @ts-expect-error we cannot type check against PhetioObject from this file
         assert && coreObject.phetioType.validateStateObject( stateObject );
       }
 
       // Only do this non-standard applyState function from stateSchema if there is a stateSchema but no applyState provided
-      if ( !applyStateSupplied && stateSchemaSupplied && this.stateSchema.isComposite() ) {
+      if ( !applyStateSupplied && stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
         this.stateSchema.defaultApplyState( coreObject, stateObject as CompositeStateObjectType );
       }
       else {
@@ -372,7 +367,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
   private getTypeHierarchy(): IOType<unknown, unknown>[] {
     const array = [];
 
-    // @ts-expect-error
+    // @ts-expect-error Still working out this stuff, https://github.com/phetsims/tandem/issues/263
     let ioType: IOType<unknown, unknown> = this; // eslint-disable-line consistent-this, @typescript-eslint/no-this-alias
     while ( ioType ) {
       array.push( ioType );

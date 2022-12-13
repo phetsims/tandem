@@ -60,8 +60,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
    * Dispose the underlying element.  Called by the PhetioStateEngine so the capsule element can be recreated with the
    * correct state.
    */
-  // @ts-expect-error
-  public disposeElement(): void {
+  public override disposeElement(): void {
     assert && assert( this.element, 'cannot dispose if element is not defined' );
     super.disposeElement( this.element! );
     this.element = null;

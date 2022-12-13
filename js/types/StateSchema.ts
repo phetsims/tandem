@@ -23,6 +23,7 @@ import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 export type CompositeSchema = Record<string, IOType> & {
   _private?: CompositeSchema;
 };
+
 type CompositeSchemaAPI = Record<string, string> & {
   _private?: Record<string, string>;
 };
@@ -136,16 +137,16 @@ export default class StateSchema<T, StateType> {
         if ( schema.hasOwnProperty( stateKey ) ) {
           if ( stateKey === '_private' ) {
 
-            // @ts-expect-error
+            // @ts-expect-error Still working on _private in https://github.com/phetsims/tandem/issues/282
             stateObject._private = toStateObjectForSchemaLevel( schema._private );
           }
           else {
 
-            // @ts-expect-error
+            // @ts-expect-error I guess we need to support schemas outside of composite here, or tell how to avoid that, https://github.com/phetsims/tandem/issues/261
             assert && assert( coreObject.hasOwnProperty( stateKey ),
               `cannot get state because coreObject does not have expected schema key: ${stateKey}` );
 
-            // @ts-expect-error
+            // @ts-expect-error https://github.com/phetsims/tandem/issues/261
             stateObject[ stateKey ] = schema[ stateKey ].toStateObject( coreObject[ stateKey ] );
           }
         }

@@ -203,7 +203,7 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
     assert && assert( Tandem.PHET_IO_ENABLED, 'should only get phet-io data in phet-io brand' );
 
     // null if there are no arguments. dataStream.js omits null values for data
-    let data = null;
+    let data: Record<string, object> | null = null;
     if ( this.parameters.length > 0 ) {
 
       // Enumerate named argsObject for the data stream.
@@ -211,9 +211,8 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
       for ( let i = 0; i < this.parameters.length; i++ ) {
         const element = this.parameters[ i ];
         if ( !element.phetioPrivate ) {
-
-          // @ts-expect-error
-          data[ element.name ] = element.phetioType.toStateObject( args[ i ] );
+          assert && assert( element.name, 'name required' );
+          data[ element.name! ] = element.phetioType!.toStateObject( args[ i ] );
         }
       }
     }

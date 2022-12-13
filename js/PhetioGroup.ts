@@ -280,7 +280,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
 
         isValidValue: ( v: IntentionalAny ) => {
 
-          // @ts-expect-error
+          // @ts-expect-error - handle built and unbuilt versions
           const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
           return v instanceof PhetioGroup;
         },

@@ -60,7 +60,7 @@ function MapIO<KType, KStateType, VType, VStateType>( keyType: IOType<KType, KSt
           return [ keyType.fromStateObject( tuple[ 0 ] ), valueType.fromStateObject( tuple[ 1 ] ) ];
         } );
 
-        // @ts-expect-error
+        // @ts-expect-error not sure how to demonstrate that the argument is readonly, since it is dynamically created
         return new Map( result );
       },
       documentation: 'IO Type for the built-in JS Map type, with the key and value types specified.',

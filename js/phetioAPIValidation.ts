@@ -265,7 +265,7 @@ class PhetioAPIValidation {
       // These attributes are different for archetype vs actual
       if ( key !== 'phetioDynamicElement' && key !== 'phetioArchetypePhetioID' && key !== 'phetioIsArchetype' ) {
 
-        // @ts-expect-error
+        // @ts-expect-error - not sure how to be typesafe in the API files
         if ( archetypeMetadata[ key ] !== actualMetadata[ key ] && phetioObject.tandem ) {
           this.assertAPIError( {
             phetioID: phetioObject.tandem.phetioID,
