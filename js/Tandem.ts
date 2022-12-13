@@ -79,18 +79,19 @@ class Tandem {
   public readonly supplied: boolean;
   private isDisposed = false;
 
-  public static ROOT: RootTandem;
-  public static ROOT_TEST: Tandem;
-  public static GENERAL_MODEL: Tandem;
-  public static GENERAL_VIEW: Tandem;
-  public static GENERAL_CONTROLLER: Tandem;
-  public static GLOBAL_MODEL: Tandem;
-  public static GLOBAL_VIEW: Tandem;
-  public static COLORS: Tandem;
-  public static OPTIONAL: Tandem;
-  public static OPT_OUT: Tandem;
-  public static REQUIRED: Tandem;
-  public static PREFERENCES: Tandem;
+  // Disabling lint rule because GroupTandem is a subtype
+  public static ROOT: RootTandem; // eslint-disable-line statics-should-be-readonly
+  public static ROOT_TEST: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static GENERAL_MODEL: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static GENERAL_VIEW: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static GENERAL_CONTROLLER: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static GLOBAL_MODEL: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static GLOBAL_VIEW: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static COLORS: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static OPTIONAL: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static OPT_OUT: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static REQUIRED: Tandem; // eslint-disable-line statics-should-be-readonly
+  public static PREFERENCES: Tandem; // eslint-disable-line statics-should-be-readonly
 
   public static readonly SCREEN_TANDEM_NAME_SUFFIX = 'Screen';
 
