@@ -211,7 +211,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
    * so that electron_0 corresponds to electronNode_0 and so on.
    * @param tandemName - the tandem name of the model element
    * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
-   *                                      `stateToArgsForConstructor` method
+   *                                      `stateObjectToCreateElementArguments` method
    */
   public createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ): T {
 
@@ -228,7 +228,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   /**
    * Creates the next group element.
    * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
-   *                                      `stateToArgsForConstructor` method
+   *                                      `stateObjectToCreateElementArguments` method
    */
   public createNextElement( ...argsForCreateFunction: P ): T {
     return this.createIndexedElement( this.groupElementIndex++, argsForCreateFunction );
@@ -302,7 +302,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
           // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
           // element in the state needs to be created first, so we will try again on the next iteration of the state
           // setting engine.
-          const args = parameterType.stateToArgsForConstructor( stateObject );
+          const args = parameterType.stateObjectToCreateElementArguments( stateObject );
 
           const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
 

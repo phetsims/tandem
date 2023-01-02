@@ -138,7 +138,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
           // should throw CouldNotYetDeserializeError if it can't be created yet. Likely that would be because another
           // element in the state needs to be created first, so we will try again on the next iteration of the state
           // setting engine.
-          const args = parameterType.stateToArgsForConstructor( stateObject );
+          const args = parameterType.stateObjectToCreateElementArguments( stateObject );
 
           // @ts-expect-error args is of type P, but we can't really communicate that here
           return capsule.create( args, true );

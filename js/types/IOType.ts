@@ -75,7 +75,7 @@ type StateOptions<T, StateType> = {
 
   // If it is serializable, then it is optionally deserializable via one of these methods
   fromStateObject?: ( s: StateType ) => T;
-  stateToArgsForConstructor?: ( s: StateType ) => unknown[];
+  stateObjectToCreateElementArguments?: ( s: StateType ) => unknown[];
   applyState?: ( t: T, state: StateType ) => void;
   defaultDeserializationMethod?: DeserializationType;
   addChildElement?: AddChildElement;
@@ -85,7 +85,7 @@ type StateOptions<T, StateType> = {
   toStateObject?: never;
   stateSchema?: never;
   fromStateObject?: never;
-  stateToArgsForConstructor?: never;
+  stateObjectToCreateElementArguments?: never;
   applyState?: never;
   defaultDeserializationMethod?: never;
   addChildElement?: never;
@@ -126,7 +126,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 
   public readonly toStateObject: ( t: T ) => StateType;
   public readonly fromStateObject: ( state: StateType ) => T;
-  public readonly stateToArgsForConstructor: ( s: StateType ) => unknown[]; // TODO: instead of unknown this is the second parameter type for PhetioDynamicElementContainer. How? https://github.com/phetsims/tandem/issues/261
+  public readonly stateObjectToCreateElementArguments: ( s: StateType ) => unknown[]; // TODO: instead of unknown this is the second parameter type for PhetioDynamicElementContainer. How? https://github.com/phetsims/tandem/issues/261
   public readonly applyState: ( object: T, state: StateType ) => void;
   public readonly addChildElement: AddChildElement;
   public readonly validator: Validator<T>;
@@ -197,7 +197,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       // to be implemented on IO Types whose core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
       // elements.
       // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
-      stateToArgsForConstructor: supertype && supertype.stateToArgsForConstructor,
+      stateObjectToCreateElementArguments: supertype && supertype.stateObjectToCreateElementArguments,
 
       // For Reference Type Deserialization:  Applies the state (see toStateObject)
       // value to the instance. When setting PhET-iO state, this function will be called on an instrumented instance to set the
@@ -295,7 +295,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       return toStateObject;
     };
     this.fromStateObject = options.fromStateObject;
-    this.stateToArgsForConstructor = options.stateToArgsForConstructor;
+    this.stateObjectToCreateElementArguments = options.stateObjectToCreateElementArguments;
 
     this.applyState = ( coreObject: T, stateObject: StateType ) => {
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
@@ -355,7 +355,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
         // The root IOType must supply all 4 state methods.
         assert && assert( typeof options.toStateObject === 'function', 'toStateObject must be defined' );
         assert && assert( typeof options.fromStateObject === 'function', 'fromStateObject must be defined' );
-        assert && assert( typeof options.stateToArgsForConstructor === 'function', 'stateToArgsForConstructor must be defined' );
+        assert && assert( typeof options.stateObjectToCreateElementArguments === 'function', 'stateObjectToCreateElementArguments must be defined' );
         assert && assert( typeof options.applyState === 'function', 'applyState must be defined' );
       }
     }
@@ -485,7 +485,7 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
   fromStateObject: stateObject => {
     throw new Error( 'ObjectIO.fromStateObject should not be called' );
   },
-  stateToArgsForConstructor: stateObject => [],
+  stateObjectToCreateElementArguments: stateObject => [],
   applyState: _.noop,
   metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS,
   dataDefaults: {
