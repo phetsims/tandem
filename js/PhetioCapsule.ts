@@ -43,7 +43,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
    */
   public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: PhetioCapsuleOptions ) {
 
-    options = optionize<PhetioCapsuleOptions, EmptySelfOptions>()( {
+    options = optionize<PhetioCapsuleOptions, EmptySelfOptions, PhetioDynamicElementContainerOptions>()( {
       tandem: Tandem.OPTIONAL,
 
       // The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
