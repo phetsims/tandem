@@ -49,7 +49,13 @@ export type IOTypeMethod = {
 
 type DeserializationType = 'fromStateObject' | 'applyState';
 
-type MainOptions = {
+type StateSchemaOption<T, StateType> = (
+  ( ioType: IOType<T, StateType> ) => CompositeSchema ) |
+  StateSchema<T, StateType> |
+  CompositeSchema |
+  null;
+
+type SelfOptions<T, StateType> = {
   supertype?: IOType | null;
   events?: string[];
   dataDefaults?: Record<string, unknown>;
@@ -59,16 +65,8 @@ type MainOptions = {
   methodOrder?: string[];
   parameterTypes?: IOType[];
   isFunctionType?: boolean;
-};
 
-type StateSchemaOption<T, StateType> = (
-  ( ioType: IOType<T, StateType> ) => CompositeSchema ) |
-  StateSchema<T, StateType> |
-  CompositeSchema |
-  null;
-
-type StateOptions<T, StateType> = {
-
+  // State Options
   // Should be required, but sometimes this is only in the parent IOType, like in DerivedPropertyIO
   stateSchema?: StateSchemaOption<T, StateType>;
   toStateObject?: ( t: T ) => StateType;
@@ -79,21 +77,7 @@ type StateOptions<T, StateType> = {
   applyState?: ( t: T, state: StateType ) => void;
   defaultDeserializationMethod?: DeserializationType;
   addChildElement?: AddChildElement;
-} | {
-
-  // Otherwise it cannot have any stateful parts
-  toStateObject?: never;
-  stateSchema?: never;
-  fromStateObject?: never;
-  stateObjectToCreateElementArguments?: never;
-  applyState?: never;
-  defaultDeserializationMethod?: never;
-  addChildElement?: never;
 };
-
-type SelfOptions<T, StateType> =
-  MainOptions &
-  StateOptions<T, StateType>;
 
 type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
 
