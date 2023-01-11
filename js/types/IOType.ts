@@ -56,26 +56,93 @@ type StateSchemaOption<T, StateType> = (
   null;
 
 type SelfOptions<T, StateType> = {
+
+  // IO Types form an object tree like a type hierarchy. If the supertype is specified, attributes such as
+  // toStateObject, fromStateObject, stateObjectToCreateElementArguments, applyState, addChildElement
+  // will be inherited from the supertype (unless overridden).  It is also used in features such as schema validation,
+  // data/metadata default calculations.
   supertype?: IOType | null;
+
+  // The list of events that can be emitted at this level (does not include events from supertypes).
   events?: string[];
+
+  // Key/value pairs indicating the defaults for the IO Type data, just for this level (do not specify parent defaults)
   dataDefaults?: Record<string, unknown>;
+
+  // Key/value pairs indicating the defaults for the IO Type metadata.
+  // If anything is provided here, then corresponding PhetioObjects that use this IOType should override
+  // PhetioObject.getMetadata() to add what keys they need for their specific type.  Cannot specify redundant values
+  // (that an ancestor already specified).
   metadataDefaults?: Partial<PhetioObjectMetadata>;
+
+  // Text that describes the IO Type, presented to the PhET-iO Client in Studio, supports HTML markup.
   documentation?: string;
+
+  // The public methods available for this IO Type. Each method is not just a function,
+  // but a collection of metadata about the method to be able to serialize parameters and return types and provide
+  // better documentation.
   methods?: Record<string, IOTypeMethod>;
+
+  // IO Types can specify the order that methods appear in the documentation by putting their names in this
+  // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
+  // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
   methodOrder?: string[];
+
+  // For parametric types, they must indicate the types of the parameters here. Empty array if non-parametric.
   parameterTypes?: IOType[];
+
+  // For internal phet-io use only. Functions cannot be sent from one iframe to another, so must be wrapped. See
+  // phetioCommandProcessor.wrapFunction
   isFunctionType?: boolean;
 
-  // State Options
-  // Should be required, but sometimes this is only in the parent IOType, like in DerivedPropertyIO
+  // ******** STATE ******** //
+
+  // The specification for how the PhET-iO state will look for instances of this type. null specifies that the object
+  // is not serialized. A composite StateSchema can supply a toStateObject and applyState serialization strategy. This
+  // default serialization strategy only applies to this level, and does not recurse to parents. If you need to add
+  // serialization from parent levels, this can be done by manually implementing a custom toStateObject. By default, it
+  // will assume that each composite child of this stateSchema deserializes via "fromStateObject", if instead it uses
+  // applyState, please specify that per IOType with defaultDeserializationMethod.
+  // For phetioState: true objects, this should be required, but may be specified in the parent IOType, like in DerivedPropertyIO
   stateSchema?: StateSchemaOption<T, StateType>;
+
+  // Serialize the core object. Most often this looks like an object literal that holds data about the PhetioObject
+  // instance. This is likely superfluous to just providing a stateSchema of composite key/IOType values, which will
+  // create a default toStateObject based on the schema.
   toStateObject?: ( t: T ) => StateType;
 
-  // If it is serializable, then it is optionally deserializable via one of these methods
+  // ******** DESERIALIZATION ******** //
+
+  // For Data Type Deserialization. Decodes the object from a state (see toStateObject) into an instance of the core type.
+  // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
   fromStateObject?: ( s: StateType ) => T;
+
+  // For Dynamic Element Deserialization: converts the state object to arguments
+  // for a `create` function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that
+  // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
+  // to be implemented on IO Types whose core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
+  // elements.
+  // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
   stateObjectToCreateElementArguments?: ( s: StateType ) => unknown[];
+
+  // For Reference Type Deserialization:  Applies the state (see toStateObject)
+  // value to the instance. When setting PhET-iO state, this function will be called on an instrumented instance to set the
+  // stateObject's value to it. StateSchema makes this method often superfluous. A composite stateSchema can be used
+  // to automatically formulate the applyState function. If using stateSchema for the applyState method, make sure that
+  // each compose IOType has the correct defaultDeserializationMethod. Most of the time, composite IOTypes use fromStateObject
+  // to deserialize each sub-component, but in some circumstances, you will want your child to deserialize by also using applyState.
+  // See options.defaultDeserializationMethod to configure this case.
+  // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
   applyState?: ( t: T, state: StateType ) => void;
+
+  // For use when this IOType is part of a composite stateSchema in another IOType.  When
+  // using serialization methods by supplying only stateSchema, then deserialization
+  // can take a variety of forms, and this will vary based on the IOType. In most cases deserialization of a component
+  // is done via fromStateObject. If not, specify this option so that the stateSchema will be able to know to call
+  // the appropriate deserialization method when deserializing something of this IOType.
   defaultDeserializationMethod?: DeserializationType;
+
+  // For dynamic element containers, see examples in IOTypes for PhetioDynamicElementContainer classes
   addChildElement?: AddChildElement;
 };
 
@@ -85,27 +152,13 @@ type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
 export default class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
   public readonly supertype?: IOType;
   public readonly documentation?: string;
-
-  // The public methods available for this IO Type. Each method is not just a function,
-  // but a collection of metadata about the method to be able to serialize parameters and return types and provide
-  // better documentation.
   public readonly methods?: Record<string, IOTypeMethod>;
 
-  // The list of events that can be emitted at this level (does not include events from supertypes).
   public readonly events: string[];
-
-  // Key/value pairs indicating the defaults for the IO Type metadata.
   public readonly metadataDefaults?: Partial<PhetioObjectMetadata>;
 
-  // Key/value pairs indicating the defaults for the IO Type data.
   public readonly dataDefaults?: Record<string, unknown>;
-
-  // IO Types can specify the order that methods appear in the documentation by putting their names in this
-  // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
-  // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
   public readonly methodOrder?: string[];
-
-  // For parametric types, they must indicate the types of the parameters here. Empty array if non-parametric
   public readonly parameterTypes?: IOType[];
 
   public readonly toStateObject: ( t: T ) => StateType;
@@ -115,9 +168,6 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
   public readonly addChildElement: AddChildElement;
   public readonly validator: Validator<T>;
   public readonly defaultDeserializationMethod: DeserializationType;
-
-  // The schema for how this IOType is serialized. Just for this level in the IOType hierarchy,
-  // see getAllStateSchema().
   public readonly stateSchema: StateSchema<T, StateType>;
   public readonly isFunctionType: boolean;
 
@@ -146,70 +196,24 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       supertype: IOType.ObjectIO,
       methods: {},
       events: [],
-
-      // If anything is provided here, then corresponding PhetioObjects that use this IOType should override
-      // PhetioObject.getMetadata() to add what keys they need for their specific type.  Cannot specify redundant values
-      // (that an ancestor already specified).
       metadataDefaults: {},
 
       //  Most likely this will remain PhET-iO internal, and shouldn't need to be used when creating IOTypes outside of tandem/.
       dataDefaults: {},
       methodOrder: [],
       parameterTypes: [],
-
-      // Documentation that appears in PhET-iO Studio, supports HTML markup.
       documentation: `IO Type for ${getCoreTypeName( typeName )}`,
-
-      // Functions cannot be sent from one iframe to another, so must be wrapped.  See phetioCommandProcessor.wrapFunction
       isFunctionType: false,
 
       /**** STATE ****/
 
-      // Serialize the core object. Most often this looks like an object literal that holds
-      // data about the PhetioObject instance. This is likely superfluous to just providing a stateSchema of composite
-      // key/IOType values, which will create a default toStateObject based on the schema.
       toStateObject: supertype && supertype.toStateObject,
-
-      // For Data Type Deserialization. Decodes the object from a state (see toStateObject)
-      // into an instance of the core type.
-      // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       fromStateObject: supertype && supertype.fromStateObject,
-
-      // For Dynamic Element Deserialization: converts the state object to arguments
-      // for a `create` function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that
-      // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
-      // to be implemented on IO Types whose core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
-      // elements.
-      // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       stateObjectToCreateElementArguments: supertype && supertype.stateObjectToCreateElementArguments,
-
-      // For Reference Type Deserialization:  Applies the state (see toStateObject)
-      // value to the instance. When setting PhET-iO state, this function will be called on an instrumented instance to set the
-      // stateObject's value to it. StateSchema makes this method often superfluous. A composite stateSchema can be used
-      // to automatically formulate the applyState function. If using stateSchema for the applyState method, make sure that
-      // each compose IOType has the correct defaultDeserializationMethod. Most of the time, composite IOTypes use fromStateObject
-      // to deserialize each sub-component, but in some circumstances, you will want your child to deserialize by also using applyState.
-      // See options.defaultDeserializationMethod to configure this case.
-      // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
       applyState: supertype && supertype.applyState,
 
-      // the specification for how the
-      // PhET-iO state will look for instances of this type. null specifies that the object is not serialized. A composite
-      // StateSchema can supply a toStateObject and applyState serialization strategy. This default serialization strategy
-      // only applies to this level, and does not recurse to parents. If you need to add serialization from parent levels,
-      // this can be done by manually implementing a custom toStateObject. By default, it will assume that each composite
-      // child of this stateSchema deserializes via "fromStateObject", if instead it uses applyState, please specify that
-      // per IOType with defaultDeserializationMethod.
       stateSchema: null,
-
-      // For use when this IOType is part of a composite stateSchema in another IOType.  When
-      // using serialization methods by supplying only stateSchema, then deserialization
-      // can take a variety of forms, and this will vary based on the IOType. In most cases deserialization of a component
-      // is done via fromStateObject. If not, specify this option so that the stateSchema will be able to know to call
-      // the appropriate deserialization method when deserializing something of this IOType.
       defaultDeserializationMethod: 'fromStateObject',
-
-      // For dynamic element containers, see examples in IOTypes for PhetioDynamicElementContainer classes
       addChildElement: supertype && supertype.addChildElement
     }, providedOptions );
 
