@@ -22,7 +22,10 @@ const LinkedElementIO = new IOType( 'LinkedElementIO', {
     assert && Tandem.VALIDATION && assert( linkedElement.element.isPhetioInstrumented(), 'Linked elements must be instrumented' );
     return { elementID: linkedElement.element.tandem.phetioID };
   },
-  fromStateObject: stateObject => ( {} ),
+
+  // Override the parent implementation as a no-op.  LinkedElement elementID appears in the state, but should not be set
+  // back into a running simulation.
+  applyState: _.noop,
   stateSchema: {
     elementID: StringIO
   }

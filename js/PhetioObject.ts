@@ -734,7 +734,7 @@ class LinkedElement extends PhetioObject {
 
     const options = optionize<LinkedElementOptions, EmptySelfOptions, PhetioObjectOptions>()( {
       phetioType: LinkedElementIO,
-      phetioState: false
+      phetioState: true
     }, providedOptions );
 
     // References cannot be changed by PhET-iO
