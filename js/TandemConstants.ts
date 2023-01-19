@@ -14,6 +14,8 @@ import tandemNamespace from './tandemNamespace.js';
 const OBJECT_IO_TYPE_NAME = 'ObjectIO';
 const EVENT_TYPE_MODEL = 'MODEL';
 
+export type PhetioID = string;
+
 export type PhetioElementData = {
   initialState: Record<string, unknown>;
 };
@@ -22,7 +24,11 @@ export type PhetioElement = {
   _metadata: PhetioObjectMetadata;
   _data?: PhetioElementData;
 };
+
+// In tree structure
 export type PhetioElements = {
+
+  // Each string is a component name of a PhetioID
   [ name: string ]: PhetioElements;
 } & PhetioElement;
 
@@ -68,7 +74,7 @@ export type PhetioAPI = {
 };
 
 // Like the old API schema, where keys are the full, dot-separated phetioID
-export type APIFlat = Record<string, PhetioElement>;
+export type APIFlat = Record<PhetioID, PhetioElement>;
 
 export type PhetioObjectMetadata = {
 
