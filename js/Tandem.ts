@@ -12,6 +12,7 @@ import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
 import PhetioObject from './PhetioObject.js';
+import { PhetioID } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // constants
@@ -73,7 +74,7 @@ class Tandem {
   // the last part of the tandem (after the last .), used e.g., in Joist for creating button
   // names dynamically based on screen names
   public readonly name: string;
-  public readonly phetioID: string;
+  public readonly phetioID: PhetioID;
   private readonly children: Record<string, Tandem> = {};
   public readonly required: boolean;
   public readonly supplied: boolean;
