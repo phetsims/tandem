@@ -42,8 +42,8 @@ export const DYNAMIC_ARCHETYPE_NAME = 'archetype';
 
 // used to keep track of missing tandems
 const missingTandems: {
-  required: Array<{ phetioID: string; stack: string }>;
-  optional: Array<{ phetioID: string; stack: string }>;
+  required: Array<{ phetioID: PhetioID; stack: string }>;
+  optional: Array<{ phetioID: PhetioID; stack: string }>;
 } = {
   required: [],
   optional: []
@@ -305,10 +305,10 @@ class Tandem {
    * For API validation, each PhetioObject has a corresponding concrete PhetioObject for comparison. Non-dynamic
    * PhetioObjects have the trivial case where its archetypal phetioID is the same as its phetioID.
    */
-  public getArchetypalPhetioID(): string {
+  public getArchetypalPhetioID(): PhetioID {
 
     // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
-    const result: string = this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), this.name ) : this.phetioID;
+    const result: PhetioID = this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), this.name ) : this.phetioID;
 
     // For https://github.com/phetsims/axon/issues/408, we need to access archetypes for Tandems from createTandemFromPhetioID
     if ( result.includes( '_' ) ) {
@@ -420,7 +420,7 @@ class Tandem {
   // a list of PhetioObjects ready to be sent out to listeners, but can't because Tandem hasn't been launched yet.
   public static readonly bufferedPhetioObjects: PhetioObject[] = [];
 
-  public createTandemFromPhetioID( phetioID: string ): Tandem {
+  public createTandemFromPhetioID( phetioID: PhetioID ): Tandem {
     return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( INTER_TERM_SEPARATOR ), {
       isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],-_]+$/.test( name )
     } );
