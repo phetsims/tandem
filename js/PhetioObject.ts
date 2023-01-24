@@ -23,7 +23,7 @@ import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
-import TandemConstants, { PhetioObjectMetadata } from './TandemConstants.js';
+import TandemConstants, { PhetioID, PhetioObjectMetadata } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
@@ -171,7 +171,7 @@ class PhetioObject extends Disposable {
   public phetioNotifiedObjectCreated!: boolean;
   private phetioMessageStack!: number[];
   public static readonly DEFAULT_OPTIONS = DEFAULTS;
-  public phetioID: string;
+  public phetioID: PhetioID;
 
   public constructor( options?: PhetioObjectOptions ) {
     super( options );
