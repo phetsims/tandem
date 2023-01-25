@@ -181,8 +181,12 @@ export default class StateSchema<T, StateType> {
 
       let valid = null;
       const checkLevel = ( schemaLevel: CompositeSchema, objectLevel: GeneralStateObject, keyList: string[], exclude: string | null ) => {
+        if ( !objectLevel ) {
+          valid = false;
+          assert && toAssert && assert( false, 'There was no stateObject, but there was a state schema saying there should be', schemaLevel );
+          return;
+        }
         Object.keys( schemaLevel ).filter( ( k: string ) => k !== exclude ).forEach( key => {
-
           const validKey = objectLevel.hasOwnProperty( key );
           if ( !validKey ) {
             valid = false;
