@@ -421,7 +421,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
       }
     }
 
-    if ( this.supertype && !( this.stateSchema && this.stateSchema.isComposite() ) ) {
+    if ( this.supertype ) {
       return valid && this.supertype.isStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
     }
 
@@ -482,7 +482,7 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
     }
     return DEFAULT_STATE;
   },
-  fromStateObject: stateObject => {
+  fromStateObject: () => {
     throw new Error( 'ObjectIO.fromStateObject should not be called' );
   },
   stateToArgsForConstructor: stateObject => [],
