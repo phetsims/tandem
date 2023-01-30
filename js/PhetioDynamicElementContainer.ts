@@ -180,7 +180,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       const phetioStateEngine = phet.phetio.phetioEngine.phetioStateEngine;
 
       // On state start, clear out the container and set to defer notifications.
-      phetioStateEngine.onBeforeStateSetEmitter.addListener( ( state: PhetioState, scopeTandem: Tandem ) => {
+      phetioStateEngine.clearDynamicElementsEmitter.addListener( ( state: PhetioState, scopeTandem: Tandem ) => {
 
         // Only clear if this PhetioDynamicElementContainer is in scope of the state to be set
         if ( this.tandem.hasAncestor( scopeTandem ) ) {
@@ -358,7 +358,9 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
     element.dispose();
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) && assert(
-      !phet.joist.sim.isSettingPhetioStateProperty.value,
+      // We do not want to be disposing dynamic elements when state setting EXCEPT when we are clearing all dynamic
+      // elements (which is ok and expected to do at the beginning of setting state).
+      !( phet.joist.sim.isSettingPhetioStateProperty.value && !phet.joist.sim.isClearingPhetioDynamicElementsProperty ),
       'should not dispose a dynamic element while setting phet-io state' );
 
     if ( this.notificationsDeferred ) {
