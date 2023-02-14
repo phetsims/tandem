@@ -28,6 +28,7 @@ import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
+import LinkableElement from './LinkableElement.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
@@ -138,8 +139,6 @@ export type PhetioObjectOptions = SelfOptions & ParentOptions;
 
 type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName' | 'phetioDynamicElementName'> ) | 'phetioType';
 export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
-
-export type LinkableElement = Pick<PhetioObject, 'phetioFeatured' | 'isPhetioInstrumented'>;
 
 class PhetioObject extends Disposable {
 
@@ -580,8 +579,7 @@ class PhetioObject extends Disposable {
    * association which is rendered in Studio as a "symbolic" link or hyperlink. Many common code UI elements use this
    * automatically. To keep client sites simple, this has a graceful opt-out mechanism which makes this function a
    * no-op if either this PhetioObject or the target PhetioObject is not instrumented.
-   * @param element - the target element. Must be instrumented for a LinkedElement to be created--
-   *                               - otherwise it gracefully opts out
+   * @param element - the target element. Must be instrumented for a LinkedElement to be created-- otherwise gracefully opts out
    * @param [options]
    */
   public addLinkedElement( element: LinkableElement, options?: LinkedElementOptions ): void {
