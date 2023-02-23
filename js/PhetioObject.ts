@@ -657,9 +657,7 @@ class PhetioObject extends Disposable {
       } );
     } );
 
-    if ( this.phetioObjectInitialized ) {
-      this.tandem.removePhetioObject( this );
-    }
+    this.tandem.removePhetioObject( this );
 
     // Dispose LinkedElements
     if ( this.linkedElements ) {
