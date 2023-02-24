@@ -657,6 +657,9 @@ class PhetioObject extends Disposable {
       } );
     } );
 
+    // Detach from listeners and dispose the corresponding tandem. This must happen in PhET-iO brand and PhET brand
+    // because in PhET brand, PhetioDynamicElementContainer dynamic elements would memory leak tandems (parent tandems
+    // would retain references to their children).
     this.tandem.removePhetioObject( this );
 
     // Dispose LinkedElements
