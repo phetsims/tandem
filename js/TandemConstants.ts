@@ -40,6 +40,8 @@ export type Method = {
 };
 
 export type PhetioObjectState = Record<string, IntentionalAny>;
+export type PhetioState = Record<PhetioID, PhetioObjectState>;
+export type FullPhetioState = Record<PhetioID, PhetioObjectState | 'DELETED'>;
 
 export type Methods = Record<string, Method>;
 
@@ -58,8 +60,6 @@ export type PhetioType = {
 export type PhetioTypes = Record<string, PhetioType>;
 
 export type PhetioOverrides = Record<string, Partial<PhetioObjectMetadata>>;
-
-export type PhetioState = Record<string, object>;
 
 // Like the generate API files
 export type PhetioAPI = {
