@@ -80,21 +80,6 @@ class Tandem {
   public readonly supplied: boolean;
   private isDisposed = false;
 
-  // Disabling lint rule because GroupTandem is a subtype
-  public static ROOT: RootTandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static ROOT_TEST: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static GENERAL_MODEL: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static GENERAL_VIEW: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static GENERAL_VIEW_AUDIO: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static GENERAL_CONTROLLER: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static GLOBAL_MODEL: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static GLOBAL_VIEW: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static COLORS: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static OPTIONAL: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static OPT_OUT: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static REQUIRED: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-  public static PREFERENCES: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
-
   public static readonly SCREEN_TANDEM_NAME_SUFFIX = 'Screen';
 
   /**
@@ -426,6 +411,124 @@ class Tandem {
       isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],-_]+$/.test( name )
     } );
   }
+
+  private static readonly RootTandem = class RootTandem extends Tandem {
+
+    /**
+     * RootTandems only accept specifically named children.
+     */
+    public override createTandem( name: string, options?: TandemOptions ): Tandem {
+      if ( Tandem.VALIDATION ) {
+        const allowedOnRoot = name === window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME ||
+                              name === REQUIRED_TANDEM_NAME ||
+                              name === OPTIONAL_TANDEM_NAME ||
+                              name === TEST_TANDEM_NAME ||
+                              name === window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME ||
+                              _.endsWith( name, Tandem.SCREEN_TANDEM_NAME_SUFFIX );
+        assert && assert( allowedOnRoot, `tandem name not allowed on root: "${name}"; perhaps try putting it under general or global` );
+      }
+
+      return super.createTandem( name, options );
+    }
+  };
+
+  /**
+   * The root tandem for a simulation
+   */
+  public static readonly ROOT = new Tandem.RootTandem( null, _.camelCase( packageJSON.name ) );
+
+  /**
+   * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
+   * place to put simulation specific globals, see `GLOBAL`
+   *
+   * @constant
+   * @type {Tandem}
+   */
+  private static readonly GENERAL = Tandem.ROOT.createTandem( window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
+
+  /**
+   * Used in unit tests
+   */
+  public static readonly ROOT_TEST = Tandem.ROOT.createTandem( TEST_TANDEM_NAME );
+
+  /**
+   * Tandem for model simulation elements that are general to all sims.
+   */
+  public static readonly GENERAL_MODEL = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
+
+  /**
+   * Tandem for view simulation elements that are general to all sims.
+   */
+  public static readonly GENERAL_VIEW = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
+
+  /**
+   * Tandem for audio-specific view simulation elements that are general to all sims.
+   */
+  public static readonly GENERAL_VIEW_AUDIO = Tandem.GENERAL_VIEW.createTandem( 'audio' );
+
+  /**
+   * Tandem for controller simulation elements that are general to all sims.
+   */
+  public static readonly GENERAL_CONTROLLER = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.CONTROLLER_COMPONENT_NAME );
+
+  /**
+   * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
+   * have simulation specific elements in them. Instrument items used by all sims under `Tandem.GENERAL`. Most
+   * likely simulations elements should not be directly under this, but instead either under the model or view sub
+   * tandems.
+   *
+   * @constant
+   * @type {Tandem}
+   */
+  private static readonly GLOBAL = Tandem.ROOT.createTandem( window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
+
+  /**
+   * Model simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
+   * tandem should only have simulation specific elements in them.
+   */
+  public static readonly GLOBAL_MODEL = Tandem.GLOBAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
+
+  /**
+   * View simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
+   * tandem should only have simulation specific elements in them.
+   */
+  public static readonly GLOBAL_VIEW = Tandem.GLOBAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
+
+  /**
+   * Colors used in the simulation.
+   */
+  public static readonly COLORS = Tandem.GLOBAL_VIEW.createTandem( window.phetio.PhetioIDUtils.COLORS_COMPONENT_NAME );
+
+  /**
+   * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
+   * passed in, then it will not be instrumented.
+   */
+  public static readonly OPTIONAL = Tandem.ROOT.createTandem( OPTIONAL_TANDEM_NAME, {
+    required: false,
+    supplied: false
+  } );
+
+  /**
+   * To be used exclusively to opt out of situations where a tandem is required, see https://github.com/phetsims/tandem/issues/97.
+   */
+  public static readonly OPT_OUT = Tandem.OPTIONAL;
+
+  /**
+   * Some common code (such as Checkbox or RadioButton) must always be instrumented.
+   */
+  public static readonly REQUIRED = Tandem.ROOT.createTandem( REQUIRED_TANDEM_NAME, {
+
+    // let phetioPrintMissingTandems bypass this
+    required: VALIDATION || PRINT_MISSING_TANDEMS,
+    supplied: false
+  } );
+
+  /**
+   * Use this as the parent tandem for Properties that are related to sim-specific preferences.
+   */
+  public static readonly PREFERENCES = Tandem.GLOBAL_MODEL.createTandem( 'preferences' );
+
+
 }
 
 Tandem.addLaunchListener( () => {
@@ -435,122 +538,6 @@ Tandem.addLaunchListener( () => {
   }
   assert && assert( Tandem.bufferedPhetioObjects.length === 0, 'bufferedPhetioObjects should be empty' );
 } );
-
-class RootTandem extends Tandem {
-
-  /**
-   * RootTandems only accept specifically named children.
-   */
-  public override createTandem( name: string, options?: TandemOptions ): Tandem {
-    if ( Tandem.VALIDATION ) {
-      const allowedOnRoot = name === window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME ||
-                            name === REQUIRED_TANDEM_NAME ||
-                            name === OPTIONAL_TANDEM_NAME ||
-                            name === TEST_TANDEM_NAME ||
-                            name === window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME ||
-                            _.endsWith( name, Tandem.SCREEN_TANDEM_NAME_SUFFIX );
-      assert && assert( allowedOnRoot, `tandem name not allowed on root: "${name}"; perhaps try putting it under general or global` );
-    }
-
-    return super.createTandem( name, options );
-  }
-}
-
-/**
- * The root tandem for a simulation
- */
-Tandem.ROOT = new RootTandem( null, _.camelCase( packageJSON.name ) );
-
-/**
- * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
- * place to put simulation specific globals, see `GLOBAL`
- *
- * @constant
- * @type {Tandem}
- */
-const GENERAL = Tandem.ROOT.createTandem( window.phetio.PhetioIDUtils.GENERAL_COMPONENT_NAME );
-
-/**
- * Used in unit tests
- */
-Tandem.ROOT_TEST = Tandem.ROOT.createTandem( TEST_TANDEM_NAME );
-
-/**
- * Tandem for model simulation elements that are general to all sims.
- */
-Tandem.GENERAL_MODEL = GENERAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
-
-/**
- * Tandem for view simulation elements that are general to all sims.
- */
-Tandem.GENERAL_VIEW = GENERAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
-
-/**
- * Tandem for audio-specific view simulation elements that are general to all sims.
- */
-Tandem.GENERAL_VIEW_AUDIO = Tandem.GENERAL_VIEW.createTandem( 'audio' );
-
-/**
- * Tandem for controller simulation elements that are general to all sims.
- */
-Tandem.GENERAL_CONTROLLER = GENERAL.createTandem( window.phetio.PhetioIDUtils.CONTROLLER_COMPONENT_NAME );
-
-/**
- * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
- * have simulation specific elements in them. Instrument items used by all sims under `Tandem.GENERAL`. Most
- * likely simulations elements should not be directly under this, but instead either under the model or view sub
- * tandems.
- *
- * @constant
- * @type {Tandem}
- */
-const GLOBAL = Tandem.ROOT.createTandem( window.phetio.PhetioIDUtils.GLOBAL_COMPONENT_NAME );
-
-/**
- * Model simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
- * tandem should only have simulation specific elements in them.
- */
-Tandem.GLOBAL_MODEL = GLOBAL.createTandem( window.phetio.PhetioIDUtils.MODEL_COMPONENT_NAME );
-
-/**
- * View simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
- * tandem should only have simulation specific elements in them.
- */
-Tandem.GLOBAL_VIEW = GLOBAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
-
-/**
- * Colors used in the simulation.
- */
-Tandem.COLORS = Tandem.GLOBAL_VIEW.createTandem( window.phetio.PhetioIDUtils.COLORS_COMPONENT_NAME );
-
-/**
- * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
- * passed in, then it will not be instrumented.
- */
-Tandem.OPTIONAL = Tandem.ROOT.createTandem( OPTIONAL_TANDEM_NAME, {
-  required: false,
-  supplied: false
-} );
-
-/**
- * To be used exclusively to opt out of situations where a tandem is required, see https://github.com/phetsims/tandem/issues/97.
- */
-Tandem.OPT_OUT = Tandem.OPTIONAL;
-
-/**
- * Some common code (such as Checkbox or RadioButton) must always be instrumented.
- */
-Tandem.REQUIRED = Tandem.ROOT.createTandem( REQUIRED_TANDEM_NAME, {
-
-  // let phetioPrintMissingTandems bypass this
-  required: VALIDATION || PRINT_MISSING_TANDEMS,
-  supplied: false
-} );
-
-/**
- * Use this as the parent tandem for Properties that are related to sim-specific preferences.
- */
-Tandem.PREFERENCES = Tandem.GLOBAL_MODEL.createTandem( 'preferences' );
 
 /**
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
