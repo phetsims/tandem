@@ -85,6 +85,7 @@ class Tandem {
   public static ROOT_TEST: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
   public static GENERAL_MODEL: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
   public static GENERAL_VIEW: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
+  public static GENERAL_VIEW_AUDIO: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
   public static GENERAL_CONTROLLER: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
   public static GLOBAL_MODEL: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
   public static GLOBAL_VIEW: Tandem; // eslint-disable-line uppercase-statics-should-be-readonly
@@ -483,6 +484,11 @@ Tandem.GENERAL_MODEL = GENERAL.createTandem( window.phetio.PhetioIDUtils.MODEL_C
  * Tandem for view simulation elements that are general to all sims.
  */
 Tandem.GENERAL_VIEW = GENERAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
+
+/**
+ * Tandem for audio-specific view simulation elements that are general to all sims.
+ */
+Tandem.GENERAL_VIEW_AUDIO = Tandem.GENERAL_VIEW.createTandem( 'audio' );
 
 /**
  * Tandem for controller simulation elements that are general to all sims.
