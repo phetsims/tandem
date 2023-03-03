@@ -462,11 +462,6 @@ class Tandem {
   public static readonly GENERAL_VIEW = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.VIEW_COMPONENT_NAME );
 
   /**
-   * Tandem for audio-specific view simulation elements that are general to all sims.
-   */
-  public static readonly GENERAL_VIEW_AUDIO = Tandem.GENERAL_VIEW.createTandem( 'audio' );
-
-  /**
    * Tandem for controller simulation elements that are general to all sims.
    */
   public static readonly GENERAL_CONTROLLER = Tandem.GENERAL.createTandem( window.phetio.PhetioIDUtils.CONTROLLER_COMPONENT_NAME );
