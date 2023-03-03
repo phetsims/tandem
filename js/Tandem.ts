@@ -32,7 +32,14 @@ const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMET
 
 const VALIDATION = PHET_IO_ENABLED && IS_VALIDATION_SPECIFIED && !PRINT_MISSING_TANDEMS;
 
-const UNALLOWED_TANDEM_NAMES = [ 'pickableProperty' ];
+const UNALLOWED_TANDEM_NAMES = [
+  'pickableProperty', // use inputEnabled instead
+
+  // in https://github.com/phetsims/phet-io/issues/1915 we decided to prefer the scenery listener types
+  // ('dragListener' etc). If you encounter this and feel like inputListener is preferable, let's discuss!
+  'inputListener',
+  'dragHandler' // prefer dragListener
+];
 
 const REQUIRED_TANDEM_NAME = 'requiredTandem';
 const OPTIONAL_TANDEM_NAME = 'optionalTandem';
