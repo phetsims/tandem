@@ -54,7 +54,7 @@ export type PhetioType = {
   metadataDefaults?: Partial<PhetioObjectMetadata>;
   dataDefaults?: Record<string, unknown>;
   methodOrder?: string[];
-  stateSchema?: PhetioObjectState;
+  stateSchema?: string | Record<string, string>;
   parameterTypes?: string[]; // each typeName
 };
 export type PhetioTypes = Record<string, PhetioType>;
