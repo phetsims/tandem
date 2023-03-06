@@ -701,6 +701,19 @@ class PhetioObject extends Disposable {
     return metadata;
   }
 
+  // Public facing documentation, no need to include metadata that may we don't want clients knowing about
+  public static readonly METADATA_DOCUMENTATION = 'Get metadata about the PhET-iO element. This includes the following keys:<ul>' +
+                                                  '<li><strong>phetioTypeName:</strong> The name of the PhET-iO Type\n</li>' +
+                                                  '<li><strong>phetioDocumentation:</strong> default - null. Useful notes about a PhET-iO element, shown in the PhET-iO Studio Wrapper</li>' +
+                                                  '<li><strong>phetioState:</strong> default - true. When true, includes the PhET-iO element in the PhET-iO state\n</li>' +
+                                                  '<li><strong>phetioReadOnly:</strong> default - false. When true, you can only get values from the PhET-iO element; no setting allowed.\n</li>' +
+                                                  '<li><strong>phetioEventType:</strong> default - MODEL. The category of event that this element emits to the PhET-iO Data Stream.\n</li>' +
+                                                  '<li><strong>phetioDynamicElement:</strong> default - false. If this element is a "dynamic element" that can be created and destroyed throughout the lifetime of the sim (as opposed to existing forever).\n</li>' +
+                                                  '<li><strong>phetioIsArchetype:</strong> default - false. If this element is an archetype for a dynamic element.\n</li>' +
+                                                  '<li><strong>phetioFeatured:</strong> default - false. If this is a featured PhET-iO element.\n</li>' +
+                                                  '<li><strong>phetioArchetypePhetioID:</strong> default - \'\'. If an applicable dynamic element, this is the phetioID of its archetype.\n</li></ul>';
+
+
   public static create( options?: PhetioObjectOptions ): PhetioObject {
     return new PhetioObject( options );
   }
