@@ -122,6 +122,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
     this.executedEmitter = new Emitter<T>( {
       parameters: options.parameters,
       tandem: options.tandem.createTandem( 'executedEmitter' ),
+      hasListenerOrderDependencies: options.hasListenerOrderDependencies,
       phetioState: options.phetioState,
       phetioReadOnly: options.phetioReadOnly,
       phetioHighFrequency: options.phetioHighFrequency,

@@ -52,6 +52,7 @@ const paramToName = ( param: Parameter ) => param.name!;
 type SelfOptions = {
   parameters?: Parameter[];
   phetioOuterType: ( t: IOType[] ) => IOType;
+  hasListenerOrderDependencies?: boolean;
 };
 
 // Use each subtype should provide its own phetioOuterType. That coupled with parameter IOTypes will result in the
@@ -67,6 +68,8 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
 
       // see PARAMETER_KEYS for a list of legal keys, their types, and documentation
       parameters: EMPTY_ARRAY,
+
+      hasListenerOrderDependencies: false,
 
       // phet-io - see PhetioObject.js for doc
       tandem: Tandem.OPTIONAL,
