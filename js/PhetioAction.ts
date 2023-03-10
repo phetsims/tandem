@@ -1,4 +1,4 @@
-// Copyright 2022, University of Colorado Boulder
+// Copyright 2022-2023, University of Colorado Boulder
 
 /**
  * An instrumented class that wraps a function that does "work" that needs to be interoperable with PhET-iO.
