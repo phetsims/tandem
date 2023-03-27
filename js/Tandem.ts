@@ -135,14 +135,6 @@ class Tandem {
   }
 
   /**
-   * Returns the regular expression which can be used to test each term. The term must consist only of alpha-numeric
-   * characters or tildes.
-   */
-  // protected getTermRegex(): RegExp {
-  //   return /^[a-zA-Z0-9[\],-]+$/;
-  // }
-
-  /**
    * If the provided tandem is not supplied, support the ?printMissingTandems query parameter for extra logging during
    * initial instrumentation.
    */
