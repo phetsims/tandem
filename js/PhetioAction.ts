@@ -78,7 +78,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
                 throw new Error( `Validation errors: ${errors.join( ', ' )}` );
               }
               else {
-                this.execute( values );
+                this.execute( ...values );
               }
             },
             documentation: 'Executes the function the PhetioAction is wrapping.',
