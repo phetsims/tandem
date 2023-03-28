@@ -12,7 +12,7 @@ import validate from '../../../axon/js/validate.js';
 import Validation, { Validator } from '../../../axon/js/Validation.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import PhetioConstants from '../PhetioConstants.js';
-import TandemConstants, { PhetioObjectMetadata } from '../TandemConstants.js';
+import TandemConstants, { IOTypeName, PhetioObjectMetadata } from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 import StateSchema, { CompositeSchema, CompositeStateObjectType } from './StateSchema.js';
 import type PhetioObject from '../PhetioObject.js';
@@ -25,7 +25,7 @@ const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 /**
  * Estimate the core type name from a given IO Type name.
  */
-const getCoreTypeName = ( ioTypeName: string ): string => {
+const getCoreTypeName = ( ioTypeName: IOTypeName ): string => {
   const index = ioTypeName.indexOf( PhetioConstants.IO_TYPE_SUFFIX );
   assert && assert( index >= 0, 'IO should be in the type name' );
   return ioTypeName.substring( 0, index );
@@ -183,7 +183,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
    *    Parameterized types should also include a `parameterTypes` field on the IOType.
    * @param providedOptions
    */
-  public constructor( public readonly typeName: string, providedOptions: IOTypeOptions<T, StateType> ) {
+  public constructor( public readonly typeName: IOTypeName, providedOptions: IOTypeOptions<T, StateType> ) {
 
     // For reference in the options
     const supertype = providedOptions.supertype || IOType.ObjectIO;
@@ -389,19 +389,18 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 
   /**
    * @param stateObject - the stateObject to validate against
-   * @param toAssert=false - whether or not to assert when invalid
-   * @param publicSchemaKeys=[]
-   * @param privateSchemaKeys=[]
+   * @param toAssert=false - whether to assert when invalid
+   * @param schemaKeysPresentInStateObject=[]
    * @returns if the stateObject is valid or not.
    */
-  public isStateObjectValid( stateObject: StateType, toAssert = false, publicSchemaKeys: string[] = [], privateSchemaKeys: string[] = [] ): boolean {
+  public isStateObjectValid( stateObject: StateType, toAssert = false, schemaKeysPresentInStateObject: string[] = [] ): boolean {
 
     // Set to false when invalid
     let valid = true;
 
     // make sure the stateObject has everything the schema requires and nothing more
     if ( this.stateSchema ) {
-      const validSoFar = this.stateSchema.checkStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
+      const validSoFar = this.stateSchema.checkStateObjectValid( stateObject, toAssert, schemaKeysPresentInStateObject );
 
       // null as a marker to keep checking up the hierarchy, otherwise we reached our based case because the stateSchema was a value, not a composite
       if ( validSoFar !== null ) {
@@ -410,27 +409,20 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     }
 
     if ( this.supertype ) {
-      return valid && this.supertype.isStateObjectValid( stateObject, toAssert, publicSchemaKeys, privateSchemaKeys );
+      return valid && this.supertype.isStateObjectValid( stateObject, toAssert, schemaKeysPresentInStateObject );
     }
 
     // When we reach the root, make sure there isn't anything in the stateObject that isn't described by a schema
     if ( !this.supertype && stateObject && typeof stateObject !== 'string' && !Array.isArray( stateObject ) ) {
 
-      const check = ( type: 'public' | 'private', key: string ) => {
-        const keys = type === 'public' ? publicSchemaKeys : privateSchemaKeys;
-        const keyValid = keys.includes( key );
+      // Visit the state
+      Object.keys( stateObject ).forEach( key => {
+        const keyValid = schemaKeysPresentInStateObject.includes( key );
         if ( !keyValid ) {
           valid = false;
         }
-        assert && toAssert && assert( keyValid, `stateObject provided a ${type} key that is not in the schema: ${key}` );
-      };
-
-      // Visit the public state
-      Object.keys( stateObject ).filter( key => key !== '_private' ).forEach( key => check( 'public', key ) );
-
-      // Visit the private state, if any
-      // @ts-expect-error stateObjects can take a variety of forms, they don't have to be a record, thus, it is challenging to be graceful to a `_private` key
-      stateObject._private && Object.keys( stateObject._private ).forEach( key => check( 'private', key ) );
+        assert && toAssert && assert( keyValid, `stateObject provided a key that is not in the schema: ${key}` );
+      } );
 
       return valid;
     }
@@ -444,7 +436,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     this.isStateObjectValid( stateObject, true );
   }
 
-  public toString(): string {
+  public toString(): IOTypeName {
     return this.typeName;
   }
 }
@@ -473,7 +465,7 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
   fromStateObject: () => {
     throw new Error( 'ObjectIO.fromStateObject should not be called' );
   },
-  stateObjectToCreateElementArguments: stateObject => [],
+  stateObjectToCreateElementArguments: () => [],
   applyState: _.noop,
   metadataDefaults: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS,
   dataDefaults: {

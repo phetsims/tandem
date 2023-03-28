@@ -12,33 +12,27 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import validate from '../../../axon/js/validate.js';
 import Validation, { Validator } from '../../../axon/js/Validation.js';
 import assertMutuallyExclusiveOptions from '../../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
+import { IOTypeName } from '../TandemConstants.js';
 
-export type CompositeSchema = Record<string, IOType> & {
-  _private?: CompositeSchema;
-};
+export type CompositeSchema = Record<string, IOType>;
 
-type CompositeSchemaAPI = Record<string, string> & {
-  _private?: Record<string, string>;
-};
+// As provided in the PhET-iO API json
+type CompositeSchemaAPI = Record<string, IOTypeName>;
 
-export type CompositeStateObjectType = Record<string, IntentionalAny> & {
-  _private?: Record<string, IntentionalAny>;
-};
+// The schema of the stateObject value
+export type CompositeStateObjectType = Record<string, IntentionalAny>;
 
 type StateSchemaOptions = {
   displayString?: string;
   validator?: Validator<IntentionalAny> | null;
   compositeSchema?: null | CompositeSchema;
 };
-
-type GeneralStateObject = Record<string, IntentionalAny>;
 
 export default class StateSchema<T, StateType> {
   private readonly displayString: string;
@@ -64,96 +58,56 @@ export default class StateSchema<T, StateType> {
     this.validator = options.validator;
 
     this.compositeSchema = options.compositeSchema;
-
-    assert && this.validateStateSchema( this.compositeSchema );
   }
 
+  public defaultApplyState( coreObject: T, stateObject: CompositeStateObjectType ): void {
 
-  /**
-   * Make sure that a composite state schema is of the correct form. Each value in the object should be an IOType
-   * Only useful if assert is called.
-   */
-  private validateStateSchema( stateSchema: CompositeSchema | null ): void {
-    if ( assert && this.isComposite() ) {
+    assert && assert( this.isComposite(), 'defaultApplyState from stateSchema only applies to composite stateSchemas' );
+    for ( const stateKey in this.compositeSchema ) {
+      if ( this.compositeSchema.hasOwnProperty( stateKey ) ) {
+        assert && assert( stateObject.hasOwnProperty( stateKey ), `stateObject does not have expected schema key: ${stateKey}` );
 
-      for ( const stateSchemaKey in stateSchema ) {
-        if ( stateSchema.hasOwnProperty( stateSchemaKey ) ) {
+        // The IOType for the key in the composite.
+        const schemaIOType = this.compositeSchema[ stateKey ];
 
+        const coreObjectAccessor = stateKey.startsWith( '_' ) ? stateKey.substring( 1 ) : stateKey;
 
-          if ( stateSchemaKey === '_private' ) {
+        // Using fromStateObject to deserialize sub-component
+        if ( schemaIOType.defaultDeserializationMethod === 'fromStateObject' ) {
 
-            // By putting the assignment in this statement, typescript knows the value as a CompositeSchema
-            const stateSchemaValue = stateSchema[ stateSchemaKey ];
-            assert && assert( stateSchemaValue, 'should not be undefined' );
-            this.validateStateSchema( stateSchemaValue! );
-          }
+          // @ts-expect-error, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
+          coreObject[ coreObjectAccessor ] = this.compositeSchema[ stateKey ].fromStateObject( stateObject[ stateKey ] );
+        }
+        else {
+          assert && assert( schemaIOType.defaultDeserializationMethod === 'applyState', 'unexpected deserialization method' );
+
+          // Using applyState to deserialize sub-component
+          // @ts-expect-error, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
+          this.compositeSchema[ stateKey ].applyState( coreObject[ coreObjectAccessor ], stateObject[ stateKey ] );
         }
       }
     }
   }
 
-  public defaultApplyState( coreObject: T, stateObject: CompositeStateObjectType ): void {
-
-    const applyStateForLevel = ( schema: CompositeSchema, stateObjectLevel: GeneralStateObject ) => {
-      assert && assert( this.isComposite(), 'defaultApplyState from stateSchema only applies to composite stateSchemas' );
-      for ( const stateKey in schema ) {
-        if ( schema.hasOwnProperty( stateKey ) ) {
-          if ( stateKey === '_private' ) {
-            applyStateForLevel( schema._private!, stateObjectLevel._private );
-          }
-          else {
-
-            // The IOType for the key in the composite.
-            const schemaIOType = schema[ stateKey ];
-            assert && assert( stateObjectLevel.hasOwnProperty( stateKey ), `stateObject does not have expected schema key: ${stateKey}` );
-
-            // Using fromStateObject to deserialize sub-component
-            if ( schemaIOType.defaultDeserializationMethod === 'fromStateObject' ) {
-
-              // @ts-expect-error, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
-              coreObject[ stateKey ] = schema[ stateKey ].fromStateObject( stateObjectLevel[ stateKey ] );
-            }
-            else {
-              assert && assert( schemaIOType.defaultDeserializationMethod === 'applyState', 'unexpected deserialization method' );
-
-              // Using applyState to deserialize sub-component
-              // @ts-expect-error, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
-              schema[ stateKey ].applyState( coreObject[ stateKey ], stateObjectLevel[ stateKey ] );
-            }
-          }
-        }
-      }
-    };
-    applyStateForLevel( this.compositeSchema!, stateObject );
-  }
-
   public defaultToStateObject( coreObject: T ): StateType {
     assert && assert( this.isComposite(), 'defaultToStateObject from stateSchema only applies to composite stateSchemas' );
 
-    const toStateObjectForSchemaLevel = ( schema: CompositeSchema ) => {
+    const stateObject = {};
+    for ( const stateKey in this.compositeSchema ) {
+      if ( this.compositeSchema.hasOwnProperty( stateKey ) ) {
 
-      const stateObject = {} as StateType;
-      for ( const stateKey in schema ) {
-        if ( schema.hasOwnProperty( stateKey ) ) {
-          if ( stateKey === '_private' ) {
+        // Trim the '_' if any
+        const coreObjectAccessor = stateKey.startsWith( '_' ) ? stateKey.substring( 1 ) : stateKey;
 
-            // @ts-expect-error Still working on _private in https://github.com/phetsims/tandem/issues/282
-            stateObject._private = toStateObjectForSchemaLevel( schema._private );
-          }
-          else {
+        // @ts-expect-error I guess we need to support schemas outside of composite here, or tell how to avoid that, https://github.com/phetsims/tandem/issues/261
+        assert && assert( coreObject.hasOwnProperty( coreObjectAccessor ),
+          `cannot get state because coreObject does not have expected schema key: ${coreObjectAccessor}` );
 
-            // @ts-expect-error I guess we need to support schemas outside of composite here, or tell how to avoid that, https://github.com/phetsims/tandem/issues/261
-            assert && assert( coreObject.hasOwnProperty( stateKey ),
-              `cannot get state because coreObject does not have expected schema key: ${stateKey}` );
-
-            // @ts-expect-error https://github.com/phetsims/tandem/issues/261
-            stateObject[ stateKey ] = schema[ stateKey ].toStateObject( coreObject[ stateKey ] );
-          }
-        }
+        // @ts-expect-error https://github.com/phetsims/tandem/issues/261
+        stateObject[ stateKey ] = this.compositeSchema[ stateKey ].toStateObject( coreObject[ coreObjectAccessor ] );
       }
-      return stateObject;
-    };
-    return toStateObjectForSchemaLevel( this.compositeSchema! );
+    }
+    return stateObject as StateType;
   }
 
   /**
@@ -163,50 +117,45 @@ export default class StateSchema<T, StateType> {
     return !!this.compositeSchema;
   }
 
-
   /**
    * Check if a given stateObject is as valid as can be determined by this StateSchema. Will return null if valid, but
    * needs more checking up and down the hierarchy.
    *
    * @param stateObject - the stateObject to validate against
    * @param toAssert - whether to assert when invalid
-   * @param publicSchemaKeys - to be populated with any public keys this StateSchema is responsible for
-   * @param privateSchemaKeys - to be populated with any private keys this StateSchema is responsible for
+   * @param schemaKeysPresentInStateObject - to be populated with any keys this StateSchema is responsible for.
    * @returns boolean if validity can be checked, null if valid, but next in the hierarchy is needed
    */
-  public checkStateObjectValid( stateObject: StateType, toAssert: boolean, publicSchemaKeys: string[], privateSchemaKeys: string[] ): boolean | null {
+  public checkStateObjectValid( stateObject: StateType, toAssert: boolean, schemaKeysPresentInStateObject: string[] ): boolean | null {
     if ( this.isComposite() ) {
       const compositeStateObject = stateObject as CompositeStateObjectType;
       const schema = this.compositeSchema!;
 
       let valid = null;
-      const checkLevel = ( schemaLevel: CompositeSchema, objectLevel: GeneralStateObject, keyList: string[], exclude: string | null ) => {
-        if ( !objectLevel ) {
+      if ( !compositeStateObject ) {
+        assert && toAssert && assert( false, 'There was no stateObject, but there was a state schema saying there should be', schema );
+        valid = false;
+        return valid;
+      }
+      Object.keys( schema ).forEach( key => {
+        if ( !compositeStateObject.hasOwnProperty( key ) ) {
+          assert && toAssert && assert( false, `${key} in state schema but not in the state object` );
           valid = false;
-          assert && toAssert && assert( false, 'There was no stateObject, but there was a state schema saying there should be', schemaLevel );
-          return;
         }
-        Object.keys( schemaLevel ).filter( ( k: string ) => k !== exclude ).forEach( key => {
-          const validKey = objectLevel.hasOwnProperty( key );
-          if ( !validKey ) {
+        else {
+          if ( !schema[ key ].isStateObjectValid( compositeStateObject[ key ], false ) ) {
+            assert && toAssert && assert( false, `stateObject is not valid for ${key}` );
             valid = false;
           }
-          assert && toAssert && assert( validKey, `${key} in state schema but not in the state object` );
-          schemaLevel[ key ].validateStateObject( objectLevel[ key ] );
-          keyList.push( key );
-        } );
-      };
-
-      checkLevel( schema, compositeStateObject, publicSchemaKeys, '_private' );
-      schema._private && checkLevel( schema._private, compositeStateObject._private!, privateSchemaKeys, null );
+        }
+        schemaKeysPresentInStateObject.push( key );
+      } );
       return valid;
     }
     else {
       assert && assert( this.validator, 'validator must be present if not composite' );
       const valueStateObject = stateObject;
-      if ( toAssert ) {
-        validate( valueStateObject, this.validator! );
-      }
+      assert && toAssert && assert( Validation.getValidationError( valueStateObject, this.validator! ) === null );
 
       return Validation.isValueValid( valueStateObject, this.validator! );
     }
@@ -218,18 +167,10 @@ export default class StateSchema<T, StateType> {
   public getRelatedTypes(): IOType[] {
     const relatedTypes: IOType[] = [];
 
-    // to support IOTypes from public and private state
-    const getRelatedStateTypeForLevel = ( stateSchema: CompositeSchema ) => {
-      Object.keys( stateSchema ).forEach( stateSchemaKey => {
-
-        // Support keywords in state like "private"
-        stateSchema[ stateSchemaKey ] instanceof IOType && relatedTypes.push( stateSchema[ stateSchemaKey ] );
-      } );
-    };
-
     if ( this.compositeSchema ) {
-      getRelatedStateTypeForLevel( this.compositeSchema );
-      this.compositeSchema._private && getRelatedStateTypeForLevel( this.compositeSchema._private );
+      Object.keys( this.compositeSchema ).forEach( stateSchemaKey => {
+        this.compositeSchema![ stateSchemaKey ] instanceof IOType && relatedTypes.push( this.compositeSchema![ stateSchemaKey ] );
+      } );
     }
     return relatedTypes;
   }
@@ -241,11 +182,7 @@ export default class StateSchema<T, StateType> {
    */
   public getStateSchemaAPI(): string | CompositeSchemaAPI {
     if ( this.isComposite() ) {
-      const stateSchemaAPI = _.mapValues( this.compositeSchema, value => value.typeName ) as CompositeSchemaAPI;
-      if ( this.compositeSchema!._private ) {
-        stateSchemaAPI._private = _.mapValues( this.compositeSchema!._private, value => value.typeName );
-      }
-      return stateSchemaAPI;
+      return _.mapValues( this.compositeSchema, value => value.typeName )!;
     }
     else {
       return this.displayString;

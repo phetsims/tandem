@@ -76,6 +76,8 @@ export type PhetioAPI = {
 // Like the old API schema, where keys are the full, dot-separated phetioID
 export type APIFlat = Record<PhetioID, PhetioElement>;
 
+export type IOTypeName = string;
+
 export type PhetioObjectMetadata = {
 
   // Used in PhetioObjectOptions
@@ -90,7 +92,7 @@ export type PhetioObjectMetadata = {
   phetioDesigned: boolean;
 
   // Specific to Metadata
-  phetioTypeName: string;
+  phetioTypeName: IOTypeName;
   phetioIsArchetype: boolean;
   phetioArchetypePhetioID?: string | null;
 
