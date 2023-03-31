@@ -76,6 +76,7 @@ const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementN
   // This option controls how PhET-iO wrappers can interface with this PhetioObject. Predominately this occurs via
   // public methods defined on this PhetioObject's phetioType, in which some method are not executable when this flag
   // is true. See `ObjectIO.methods` for further documentation, especially regarding `invocableForReadOnlyElements`.
+  // NOTE: PhetioObjects with {phetioState: true} AND {phetioReadOnly: true} are restored during via setState.
   phetioReadOnly: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioReadOnly,
 
   // Category of event type, can be overridden in phetioStartEvent options.  Cannot be supplied through TandemConstants because
