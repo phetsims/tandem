@@ -632,7 +632,7 @@ class PhetioObject extends Disposable {
    */
   public override dispose(): void {
     const descendants: PhetioObject[] = [];
-    if ( Tandem.PHET_IO_ENABLED && this.tandem.supplied ) {
+    if ( assert && Tandem.PHET_IO_ENABLED && this.tandem.supplied ) {
       const phetioEngine = phet.phetio.phetioEngine;
       this.tandem.iterateDescendants( tandem => {
         if ( phetioEngine.hasPhetioObject( tandem.phetioID ) ) {
@@ -647,16 +647,18 @@ class PhetioObject extends Disposable {
     // disposed PhetioObjects.
     //
     // The phetioEvent stack should resolve by the next frame, so that's when we check it.
-    assert && animationFrameTimer.runOnNextTick( () => {
+    if ( assert && Tandem.PHET_IO_ENABLED && this.tandem.supplied ) {
+      animationFrameTimer.runOnNextTick( () => {
 
-      // Uninstrumented PhetioObjects don't have a phetioMessageStack attribute.
-      assert && assert( !this.hasOwnProperty( 'phetioMessageStack' ) || this.phetioMessageStack.length === 0,
-        'phetioMessageStack should be clear' );
+        // Uninstrumented PhetioObjects don't have a phetioMessageStack attribute.
+        assert && assert( !this.hasOwnProperty( 'phetioMessageStack' ) || this.phetioMessageStack.length === 0,
+          'phetioMessageStack should be clear' );
 
-      descendants.forEach( descendant => {
-        assert && assert( descendant.isDisposed, `All descendants must be disposed by the next frame: ${descendant.tandem.phetioID}` );
+        descendants.forEach( descendant => {
+          assert && assert( descendant.isDisposed, `All descendants must be disposed by the next frame: ${descendant.tandem.phetioID}` );
+        } );
       } );
-    } );
+    }
 
     // Detach from listeners and dispose the corresponding tandem. This must happen in PhET-iO brand and PhET brand
     // because in PhET brand, PhetioDynamicElementContainer dynamic elements would memory leak tandems (parent tandems
