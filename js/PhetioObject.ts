@@ -27,7 +27,7 @@ import TandemConstants, { PhetioID, PhetioObjectMetadata } from './TandemConstan
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
+import Disposable from '../../axon/js/Disposable.js';
 import LinkableElement from './LinkableElement.js';
 
 // constants
@@ -135,8 +135,7 @@ type SelfOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 
   // sim.screen1.view.upperThermometerNode
   tandemNameSuffix?: string | string[] | null;
 };
-type ParentOptions = DisposableOptions;
-export type PhetioObjectOptions = SelfOptions & ParentOptions;
+export type PhetioObjectOptions = SelfOptions;
 
 type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName' | 'phetioDynamicElementName'> ) | 'phetioType';
 export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
@@ -174,7 +173,7 @@ class PhetioObject extends Disposable {
   public phetioID: PhetioID;
 
   public constructor( options?: PhetioObjectOptions ) {
-    super( options );
+    super();
 
     this.tandem = DEFAULTS.tandem;
     this.phetioID = this.tandem.phetioID;

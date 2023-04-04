@@ -57,11 +57,14 @@ QUnit.test( 'PhetioObject end without start', assert => {
   }
 } );
 
-QUnit.test( 'PhetioObject disposer', assert => {
+QUnit.test( 'PhetioObject is a Disposable', assert => {
   const object1 = new PhetioObject();
-  const object2 = new PhetioObject( {
-    disposer: object1
-  } );
+
+  assert.ok( !!object1.disposeEmitter, 'disposeEmitter needed' );
+
+  const object2 = new PhetioObject();
+
+  object1.disposeEmitter.addListener( () => object2.dispose() );
 
   assert.ok( !object1.isDisposed, '1 is not disposed' );
   assert.ok( !object2.isDisposed, '2 is not disposed' );
