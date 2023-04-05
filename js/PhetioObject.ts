@@ -628,25 +628,24 @@ class PhetioObject extends Disposable {
   /**
    * Remove this phetioObject from PhET-iO. After disposal, this object is no longer interoperable. Also release any
    * other references created during its lifetime.
+   *
+   * In order to support the structured data stream, PhetioObjects must end the messages in the correct
+   * sequence, without being interrupted by dispose() calls.  Therefore, we do not clear out any of the state
+   * related to the endEvent.  Note this means it is acceptable (and expected) for endEvent() to be called on
+   * disposed PhetioObjects.
    */
   public override dispose(): void {
-    const descendants: PhetioObject[] = [];
-    if ( assert && Tandem.PHET_IO_ENABLED && this.tandem.supplied ) {
-      const phetioEngine = phet.phetio.phetioEngine;
-      this.tandem.iterateDescendants( tandem => {
-        if ( phetioEngine.hasPhetioObject( tandem.phetioID ) ) {
-          descendants.push( phetioEngine.getPhetioObject( tandem.phetioID ) );
-        }
-      } );
-    }
 
-    // In order to support the structured data stream, PhetioObjects must end the messages in the correct
-    // sequence, without being interrupted by dispose() calls.  Therefore, we do not clear out any of the state
-    // related to the endEvent.  Note this means it is acceptable (and expected) for endEvent() to be called on
-    // disposed PhetioObjects.
-    //
     // The phetioEvent stack should resolve by the next frame, so that's when we check it.
     if ( assert && Tandem.PHET_IO_ENABLED && this.tandem.supplied ) {
+
+      const descendants: PhetioObject[] = [];
+      this.tandem.iterateDescendants( tandem => {
+        if ( phet.phetio.phetioEngine.hasPhetioObject( tandem.phetioID ) ) {
+          descendants.push( phet.phetio.phetioEngine.getPhetioObject( tandem.phetioID ) );
+        }
+      } );
+
       animationFrameTimer.runOnNextTick( () => {
 
         // Uninstrumented PhetioObjects don't have a phetioMessageStack attribute.
