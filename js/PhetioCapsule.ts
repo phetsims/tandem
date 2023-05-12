@@ -17,12 +17,12 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
-import PhetioDynamicElementContainer, { PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
+import PhetioDynamicElementContainer, { ClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import PhetioObject from './PhetioObject.js';
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 
 // constants
@@ -31,29 +31,39 @@ const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 // cache each parameterized IOType so that it is only created once.
 const cache = new Map<IOType, IOType>();
 
-export type PhetioCapsuleOptions = PhetioDynamicElementContainerOptions;
+type SelfOptions = {
+  isElementDisposable?: boolean;
+};
+
+export type PhetioCapsuleOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
 class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
+  private readonly isElementDisposable: boolean;
 
   /**
    * @param createElement - function that creates the encapsulated element
    * @param defaultArguments - arguments passed to createElement when creating the archetype
-   * @param [options]
+   * @param [providedOptions]
    */
-  public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), options?: PhetioCapsuleOptions ) {
+  public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioCapsuleOptions ) {
 
-    options = optionize<PhetioCapsuleOptions, EmptySelfOptions, PhetioDynamicElementContainerOptions>()( {
+    const options = optionize<PhetioCapsuleOptions, SelfOptions, PhetioDynamicElementContainerOptions>()( {
       tandem: Tandem.OPTIONAL,
 
       // The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
       // will consist of the capsule's tandem name with this suffix stripped off.
-      containerSuffix: DEFAULT_CONTAINER_SUFFIX
-    }, options );
+      containerSuffix: DEFAULT_CONTAINER_SUFFIX,
+
+      // Some elements like AboutDialog and PreferencesDialog persist for the lifetime of the sim, and once created
+      // are never disposed. This allows us to avoid extensive unnecessary work implementing dispose for these elements.
+      isElementDisposable: true
+    }, providedOptions );
 
     super( createElement, defaultArguments, options );
 
     this.element = null;
+    this.isElementDisposable = options.isElementDisposable;
   }
 
   /**
@@ -62,6 +72,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
    */
   public override disposeElement(): void {
     assert && assert( this.element, 'cannot dispose if element is not defined' );
+    assert && assert( this.isElementDisposable, 'cannot dispose if element is not disposable' );
     super.disposeElement( this.element! );
     this.element = null;
   }
@@ -81,10 +92,17 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
     return this.element!;
   }
 
-  public override clear(): void {
+  public override clear( providedOptions?: ClearOptions ): void {
 
-    if ( this.element ) {
-      this.disposeElement();
+    const options = optionize<ClearOptions>()( {
+      phetioState: null
+    }, providedOptions );
+
+    if ( this.element && this.isElementDisposable ) {
+      const appearsInState = options.phetioState && ( options.phetioState.hasOwnProperty( this.element.phetioID ) ?? false );
+      if ( !appearsInState ) {
+        this.disposeElement();
+      }
     }
   }
 

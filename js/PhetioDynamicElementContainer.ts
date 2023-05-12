@@ -30,6 +30,10 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import TEmitter from '../../axon/js/TEmitter.js';
 import StringIO from './types/StringIO.js';
 
+export type ClearOptions = {
+  phetioState?: PhetioState | null;
+};
+
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Container';
 
@@ -184,7 +188,9 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
 
         // Only clear if this PhetioDynamicElementContainer is in scope of the state to be set
         if ( this.tandem.hasAncestor( scopeTandem ) ) {
-          this.clear();
+          this.clear( {
+            phetioState: state
+          } );
           this.setNotificationsDeferred( true );
         }
       } );
@@ -371,7 +377,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
     }
   }
 
-  public abstract clear(): void;
+  public abstract clear( clearOptions?: ClearOptions ): void;
 
   /**
    * Flush a single element from the list of deferred disposals that have not yet notified about the disposal. This

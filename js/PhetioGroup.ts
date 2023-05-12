@@ -18,7 +18,7 @@ import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import PhetioDynamicElementContainer, { PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
+import PhetioDynamicElementContainer, { ClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -27,10 +27,9 @@ import IOType from './types/IOType.js';
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
 
-type ClearSelfOptions = {
+type PhetioGroupClearOptions = {
   resetIndex?: boolean;
-};
-type ClearOptions = ClearSelfOptions;
+} & ClearOptions;
 
 type SelfOptions = EmptySelfOptions;
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
@@ -184,8 +183,9 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   /**
    * Remove and dispose all registered group elements
    */
-  public override clear( providedOptions?: ClearOptions ): void {
-    const options = optionize<ClearOptions>()( {
+  public override clear( providedOptions?: PhetioGroupClearOptions ): void {
+    const options = optionize<PhetioGroupClearOptions>()( {
+      phetioState: null, // not supported in PhetioGroup at this time
 
       // whether the group's index is reset to 0 for the next element created
       resetIndex: true
