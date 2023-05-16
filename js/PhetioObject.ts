@@ -747,35 +747,19 @@ class LinkedElement extends PhetioObject {
 
     const options = optionize<LinkedElementOptions, EmptySelfOptions, PhetioObjectOptions>()( {
       phetioType: LinkedElementIO,
-      phetioState: true
+      phetioState: true,
+
+      // By default, LinkedElements are as featured as their coreElements are.
+      phetioFeatured: coreElement.phetioFeatured
     }, providedOptions );
 
     // References cannot be changed by PhET-iO
     assert && assert( !options.hasOwnProperty( 'phetioReadOnly' ), 'phetioReadOnly set by LinkedElement' );
     options.phetioReadOnly = true;
 
-    // By default, this linked element's baseline value is the overridden value of the coreElement. This allows
-    // the them to be in sync by default, but also allows the linked element to be overridden in studio.
-    assert && assert( !options.hasOwnProperty( 'phetioFeatured' ), 'phetioFeatured set by LinkedElement' );
-    options.phetioFeatured = coreElement.phetioFeatured;
-
     super( options );
 
     this.element = coreElement;
-  }
-
-  /**
-   * LinkedElements listen to their core elements for phetioFeatured, so to avoid a dependency on overrides metadata
-   * (when the core element's phetioFeatured is specified in the overrides file), ignore phetioFeatured for LinkedElements.
-   * @param object - used to get metadata keys, can be a PhetioObject, or an options object
-   *                          (see usage initializePhetioObject)
-   * @returns - metadata plucked from the passed in parameter
-   */
-  public override getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
-    const phetioObjectMetadata = super.getMetadata( object );
-
-    delete phetioObjectMetadata.phetioFeatured;
-    return phetioObjectMetadata;
   }
 }
 
