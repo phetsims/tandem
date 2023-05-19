@@ -64,6 +64,11 @@ QUnit.test( 'PhetioAction reentrant disposal', assert => {
     tandem: Tandem.ROOT_TEST.createTandem( 'phetioAction' )
   } );
 
+  // @ts-expect-error INTENTIONAL for testing
+  const v = phetioAction.getValidationErrors( 'hello' );
+  assert.ok( v.length === 1, 'should have one validation error' );
+  assert.ok( typeof v[ 0 ] === 'string', 'should have correct validation error' );
+
   phetioAction.executedEmitter.addListener( ( currentCount: number ) => {
     assert.ok( !actionDisposedItself(), 'should not be disposed until after emitting ' + currentCount );
     assert.ok( count === 3, 'count will always be last because all execute calls come before all emitting ' + currentCount );

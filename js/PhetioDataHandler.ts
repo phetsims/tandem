@@ -178,23 +178,13 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
   /**
    * Validate that provided args match the expected schema given via options.parameters.
    */
-  protected getValidationErrors( ...args: T ): Array<string> {
+  public getValidationErrors( ...args: T ): Array<string | null> {
     assert && assert( args.length === this.parameters.length,
       `Emitted unexpected number of args. Expected: ${this.parameters.length} and received ${args.length}`
     );
-    const errors = [];
-    for ( let i = 0; i < this.parameters.length; i++ ) {
-      const parameter = this.parameters[ i ];
-      let error = Validation.getValidationError( args[ i ], parameter, VALIDATE_OPTIONS_FALSE );
-      error !== null && errors.push( error );
-
-      // valueType overrides the phetioType validator so we don't use that one if there is a valueType
-      if ( parameter.phetioType && !parameter.valueType ) {
-        error = Validation.getValidationError( args[ i ], parameter.phetioType.validator, VALIDATE_OPTIONS_FALSE );
-        error !== null && errors.push( error );
-      }
-    }
-    return errors;
+    return this.parameters.map( ( parameter, index ) => {
+      return Validation.getValidationError( args[ index ], parameter, VALIDATE_OPTIONS_FALSE );
+    } );
   }
 
   /**

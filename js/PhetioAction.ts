@@ -23,6 +23,9 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Emitter from '../../axon/js/Emitter.js';
 import PhetioObject from './PhetioObject.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import ArrayIO from './types/ArrayIO.js';
+import NullableIO from './types/NullableIO.js';
+import StringIO from './types/StringIO.js';
 
 
 const EMPTY_ARRAY: Parameter[] = [];
@@ -72,17 +75,18 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
             returnType: VoidIO,
             parameterTypes: parameterTypes,
             implementation: function( this: PhetioAction<unknown[]>, ...values: unknown[] ) {
-              const errors = this.getValidationErrors( ...values );
-
-              if ( errors.length > 0 ) {
-                throw new Error( `Validation errors: ${errors.join( ', ' )}` );
-              }
-              else {
-                this.execute( ...values );
-              }
+              this.execute( ...values );
             },
             documentation: 'Executes the function the PhetioAction is wrapping.',
             invocableForReadOnlyElements: false
+          },
+          getValidationErrors: {
+            returnType: ArrayIO( NullableIO( StringIO ) ),
+            parameterTypes: parameterTypes,
+            implementation: function( this: Emitter<unknown[]>, ...values: unknown[] ) {
+              return this.getValidationErrors( ...values );
+            },
+            documentation: 'Checks to see if the proposed values are valid. Returns an array of length N where each element is an error (string) or null if the value is valid.'
           }
         }
       } ) );
