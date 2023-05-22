@@ -626,6 +626,13 @@ class PhetioObject extends Disposable {
   }
 
   /**
+   * Overrideable so that subclasses can return a different PhetioObject for studio autoselect
+   */
+  public getPhetioMouseHitTarget(): PhetioObject | null {
+    return this;
+  }
+
+  /**
    * Remove this phetioObject from PhET-iO. After disposal, this object is no longer interoperable. Also release any
    * other references created during its lifetime.
    *
