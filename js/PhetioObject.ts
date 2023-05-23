@@ -580,9 +580,9 @@ class PhetioObject extends Disposable {
    * automatically. To keep client sites simple, this has a graceful opt-out mechanism which makes this function a
    * no-op if either this PhetioObject or the target PhetioObject is not instrumented.
    * @param element - the target element. Must be instrumented for a LinkedElement to be created-- otherwise gracefully opts out
-   * @param [options]
+   * @param [providedOptions]
    */
-  public addLinkedElement( element: LinkableElement, options?: LinkedElementOptions ): void {
+  public addLinkedElement( element: LinkableElement, providedOptions?: LinkedElementOptions ): void {
     if ( !this.isPhetioInstrumented() ) {
 
       // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrument
@@ -594,6 +594,11 @@ class PhetioObject extends Disposable {
     // In some cases, UI components need to be wired up to a private (internal) Property which should neither be
     // instrumented nor linked.
     if ( PHET_IO_ENABLED && element.isPhetioInstrumented() ) {
+      const options = optionize<LinkedElementOptions, EmptySelfOptions>()( {
+
+        // The linkage is only featured if the parent and the element are both also featured
+        phetioFeatured: this.phetioFeatured && element.phetioFeatured
+      }, providedOptions );
       assert && assert( Array.isArray( this.linkedElements ), 'linkedElements should be an array' );
       this.linkedElements!.push( new LinkedElement( element, options ) );
     }
