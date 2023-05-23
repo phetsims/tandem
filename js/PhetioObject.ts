@@ -629,7 +629,17 @@ class PhetioObject extends Disposable {
    * Overrideable so that subclasses can return a different PhetioObject for studio autoselect
    */
   public getPhetioMouseHitTarget(): PhetioObject | null {
-    return this;
+    const featured = this.isPhetioInstrumented() && this.phetioFeatured;
+
+    // We do not have a target if it is unfeatured, and we are only displaying featured elements.
+    // To prevent a circular dependency. We need to have a Property (which is a PhetioObject) in order to use it.
+    // This should remain a hard failure if we have not loaded this display Property by the time we want a mouse-hit target.
+    if ( phet.tandem.phetioElementsDisplayProperty.value === 'featured' && !featured ) {
+      return null;
+    }
+
+    // If we aren't an instrumented Node, then we aren't done with the search!
+    return this.isPhetioInstrumented() ? this : null;
   }
 
   /**
