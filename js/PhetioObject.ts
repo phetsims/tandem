@@ -195,8 +195,8 @@ class PhetioObject extends Disposable {
     providedOptions.tandem && Tandem.onMissingTandem( providedOptions.tandem );
 
     // Make sure that required tandems are supplied
-    if ( Tandem.VALIDATION && providedOptions.tandem && providedOptions.tandem.required ) {
-      assert && assert( providedOptions.tandem.supplied, 'required tandems must be supplied' );
+    if ( assert && Tandem.VALIDATION && providedOptions.tandem && providedOptions.tandem.required ) {
+      assert( providedOptions.tandem.supplied, 'required tandems must be supplied' );
     }
 
     // The presence of `tandem` indicates if this PhetioObject can be initialized. If not yet initialized, perhaps
