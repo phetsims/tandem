@@ -262,7 +262,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 
       // Only do this non-standard toStateObject function if there is a stateSchema but no toStateObject provided
       if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
-        toStateObject = this.stateSchema.defaultToStateObject( coreObject );
+        toStateObject = this.defaultToStateObject( coreObject );
       }
       else {
         toStateObject = options.toStateObject( coreObject );
@@ -300,7 +300,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 
       // Only do this non-standard applyState function from stateSchema if there is a stateSchema but no applyState provided
       if ( !applyStateSupplied && stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
-        this.stateSchema.defaultApplyState( coreObject, stateObject as CompositeStateObjectType );
+        this.defaultApplyState( coreObject, stateObject as CompositeStateObjectType );
       }
       else {
         options.applyState( coreObject, stateObject );
@@ -347,6 +347,25 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
         assert && assert( typeof options.applyState === 'function', 'applyState must be defined' );
       }
     }
+  }
+
+  // Include state from all composite state schemas up and down the type hierarchy (children overriding parents).
+  private defaultToStateObject( coreObject: T ): StateType {
+
+    let superStateObject: Partial<StateType> = {};
+    if ( this.supertype && this.supertype.stateSchema && this.supertype.stateSchema.isComposite() ) {
+      superStateObject = this.supertype.defaultToStateObject( coreObject );
+    }
+    return _.merge( superStateObject, this.stateSchema.defaultToStateObject( coreObject ) );
+  }
+
+  // Include state from all composite state schemas up and down the type hierarchy (children overriding parents).
+  private defaultApplyState( coreObject: T, stateObject: CompositeStateObjectType ): void {
+
+    if ( this.supertype && this.supertype.stateSchema && this.supertype.stateSchema.isComposite() ) {
+      this.supertype.defaultApplyState( coreObject, stateObject );
+    }
+    this.stateSchema.defaultApplyState( coreObject, stateObject );
   }
 
   /**
