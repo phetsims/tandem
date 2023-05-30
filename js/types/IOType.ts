@@ -295,7 +295,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
         // NOTE: Cannot use this.validateStateObject because options adopts supertype.applyState, which is bounds to the
         // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
         // @ts-expect-error we cannot type check against PhetioObject from this file
-        assert && coreObject.phetioType.validateStateObject( stateObject );
+        assert && coreObject.phetioType && coreObject.phetioType.validateStateObject( stateObject );
       }
 
       // Only do this non-standard applyState function from stateSchema if there is a stateSchema but no applyState provided
