@@ -13,12 +13,13 @@ import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StringIO from './StringIO.js';
+import { PhetioID } from '../TandemConstants.js';
 
 // {Map.<cacheKey:string|*, IOType>} - Cache each parameterized ReferenceIO so that it is only created once
 const cache = new Map<IOType, IOType>();
 
 export type ReferenceIOState = {
-  phetioID: string;
+  phetioID: PhetioID;
 };
 
 const ReferenceIO = ( parameterType: IOType ): IOType => {

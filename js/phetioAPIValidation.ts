@@ -35,7 +35,7 @@ import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import PhetioObject, { LinkedElement } from './PhetioObject.js';
-import { PhetioObjectMetadata } from './TandemConstants.js';
+import { PhetioID, PhetioObjectMetadata } from './TandemConstants.js';
 
 // constants
 // The API-tracked and validated metadata keys
@@ -52,7 +52,7 @@ const KEYS_TO_CHECK = [
 // Feel free to add any other JSONifyable keys to this to make the error more clear! All mismatches are printed
 // at once for clarity, see PhetioEngine.
 type APIMismatch = {
-  phetioID: string;
+  phetioID: PhetioID;
   ruleInViolation: string; // one of the numbered list in the header doc.
   message?: string; // specific problem
   source?: string;
