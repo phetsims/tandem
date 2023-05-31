@@ -45,7 +45,7 @@ const REQUIRED_TANDEM_NAME = 'requiredTandem';
 const OPTIONAL_TANDEM_NAME = 'optionalTandem';
 const TEST_TANDEM_NAME = 'test';
 const INTER_TERM_SEPARATOR = phetio.PhetioIDUtils.INTER_TERM_SEPARATOR;
-export const DYNAMIC_ARCHETYPE_NAME = 'archetype';
+export const DYNAMIC_ARCHETYPE_NAME = phetio.PhetioIDUtils.ARCHETYPE;
 
 // used to keep track of missing tandems
 const missingTandems: {

@@ -11,7 +11,7 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 ( function() {
-  
+
 
   // define the phetio global
   window.phetio = window.phetio || {};
@@ -50,7 +50,8 @@
     append: function( phetioID, ...componentNames ) {
       componentNames.forEach( componentName => {
         assert && assert( componentName.indexOf( SEPARATOR ) === -1, `separator appears in componentName: ${componentName}` );
-        phetioID += SEPARATOR + componentName;
+        const separator = phetioID === '' ? '' : SEPARATOR;
+        phetioID += separator + componentName;
       } );
       return phetioID;
     },
@@ -255,6 +256,14 @@
      * @constant
      * @public
      */
-    COLORS_COMPONENT_NAME: COLORS_COMPONENT_NAME
+    COLORS_COMPONENT_NAME: COLORS_COMPONENT_NAME,
+
+    /**
+     * The component name for a dynamic element archetype
+     * @type {string}
+     * @constant
+     * @public
+     */
+    ARCHETYPE: 'archetype'
   };
 } )();
