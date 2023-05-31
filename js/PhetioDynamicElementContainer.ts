@@ -29,6 +29,7 @@ import { PhetioObjectMetadata, PhetioState } from './TandemConstants.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import TEmitter from '../../axon/js/TEmitter.js';
 import StringIO from './types/StringIO.js';
+import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 
 export type ClearOptions = {
   phetioState?: PhetioState | null;
@@ -366,7 +367,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) && assert(
       // We do not want to be disposing dynamic elements when state setting EXCEPT when we are clearing all dynamic
       // elements (which is ok and expected to do at the beginning of setting state).
-      !( phet.joist.sim.isSettingPhetioStateProperty.value && !phet.joist.sim.isClearingPhetioDynamicElementsProperty ),
+      !( isSettingPhetioStateProperty.value && !phet.joist.sim.isClearingPhetioDynamicElementsProperty ),
       'should not dispose a dynamic element while setting phet-io state' );
 
     if ( this.notificationsDeferred ) {

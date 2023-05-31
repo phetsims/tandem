@@ -24,6 +24,7 @@ import IOType from './types/IOType.js';
 import PhetioObject from './PhetioObject.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
@@ -116,7 +117,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
     assert && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioCapsules? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim.' ) &&
-    phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
+    isSettingPhetioStateProperty.value && assert( fromStateSetting,
       'dynamic elements should only be created by the state engine when setting state.' );
 
     // create with default state and substructure, details will need to be set by setter methods.

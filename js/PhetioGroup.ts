@@ -23,6 +23,7 @@ import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
+import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
@@ -251,7 +252,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
-    assert && phet.joist.sim.isSettingPhetioStateProperty.value && assert( fromStateSetting,
+    assert && isSettingPhetioStateProperty.value && assert( fromStateSetting,
       'dynamic elements should only be created by the state engine when setting state.' );
 
     const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
