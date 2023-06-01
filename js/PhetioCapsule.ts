@@ -33,6 +33,9 @@ const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
 const cache = new Map<IOType, IOType>();
 
 type SelfOptions = {
+
+  // Some elements like AboutDialog and PreferencesDialog persist for the lifetime of the sim, and once created
+  // are never disposed. This allows us to avoid extensive unnecessary work implementing dispose for these elements.
   isElementDisposable?: boolean;
 };
 
@@ -56,8 +59,6 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
       // will consist of the capsule's tandem name with this suffix stripped off.
       containerSuffix: DEFAULT_CONTAINER_SUFFIX,
 
-      // Some elements like AboutDialog and PreferencesDialog persist for the lifetime of the sim, and once created
-      // are never disposed. This allows us to avoid extensive unnecessary work implementing dispose for these elements.
       isElementDisposable: true
     }, providedOptions );
 
