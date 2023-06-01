@@ -646,7 +646,7 @@ class PhetioObject extends Disposable {
       return 'phetioNotSelectable';
     }
 
-    // If we aren't an instrumented Node, then we aren't done with the search!
+    // If we aren't an instrumented Node, then we have found a hit but aren't done finding our target.
     return this.isPhetioInstrumented() ? this : 'phetioNotSelectable';
   }
 
