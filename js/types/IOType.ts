@@ -353,19 +353,28 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
   private defaultToStateObject( coreObject: T ): StateType {
 
     let superStateObject: Partial<StateType> = {};
-    if ( this.supertype && this.supertype.stateSchema && this.supertype.stateSchema.isComposite() ) {
+    if ( this.supertype ) {
       superStateObject = this.supertype.defaultToStateObject( coreObject );
     }
-    return _.merge( superStateObject, this.stateSchema.defaultToStateObject( coreObject ) );
+
+    if ( this.stateSchema && this.stateSchema.isComposite() ) {
+      return _.merge( superStateObject, this.stateSchema.defaultToStateObject( coreObject ) );
+    }
+    else {
+      return superStateObject as StateType;
+    }
   }
 
   // Include state from all composite state schemas up and down the type hierarchy (children overriding parents).
   private defaultApplyState( coreObject: T, stateObject: CompositeStateObjectType ): void {
 
-    if ( this.supertype && this.supertype.stateSchema && this.supertype.stateSchema.isComposite() ) {
+    if ( this.supertype ) {
       this.supertype.defaultApplyState( coreObject, stateObject );
     }
-    this.stateSchema.defaultApplyState( coreObject, stateObject );
+
+    if ( this.stateSchema && this.stateSchema.isComposite() ) {
+      this.stateSchema.defaultApplyState( coreObject, stateObject );
+    }
   }
 
   /**
