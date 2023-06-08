@@ -494,7 +494,15 @@ class Tandem {
   public static readonly COLORS = Tandem.GLOBAL_VIEW.createTandem( window.phetio.PhetioIDUtils.COLORS_COMPONENT_NAME );
 
   /**
-   * Used to indicate a common code component that supports tandem, but doesn't not require it.  If a tandem is not
+   * Get the Tandem location for custom model strings. Provide the camelCased repo name for where the string should be
+   * organized. This will default to the sim's name.
+   */
+  public static getStringsTandem( moduleName: string = Tandem.ROOT.name ): Tandem {
+    return Tandem.GENERAL_MODEL.createTandem( 'strings' ).createTandem( moduleName ).createTandem( 'derivedStrings' );
+  }
+
+  /**
+   * Used to indicate a common code component that supports tandem, but doesn't require it.  If a tandem is not
    * passed in, then it will not be instrumented.
    */
   public static readonly OPTIONAL = Tandem.ROOT.createTandem( OPTIONAL_TANDEM_NAME, {
