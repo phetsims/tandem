@@ -494,11 +494,19 @@ class Tandem {
   public static readonly COLORS = Tandem.GLOBAL_VIEW.createTandem( window.phetio.PhetioIDUtils.COLORS_COMPONENT_NAME );
 
   /**
-   * Get the Tandem location for custom model strings. Provide the camelCased repo name for where the string should be
-   * organized. This will default to the sim's name.
+   * Get the Tandem location for model strings. Provide the camelCased repo name for where the string should be
+   * organized. This will default to the sim's name. See https://github.com/phetsims/tandem/issues/298
    */
   public static getStringsTandem( moduleName: string = Tandem.ROOT.name ): Tandem {
-    return Tandem.GENERAL_MODEL.createTandem( 'strings' ).createTandem( moduleName ).createTandem( 'derivedStrings' );
+    return Tandem.GENERAL_MODEL.createTandem( 'strings' ).createTandem( moduleName );
+  }
+
+  /**
+   * Get the Tandem location for derived model strings. Provide the camelCased repo name for where the string should be
+   * organized. This will default to the sim's name. See https://github.com/phetsims/tandem/issues/298
+   */
+  public static getDerivedStringsTandem( moduleName: string = Tandem.ROOT.name ): Tandem {
+    return Tandem.getStringsTandem( moduleName ).createTandem( 'derivedStrings' );
   }
 
   /**
