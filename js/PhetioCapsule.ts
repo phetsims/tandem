@@ -36,14 +36,17 @@ type SelfOptions = {
 
   // Some elements like AboutDialog and PreferencesDialog persist for the lifetime of the sim, and once created
   // are never disposed. This allows us to avoid extensive unnecessary work implementing dispose for these elements.
-  isElementDisposable?: boolean;
+  // If true, dispose the element when cleared. If set to false, clear() will basically be a no-op, which can be
+  // useful if you want to support lazy creation, but if this is not a true "dynamic element". This will also cause an
+  // assertion if ever trying to call disposeElement on this.
+  disposeOnClear?: boolean;
 };
 
 export type PhetioCapsuleOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
 class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
-  private readonly isElementDisposable: boolean;
+  private readonly disposeOnClear: boolean;
 
   /**
    * @param createElement - function that creates the encapsulated element
@@ -58,14 +61,13 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
       // The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
       // will consist of the capsule's tandem name with this suffix stripped off.
       containerSuffix: DEFAULT_CONTAINER_SUFFIX,
-
-      isElementDisposable: true
+      disposeOnClear: true
     }, providedOptions );
 
     super( createElement, defaultArguments, options );
 
     this.element = null;
-    this.isElementDisposable = options.isElementDisposable;
+    this.disposeOnClear = options.disposeOnClear;
   }
 
   /**
@@ -74,7 +76,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
    */
   public override disposeElement(): void {
     assert && assert( this.element, 'cannot dispose if element is not defined' );
-    assert && assert( this.isElementDisposable, 'cannot dispose if element is not disposable' );
+    assert && assert( this.disposeOnClear, 'cannot dispose if element is not disposable' );
     super.disposeElement( this.element! );
     this.element = null;
   }
@@ -94,13 +96,18 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
     return this.element!;
   }
 
+  /**
+   * PhetioCapsule will dispose its element, clearing things up and getting ready for setState, unless
+   * this.disposeOnClear opts out of this behavior, in which case the element should fully support mutating itself
+   * during state setting.
+   */
   public override clear( providedOptions?: ClearOptions ): void {
 
     const options = optionize<ClearOptions>()( {
       phetioState: null
     }, providedOptions );
 
-    if ( this.element && this.isElementDisposable ) {
+    if ( this.element && this.disposeOnClear ) {
       const appearsInState = options.phetioState && ( options.phetioState.hasOwnProperty( this.element.phetioID ) ?? false );
       if ( !appearsInState ) {
         this.disposeElement();
@@ -109,7 +116,7 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
   }
 
   /**
-   * Primarily for internal use, clients should usually use getElement.
+   * Primarily for internal use, clients should usually use getElement().
    * @param argsForCreateFunction
    * @param [fromStateSetting] - used for validation during state setting, see PhetioDynamicElementContainer.disposeElement() for documentation
    * (phet-io)

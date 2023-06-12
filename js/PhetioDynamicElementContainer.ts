@@ -379,6 +379,10 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
     }
   }
 
+  /**
+   * Called when clearing the contents of this container to ready things for setting its state. In general, this class
+   * is set up to destroy and then recreate all of its elements instead of mutating them.
+   */
   public abstract clear( clearOptions?: ClearOptions ): void;
 
   /**
