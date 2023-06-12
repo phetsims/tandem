@@ -658,17 +658,35 @@ class PhetioObject extends Disposable {
 
       // Otherwise fall back to the view element, don't return here
     }
-    const featured = this.isPhetioInstrumented() && this.phetioFeatured;
 
     // We do not have a target if it is unfeatured, and we are only displaying featured elements.
     // To prevent a circular dependency. We need to have a Property (which is a PhetioObject) in order to use it.
     // This should remain a hard failure if we have not loaded this display Property by the time we want a mouse-hit target.
-    if ( phet.tandem.phetioElementsDisplayProperty.value === 'featured' && !featured ) {
+    if ( phet.tandem.phetioElementsDisplayProperty.value === 'featured' && !this.displayedInFeaturedTree() ) {
       return 'phetioNotSelectable';
     }
 
     // If we aren't an instrumented Node, then we have found a hit but aren't done finding our target.
     return this.isPhetioInstrumented() ? this : 'phetioNotSelectable';
+  }
+
+  /**
+   * This function determines not only if this PhetioObject is phetioFeatured, but if any descendant of this
+   * PhetioObject is phetioFeatured, this will influence if this instance is displayed while showing phetioFeatured,
+   * since featured children will cause the parent to be displayed as well.
+   */
+  private displayedInFeaturedTree(): boolean {
+    if ( this.isPhetioInstrumented() && this.phetioFeatured ) {
+      return true;
+    }
+    let displayed = false;
+    this.tandem.iterateDescendants( descendantTandem => {
+      const parent: PhetioObject | undefined = phet.phetio.phetioEngine.phetioObjectMap[ descendantTandem.phetioID ];
+      if ( parent && parent.isPhetioInstrumented() && parent.phetioFeatured ) {
+        displayed = true;
+      }
+    } );
+    return displayed;
   }
 
   /**
