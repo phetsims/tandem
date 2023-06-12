@@ -680,14 +680,11 @@ class PhetioObject extends Disposable {
     const linkedChildren: LinkedElement[] = [];
     children.forEach( childName => {
       const childPhetioID = phetio.PhetioIDUtils.append( this.tandem.phetioID, childName );
-      // TODO: perhaps make this a bit more top level, https://github.com/phetsims/studio/issues/305
-      if ( !childPhetioID.includes( Tandem.REQUIRED.phetioID ) && !childPhetioID.includes( Tandem.OPTIONAL.phetioID ) ) {
 
-        // Note that if it doesn't find a phetioID, that may be a synthetic node with children but not itself instrumented.
-        const phetioObject: PhetioObject | undefined = phet.phetio.phetioEngine.phetioObjectMap[ childPhetioID ];
-        if ( phetioObject instanceof LinkedElement ) {
-          linkedChildren.push( phetioObject );
-        }
+      // Note that if it doesn't find a phetioID, that may be a synthetic node with children but not itself instrumented.
+      const phetioObject: PhetioObject | undefined = phet.phetio.phetioEngine.phetioObjectMap[ childPhetioID ];
+      if ( phetioObject instanceof LinkedElement ) {
+        linkedChildren.push( phetioObject );
       }
     } );
     const linkedTandemNames = linkedChildren.map( ( linkedElement: LinkedElement ): string => {
