@@ -82,7 +82,9 @@ class Tandem {
   // names dynamically based on screen names
   public readonly name: string;
   public readonly phetioID: PhetioID;
-  private readonly children: Record<string, Tandem> = {};
+
+  // phet-io internal, please don't use this. Please.
+  public readonly children: Record<string, Tandem> = {};
   public readonly required: boolean;
   public readonly supplied: boolean;
   private isDisposed = false;

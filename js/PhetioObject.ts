@@ -637,6 +637,27 @@ class PhetioObject extends Disposable {
    * Something is 'phetioNotSelectable' if it is not instrumented or if it does not match the "featured" filtering.
    */
   public getPhetioMouseHitTarget(): PhetioObject | 'phetioNotSelectable' {
+    assert && assert( phet.tandem.phetioElementSelectionProperty.value !== 'none', 'getPhetioMouseHitTarget should not be called when phetioElementSelectionProperty is none' );
+
+    if ( phet.tandem.phetioElementSelectionProperty.value === 'linked' ) {
+      const linkedElement = this.getCorrespondingLinkedElement();
+      if ( linkedElement !== 'noCorrespondingLinkedElement' ) {
+        return linkedElement.getPhetioMouseHitTarget();
+      }
+      else if ( this.tandem.parentTandem ) {
+        // Look for a sibling linkedElement if there are no child linkages, see https://github.com/phetsims/studio/issues/246#issuecomment-1018733408
+
+        const parent: PhetioObject | undefined = phet.phetio.phetioEngine.phetioObjectMap[ this.tandem.parentTandem.phetioID ];
+        if ( parent ) {
+          const linkedParentElement = parent.getCorrespondingLinkedElement();
+          if ( linkedParentElement !== 'noCorrespondingLinkedElement' ) {
+            return linkedParentElement.getPhetioMouseHitTarget();
+          }
+        }
+      }
+
+      // Otherwise fall back to the view element, don't return here
+    }
     const featured = this.isPhetioInstrumented() && this.phetioFeatured;
 
     // We do not have a target if it is unfeatured, and we are only displaying featured elements.
@@ -648,6 +669,56 @@ class PhetioObject extends Disposable {
 
     // If we aren't an instrumented Node, then we have found a hit but aren't done finding our target.
     return this.isPhetioInstrumented() ? this : 'phetioNotSelectable';
+  }
+
+  /**
+   * Acquire the linkedElement that most closely relates to this PhetioObject, given some heuristics. First, if there is
+   * only a single LinkedElement child, use that. Otherwise, select hard coded names that are likely to be most important.
+   */
+  public getCorrespondingLinkedElement(): PhetioObject | 'noCorrespondingLinkedElement' {
+    const children = Object.keys( this.tandem.children );
+    const linkedChildren: LinkedElement[] = [];
+    children.forEach( childName => {
+      const childPhetioID = phetio.PhetioIDUtils.append( this.tandem.phetioID, childName );
+      // TODO: perhaps make this a bit more top level, https://github.com/phetsims/studio/issues/305
+      if ( !childPhetioID.includes( Tandem.REQUIRED.phetioID ) && !childPhetioID.includes( Tandem.OPTIONAL.phetioID ) ) {
+
+        // Note that if it doesn't find a phetioID, that may be a synthetic node with children but not itself instrumented.
+        const phetioObject: PhetioObject | undefined = phet.phetio.phetioEngine.phetioObjectMap[ childPhetioID ];
+        if ( phetioObject instanceof LinkedElement ) {
+          linkedChildren.push( phetioObject );
+        }
+      }
+    } );
+    const linkedTandemNames = linkedChildren.map( ( linkedElement: LinkedElement ): string => {
+      return phetio.PhetioIDUtils.getComponentName( linkedElement.phetioID );
+    } );
+    let linkedChild: LinkedElement | null = null;
+    if ( linkedChildren.length === 1 ) {
+      linkedChild = linkedChildren[ 0 ];
+    }
+    else if ( linkedTandemNames.includes( 'property' ) ) {
+
+      // Prioritize a linked child named "property"
+      linkedChild = linkedChildren[ linkedTandemNames.indexOf( 'property' ) ];
+    }
+    else if ( linkedTandemNames.includes( 'valueProperty' ) ) {
+
+      // Next prioritize "valueProperty", a common name for the controlling Property of a view component
+      linkedChild = linkedChildren[ linkedTandemNames.indexOf( 'valueProperty' ) ];
+    }
+    else {
+
+      // Either there are no linked children, or too many to know which one to select.
+      return 'noCorrespondingLinkedElement';
+    }
+
+    assert && assert( linkedChild, 'phetioElement is needed' );
+
+    // TODO: linkedChild.element is not a full PhetioObject, see https://github.com/phetsims/tandem/issues/299
+    // This may be solved by making addLinkedElement parameter type PhetioObject
+    assert && assert( linkedChild.element instanceof PhetioObject, 'linkedChild.element should be a PhetioObject, ' + this.phetioID );
+    return linkedChild.element as PhetioObject;
   }
 
   /**
