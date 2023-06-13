@@ -662,7 +662,7 @@ class PhetioObject extends Disposable {
     // We do not have a target if it is unfeatured, and we are only displaying featured elements.
     // To prevent a circular dependency. We need to have a Property (which is a PhetioObject) in order to use it.
     // This should remain a hard failure if we have not loaded this display Property by the time we want a mouse-hit target.
-    if ( phet.tandem.phetioElementsDisplayProperty.value === 'featured' && !this.displayedInFeaturedTree() ) {
+    if ( phet.tandem.phetioElementsDisplayProperty.value === 'featured' && !this.isDisplayedInFeaturedTree() ) {
       return 'phetioNotSelectable';
     }
 
@@ -675,7 +675,7 @@ class PhetioObject extends Disposable {
    * PhetioObject is phetioFeatured, this will influence if this instance is displayed while showing phetioFeatured,
    * since featured children will cause the parent to be displayed as well.
    */
-  private displayedInFeaturedTree(): boolean {
+  private isDisplayedInFeaturedTree(): boolean {
     if ( this.isPhetioInstrumented() && this.phetioFeatured ) {
       return true;
     }
