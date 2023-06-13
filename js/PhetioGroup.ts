@@ -16,7 +16,7 @@
 
 import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import PhetioDynamicElementContainer, { ClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
@@ -32,7 +32,11 @@ type PhetioGroupClearOptions = {
   resetIndex?: boolean;
 } & ClearOptions;
 
-type SelfOptions = EmptySelfOptions;
+type SelfOptions = {
+
+  // What the tandem name index count should start at, default to 0
+  groupElementStartingIndex?: number;
+};
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
 // cache each parameterized IOType so that it is only created once.
@@ -40,7 +44,10 @@ const cache = new Map<IOType, IOType>();
 
 class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private readonly _array: T[];
+
+  // (only for PhetioGroupIO) - for generating indices from a pool
   private groupElementIndex: number;
+  private groupElementStartingIndex: number;
   public readonly countProperty: NumberProperty; // (read-only)
 
   /**
@@ -57,6 +64,8 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     const options = optionize<PhetioGroupOptions, SelfOptions, PhetioDynamicElementContainerOptions>()( {
       tandem: Tandem.OPTIONAL,
 
+      groupElementStartingIndex: 0,
+
       // {string} The group's tandem name must have this suffix, and the base tandem name for elements of
       // the group will consist of the group's tandem name with this suffix stripped off.
       containerSuffix: DEFAULT_CONTAINER_SUFFIX
@@ -67,8 +76,9 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     // (PhetioGroupTests only) access using getArray or getArrayCopy
     this._array = [];
 
-    // (only for PhetioGroupIO) - for generating indices from a pool
-    this.groupElementIndex = 0;
+
+    this.groupElementStartingIndex = options.groupElementStartingIndex;
+    this.groupElementIndex = this.groupElementStartingIndex;
 
     this.countProperty = new NumberProperty( 0, {
       tandem: options.tandem.createTandem( 'countProperty' ),
@@ -203,7 +213,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     }
 
     if ( options.resetIndex ) {
-      this.groupElementIndex = 0;
+      this.groupElementIndex = this.groupElementStartingIndex;
     }
   }
 
