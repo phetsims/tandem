@@ -11,17 +11,18 @@
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME, TandemOptions } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 
 type DynamicTandemOptions = StrictOmit<TandemOptions, 'isValidTandemName'>;
 
 class DynamicTandem extends Tandem {
 
-  public constructor( parentTandem: Tandem, name: string, options?: DynamicTandemOptions ) {
+  public constructor( parentTandem: Tandem, name: string, providedOptions?: DynamicTandemOptions ) {
     assert && assert( parentTandem, 'DynamicTandem must have a parentTandem' );
-    super( parentTandem, name, {
-      ...options,
+    const options = optionize<DynamicTandemOptions, EmptySelfOptions, TandemOptions>()( {
       isValidTandemName: ( name: string ) => /^[a-zA-Z0-9_]+$/.test( name )
-    } );
+    }, providedOptions );
+    super( parentTandem, name, options );
   }
 
   /**
