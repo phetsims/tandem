@@ -253,6 +253,16 @@ class Tandem {
     }
   }
 
+  /**
+   * Create a new Tandem by indexing with the specified index.  Note that it increments by 1 so that index 0 is
+   * "1" in the tandem name.
+   * For example:
+   * - createTandem( 'foo', 0 ) => 'foo1'
+   */
+  public createTandemIndex1( name: string, index: number, options?: TandemOptions ): Tandem {
+    return this.createTandem( `${name}${index + 1}`, options );
+  }
+
   public hasChild( name: string ): boolean {
     return this.children.hasOwnProperty( name );
   }
