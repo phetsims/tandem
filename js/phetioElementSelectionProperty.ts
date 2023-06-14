@@ -27,7 +27,8 @@ const phetioElementSelectionProperty = new Property<PhetioElementSelection>( 'no
   validValues: PhetioElementSelectionValues,
   phetioState: false,
   phetioDocumentation: 'Specifies how PhET-iO Elements are being selected. "view": the target view element, ' +
-                       '"linked": the corresponding linked element of the view element (if there is one), "none": no active selection.'
+                       '"linked": the corresponding linked element of the view element (if there is one), "string": ' +
+                       'select only string elements in the sim, "none": no active selection.'
 } );
 
 tandemNamespace.register( 'phetioElementSelectionProperty', phetioElementSelectionProperty );
