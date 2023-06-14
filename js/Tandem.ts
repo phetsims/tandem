@@ -259,7 +259,7 @@ class Tandem {
    * For example:
    * - createTandem( 'foo', 0 ) => 'foo1'
    */
-  public createTandemIndex1( name: string, index: number, options?: TandemOptions ): Tandem {
+  public createTandem1Indexed( name: string, index: number, options?: TandemOptions ): Tandem {
     return this.createTandem( `${name}${index + 1}`, options );
   }
 
