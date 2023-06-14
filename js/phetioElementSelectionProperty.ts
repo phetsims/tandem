@@ -12,18 +12,19 @@ import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import StringIO from './types/StringIO.js';
 
-export const PhetioElementsViewValues = [
-  'view',
-  'linked',
-  'none'
+export const PhetioElementSelectionValues = [
+  'view', // Select the view element under the mouse
+  'linked', // Map to the linked element if possible
+  'string', // Only string elements are selectable
+  'none' // No selection
 ] as const;
 
-export type PhetioElementsView = ( typeof PhetioElementsViewValues )[number];
+export type PhetioElementSelection = ( typeof PhetioElementSelectionValues )[number];
 
-const phetioElementSelectionProperty = new Property<PhetioElementsView>( 'none', {
+const phetioElementSelectionProperty = new Property<PhetioElementSelection>( 'none', {
   tandem: Tandem.GENERAL_VIEW.createTandem( 'phetioElementSelectionProperty' ),
   phetioValueType: StringIO,
-  validValues: PhetioElementsViewValues,
+  validValues: PhetioElementSelectionValues,
   phetioState: false,
   phetioDocumentation: 'Specifies how PhET-iO Elements are being selected. "view": the target view element, ' +
                        '"linked": the corresponding linked element of the view element (if there is one), "none": no active selection.'

@@ -659,15 +659,31 @@ class PhetioObject extends Disposable {
       // Otherwise fall back to the view element, don't return here
     }
 
-    // We do not have a target if it is unfeatured, and we are only displaying featured elements.
-    // To prevent a circular dependency. We need to have a Property (which is a PhetioObject) in order to use it.
-    // This should remain a hard failure if we have not loaded this display Property by the time we want a mouse-hit target.
-    if ( phet.tandem.phetioElementsDisplayProperty.value === 'featured' && !this.isDisplayedInFeaturedTree() ) {
+    if ( phet.tandem.phetioElementSelectionProperty.value === 'string' ) {
       return 'phetioNotSelectable';
     }
 
-    // If we aren't an instrumented Node, then we have found a hit but aren't done finding our target.
-    return this.isPhetioInstrumented() ? this : 'phetioNotSelectable';
+    return this.getPhetioMouseHitTargetSelf();
+  }
+
+  /**
+   * Determine if this instance should be selectable
+   */
+  protected getPhetioMouseHitTargetSelf(): PhetioObject | 'phetioNotSelectable' {
+    return this.isPhetioMouseHitSelectable() ? this : 'phetioNotSelectable';
+  }
+
+  /**
+   * Factored out function returning if this instance is phetio selectable
+   */
+  private isPhetioMouseHitSelectable(): boolean {
+
+    // We are not selectable if we are unfeatured and we are only displaying featured elements.
+    // To prevent a circular dependency. We need to have a Property (which is a PhetioObject) in order to use it.
+    // This should remain a hard failure if we have not loaded this display Property by the time we want a mouse-hit target.
+    const featuredFilterCorrect = phet.tandem.phetioElementsDisplayProperty.value !== 'featured' || this.isDisplayedInFeaturedTree();
+
+    return this.isPhetioInstrumented() && featuredFilterCorrect;
   }
 
   /**
