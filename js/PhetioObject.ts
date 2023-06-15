@@ -579,6 +579,13 @@ class PhetioObject extends Disposable {
    * association which is rendered in Studio as a "symbolic" link or hyperlink. Many common code UI elements use this
    * automatically. To keep client sites simple, this has a graceful opt-out mechanism which makes this function a
    * no-op if either this PhetioObject or the target PhetioObject is not instrumented.
+   *
+   * You can specify the tandem one of three ways:
+   * 1. Without specifying tandemName or tandem, it will pluck the tandem.name from the target element
+   * 2. If tandemName is specified in the options, it will use that tandem name and nest the tandem under this PhetioObject's tandem
+   * 3. If tandem is specified in the options (not recommended), it will use that tandem and nest it anywhere that tandem exists.
+   *    Use this option with caution since it allows you to nest the tandem anywhere in the tree.
+   *
    * @param element - the target element. Must be instrumented for a LinkedElement to be created-- otherwise gracefully opts out
    * @param [providedOptions]
    */
@@ -600,6 +607,22 @@ class PhetioObject extends Disposable {
         phetioFeatured: this.phetioFeatured && element.phetioFeatured
       }, providedOptions );
       assert && assert( Array.isArray( this.linkedElements ), 'linkedElements should be an array' );
+
+      let tandem: Tandem | null = null;
+      if ( providedOptions && providedOptions.tandem ) {
+        tandem = providedOptions.tandem;
+      }
+      else if ( providedOptions && providedOptions.tandemName ) {
+        tandem = this.tandem.createTandem( providedOptions.tandemName );
+      }
+      else if ( !providedOptions && element.tandem ) {
+        tandem = this.tandem.createTandem( element.tandem.name );
+      }
+
+      if ( tandem ) {
+        options.tandem = tandem;
+      }
+
       this.linkedElements!.push( new LinkedElement( element, options ) );
     }
   }
@@ -861,7 +884,8 @@ const specifiesNonTandemPhetioObjectKey = ( options: Record<string, IntentionalA
   return false;
 };
 
-type LinkedElementOptions = PhetioObjectOptions;
+// See documentation for addLinkedElement()
+type LinkedElementOptions = StrictOmit<PhetioObjectOptions, 'tandem'> & ( { tandemName?: string; tandem?: never } | { tandemName?: never; tandem?: Tandem } );
 
 /**
  * Internal class to avoid cyclic dependencies.
