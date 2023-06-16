@@ -8,5 +8,6 @@ import Tandem from './Tandem.js';
  *
  * @author Sam Reid (PhET Interactive Simulations)
  */
+// eslint-disable-next-line phet-io-object-options-should-not-pick-from-phet-io-object
 type LinkableElement = Pick<PhetioObject, 'phetioFeatured' | 'isPhetioInstrumented'> & { tandem?: Tandem };
 export default LinkableElement;

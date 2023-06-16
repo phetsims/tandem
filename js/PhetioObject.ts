@@ -138,6 +138,8 @@ type SelfOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 
 export type PhetioObjectOptions = SelfOptions;
 
 type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName' | 'phetioDynamicElementName'> ) | 'phetioType';
+
+// eslint-disable-next-line phet-io-object-options-should-not-pick-from-phet-io-object
 export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
 
 class PhetioObject extends Disposable {
