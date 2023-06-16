@@ -658,14 +658,19 @@ class PhetioObject extends Disposable {
    * when there is a scene graph hit. Return the corresponding target that matches the PhET-iO filters.  Note this means
    * that if PhET-iO Studio is looking for a featured item and this is not featured, it will return 'phetioNotSelectable'.
    * Something is 'phetioNotSelectable' if it is not instrumented or if it does not match the "featured" filtering.
+   *
+   * The `fromLinking` flag allows a cutoff to prevent recursive linking chains in 'linked' mode. Given these linked elements:
+   * cardNode -> card -> cardValueProperty
+   * We don't want 'linked' mode to map from cardNode all the way to cardValueProperty (at least automatically), see https://github.com/phetsims/tandem/issues/300
    */
-  public getPhetioMouseHitTarget(): PhetioObject | 'phetioNotSelectable' {
+  public getPhetioMouseHitTarget( fromLinking = false ): PhetioObject | 'phetioNotSelectable' {
     assert && assert( phet.tandem.phetioElementSelectionProperty.value !== 'none', 'getPhetioMouseHitTarget should not be called when phetioElementSelectionProperty is none' );
 
-    if ( phet.tandem.phetioElementSelectionProperty.value === 'linked' ) {
+    // Don't get a linked element for a linked element (recursive link element searching)
+    if ( !fromLinking && phet.tandem.phetioElementSelectionProperty.value === 'linked' ) {
       const linkedElement = this.getCorrespondingLinkedElement();
       if ( linkedElement !== 'noCorrespondingLinkedElement' ) {
-        return linkedElement.getPhetioMouseHitTarget();
+        return linkedElement.getPhetioMouseHitTarget( true );
       }
       else if ( this.tandem.parentTandem ) {
         // Look for a sibling linkedElement if there are no child linkages, see https://github.com/phetsims/studio/issues/246#issuecomment-1018733408
@@ -674,7 +679,7 @@ class PhetioObject extends Disposable {
         if ( parent ) {
           const linkedParentElement = parent.getCorrespondingLinkedElement();
           if ( linkedParentElement !== 'noCorrespondingLinkedElement' ) {
-            return linkedParentElement.getPhetioMouseHitTarget();
+            return linkedParentElement.getPhetioMouseHitTarget( true );
           }
         }
       }
