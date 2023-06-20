@@ -28,7 +28,6 @@ import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Disposable from '../../axon/js/Disposable.js';
-import LinkableElement from './LinkableElement.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
@@ -591,7 +590,7 @@ class PhetioObject extends Disposable {
    * @param element - the target element. Must be instrumented for a LinkedElement to be created-- otherwise gracefully opts out
    * @param [providedOptions]
    */
-  public addLinkedElement( element: LinkableElement, providedOptions?: LinkedElementOptions ): void {
+  public addLinkedElement( element: PhetioObject, providedOptions?: LinkedElementOptions ): void {
     if ( !this.isPhetioInstrumented() ) {
 
       // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrument
@@ -900,9 +899,9 @@ type LinkedElementOptions = ( { tandemName?: string; tandem?: never } | { tandem
  * Internal class to avoid cyclic dependencies.
  */
 class LinkedElement extends PhetioObject {
-  public readonly element: LinkableElement;
+  public readonly element: PhetioObject;
 
-  public constructor( coreElement: LinkableElement, providedOptions?: LinkedElementOptions ) {
+  public constructor( coreElement: PhetioObject, providedOptions?: LinkedElementOptions ) {
     assert && assert( !!coreElement, 'coreElement should be defined' );
 
     const options = optionize<LinkedElementOptions, EmptySelfOptions, PhetioObjectOptions>()( {
