@@ -27,7 +27,6 @@ QUnit.test( 'PhetioGroup creation and disposal', assert => {
     return element;
   };
   const phetioGroup = new PhetioGroup( createElement, [ '' ], {
-    groupElementStartingIndex: 0,
     tandem: Tandem.ROOT_TEST.createTandem( 'phetioGroup' ),
     phetioType: PhetioGroup.PhetioGroupIO( IOType.ObjectIO )
   } );
@@ -78,7 +77,6 @@ QUnit.test( 'PhetioGroup deferring notifications', assert => {
     } );
   };
   const myPhetioGroup = new PhetioGroup( createElement, [], {
-    groupElementStartingIndex: 0,
     tandem: Tandem.ROOT_TEST.createTandem( 'myPhetioGroup' ),
     phetioType: PhetioGroup.PhetioGroupIO( IOType.ObjectIO )
   } );
