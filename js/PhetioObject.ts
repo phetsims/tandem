@@ -774,11 +774,7 @@ class PhetioObject extends Disposable {
     }
 
     assert && assert( linkedChild, 'phetioElement is needed' );
-
-    // TODO: linkedChild.element is not a full PhetioObject, see https://github.com/phetsims/tandem/issues/299
-    // This may be solved by making addLinkedElement parameter type PhetioObject
-    assert && assert( linkedChild.element instanceof PhetioObject, 'linkedChild.element should be a PhetioObject, ' + this.phetioID );
-    return linkedChild.element as PhetioObject;
+    return linkedChild.element;
   }
 
   /**
