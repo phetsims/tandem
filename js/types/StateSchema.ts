@@ -70,7 +70,7 @@ export default class StateSchema<T, StateType> {
         // The IOType for the key in the composite.
         const schemaIOType = this.compositeSchema[ stateKey ];
 
-        const coreObjectAccessor = stateKey.startsWith( '_' ) ? stateKey.substring( 1 ) : stateKey;
+        const coreObjectAccessor = this.getCoreObjectAccessor( stateKey, coreObject );
 
         // Using fromStateObject to deserialize sub-component
         if ( schemaIOType.defaultDeserializationMethod === 'fromStateObject' ) {
@@ -96,18 +96,52 @@ export default class StateSchema<T, StateType> {
     for ( const stateKey in this.compositeSchema ) {
       if ( this.compositeSchema.hasOwnProperty( stateKey ) ) {
 
-        // Trim the '_' if any
-        const coreObjectAccessor = stateKey.startsWith( '_' ) ? stateKey.substring( 1 ) : stateKey;
+        const coreObjectAccessor = this.getCoreObjectAccessor( stateKey, coreObject );
 
-        // @ts-expect-error I guess we need to support schemas outside of composite here, or tell how to avoid that, https://github.com/phetsims/tandem/issues/261
-        assert && assert( coreObject.hasOwnProperty( coreObjectAccessor ),
-          `cannot get state because coreObject does not have expected schema key: ${coreObjectAccessor}` );
+        if ( assert ) {
+          const descriptor = Object.getOwnPropertyDescriptor( coreObject, coreObjectAccessor )!;
+
+          let isGetter = false;
+
+          // @ts-expect-error Subtype T for this method better
+          if ( coreObject.constructor.prototype ) {
+
+            // @ts-expect-error Subtype T for this method better
+            const prototypeDescriptor = Object.getOwnPropertyDescriptor( coreObject.constructor!.prototype, coreObjectAccessor );
+            isGetter = !!prototypeDescriptor && !!prototypeDescriptor.get;
+          }
+
+          const isValue = !!descriptor && descriptor.hasOwnProperty( 'value' ) && descriptor.writable;
+          assert && assert( isValue || isGetter,
+            `cannot get state because coreObject does not have expected schema key: ${coreObjectAccessor}` );
+
+        }
 
         // @ts-expect-error https://github.com/phetsims/tandem/issues/261
         stateObject[ stateKey ] = this.compositeSchema[ stateKey ].toStateObject( coreObject[ coreObjectAccessor ] );
       }
     }
     return stateObject as StateType;
+  }
+
+  private getCoreObjectAccessor( stateKey: string, coreObject: T ): string {
+
+    // Does the class field start with an underscore? We need to cover two cases here. The first is where the underscore
+    // was added to make a private state key. The second, is where the core class only has the underscore-prefixed
+    // field key name available for setting. The easiest algorithm to cover all cases is to see if the coreObject has
+    // the underscore-prefixed key name, and use that if available, otherwise use the stateKey without an underscore.
+    const noUnderscore = stateKey.startsWith( '_' ) ? stateKey.substring( 1 ) : stateKey;
+    const underscored = `_${stateKey}`;
+    let coreObjectAccessor: string;
+
+    // @ts-expect-error - T is not specific to composite schemas, so NumberIO doesn't actually need a hasOwnProperty method
+    if ( coreObject.hasOwnProperty( underscored ) ) {
+      coreObjectAccessor = underscored;
+    }
+    else {
+      coreObjectAccessor = noUnderscore;
+    }
+    return coreObjectAccessor;
   }
 
   /**
