@@ -72,6 +72,15 @@ QUnit.test( 'PhetioObject is a Disposable', assert => {
   object1.dispose();
   assert.ok( object1.isDisposed, '1 is disposed' );
   assert.ok( object2.isDisposed, '2 is disposed' );
+
+  const object3 = new PhetioObject( { isDisposable: false } );
+  const object4 = new PhetioObject();
+  object4[ 'initializePhetioObject' ]( {}, { isDisposable: false } );
+
+  if ( window.assert ) {
+    assert.throws( () => object3.dispose(), 'should throw if isDisposable is false1' );
+    assert.throws( () => object4.dispose(), 'should throw if isDisposable is false2' );
+  }
 } );
 
 Tandem.PHET_IO_ENABLED && QUnit.test( 'no calling addLinkedElement before instrumentation', assert => {
