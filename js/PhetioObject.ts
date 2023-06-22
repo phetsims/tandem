@@ -27,7 +27,7 @@ import TandemConstants, { PhetioID, PhetioObjectMetadata } from './TandemConstan
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import Disposable from '../../axon/js/Disposable.js';
+import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
@@ -134,7 +134,7 @@ type SelfOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 
   // sim.screen1.view.upperThermometerNode
   tandemNameSuffix?: string | string[] | null;
 };
-export type PhetioObjectOptions = SelfOptions;
+export type PhetioObjectOptions = SelfOptions & DisposableOptions;
 
 type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName' | 'phetioDynamicElementName'> ) | 'phetioType';
 
@@ -190,6 +190,10 @@ class PhetioObject extends Disposable {
    * Noop if provided options keys don't intersect with any key in DEFAULTS; baseOptions are ignored for this calculation.
    */
   protected initializePhetioObject( baseOptions: Partial<PhetioObjectOptions>, providedOptions: PhetioObjectOptions ): void {
+
+    assert && assert( !baseOptions.hasOwnProperty( 'isDisposable' ), 'baseOptions should not contain isDisposable' );
+    super.initializeDisposable( providedOptions );
+
     assert && assert( providedOptions, 'initializePhetioObject must be called with providedOptions' );
 
     // call before we exit early to support logging unsupplied Tandems.
