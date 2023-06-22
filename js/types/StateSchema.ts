@@ -60,6 +60,11 @@ export default class StateSchema<T, StateType> {
     this.compositeSchema = options.compositeSchema;
   }
 
+  /**
+   * This method provides a default implementation for setting a stateObject onto an object from the stateSchema information.
+   * It supports the coreObject keys as private, underscore-prefixed field, as
+   * well as if the coreObject has an es5 setter instead of an actual field.
+   */
   public defaultApplyState( coreObject: T, stateObject: CompositeStateObjectType ): void {
 
     assert && assert( this.isComposite(), 'defaultApplyState from stateSchema only applies to composite stateSchemas' );
@@ -70,25 +75,30 @@ export default class StateSchema<T, StateType> {
         // The IOType for the key in the composite.
         const schemaIOType = this.compositeSchema[ stateKey ];
 
-        const coreObjectAccessor = this.getCoreObjectAccessor( stateKey, coreObject );
+        const coreObjectAccessorName = this.getCoreObjectAccessorName( stateKey, coreObject );
 
         // Using fromStateObject to deserialize sub-component
         if ( schemaIOType.defaultDeserializationMethod === 'fromStateObject' ) {
 
           // @ts-expect-error, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
-          coreObject[ coreObjectAccessor ] = this.compositeSchema[ stateKey ].fromStateObject( stateObject[ stateKey ] );
+          coreObject[ coreObjectAccessorName ] = this.compositeSchema[ stateKey ].fromStateObject( stateObject[ stateKey ] );
         }
         else {
           assert && assert( schemaIOType.defaultDeserializationMethod === 'applyState', 'unexpected deserialization method' );
 
           // Using applyState to deserialize sub-component
           // @ts-expect-error, I don't know how to tell typescript that we are accessing an expected key on the PhetioObject subtype. Likely there is no way with making things generic.
-          this.compositeSchema[ stateKey ].applyState( coreObject[ coreObjectAccessor ], stateObject[ stateKey ] );
+          this.compositeSchema[ stateKey ].applyState( coreObject[ coreObjectAccessorName ], stateObject[ stateKey ] );
         }
       }
     }
   }
 
+  /**
+   * This method provides a default implementation for creating a stateObject from the stateSchema by accessing those
+   * same key names on the coreObject instance. It supports those keys as private, underscore-prefixed field, as
+   * well as if the coreObject has an es5 getter instead of an actual field.
+   */
   public defaultToStateObject( coreObject: T ): StateType {
     assert && assert( this.isComposite(), 'defaultToStateObject from stateSchema only applies to composite stateSchemas' );
 
@@ -96,35 +106,36 @@ export default class StateSchema<T, StateType> {
     for ( const stateKey in this.compositeSchema ) {
       if ( this.compositeSchema.hasOwnProperty( stateKey ) ) {
 
-        const coreObjectAccessor = this.getCoreObjectAccessor( stateKey, coreObject );
+        const coreObjectAccessorName = this.getCoreObjectAccessorName( stateKey, coreObject );
 
         if ( assert ) {
-          const descriptor = Object.getOwnPropertyDescriptor( coreObject, coreObjectAccessor )!;
+          const descriptor = Object.getOwnPropertyDescriptor( coreObject, coreObjectAccessorName )!;
 
           let isGetter = false;
 
           // @ts-expect-error Subtype T for this method better
           if ( coreObject.constructor.prototype ) {
 
+            // The prototype is what has the getter on it
             // @ts-expect-error Subtype T for this method better
-            const prototypeDescriptor = Object.getOwnPropertyDescriptor( coreObject.constructor!.prototype, coreObjectAccessor );
+            const prototypeDescriptor = Object.getOwnPropertyDescriptor( coreObject.constructor!.prototype, coreObjectAccessorName );
             isGetter = !!prototypeDescriptor && !!prototypeDescriptor.get;
           }
 
           const isValue = !!descriptor && descriptor.hasOwnProperty( 'value' ) && descriptor.writable;
           assert && assert( isValue || isGetter,
-            `cannot get state because coreObject does not have expected schema key: ${coreObjectAccessor}` );
+            `cannot get state because coreObject does not have expected schema key: ${coreObjectAccessorName}` );
 
         }
 
         // @ts-expect-error https://github.com/phetsims/tandem/issues/261
-        stateObject[ stateKey ] = this.compositeSchema[ stateKey ].toStateObject( coreObject[ coreObjectAccessor ] );
+        stateObject[ stateKey ] = this.compositeSchema[ stateKey ].toStateObject( coreObject[ coreObjectAccessorName ] );
       }
     }
     return stateObject as StateType;
   }
 
-  private getCoreObjectAccessor( stateKey: string, coreObject: T ): string {
+  private getCoreObjectAccessorName( stateKey: string, coreObject: T ): string {
 
     // Does the class field start with an underscore? We need to cover two cases here. The first is where the underscore
     // was added to make a private state key. The second, is where the core class only has the underscore-prefixed
@@ -132,16 +143,16 @@ export default class StateSchema<T, StateType> {
     // the underscore-prefixed key name, and use that if available, otherwise use the stateKey without an underscore.
     const noUnderscore = stateKey.startsWith( '_' ) ? stateKey.substring( 1 ) : stateKey;
     const underscored = `_${stateKey}`;
-    let coreObjectAccessor: string;
+    let coreObjectAccessorName: string;
 
     // @ts-expect-error - T is not specific to composite schemas, so NumberIO doesn't actually need a hasOwnProperty method
     if ( coreObject.hasOwnProperty( underscored ) ) {
-      coreObjectAccessor = underscored;
+      coreObjectAccessorName = underscored;
     }
     else {
-      coreObjectAccessor = noUnderscore;
+      coreObjectAccessorName = noUnderscore;
     }
-    return coreObjectAccessor;
+    return coreObjectAccessorName;
   }
 
   /**
