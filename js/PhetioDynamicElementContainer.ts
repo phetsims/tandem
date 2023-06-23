@@ -360,7 +360,6 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
 
   /**
    * Dispose a contained element
-   * @param element
    */
   protected disposeElement( element: T ): void {
     element.dispose();
