@@ -29,9 +29,8 @@ const IS_VALIDATION_DEFAULT = _.hasIn( packageJSON, 'phet.phet-io.validation' ) 
 const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = window.QueryStringMachine && QueryStringMachine.containsKey( 'phetioValidation' );
 const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? !!phet.preloads.phetio.queryParameters.phetioValidation :
                                 ( PHET_IO_ENABLED && IS_VALIDATION_DEFAULT );
-
-const baseTandemTerm = 'a-zA-Z0-9';
-const validTandemRegex = new RegExp( `^[${baseTandemTerm}[\\],]+$` );
+const baseTandemTerm = 'a-zA-Z0-9[\\],';
+const validTandemRegex = new RegExp( `^[${baseTandemTerm}]+$` );
 const VALIDATION = PHET_IO_ENABLED && IS_VALIDATION_SPECIFIED && !PRINT_MISSING_TANDEMS;
 
 const UNALLOWED_TANDEM_NAMES = [
