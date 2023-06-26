@@ -150,17 +150,15 @@ type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
 
 // TODO: not any, but do we have to serialize type parameters? https://github.com/phetsims/tandem/issues/263
 export default class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
+  // See documentation in options type declaration
   public readonly supertype?: IOType;
   public readonly documentation?: string;
   public readonly methods?: Record<string, IOTypeMethod>;
-
   public readonly events: string[];
   public readonly metadataDefaults?: Partial<PhetioObjectMetadata>;
-
   public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
   public readonly parameterTypes?: IOType[];
-
   public readonly toStateObject: ( t: T ) => StateType;
   public readonly fromStateObject: ( state: StateType ) => T;
   public readonly stateObjectToCreateElementArguments: ( s: StateType ) => unknown[]; // TODO: instead of unknown this is the second parameter type for PhetioDynamicElementContainer. How? https://github.com/phetsims/tandem/issues/261
@@ -168,9 +166,12 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
   public readonly addChildElement: AddChildElement;
   public readonly validator: Validator<T>;
   public readonly defaultDeserializationMethod: DeserializationType;
-  public readonly stateSchema: StateSchema<T, StateType>;
   public readonly isFunctionType: boolean;
 
+  // The StateSchema (type) that the option is made into. The option is more flexible than the class.
+  public readonly stateSchema: StateSchema<T, StateType>;
+
+  // The base IOType for the entire hierarchy.
   public static ObjectIO: IOType;
 
   /**
@@ -228,8 +229,8 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     this.documentation = options.documentation;
     this.methods = options.methods;
     this.events = options.events;
-    this.metadataDefaults = options.metadataDefaults; // just for this level, see getAllMetadataDefaults()
-    this.dataDefaults = options.dataDefaults; // just for this level, see getAllDataDefaults()
+    this.metadataDefaults = options.metadataDefaults;
+    this.dataDefaults = options.dataDefaults;
     this.methodOrder = options.methodOrder;
     this.parameterTypes = options.parameterTypes;
 
@@ -472,6 +473,8 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 // default state value
 const DEFAULT_STATE = null;
 
+// This must be declared after the class declaration to avoid a circular dependency with PhetioObject.
+// @readonly
 IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,

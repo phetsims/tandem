@@ -4,9 +4,13 @@
  * Class responsible for storing information about the schema of PhET-iO state. See IOType stateSchema option for usage
  * and more information.
  *
- * There are two types of StateSchema, the first serves as a "value", when the state of an IOType is just a value.
- * The second is a "composite", where the state of an IOType is made from sub-components, each of which have an IOType.
- * Check which type of StateSchema your instance is with StateSchema.isComposite().
+ * There are two types of StateSchema:
+ * - The first serves as a "value", when the state of an IOType is just a value. In
+ * effect, this just serves as boilerplate, and isn't the primary usage of stateSchema. For example, a StringIO or
+ * NumberIO.
+ * - The second is a "composite", where the state of an IOType is made from sub-components, each of which have an IOType.
+ * A composite schema was named because it is a sum of its parts. For example a BunnyIO has multiple components that
+ * make it up (mother/father/age/etc). Check which type of StateSchema your instance is with StateSchema.isComposite().
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -20,6 +24,15 @@ import IOType from './IOType.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import { IOTypeName } from '../TandemConstants.js';
 
+/**
+ * This is the primary functionality of the StateSchema class. An IOType can be provided a composite schema like so:
+ * {
+ *   subcomponent1: StringIO;
+ *   subcomponent2: NumberIO;
+ * }
+ * By providing this, you are giving the schema to allow StateSchema to serialize and deserialize itself based on the
+ * composite schema.
+ */
 export type CompositeSchema = Record<string, IOType>;
 
 // As provided in the PhET-iO API json
@@ -29,8 +42,16 @@ type CompositeSchemaAPI = Record<string, IOTypeName>;
 export type CompositeStateObjectType = Record<string, IntentionalAny>;
 
 type StateSchemaOptions = {
+
+  // What the IOType will display as in the API.
   displayString?: string;
+
+  // Provided to validate the contents of the stateObject. Not the instance it came from
   validator?: Validator<IntentionalAny> | null;
+
+  // The primary way to provide the detailed schema about the state for this instance. Composite schemas are a sum of
+  // their stateful parts, instead of a "value" themselves.
+  // An object literal of keys that correspond to an IOType
   compositeSchema?: null | CompositeSchema;
 };
 
@@ -49,8 +70,6 @@ export default class StateSchema<T, StateType> {
     const options = optionize<StateSchemaOptions>()( {
       displayString: '',
       validator: null,
-
-      // an object literal of keys that correspond to an IOType
       compositeSchema: null
     }, providedOptions );
 
@@ -135,6 +154,10 @@ export default class StateSchema<T, StateType> {
     return stateObject as StateType;
   }
 
+  /**
+   * Provide the member string key that should be used to get/set an instance's field. Used only internally for the
+   * default implementations of toStateObject and applyState.
+   */
   private getCoreObjectAccessorName( stateKey: string, coreObject: T ): string {
 
     // Does the class field start with an underscore? We need to cover two cases here. The first is where the underscore
@@ -236,7 +259,7 @@ export default class StateSchema<T, StateType> {
 
 
   /**
-   * Factory function for StateKSchema instances that represent a single value of state. This is opposed to a composite
+   * Factory function for StateSchema instances that represent a single value of state. This is opposed to a composite
    * schema of sub-components.
    */
   public static asValue<T, StateType>( displayString: string, validator: Validator<IntentionalAny> ): StateSchema<T, StateType> {
