@@ -29,8 +29,10 @@ const IS_VALIDATION_DEFAULT = _.hasIn( packageJSON, 'phet.phet-io.validation' ) 
 const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = window.QueryStringMachine && QueryStringMachine.containsKey( 'phetioValidation' );
 const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? !!phet.preloads.phetio.queryParameters.phetioValidation :
                                 ( PHET_IO_ENABLED && IS_VALIDATION_DEFAULT );
-const baseTandemTerm = 'a-zA-Z0-9[\\],';
-const validTandemRegex = new RegExp( `^[${baseTandemTerm}]+$` );
+
+// Allowable terms for tandems, like myObject, or myObject3[1,4], or MyObject
+// Note this allows some tandems we would not prefer, such as My,Obje[ct, but we will catch that during the design phase.
+const BASE_TANDEM_TERM = 'a-zA-Z0-9[\\],';
 const VALIDATION = PHET_IO_ENABLED && IS_VALIDATION_SPECIFIED && !PRINT_MISSING_TANDEMS;
 
 const UNALLOWED_TANDEM_NAMES = [
@@ -121,7 +123,7 @@ class Tandem {
       // if the tandem is required but not supplied, an error will be thrown.
       supplied: true,
 
-      isValidTandemName: ( name: string ) => validTandemRegex.test( name )
+      isValidTandemName: ( name: string ) => new RegExp( `^[${BASE_TANDEM_TERM}]+$` ).test( name )
     }, providedOptions );
 
     assert && assert( options.isValidTandemName( name ), `invalid tandem name: ${name}` );
@@ -420,7 +422,7 @@ class Tandem {
 
   public createTandemFromPhetioID( phetioID: PhetioID ): Tandem {
     return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( INTER_TERM_SEPARATOR ), {
-      isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],-_]+$/.test( name )
+      isValidTandemName: ( name: string ) => new RegExp( `^[${BASE_TANDEM_TERM}_-]+$` ).test( name )
     } );
   }
 
@@ -553,7 +555,7 @@ class Tandem {
 
   // The base definition of allowed characters in a tandem name. In regex form. This will be added to a character
   // class (inside `[]`). See isValidTandemName(). This applies to all Tandem subtypes, not just Tandem()
-  protected static readonly BASE_TANDEM_TERM = baseTandemTerm;
+  protected static readonly BASE_TANDEM_TERM = BASE_TANDEM_TERM;
 }
 
 Tandem.addLaunchListener( () => {
