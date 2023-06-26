@@ -30,6 +30,8 @@ const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = window.QueryStringMachine && Que
 const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? !!phet.preloads.phetio.queryParameters.phetioValidation :
                                 ( PHET_IO_ENABLED && IS_VALIDATION_DEFAULT );
 
+const baseTandemTerm = 'a-zA-Z0-9';
+const validTandemRegex = new RegExp( `^[${baseTandemTerm}[\\],]+$` );
 const VALIDATION = PHET_IO_ENABLED && IS_VALIDATION_SPECIFIED && !PRINT_MISSING_TANDEMS;
 
 const UNALLOWED_TANDEM_NAMES = [
@@ -120,7 +122,7 @@ class Tandem {
       // if the tandem is required but not supplied, an error will be thrown.
       supplied: true,
 
-      isValidTandemName: ( name: string ) => /^[a-zA-Z0-9[\],]+$/.test( name )
+      isValidTandemName: ( name: string ) => validTandemRegex.test( name )
     }, providedOptions );
 
     assert && assert( options.isValidTandemName( name ), `invalid tandem name: ${name}` );
@@ -549,6 +551,10 @@ class Tandem {
    * Use this as the parent tandem for Properties that are related to sim-specific preferences.
    */
   public static readonly PREFERENCES = Tandem.GLOBAL_MODEL.createTandem( 'preferences' );
+
+  // The base definition of allowed characters in a tandem name. In regex form. This will be added to a character
+  // class (inside `[]`). See isValidTandemName(). This applies to all Tandem subtypes, not just Tandem()
+  protected static readonly BASE_TANDEM_TERM = baseTandemTerm;
 }
 
 Tandem.addLaunchListener( () => {

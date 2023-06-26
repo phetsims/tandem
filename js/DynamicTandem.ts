@@ -20,7 +20,7 @@ class DynamicTandem extends Tandem {
   public constructor( parentTandem: Tandem, name: string, providedOptions?: DynamicTandemOptions ) {
     assert && assert( parentTandem, 'DynamicTandem must have a parentTandem' );
     const options = optionize<DynamicTandemOptions, EmptySelfOptions, TandemOptions>()( {
-      isValidTandemName: ( name: string ) => /^[a-zA-Z0-9_]+$/.test( name )
+      isValidTandemName: ( name: string ) => DynamicTandem.VALID_DYNAMIC_TANDEM_REGEX.test( name )
     }, providedOptions );
     super( parentTandem, name, options );
   }
@@ -36,6 +36,8 @@ class DynamicTandem extends Tandem {
   }
 
   public static readonly DYNAMIC_ARCHETYPE_NAME = DYNAMIC_ARCHETYPE_NAME;
+
+  private static readonly VALID_DYNAMIC_TANDEM_REGEX = new RegExp( `^[${Tandem.BASE_TANDEM_TERM}_]+$` );
 }
 
 tandemNamespace.register( 'DynamicTandem', DynamicTandem );
