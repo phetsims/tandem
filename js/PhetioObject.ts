@@ -207,7 +207,6 @@ class PhetioObject extends Disposable {
     // The presence of `tandem` indicates if this PhetioObject can be initialized. If not yet initialized, perhaps
     // it will be initialized later on, as in Node.mutate().
     if ( !( PHET_IO_ENABLED && providedOptions.tandem && providedOptions.tandem.supplied ) ) {
-      assert && !providedOptions.tandem && assert( !specifiesNonTandemPhetioObjectKey( providedOptions ), 'only specify metadata when providing a Tandem' );
 
       // In this case, the PhetioObject is not initialized, but still set tandem to maintain a consistent API for
       // creating the Tandem tree.
@@ -218,7 +217,6 @@ class PhetioObject extends Disposable {
       return;
     }
 
-    // assert this after the `specifiesPhetioObjectKey check to support something like:
     assert && assert( !this.phetioObjectInitialized, 'cannot initialize twice' );
 
     // Guard validation on assert to avoid calling a large number of no-ops when assertions are disabled, see https://github.com/phetsims/tandem/issues/200
@@ -875,20 +873,6 @@ class PhetioObject extends Disposable {
     return new PhetioObject( options );
   }
 }
-
-/**
- * Determine if any of the options keys are intended for PhetioObject. Semantically equivalent to
- * _.intersection( _.keys( options ), _.keys( DEFAULTS) ).length>0 but implemented imperatively to avoid memory or
- * performance issues. Also handles options.tandem differently.
- */
-const specifiesNonTandemPhetioObjectKey = ( options: Record<string, IntentionalAny> ): boolean => {
-  for ( const key in options ) {
-    if ( key !== 'tandem' && options.hasOwnProperty( key ) && DEFAULTS.hasOwnProperty( key ) ) {
-      return true;
-    }
-  }
-  return false;
-};
 
 // See documentation for addLinkedElement() to describe how to instrument LinkedElements. No other metadata is needed
 // for LinkedElements, and should instead be provided to the coreElement. If you find a case where you want to pass
