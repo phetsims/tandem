@@ -58,7 +58,7 @@ const SKIPPING_MESSAGE = -1;
 
 const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementName'>> = {
 
-  // Subtypes can use `Tandem.tandemRequired` to require a named tandem passed in
+  // Subtypes can use `Tandem.REQUIRED` to require a named tandem passed in
   tandem: Tandem.OPTIONAL,
 
   // Defines API methods, events and serialization
