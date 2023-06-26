@@ -96,7 +96,6 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
 
       // Many PhET-iO instrumented types live in common code used by multiple sims, and may only be instrumented in a subset of their usages.
-      tandem: Tandem.OPTIONAL,
       supportsDynamicState: true,
       containerSuffix: DEFAULT_CONTAINER_SUFFIX,
 
@@ -119,13 +118,16 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       'PhetioDynamicElementContainer\'s phetioType must have exactly one parameter type' );
     assert && Tandem.VALIDATION && assert( !!options.phetioType.parameterTypes![ 0 ],
       'PhetioDynamicElementContainer\'s phetioType\'s parameterType must be truthy' );
-    if ( assert && options.tandem.supplied ) {
+    if ( assert && options.tandem?.supplied ) {
       assert && Tandem.VALIDATION && assert( options.tandem.name.endsWith( options.containerSuffix ),
         'PhetioDynamicElementContainer tandems should end with options.containerSuffix' );
     }
 
-    // options that depend on other options
-    options.phetioDynamicElementName = options.tandem.name.slice( 0, options.tandem.name.length - options.containerSuffix.length );
+    if ( options.tandem ) {
+
+      // options that depend on other options
+      options.phetioDynamicElementName = options.tandem.name.slice( 0, options.tandem.name.length - options.containerSuffix.length );
+    }
 
     super( options );
 

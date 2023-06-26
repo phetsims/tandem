@@ -108,7 +108,6 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
       phetioOuterType: PhetioAction.PhetioActionIO,
 
       // PhetioObject
-      tandem: Tandem.OPTIONAL,
       phetioState: PHET_IO_STATE_DEFAULT,
       phetioReadOnly: PhetioObject.DEFAULT_OPTIONS.phetioReadOnly,
       phetioHighFrequency: PhetioObject.DEFAULT_OPTIONS.phetioHighFrequency,
@@ -125,7 +124,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
 
     this.executedEmitter = new Emitter<T>( {
       parameters: options.parameters,
-      tandem: options.tandem.createTandem( 'executedEmitter' ),
+      tandem: options.tandem?.createTandem( 'executedEmitter' ),
       hasListenerOrderDependencies: options.hasListenerOrderDependencies,
       phetioState: options.phetioState,
       phetioReadOnly: options.phetioReadOnly,

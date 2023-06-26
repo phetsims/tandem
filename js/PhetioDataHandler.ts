@@ -72,13 +72,12 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
       hasListenerOrderDependencies: false,
 
       // phet-io - see PhetioObject.js for doc
-      tandem: Tandem.OPTIONAL,
       phetioPlayback: PhetioObject.DEFAULT_OPTIONS.phetioPlayback,
       phetioEventMetadata: PhetioObject.DEFAULT_OPTIONS.phetioEventMetadata,
       phetioDocumentation: ''
     }, providedOptions );
 
-    assert && PhetioDataHandler.validateParameters( options.parameters, options.tandem.supplied );
+    assert && PhetioDataHandler.validateParameters( options.parameters, !!options.tandem?.supplied );
     assert && assert( options.phetioType === undefined,
       'PhetioDataHandler sets its own phetioType. Instead provide parameter phetioTypes through `options.parameters` with a phetioOuterType' );
 

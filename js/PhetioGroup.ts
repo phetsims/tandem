@@ -62,8 +62,6 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   public constructor( createElement: ( t: Tandem, ...p: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioGroupOptions ) {
 
     const options = optionize<PhetioGroupOptions, SelfOptions, PhetioDynamicElementContainerOptions>()( {
-      tandem: Tandem.OPTIONAL,
-
       groupElementStartingIndex: 1,
 
       // {string} The group's tandem name must have this suffix, and the base tandem name for elements of
@@ -81,7 +79,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     this.groupElementIndex = this.groupElementStartingIndex;
 
     this.countProperty = new NumberProperty( 0, {
-      tandem: options.tandem.createTandem( 'countProperty' ),
+      tandem: options.tandem?.createTandem( 'countProperty' ),
       phetioDocumentation: 'the number of elements in the group',
       phetioReadOnly: true,
       phetioFeatured: true,
