@@ -122,7 +122,9 @@ assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType )
 // Options for creating a PhetioObject
 type SelfOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
   'phetioIsArchetype' | 'phetioEventType'> & {
-  tandem?: Tandem;
+
+  // This is the only place in the project where this is allowed
+  tandem?: Tandem; // eslint-disable-line bad-sim-text
   phetioType?: IOType;
   phetioEventType?: EventType;
   phetioEventMetadata?: EventMetadata | null;
