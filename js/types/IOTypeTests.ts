@@ -23,7 +23,7 @@ QUnit.test( 'default toStateObject and applyState', assert => {
     public secondField = 5;
     public willBePrivateInStateObject = 42;
     private _myUnsettableField = 'unacceptable!';
-
+    private _secretName = 'Larry';
     private _valueForGetterAndSetter = 'hi';
 
     public get gettersAndSettersTest() { return this._valueForGetterAndSetter; }
@@ -37,7 +37,8 @@ QUnit.test( 'default toStateObject and applyState', assert => {
         secondField: NumberIO,
         _willBePrivateInStateObject: NumberIO,
         myUnsettableField: StringIO,
-        gettersAndSettersTest: StringIO
+        gettersAndSettersTest: StringIO,
+        _secretName: StringIO
       }
     } );
   }
@@ -49,13 +50,15 @@ QUnit.test( 'default toStateObject and applyState', assert => {
   assert.ok( stateObject._willBePrivateInStateObject === 42, 'stateObject willBePrivateInStateObject' );
   assert.ok( stateObject.myUnsettableField === 'unacceptable!', 'stateObject myUnsettableField' );
   assert.ok( stateObject.gettersAndSettersTest === 'hi', 'stateObject gettersAndSettersTest' );
+  assert.ok( stateObject._secretName === 'Larry', 'stateObject underscore key + underscore core' );
 
   const myStateObject = {
     firstField: false,
     secondField: 2,
     _willBePrivateInStateObject: 100,
     myUnsettableField: 'other',
-    gettersAndSettersTest: 'other2'
+    gettersAndSettersTest: 'other2',
+    _secretName: 'Bob'
   };
 
   MyClass.MyClassIO.applyState( x, myStateObject );
@@ -64,4 +67,5 @@ QUnit.test( 'default toStateObject and applyState', assert => {
   assert.ok( x.willBePrivateInStateObject === 100, 'applyState willBePrivateInStateObject' );
   assert.ok( x[ '_myUnsettableField' ] === 'other', 'applyState myUnsettableField' );
   assert.ok( x.gettersAndSettersTest === 'other2', 'applyState gettersAndSettersTest' );
+  assert.ok( x[ '_secretName' ] === 'Bob', 'applyState underscore key + underscore core' );
 } );

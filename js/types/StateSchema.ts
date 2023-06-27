@@ -160,12 +160,14 @@ export default class StateSchema<T, StateType> {
    */
   private getCoreObjectAccessorName( stateKey: string, coreObject: T ): string {
 
+    assert && assert( !stateKey.startsWith( '__' ), 'State keys should not start with too many underscores: ' + stateKey + '. When serializing ', coreObject );
+
     // Does the class field start with an underscore? We need to cover two cases here. The first is where the underscore
     // was added to make a private state key. The second, is where the core class only has the underscore-prefixed
     // field key name available for setting. The easiest algorithm to cover all cases is to see if the coreObject has
     // the underscore-prefixed key name, and use that if available, otherwise use the stateKey without an underscore.
     const noUnderscore = stateKey.startsWith( '_' ) ? stateKey.substring( 1 ) : stateKey;
-    const underscored = `_${stateKey}`;
+    const underscored = `_${noUnderscore}`;
     let coreObjectAccessorName: string;
 
     // @ts-expect-error - T is not specific to composite schemas, so NumberIO doesn't actually need a hasOwnProperty method
