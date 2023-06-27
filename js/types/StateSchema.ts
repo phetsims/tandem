@@ -41,6 +41,11 @@ type CompositeSchemaAPI = Record<string, IOTypeName>;
 // The schema of the stateObject value
 export type CompositeStateObjectType = Record<string, IntentionalAny>;
 
+// Pluck the result toStateObject types from the CompositeSchema. For instance, in a state schema like {name: StringIO} => {name: string}
+export type StateObject<T extends CompositeSchema> = {
+  [key in keyof T]: ReturnType<T[key]['toStateObject']>;
+};
+
 type StateSchemaOptions = {
 
   // What the IOType will display as in the API.
