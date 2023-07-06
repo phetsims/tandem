@@ -187,7 +187,8 @@ export default class StateSchema<T, StateType> {
   }
 
   /**
-   * True if the StateSchema is a composite schema.
+   * True if the StateSchema is a composite schema. See the header documentation in this file for the definition
+   * of "composite" schema.
    */
   public isComposite(): boolean {
     return !!this.compositeSchema;
