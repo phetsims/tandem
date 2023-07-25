@@ -24,6 +24,7 @@ QUnit.test( 'default toStateObject and applyState', assert => {
     public willBePrivateInStateObject = 42;
     private _myUnsettableField = 'unacceptable!';
     private _secretName = 'Larry';
+    private _secretNameButPublicState = 'Larry2';
     private _valueForGetterAndSetter = 'hi';
 
     public get gettersAndSettersTest() { return this._valueForGetterAndSetter; }
@@ -38,7 +39,8 @@ QUnit.test( 'default toStateObject and applyState', assert => {
         _willBePrivateInStateObject: NumberIO,
         myUnsettableField: StringIO,
         gettersAndSettersTest: StringIO,
-        _secretName: StringIO
+        _secretName: StringIO,
+        secretNameButPublicState: StringIO
       }
     } );
   }
@@ -51,6 +53,7 @@ QUnit.test( 'default toStateObject and applyState', assert => {
   assert.ok( stateObject.myUnsettableField === 'unacceptable!', 'stateObject myUnsettableField' );
   assert.ok( stateObject.gettersAndSettersTest === 'hi', 'stateObject gettersAndSettersTest' );
   assert.ok( stateObject._secretName === 'Larry', 'stateObject underscore key + underscore core' );
+  assert.ok( stateObject.secretNameButPublicState === 'Larry2', 'stateObject nonunderscored key + underscore core' );
 
   const myStateObject = {
     firstField: false,
@@ -58,7 +61,8 @@ QUnit.test( 'default toStateObject and applyState', assert => {
     _willBePrivateInStateObject: 100,
     myUnsettableField: 'other',
     gettersAndSettersTest: 'other2',
-    _secretName: 'Bob'
+    _secretName: 'Bob',
+    secretNameButPublicState: 'Bob2'
   };
 
   MyClass.MyClassIO.applyState( x, myStateObject );
@@ -68,4 +72,7 @@ QUnit.test( 'default toStateObject and applyState', assert => {
   assert.ok( x[ '_myUnsettableField' ] === 'other', 'applyState myUnsettableField' );
   assert.ok( x.gettersAndSettersTest === 'other2', 'applyState gettersAndSettersTest' );
   assert.ok( x[ '_secretName' ] === 'Bob', 'applyState underscore key + underscore core' );
+  assert.ok( !x.hasOwnProperty( 'secretName' ), 'do not write a bad field secretName' );
+  assert.ok( x[ '_secretNameButPublicState' ] === 'Bob2', 'applyState nonunderscore key + underscore core' );
+  assert.ok( !x.hasOwnProperty( 'secretNameButPublicState' ), 'do not write a bad field secretNameButPublicState' );
 } );
