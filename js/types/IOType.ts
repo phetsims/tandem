@@ -114,7 +114,7 @@ type SelfOptions<T, StateType> = {
   // ******** DESERIALIZATION ******** //
 
   // For Data Type Deserialization. Decodes the object from a state (see toStateObject) into an instance of the core type.
-  // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
+  // see https://github.com/phetsims/phet-io/blob/main/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
   fromStateObject?: ( s: StateType ) => T;
 
   // For Dynamic Element Deserialization: converts the state object to arguments
@@ -122,7 +122,7 @@ type SelfOptions<T, StateType> = {
   // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
   // to be implemented on IO Types whose core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
   // elements.
-  // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
+  // see https://github.com/phetsims/phet-io/blob/main/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
   stateObjectToCreateElementArguments?: ( s: StateType ) => unknown[];
 
   // For Reference Type Deserialization:  Applies the state (see toStateObject)
@@ -132,7 +132,7 @@ type SelfOptions<T, StateType> = {
   // each compose IOType has the correct defaultDeserializationMethod. Most of the time, composite IOTypes use fromStateObject
   // to deserialize each sub-component, but in some circumstances, you will want your child to deserialize by also using applyState.
   // See options.defaultDeserializationMethod to configure this case.
-  // see https://github.com/phetsims/phet-io/blob/master/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
+  // see https://github.com/phetsims/phet-io/blob/main/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
   applyState?: ( t: T, state: StateType ) => void;
 
   // For use when this IOType is part of a composite stateSchema in another IOType.  When
