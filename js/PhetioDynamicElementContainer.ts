@@ -200,7 +200,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
       } );
 
       // done with state setting
-      phetioStateEngine.stateSetEmitter.addListener( () => {
+      phetioStateEngine.undeferEmitter.addListener( () => {
         if ( this.notificationsDeferred ) {
           this.setNotificationsDeferred( false );
         }
@@ -423,7 +423,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
 
   /**
    * When set to true, creation and disposal notifications will be deferred until set to false. When set to false,
-   * this function will flush all of the notifications for created and disposed elements (in that order) that occurred
+   * this function will flush all the notifications for created and disposed elements (in that order) that occurred
    * while this container was deferring its notifications.
    */
   public setNotificationsDeferred( notificationsDeferred: boolean ): void {
