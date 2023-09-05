@@ -27,7 +27,7 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 
 // constants
-const DEFAULT_CONTAINER_SUFFIX = 'Capsule';
+const DEFAULT_CONTAINER_SUFFIX = phetio.PhetioIDUtils.CAPSULE_SUFFIX;
 
 // cache each parameterized IOType so that it is only created once.
 const cache = new Map<IOType, IOType>();

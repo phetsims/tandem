@@ -40,4 +40,28 @@ QUnit.test( 'Test archetype mapping', assert => {
       'sim.circuitConstructionKitDc-introScreen-model-circuit-batteryGroup-battery_0-currentProperty.test.battery_1' ),
     'sim.circuitConstructionKitDc-introScreen-model-circuit-batteryGroup-archetype-currentProperty.test.archetype',
     'Unexpected phetioID' );
+
+  assert.equal(
+    PhetioIDUtils.getArchetypalPhetioID(
+      'statesOfMatter.general.view.navigationBar.preferencesButton.preferencesDialogCapsule.preferencesDialog.selectedTabProperty' ),
+    'statesOfMatter.general.view.navigationBar.preferencesButton.preferencesDialogCapsule.archetype.selectedTabProperty',
+    'Unexpected phetioID' );
+
+  assert.equal(
+    PhetioIDUtils.getArchetypalPhetioID(
+      'statesOfMatter.general.view.navigationBar.preferencesButton.aboutDialogCapsule.preferencesDialog' ),
+    'statesOfMatter.general.view.navigationBar.preferencesButton.aboutDialogCapsule.archetype',
+    'Unexpected phetioID' );
+
+  assert.equal(
+    PhetioIDUtils.getArchetypalPhetioID(
+      'statesOfMatter.general.view.navigationBar.preferencesButton.aboutDialogCapsule' ),
+    'statesOfMatter.general.view.navigationBar.preferencesButton.aboutDialogCapsule',
+    'Unexpected phetioID' );
+
+  assert.equal(
+    PhetioIDUtils.getArchetypalPhetioID(
+      'aboutDialogCapsule.preferencesDialog.somethingForTheMasses' ),
+    'aboutDialogCapsule.archetype.somethingForTheMasses',
+    'Unexpected phetioID' );
 } );

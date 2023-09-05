@@ -29,6 +29,7 @@
   const CONTROLLER_COMPONENT_NAME = 'controller';
   const SCREEN_COMPONENT_NAME = 'Screen';
   const ARCHETYPE = 'archetype';
+  const CAPSULE_SUFFIX = 'Capsule';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -178,11 +179,21 @@
      * @returns {string}
      */
     getArchetypalPhetioID: function( phetioID ) {
-      const mapped = phetioID.split( SEPARATOR ).map( term => {
-        const mappedInnerTerms = term.split( INTER_TERM_SEPARATOR ).map( term => term.includes( GROUP_SEPARATOR ) ? ARCHETYPE : term );
-        return mappedInnerTerms.join( INTER_TERM_SEPARATOR );
-      } );
-      return mapped.join( SEPARATOR );
+      const phetioIDParts = phetioID.split( SEPARATOR );
+
+      for ( let i = 0; i < phetioIDParts.length; i++ ) {
+        const term = phetioIDParts[ i ];
+
+        if ( term.endsWith( CAPSULE_SUFFIX ) && i < phetioIDParts.length - 1 ) {
+          phetioIDParts[ i + 1 ] = ARCHETYPE;
+          i++;
+        }
+        else {
+          const mappedInnerTerms = term.split( INTER_TERM_SEPARATOR ).map( term => term.includes( GROUP_SEPARATOR ) ? ARCHETYPE : term );
+          phetioIDParts[ i ] = mappedInnerTerms.join( INTER_TERM_SEPARATOR );
+        }
+      }
+      return phetioIDParts.join( SEPARATOR );
     },
 
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
@@ -282,6 +293,14 @@
      * @constant
      * @public
      */
-    ARCHETYPE: ARCHETYPE
+    ARCHETYPE: ARCHETYPE,
+
+    /**
+     * The component name suffix for the container (parent) of a dynamic element that doesn't have an '_' in it.
+     * @type {string}
+     * @constant
+     * @public
+     */
+    CAPSULE_SUFFIX: CAPSULE_SUFFIX
   };
 } )();
