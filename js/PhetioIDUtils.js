@@ -28,6 +28,7 @@
   const COLORS_COMPONENT_NAME = 'colors';
   const CONTROLLER_COMPONENT_NAME = 'controller';
   const SCREEN_COMPONENT_NAME = 'Screen';
+  const ARCHETYPE = 'archetype';
 
   /**
    * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
@@ -167,6 +168,23 @@
       return potentialDescendantPhetioID !== potentialAncestorPhetioID;
     },
 
+    /**
+     * Converts a given phetioID to one where all dynamic element terms (i.e. ones with an underscore, like battery_4)
+     * are replaced with the term 'archetype'. This helps when looking up the archetype phetioID or metadata for a given
+     * dynamic element. Also support INTER_TERM_SEPARATOR delimited parts, like 'sim.screen1.myObject.term1-and-term2-battery_4-term4-etc'.
+     *
+     * See unit tests and examples in PhetioIDUtilsTests.ts.
+     * @param {string} phetioID
+     * @returns {string}
+     */
+    getArchetypalPhetioID: function( phetioID ) {
+      const mapped = phetioID.split( SEPARATOR ).map( term => {
+        const mappedInnerTerms = term.split( INTER_TERM_SEPARATOR ).map( term => term.includes( GROUP_SEPARATOR ) ? ARCHETYPE : term );
+        return mappedInnerTerms.join( INTER_TERM_SEPARATOR );
+      } );
+      return mapped.join( SEPARATOR );
+    },
+
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * The separator used to piece together a phet-io ID.
@@ -264,6 +282,6 @@
      * @constant
      * @public
      */
-    ARCHETYPE: 'archetype'
+    ARCHETYPE: ARCHETYPE
   };
 } )();

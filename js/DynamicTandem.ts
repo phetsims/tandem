@@ -9,7 +9,7 @@
  */
 
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import Tandem, { DYNAMIC_ARCHETYPE_NAME, TandemOptions } from './Tandem.js';
+import Tandem, { TandemOptions } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 
@@ -24,18 +24,6 @@ class DynamicTandem extends Tandem {
     }, providedOptions );
     super( parentTandem, name, options );
   }
-
-  /**
-   * See Tandem.getArchetypalPhetioID, in this case, look up the corresponding archetype.
-   * A dynamic phetioID contains text like .................'sim.screen1.particles.particles_7.visibleProperty'
-   * This method looks up the corresponding archetype like..'sim.screen1.particles.archetype.visibleProperty'
-   */
-  public override getArchetypalPhetioID(): string {
-    assert && assert( this.parentTandem, 'Group elements must be in a Group' );
-    return window.phetio.PhetioIDUtils.append( this.parentTandem!.getArchetypalPhetioID(), DYNAMIC_ARCHETYPE_NAME );
-  }
-
-  public static readonly DYNAMIC_ARCHETYPE_NAME = DYNAMIC_ARCHETYPE_NAME;
 }
 
 tandemNamespace.register( 'DynamicTandem', DynamicTandem );

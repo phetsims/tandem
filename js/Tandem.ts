@@ -317,19 +317,7 @@ class Tandem {
    * PhetioObjects have the trivial case where its archetypal phetioID is the same as its phetioID.
    */
   public getArchetypalPhetioID(): PhetioID {
-
-    // Dynamic elements always have a parent container, hence since this does not have a parent, it must already be concrete
-    const result: PhetioID = this.parentTandem ? window.phetio.PhetioIDUtils.append( this.parentTandem.getArchetypalPhetioID(), this.name ) : this.phetioID;
-
-    // For https://github.com/phetsims/axon/issues/408, we need to access archetypes for Tandems from createTandemFromPhetioID
-    if ( result.includes( '_' ) ) {
-      const terms = result.split( INTER_TERM_SEPARATOR );
-      const mapped = terms.map( term => term.includes( '_' ) ? DYNAMIC_ARCHETYPE_NAME : term );
-      return mapped.join( INTER_TERM_SEPARATOR );
-    }
-    else {
-      return result;
-    }
+    return window.phetio.PhetioIDUtils.getArchetypalPhetioID( this.phetioID );
   }
 
   /**
