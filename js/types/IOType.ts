@@ -49,13 +49,13 @@ export type IOTypeMethod = {
 
 type DeserializationType = 'fromStateObject' | 'applyState';
 
-type StateSchemaOption<T, StateType> = (
-  ( ioType: IOType<T, StateType> ) => CompositeSchema ) |
+type StateSchemaOption<T, StateType extends SelfStateType, SelfStateType> = (
+  ( ioType: IOType<T, StateType, SelfStateType> ) => CompositeSchema<SelfStateType> ) |
   StateSchema<T, StateType> |
-  CompositeSchema |
+  CompositeSchema<SelfStateType> |
   null;
 
-type SelfOptions<T, StateType> = {
+type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
 
   // IO Types form an object tree like a type hierarchy. If the supertype is specified, attributes such as
   // toStateObject, fromStateObject, stateObjectToCreateElementArguments, applyState, addChildElement
@@ -104,7 +104,7 @@ type SelfOptions<T, StateType> = {
   // will assume that each composite child of this stateSchema deserializes via "fromStateObject", if instead it uses
   // applyState, please specify that per IOType with defaultDeserializationMethod.
   // For phetioState: true objects, this should be required, but may be specified in the parent IOType, like in DerivedPropertyIO
-  stateSchema?: StateSchemaOption<T, StateType>;
+  stateSchema?: StateSchemaOption<T, StateType, SelfStateType>;
 
   // Serialize the core object. Most often this looks like an object literal that holds data about the PhetioObject
   // instance. This is likely superfluous to just providing a stateSchema of composite key/IOType values, which will
@@ -146,10 +146,12 @@ type SelfOptions<T, StateType> = {
   addChildElement?: AddChildElement;
 };
 
-type IOTypeOptions<T, StateType> = SelfOptions<T, StateType> & Validator<T>;
+type IOTypeOptions<T, StateType extends SelfStateType, SelfStateType> = SelfOptions<T, StateType, SelfStateType> & Validator<T>;
 
 // TODO: not any, but do we have to serialize type parameters? https://github.com/phetsims/tandem/issues/263
-export default class IOType<T = any, StateType = any> { // eslint-disable-line @typescript-eslint/no-explicit-any
+// StateType is the whole thing, SelfStateType is just at this level
+// export default class IOType<T = any, SelfStateType = any, ParentStateType = EmptyParent, StateType extends SelfStateType & ParentStateType = SelfStateType & ParentStateType> { // eslint-disable-line @typescript-eslint/no-explicit-any
+export default class IOType<T = any, StateType extends SelfStateType = any, SelfStateType = StateType> { // eslint-disable-line @typescript-eslint/no-explicit-any
   // See documentation in options type declaration
   public readonly supertype?: IOType;
   public readonly documentation?: string;
@@ -169,7 +171,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
   public readonly isFunctionType: boolean;
 
   // The StateSchema (type) that the option is made into. The option is more flexible than the class.
-  public readonly stateSchema: StateSchema<T, StateType>;
+  public readonly stateSchema: StateSchema<T, SelfStateType>;
 
   // The base IOType for the entire hierarchy.
   public static ObjectIO: IOType;
@@ -184,7 +186,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
    *    Parameterized types should also include a `parameterTypes` field on the IOType.
    * @param providedOptions
    */
-  public constructor( public readonly typeName: IOTypeName, providedOptions: IOTypeOptions<T, StateType> ) {
+  public constructor( public readonly typeName: IOTypeName, providedOptions: IOTypeOptions<T, StateType, SelfStateType> ) {
 
     // For reference in the options
     const supertype = providedOptions.supertype || IOType.ObjectIO;
@@ -192,7 +194,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     const applyStateSupplied = !!( providedOptions.applyState );
     const stateSchemaSupplied = !!( providedOptions.stateSchema );
 
-    const options = optionize<IOTypeOptions<T, StateType>, SelfOptions<T, StateType>>()( {
+    const options = optionize<IOTypeOptions<T, StateType, SelfStateType>, SelfOptions<T, StateType, SelfStateType>>()( {
 
       supertype: IOType.ObjectIO,
       methods: {},
@@ -247,7 +249,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     else {
       const compositeSchema = typeof options.stateSchema === 'function' ? options.stateSchema( this ) : options.stateSchema;
 
-      this.stateSchema = new StateSchema<T, StateType>( { compositeSchema: compositeSchema } );
+      this.stateSchema = new StateSchema<T, SelfStateType>( { compositeSchema: compositeSchema } );
     }
 
     // Assert that toStateObject method is provided for value StateSchemas. Do this with the following logic:
@@ -359,7 +361,9 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
     }
 
     if ( this.stateSchema && this.stateSchema.isComposite() ) {
-      return _.merge( superStateObject, this.stateSchema.defaultToStateObject( coreObject ) );
+
+      // TODO: Why type assert? https://github.com/phetsims/greenhouse-effect/issues/361
+      return _.merge( superStateObject, this.stateSchema.defaultToStateObject( coreObject ) ) as StateType;
     }
     else {
       return superStateObject as StateType;
@@ -429,7 +433,7 @@ export default class IOType<T = any, StateType = any> { // eslint-disable-line @
 
     // make sure the stateObject has everything the schema requires and nothing more
     if ( this.stateSchema ) {
-      const validSoFar = this.stateSchema.checkStateObjectValid( stateObject, toAssert, schemaKeysPresentInStateObject );
+      const validSoFar = this.stateSchema.checkStateObjectValid( stateObject as SelfStateType, toAssert, schemaKeysPresentInStateObject );
 
       // null as a marker to keep checking up the hierarchy, otherwise we reached our based case because the stateSchema was a value, not a composite
       if ( validSoFar !== null ) {

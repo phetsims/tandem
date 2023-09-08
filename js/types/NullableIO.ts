@@ -24,7 +24,7 @@ import StateSchema from './StateSchema.js';
 // Cache each parameterized IOType so that it is only created once
 const cache = new Map<IOType, IOType>();
 
-const NullableIO = <ParameterType, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ): IOType => {
+const NullableIO = <ParameterType, ParameterStateType extends PatternStateSelfType, PatternStateSelfType>( parameterType: IOType<ParameterType, ParameterStateType, PatternStateSelfType> ): IOType => {
 
   assert && assert( parameterType, 'NullableIO needs parameterType' );
 

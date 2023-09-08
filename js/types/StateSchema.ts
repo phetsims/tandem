@@ -33,7 +33,9 @@ import { IOTypeName } from '../TandemConstants.js';
  * By providing this, you are giving the schema to allow StateSchema to serialize and deserialize itself based on the
  * composite schema.
  */
-export type CompositeSchema = Record<string, IOType>;
+export type CompositeSchema<SelfStateType> = {
+  [K in keyof SelfStateType]: IOType
+};
 
 // As provided in the PhET-iO API json
 type CompositeSchemaAPI = Record<string, IOTypeName>;
@@ -43,11 +45,11 @@ export type CompositeStateObjectType = Record<string, IntentionalAny>;
 
 // Pluck the result toStateObject types from the CompositeSchema. For instance, map a state schema like so:
 // {name: StringIO} => {name: string}
-export type StateObject<T extends CompositeSchema> = {
+export type StateObject<T extends Record<string, IOType>> = {
   [key in keyof T]: ReturnType<T[key]['toStateObject']>;
 };
 
-type StateSchemaOptions = {
+type StateSchemaOptions<SelfStateType> = {
 
   // What the IOType will display as in the API.
   displayString?: string;
@@ -58,22 +60,22 @@ type StateSchemaOptions = {
   // The primary way to provide the detailed schema about the state for this instance. Composite schemas are a sum of
   // their stateful parts, instead of a "value" themselves.
   // An object literal of keys that correspond to an IOType
-  compositeSchema?: null | CompositeSchema;
+  compositeSchema?: null | CompositeSchema<SelfStateType>;
 };
 
-export default class StateSchema<T, StateType> {
+export default class StateSchema<T, SelfStateType> {
   private readonly displayString: string;
-  private readonly validator: Validator<StateType> | null;
+  private readonly validator: Validator<SelfStateType> | null;
 
   // "composite" state schemas are treated differently that value state schemas
-  public readonly compositeSchema: null | CompositeSchema;
+  public readonly compositeSchema: null | CompositeSchema<SelfStateType>;
 
-  public constructor( providedOptions?: StateSchemaOptions ) {
+  public constructor( providedOptions?: StateSchemaOptions<SelfStateType> ) {
 
     // Either create with compositeSchema, or specify a that this state is just a value
     assert && assertMutuallyExclusiveOptions( providedOptions, [ 'compositeSchema' ], [ 'displayString', 'validator' ] );
 
-    const options = optionize<StateSchemaOptions>()( {
+    const options = optionize<StateSchemaOptions<SelfStateType>>()( {
       displayString: '',
       validator: null,
       compositeSchema: null
@@ -124,7 +126,7 @@ export default class StateSchema<T, StateType> {
    * same key names on the coreObject instance. It supports those keys as private, underscore-prefixed field, as
    * well as if the coreObject has an es5 getter instead of an actual field.
    */
-  public defaultToStateObject( coreObject: T ): StateType {
+  public defaultToStateObject( coreObject: T ): SelfStateType {
     assert && assert( this.isComposite(), 'defaultToStateObject from stateSchema only applies to composite stateSchemas' );
 
     const stateObject = {};
@@ -157,7 +159,7 @@ export default class StateSchema<T, StateType> {
         stateObject[ stateKey ] = this.compositeSchema[ stateKey ].toStateObject( coreObject[ coreObjectAccessorName ] );
       }
     }
-    return stateObject as StateType;
+    return stateObject as SelfStateType;
   }
 
   /**
@@ -203,7 +205,7 @@ export default class StateSchema<T, StateType> {
    * @param schemaKeysPresentInStateObject - to be populated with any keys this StateSchema is responsible for.
    * @returns boolean if validity can be checked, null if valid, but next in the hierarchy is needed
    */
-  public checkStateObjectValid( stateObject: StateType, toAssert: boolean, schemaKeysPresentInStateObject: string[] ): boolean | null {
+  public checkStateObjectValid( stateObject: SelfStateType, toAssert: boolean, schemaKeysPresentInStateObject: string[] ): boolean | null {
     if ( this.isComposite() ) {
       const compositeStateObject = stateObject as CompositeStateObjectType;
       const schema = this.compositeSchema!;
@@ -214,18 +216,27 @@ export default class StateSchema<T, StateType> {
         valid = false;
         return valid;
       }
-      Object.keys( schema ).forEach( key => {
-        if ( !compositeStateObject.hasOwnProperty( key ) ) {
-          assert && toAssert && assert( false, `${key} in state schema but not in the state object` );
-          valid = false;
-        }
-        else {
-          if ( !schema[ key ].isStateObjectValid( compositeStateObject[ key ], false ) ) {
-            assert && toAssert && assert( false, `stateObject is not valid for ${key}` );
+      const keys = Object.keys( schema ) as ( keyof CompositeSchema<SelfStateType> )[];
+      keys.forEach( key => {
+
+        if ( typeof key === 'string' ) {
+
+          if ( !compositeStateObject.hasOwnProperty( key ) ) {
+            assert && toAssert && assert( false, `${key} in state schema but not in the state object` );
             valid = false;
           }
+          else {
+            if ( !schema[ key ].isStateObjectValid( compositeStateObject[ key ], false ) ) {
+              assert && toAssert && assert( false, `stateObject is not valid for ${key}` );
+              valid = false;
+            }
+          }
+          schemaKeysPresentInStateObject.push( key );
         }
-        schemaKeysPresentInStateObject.push( key );
+        else {
+          console.error( 'key should be a string', key );
+          assert && assert( false, 'key should be a string' );
+        }
       } );
       return valid;
     }
@@ -245,7 +256,9 @@ export default class StateSchema<T, StateType> {
     const relatedTypes: IOType[] = [];
 
     if ( this.compositeSchema ) {
-      Object.keys( this.compositeSchema ).forEach( stateSchemaKey => {
+
+      const keys = Object.keys( this.compositeSchema ) as ( keyof CompositeSchema<SelfStateType> )[];
+      keys.forEach( stateSchemaKey => {
         this.compositeSchema![ stateSchemaKey ] instanceof IOType && relatedTypes.push( this.compositeSchema![ stateSchemaKey ] );
       } );
     }

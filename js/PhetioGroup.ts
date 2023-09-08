@@ -282,8 +282,9 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   /**
    * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
    */
-  public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ): IOType => {
+  public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType extends ParameterStateSelfType, ParameterStateSelfType>( parameterType: IOType<ParameterType, ParameterStateType, ParameterStateSelfType> ): IOType => {
 
+    // TODO: https://github.com/phetsims/tandem/issues/254 specify the correct type instead of IntentionalAny
     if ( !cache.has( parameterType ) ) {
       cache.set( parameterType, new IOType<PhetioGroup<ParameterType>, IntentionalAny>( `PhetioGroupIO<${parameterType.typeName}>`, {
 
