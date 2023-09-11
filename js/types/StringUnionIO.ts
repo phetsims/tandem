@@ -27,6 +27,7 @@ const StringUnionIO = <ParameterType extends readonly string[]>( unionValues: Pa
       toStateObject: _.identity,
       fromStateObject: _.identity,
 
+      // TODO: This is the only place that has IO suffix in StateSchema.asValue, and likely change "<" to "(", https://github.com/phetsims/tandem/issues/303
       stateSchema: StateSchema.asValue( `StringUnionIO<${typeName}>`, {
           isValidValue: value => unionValues.includes( value )
         }
