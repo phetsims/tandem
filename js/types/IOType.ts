@@ -361,8 +361,6 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
     }
 
     if ( this.stateSchema && this.stateSchema.isComposite() ) {
-
-      // TODO: Why type assert? https://github.com/phetsims/greenhouse-effect/issues/361
       return _.merge( superStateObject, this.stateSchema.defaultToStateObject( coreObject ) ) as StateType;
     }
     else {
