@@ -243,7 +243,11 @@ export default class StateSchema<T, SelfStateType> {
     else {
       assert && assert( this.validator, 'validator must be present if not composite' );
       const valueStateObject = stateObject;
-      assert && toAssert && assert( Validation.getValidationError( valueStateObject, this.validator! ) === null );
+
+      if ( assert && toAssert ) {
+        const validationError = Validation.getValidationError( valueStateObject, this.validator! );
+        assert( validationError === null, 'valueStateObject failed validation', valueStateObject, validationError );
+      }
 
       return Validation.isValueValid( valueStateObject, this.validator! );
     }
