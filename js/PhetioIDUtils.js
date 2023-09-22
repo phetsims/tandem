@@ -60,7 +60,8 @@
 
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
-     * getComponentName returns the final term, or final part, for a phetioID (basically the tail). For example:
+     * Given a phetioID for a PhET-iO element, get the part of that ID that pertains to the component (basically the
+     * tail piece).
      * @example
      * getComponentName( 'myScreen.myControlPanel.myComboBox' )
      * -->  'myComboBox'
