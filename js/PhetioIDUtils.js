@@ -5,7 +5,7 @@
  * phetioIDs.
  *
  * Many of these functions' jsdoc is rendered and visible publicly to PhET-iO client. Those sections should be
- * marked, see top level comment in PhetioClient.js about private vs public documentation
+ * marked, see top level comment in Client.js about private vs public documentation
  *
  * @author Chris Malley (PixelZoom, Inc.)
  * @author Sam Reid (PhET Interactive Simulations)

@@ -75,7 +75,7 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // (that an ancestor already specified).
   metadataDefaults?: Partial<PhetioObjectMetadata>;
 
-  // Text that describes the IO Type, presented to the PhetioClient in Studio, supports HTML markup.
+  // Text that describes the IO Type, presented to the PhET-iO Client in Studio, supports HTML markup.
   documentation?: string;
 
   // The public methods available for this IO Type. Each method is not just a function,
