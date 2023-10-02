@@ -45,7 +45,8 @@ export type FullPhetioState = Record<PhetioID, PhetioObjectState | 'DELETED'>;
 
 export type Methods = Record<string, Method>;
 
-export type StateSchemaAPI = string | Record<string, IOTypeName>;
+export type CompositeStateSchemaAPI = Record<string, IOTypeName>;
+export type StateSchemaAPI = string | CompositeStateSchemaAPI;
 
 export type PhetioType = {
   methods: Methods;
