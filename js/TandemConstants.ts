@@ -45,6 +45,8 @@ export type FullPhetioState = Record<PhetioID, PhetioObjectState | 'DELETED'>;
 
 export type Methods = Record<string, Method>;
 
+export type StateSchemaAPI = string | Record<string, IOTypeName>;
+
 export type PhetioType = {
   methods: Methods;
   supertype?: string; // no supertype for root of hierarchy
@@ -54,27 +56,30 @@ export type PhetioType = {
   metadataDefaults?: Partial<PhetioObjectMetadata>;
   dataDefaults?: Record<string, unknown>;
   methodOrder?: string[];
-  stateSchema?: string | Record<string, string>;
+  stateSchema?: StateSchemaAPI;
   parameterTypes?: string[]; // each typeName
 };
 export type PhetioTypes = Record<string, PhetioType>;
 
 export type PhetioOverrides = Record<string, Partial<PhetioObjectMetadata>>;
 
-// Like the generate API files
-export type PhetioAPI = {
+// Abstraction for flattened or treelike PhetioAPI
+export type AbstractPhetioAPI = {
   version: {
     major: number;
     minor: number;
   };
   phetioFullAPI?: boolean;
   sim: string;
-  phetioElements: PhetioElements;
   phetioTypes: PhetioTypes;
 };
 
+export type PhetioAPI = AbstractPhetioAPI & { phetioElements: PhetioElements };
+
+export type FlattenedAPIPhetioElements = Record<PhetioID, PhetioElement>;
+
 // Like the old API schema, where keys are the full, dot-separated phetioID
-export type APIFlat = Record<PhetioID, PhetioElement>;
+export type PhetioAPIFlat = AbstractPhetioAPI & { phetioElements: FlattenedAPIPhetioElements };
 
 export type IOTypeName = string;
 
