@@ -29,7 +29,7 @@ const cache = new Map<string, IOType>();
  */
 const OrIO = ( parameterTypes: IOType[] ): IOType => {
   assert && assert( Array.isArray( parameterTypes ), 'OrIO needs to be an array' );
-  assert && assert( parameterTypes.length > 0, 'OrIO needs parameterTypes' );
+  assert && assert( parameterTypes.length > 1, 'OrIO needs parameterTypes' );
   const typeNames = parameterTypes.map( parameterType => parameterType.typeName );
   const key = typeNames.join( ',' );
 
