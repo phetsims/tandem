@@ -16,6 +16,8 @@ const EVENT_TYPE_MODEL = 'MODEL';
 
 export type PhetioID = string;
 
+export type IOTypeName = string;
+
 export type PhetioElementData = {
   initialState: Record<string, unknown>;
 };
@@ -51,7 +53,7 @@ export type StateSchemaAPI = string | CompositeStateSchemaAPI;
 export type PhetioType = {
   methods: Methods;
   supertype?: string; // no supertype for root of hierarchy
-  typeName: string;
+  typeName: IOTypeName;
   documentation?: string;
   events: string[];
   metadataDefaults?: Partial<PhetioObjectMetadata>;
@@ -81,8 +83,6 @@ export type FlattenedAPIPhetioElements = Record<PhetioID, PhetioElement>;
 
 // Like the old API schema, where keys are the full, dot-separated phetioID
 export type PhetioAPIFlat = AbstractPhetioAPI & { phetioElements: FlattenedAPIPhetioElements };
-
-export type IOTypeName = string;
 
 export type PhetioObjectMetadata = {
 
