@@ -99,10 +99,10 @@ class PhetioAPIValidation {
    * or from within studio, but phetioState: false so they are not captured with save states.
    */
   public validatePreferencesModel(): void {
-    Object.keys( phet.phetio.phetioEngine.phetioObjectMap ).filter( key => key.includes( '.preferencesModel.' ) )
+    Object.keys( phet.phetio.phetioEngine.phetioElementMap ).filter( key => key.includes( '.preferencesModel.' ) )
       .forEach( preferencesKey => {
 
-        let phetioObject = phet.phetio.phetioEngine.phetioObjectMap[ preferencesKey ];
+        let phetioObject = phet.phetio.phetioEngine.phetioElementMap[ preferencesKey ];
 
         while ( phetioObject instanceof LinkedElement ) {
           phetioObject = phetioObject.element;
@@ -175,7 +175,7 @@ class PhetioAPIValidation {
           // already been disposed.
           if ( phet.preloads.phetio.createArchetypes && !phetioObject.isDisposed ) {
             const archetypeID = phetioObject.tandem.getArchetypalPhetioID();
-            const archetypeMetadata = phet.phetio.phetioEngine.getPhetioObject( archetypeID ).getMetadata();
+            const archetypeMetadata = phet.phetio.phetioEngine.getPhetioElement( archetypeID ).getMetadata();
 
             // Compare to the simulation-defined archetype
             this.checkDynamicInstanceAgainstArchetype( phetioObject, archetypeMetadata, 'simulation archetype' );

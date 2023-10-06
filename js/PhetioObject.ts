@@ -517,7 +517,7 @@ class PhetioObject extends Disposable {
 
       if ( phetioEngine.hasPhetioObject( phetioID ) || ( !Tandem.launched && unlaunchedPhetioIDs.includes( phetioID ) ) ) {
         assert && assert( this.isPhetioInstrumented() );
-        const phetioObject = phetioEngine.hasPhetioObject( phetioID ) ? phetioEngine.getPhetioObject( phetioID ) :
+        const phetioObject = phetioEngine.hasPhetioObject( phetioID ) ? phetioEngine.getPhetioElement( phetioID ) :
                              Tandem.bufferedPhetioObjects[ unlaunchedPhetioIDs.indexOf( phetioID ) ];
 
         assert && assert( phetioObject, 'should have a phetioObject here' );
@@ -680,7 +680,7 @@ class PhetioObject extends Disposable {
       else if ( this.tandem.parentTandem ) {
         // Look for a sibling linkedElement if there are no child linkages, see https://github.com/phetsims/studio/issues/246#issuecomment-1018733408
 
-        const parent: PhetioObject | undefined = phet.phetio.phetioEngine.phetioObjectMap[ this.tandem.parentTandem.phetioID ];
+        const parent: PhetioObject | undefined = phet.phetio.phetioEngine.phetioElementMap[ this.tandem.parentTandem.phetioID ];
         if ( parent ) {
           const linkedParentElement = parent.getCorrespondingLinkedElement();
           if ( linkedParentElement !== 'noCorrespondingLinkedElement' ) {
@@ -730,7 +730,7 @@ class PhetioObject extends Disposable {
     }
     let displayed = false;
     this.tandem.iterateDescendants( descendantTandem => {
-      const parent: PhetioObject | undefined = phet.phetio.phetioEngine.phetioObjectMap[ descendantTandem.phetioID ];
+      const parent: PhetioObject | undefined = phet.phetio.phetioEngine.phetioElementMap[ descendantTandem.phetioID ];
       if ( parent && parent.isPhetioInstrumented() && parent.phetioFeatured ) {
         displayed = true;
       }
@@ -749,7 +749,7 @@ class PhetioObject extends Disposable {
       const childPhetioID = phetio.PhetioIDUtils.append( this.tandem.phetioID, childName );
 
       // Note that if it doesn't find a phetioID, that may be a synthetic node with children but not itself instrumented.
-      const phetioObject: PhetioObject | undefined = phet.phetio.phetioEngine.phetioObjectMap[ childPhetioID ];
+      const phetioObject: PhetioObject | undefined = phet.phetio.phetioEngine.phetioElementMap[ childPhetioID ];
       if ( phetioObject instanceof LinkedElement ) {
         linkedChildren.push( phetioObject );
       }
@@ -798,7 +798,7 @@ class PhetioObject extends Disposable {
       const descendants: PhetioObject[] = [];
       this.tandem.iterateDescendants( tandem => {
         if ( phet.phetio.phetioEngine.hasPhetioObject( tandem.phetioID ) ) {
-          descendants.push( phet.phetio.phetioEngine.getPhetioObject( tandem.phetioID ) );
+          descendants.push( phet.phetio.phetioEngine.getPhetioElement( tandem.phetioID ) );
         }
       } );
 

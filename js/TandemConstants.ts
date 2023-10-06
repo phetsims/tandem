@@ -41,9 +41,9 @@ export type Method = {
   invocableForReadOnlyElements?: boolean;
 };
 
-export type PhetioObjectState = Record<string, IntentionalAny>;
-export type PhetioState = Record<PhetioID, PhetioObjectState>;
-export type FullPhetioState = Record<PhetioID, PhetioObjectState | 'DELETED'>;
+export type PhetioElementState = Record<string, IntentionalAny>;
+export type PhetioState = Record<PhetioID, PhetioElementState>;
+export type FullPhetioState = Record<PhetioID, PhetioElementState | 'DELETED'>;
 
 export type Methods = Record<string, Method>;
 
