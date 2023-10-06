@@ -227,7 +227,7 @@ export default class StateSchema<T, SelfStateType> {
           }
           else {
             if ( !schema[ key ].isStateObjectValid( compositeStateObject[ key ], false ) ) {
-              assert && toAssert && assert( false, `stateObject is not valid for ${key}. stateObject=${compositeStateObject[ key ]}, schema=${schema[ key ]}` );
+              assert && toAssert && assert( false, `stateObject is not valid for ${key}. stateObject=`, compositeStateObject[ key ], `schema=`, schema[ key ] );
               valid = false;
             }
           }
