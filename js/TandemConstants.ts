@@ -62,7 +62,7 @@ export type PhetioType = {
   stateSchema?: StateSchemaAPI;
   parameterTypes?: string[]; // each typeName
 };
-export type PhetioTypes = Record<string, PhetioType>;
+export type PhetioTypes = Record<IOTypeName, PhetioType>;
 
 export type PhetioOverrides = Record<string, Partial<PhetioObjectMetadata>>;
 
