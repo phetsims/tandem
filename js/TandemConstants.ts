@@ -41,7 +41,10 @@ export type Method = {
   invocableForReadOnlyElements?: boolean;
 };
 
+// The "top level" state associated with a phetioID in state. This is NOT and never should be a "substate" or nested.
+// value within a top-level state.
 export type PhetioElementState = Record<string, IntentionalAny>;
+
 export type PhetioState = Record<PhetioID, PhetioElementState>;
 export type FullPhetioState = Record<PhetioID, PhetioElementState | 'DELETED'>;
 
