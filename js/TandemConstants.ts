@@ -19,7 +19,7 @@ export type PhetioID = string;
 export type IOTypeName = string;
 
 export type PhetioElementData = {
-  initialState: Record<string, unknown>;
+  initialState: PhetioElementState;
 };
 
 export type PhetioElement = {
