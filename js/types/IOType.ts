@@ -148,7 +148,6 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
 
 type IOTypeOptions<T, StateType extends SelfStateType, SelfStateType> = SelfOptions<T, StateType, SelfStateType> & Validator<T>;
 
-// TODO: not any, but do we have to serialize type parameters? https://github.com/phetsims/tandem/issues/263
 // StateType is the whole thing, SelfStateType is just at this level
 // export default class IOType<T = any, SelfStateType = any, ParentStateType = EmptyParent, StateType extends SelfStateType & ParentStateType = SelfStateType & ParentStateType> { // eslint-disable-line @typescript-eslint/no-explicit-any
 export default class IOType<T = any, StateType extends SelfStateType = any, SelfStateType = StateType> { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -383,11 +382,10 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   /**
    * Gets an array of IOTypes of the self type and all the supertype ancestors.
    */
-  private getTypeHierarchy(): IOType<unknown, unknown>[] {
+  private getTypeHierarchy(): IOType<IntentionalAny, IntentionalAny, IntentionalAny>[] {
     const array = [];
 
-    // @ts-expect-error Still working out this stuff, https://github.com/phetsims/tandem/issues/263
-    let ioType: IOType<unknown, unknown> = this; // eslint-disable-line consistent-this, @typescript-eslint/no-this-alias
+    let ioType: IOType = this; // eslint-disable-line consistent-this, @typescript-eslint/no-this-alias
     while ( ioType ) {
       array.push( ioType );
       ioType = ioType.supertype!;

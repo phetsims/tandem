@@ -105,7 +105,7 @@ export type PhetioObjectMetadata = {
   phetioIsArchetype: boolean;
   phetioArchetypePhetioID?: string | null;
 
-  // For PhetioDynamicElementContainer.  TODO: https://github.com/phetsims/tandem/issues/263 can this be elsewhere?
+  // For PhetioDynamicElementContainer.
   phetioDynamicElementName?: string | null;
 };
 
