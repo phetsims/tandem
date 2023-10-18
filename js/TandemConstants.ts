@@ -84,9 +84,6 @@ export type PhetioAPI = AbstractPhetioAPI & { phetioElements: PhetioElements };
 
 export type FlattenedAPIPhetioElements = Record<PhetioID, PhetioElement>;
 
-// Like the old API schema, where keys are the full, dot-separated phetioID
-export type PhetioAPIFlat = AbstractPhetioAPI & { phetioElements: FlattenedAPIPhetioElements };
-
 export type PhetioObjectMetadata = {
 
   // Used in PhetioObjectOptions
