@@ -87,7 +87,7 @@ class PhetioAPIValidation {
     }
 
     if ( phet.preloads.phetio.queryParameters.phetioPrintAPIProblems && this.apiMismatches ) {
-      console.log( 'PhET-iO api problems detected: ', this.apiMismatches );
+      console.log( 'PhET-iO API problems detected: ', this.apiMismatches );
     }
 
     // After the overrides validation to support ?phetioPrintAPIProblems on errors with overrides.
