@@ -598,7 +598,7 @@ class PhetioObject extends Disposable {
     if ( !this.isPhetioInstrumented() ) {
 
       // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrument
-      // it afterwards.
+      // it afterward.
       this.linkedElements = null;
       return;
     }
