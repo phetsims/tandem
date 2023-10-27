@@ -123,9 +123,8 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
         'PhetioDynamicElementContainer tandems should end with options.containerSuffix' );
     }
 
-    if ( options.tandem ) {
-
-      // options that depend on other options
+    // options that depend on other options for their default
+    if ( options.tandem && !options.phetioDynamicElementName ) {
       options.phetioDynamicElementName = options.tandem.name.slice( 0, options.tandem.name.length - options.containerSuffix.length );
     }
 
