@@ -40,5 +40,8 @@ const ArrayIO = <ParameterType, ParameterStateType>( parameterType: IOType<Param
   return cache.get( parameterType )!;
 };
 
+// For testing only, please.
+ArrayIO.clearCache = () => cache.clear();
+
 tandemNamespace.register( 'ArrayIO', ArrayIO );
 export default ArrayIO;
