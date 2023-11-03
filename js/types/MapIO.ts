@@ -16,7 +16,7 @@ import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new Map<string, IOType>();
+let cache = new Map<string, IOType>();
 
 const ARRAY_OF_ARRAY_VALIDATOR = {
   valueType: Array,
@@ -87,6 +87,11 @@ function MapIO<KType, KStateType, VType, VStateType>( keyType: IOType<KType, KSt
 
   return cache.get( cacheKey )!;
 }
+
+// For testing only, please. Please.
+MapIO.clearCache = () => {
+  cache = new Map<string, IOType>();
+};
 
 tandemNamespace.register( 'MapIO', MapIO );
 export default MapIO;
