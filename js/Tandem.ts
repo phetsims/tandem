@@ -567,7 +567,7 @@ class Tandem {
   }
 
   /**
-   * @deprecated - In TypeScript, optionize already knows that `tandem` may be undefined, just use `options.tandem?` See https://github.com/phetsims/tandem/issues/289
+   * In TypeScript, optionize already knows that `tandem` may be undefined, just use `options.tandem?` See https://github.com/phetsims/tandem/issues/289
    * Used to indicate a common code component that supports tandem, but doesn't require it.  If a tandem is not
    * passed in, then it will not be instrumented.
    */
