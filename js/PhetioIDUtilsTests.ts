@@ -89,4 +89,22 @@ QUnit.test( 'Test archetype mapping', assert => {
       'aboutDialogCapsule.preferencesDialog.somethingForTheMasses' ),
     'aboutDialogCapsule.archetype.somethingForTheMasses',
     'Unexpected phetioID' );
+
+  assert.equal(
+    PhetioIDUtils.getArchetypalPhetioID(
+      'myGroup.myElement_foo.positionProperty' ),
+    'myGroup.archetype.positionProperty',
+    'Unexpected phetioID' );
+
+  assert.equal(
+    PhetioIDUtils.getArchetypalPhetioID(
+      'myGroup.myElement_1.positionProperty' ),
+    'myGroup.archetype.positionProperty',
+    'Unexpected phetioID' );
+
+  assert.equal(
+    PhetioIDUtils.getArchetypalPhetioID(
+      'myGroup.myElement_blarg2.positionProperty' ),
+    'myGroup.archetype.positionProperty',
+    'Unexpected phetioID' );
 } );

@@ -12,6 +12,7 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import Tandem, { TandemOptions } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
+import TandemConstants from './TandemConstants.js';
 
 type DynamicTandemOptions = StrictOmit<TandemOptions, 'isValidTandemName'>;
 
@@ -20,7 +21,7 @@ class DynamicTandem extends Tandem {
   public constructor( parentTandem: Tandem, name: string, providedOptions?: DynamicTandemOptions ) {
     assert && assert( parentTandem, 'DynamicTandem must have a parentTandem' );
     const options = optionize<DynamicTandemOptions, EmptySelfOptions, TandemOptions>()( {
-      isValidTandemName: ( name: string ) => Tandem.getRegexFromTerm( Tandem.BASE_DYNAMIC_TANDEM_TERM ).test( name )
+      isValidTandemName: ( name: string ) => Tandem.getRegexFromCharacterClass( TandemConstants.BASE_DYNAMIC_TANDEM_CHARACTER_CLASS ).test( name )
     }, providedOptions );
     super( parentTandem, name, options );
   }

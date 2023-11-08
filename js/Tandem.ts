@@ -12,7 +12,7 @@ import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
 import PhetioObject from './PhetioObject.js';
-import { PhetioID } from './TandemConstants.js';
+import TandemConstants, { PhetioID } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // constants
@@ -120,7 +120,7 @@ class Tandem {
       // if the tandem is required but not supplied, an error will be thrown.
       supplied: true,
 
-      isValidTandemName: ( name: string ) => Tandem.getRegexFromTerm().test( name )
+      isValidTandemName: ( name: string ) => Tandem.getRegexFromCharacterClass().test( name )
     }, providedOptions );
 
     assert && assert( options.isValidTandemName( name ), `invalid tandem name: ${name}` );
@@ -136,18 +136,10 @@ class Tandem {
     this.supplied = options.supplied;
   }
 
-  // The base definition of allowed characters in a tandem name. In regex form. This will be added to a character
-  // class (inside `[]`). See isValidTandemName(). This applies to all Tandem subtypes, not just Tandem()
-  // Allowable terms for tandems, like myObject, or myObject3[1,4], or MyObject
-  // Note: This allows some tandems we would not prefer, such as My,Obje[ct, but we will catch that during the design phase.
-  // Note: This block must go before we start creating static Tandem instances at the bottom of this class.
-  private static readonly BASE_TANDEM_TERM = 'a-zA-Z0-9[\\],';
-  protected static readonly BASE_DYNAMIC_TANDEM_TERM = `${Tandem.BASE_TANDEM_TERM}_`;
-  private static readonly BASE_DERIVED_TANDEM_TERM = `${Tandem.BASE_DYNAMIC_TANDEM_TERM}-`;
-
-  // Get the regex to test for a valid tandem name, given the term for your specific tandem
-  protected static getRegexFromTerm( tandemTerm: string = Tandem.BASE_TANDEM_TERM ): RegExp {
-    return new RegExp( `^[${tandemTerm}]+$` );
+  // Get the regex to test for a valid tandem name, given the char class for your specific tandem. In the regex
+  // language. In this function we will wrap it in `[]+` brackets forming the actual "class".
+  protected static getRegexFromCharacterClass( tandemCharacterClass: string = TandemConstants.BASE_TANDEM_CHARACTER_CLASS ): RegExp {
+    return new RegExp( `^[${tandemCharacterClass}]+$` );
   }
 
   /**
@@ -458,7 +450,7 @@ class Tandem {
 
   public createTandemFromPhetioID( phetioID: PhetioID ): Tandem {
     return this.createTandem( phetioID.split( window.phetio.PhetioIDUtils.SEPARATOR ).join( INTER_TERM_SEPARATOR ), {
-      isValidTandemName: ( name: string ) => Tandem.getRegexFromTerm( Tandem.BASE_DERIVED_TANDEM_TERM ).test( name )
+      isValidTandemName: ( name: string ) => Tandem.getRegexFromCharacterClass( TandemConstants.BASE_DERIVED_TANDEM_CHARACTER_CLASS ).test( name )
     } );
   }
 
