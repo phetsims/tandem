@@ -247,7 +247,8 @@ class Tandem {
    */
   public removePhetioObject( phetioObject: PhetioObject ): void {
 
-    if ( !this.required && !this.supplied ) {
+    // No need to handle this case for uninstrumented objects being removed
+    if ( !this.supplied ) {
       return;
     }
 
