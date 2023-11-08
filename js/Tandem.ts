@@ -158,7 +158,9 @@ class Tandem {
 
     // When the query parameter phetioPrintMissingTandems is true, report tandems that are required but not supplied
     if ( PRINT_MISSING_TANDEMS && !tandem.supplied ) {
-      const stackTrace = new Error().stack!;
+
+      const stackTrace = Tandem.captureStackTrace();
+
       if ( tandem.required ) {
         missingTandems.required.push( { phetioID: tandem.phetioID, stack: stackTrace } );
       }
@@ -170,6 +172,37 @@ class Tandem {
           missingTandems.optional.push( { phetioID: tandem.phetioID, stack: stackTrace } );
         }
       }
+    }
+  }
+
+  /**
+   * Get a stack trace from a new instance of an Error(). This also uses window.Error.stackTraceLimit to expand the
+   * length of the stack trace. This can be useful in spots where the stack is the only information we have about
+   * where we are in common code (like for knowing where to provide a Tandem  for PhET-iO instrumentation).
+   * @param limit - set to Error.stackTraceLimit just for a single stack trace, then return to the previous value after.
+   */
+  private static captureStackTrace( limit = Infinity ): string {
+
+    // Check if Error.stackTraceLimit exists and is writable
+    const descriptor = Object.getOwnPropertyDescriptor( Error, 'stackTraceLimit' );
+    const stackTraceWritable = descriptor && ( descriptor.writable || ( descriptor.set && typeof descriptor.set === 'function' ) );
+
+    if ( stackTraceWritable ) {
+
+      // Save the original stackTraceLimit before changing it
+      // @ts-expect-error
+      const originalStackTraceLimit = Error.stackTraceLimit;
+
+      // @ts-expect-error
+      Error.stackTraceLimit = limit;
+      const stackTrace = new Error().stack!;
+
+      // @ts-expect-error
+      Error.stackTraceLimit = originalStackTraceLimit;
+      return stackTrace;
+    }
+    else {
+      return new Error().stack!;
     }
   }
 
