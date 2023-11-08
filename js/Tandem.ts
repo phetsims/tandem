@@ -190,14 +190,17 @@ class Tandem {
     if ( stackTraceWritable ) {
 
       // Save the original stackTraceLimit before changing it
-      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+      // @ts-ignore
       const originalStackTraceLimit = Error.stackTraceLimit;
 
-      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+      // @ts-ignore
       Error.stackTraceLimit = limit;
       const stackTrace = new Error().stack!;
 
-      // @ts-expect-error
+      // eslint-disable-next-line @typescript-eslint/prefer-ts-expect-error
+      // @ts-ignore
       Error.stackTraceLimit = originalStackTraceLimit;
       return stackTrace;
     }
