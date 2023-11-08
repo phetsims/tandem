@@ -8,6 +8,31 @@
 
 QUnit.module( 'PhetioIDUtils' );
 
+QUnit.test( 'PhetioIDUtils.append', assert => {
+
+  const PhetioIDUtils = window.phetio.PhetioIDUtils;
+  assert.equal(
+    PhetioIDUtils.append( 'circuitConstructionKitDc.introScreen.model.circuit.voltageProperty', 'rangeProperty' ),
+    'circuitConstructionKitDc.introScreen.model.circuit.voltageProperty.rangeProperty',
+    'basic append' );
+
+  assert.equal(
+    PhetioIDUtils.append( '', 'circuitConstructionKitDc' ),
+    'circuitConstructionKitDc' );
+
+  assert.equal(
+    PhetioIDUtils.append( '', 'circuitConstructionKitDc', 'introScreen' ),
+    'circuitConstructionKitDc.introScreen' );
+
+  assert.equal(
+    PhetioIDUtils.append( 'circuitConstructionKitDc', 'introScreen', 'model', 'circuit', 'voltageProperty', 'rangeProperty' ),
+    'circuitConstructionKitDc.introScreen.model.circuit.voltageProperty.rangeProperty' );
+
+  assert.equal(
+    PhetioIDUtils.append( 'circuitConstructionKitDc', 'introScreen', '', 'model', 'circuit', 'voltageProperty', '', 'rangeProperty' ),
+    'circuitConstructionKitDc.introScreen.model.circuit.voltageProperty.rangeProperty' );
+} );
+
 QUnit.test( 'Test archetype mapping', assert => {
 
   const PhetioIDUtils = window.phetio.PhetioIDUtils;

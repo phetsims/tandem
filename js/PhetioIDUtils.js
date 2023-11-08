@@ -26,6 +26,7 @@
   const MODEL_COMPONENT_NAME = 'model';
   const VIEW_COMPONENT_NAME = 'view';
   const COLORS_COMPONENT_NAME = 'colors';
+  const STRINGS_COMPONENT_NAME = 'strings';
   const CONTROLLER_COMPONENT_NAME = 'controller';
   const SCREEN_COMPONENT_NAME = 'Screen';
   const ARCHETYPE = 'archetype';
@@ -52,6 +53,9 @@
     append: function( phetioID, ...componentNames ) {
       componentNames.forEach( componentName => {
         assert && assert( componentName.indexOf( SEPARATOR ) === -1, `separator appears in componentName: ${componentName}` );
+        if ( componentName === '' ) {
+          return;
+        }
         const separator = phetioID === '' ? '' : SEPARATOR;
         phetioID += separator + componentName;
       } );
@@ -286,6 +290,14 @@
      * @public
      */
     COLORS_COMPONENT_NAME: COLORS_COMPONENT_NAME,
+
+    /**
+     * The component name for a section that holds strings
+     * @type {string}
+     * @constant
+     * @public
+     */
+    STRINGS_COMPONENT_NAME: STRINGS_COMPONENT_NAME,
 
     /**
      * The component name for a dynamic element archetype
