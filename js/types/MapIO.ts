@@ -31,6 +31,7 @@ export type MapStateObject<KState, VState> = Array<[ KState, VState ]>;
  */
 function MapIO<KType, KStateType, VType, VStateType>( keyType: IOType<KType, KStateType>, valueType: IOType<VType, VStateType> ): IOType {
 
+  // TODO: instead of turning into a string, can we make this a tuple of the actual instances? https://github.com/phetsims/phet-io-wrappers/issues/566
   const cacheKey = keyType.typeName + ',' + valueType.typeName;
   if ( !cache.has( cacheKey ) ) {
 
