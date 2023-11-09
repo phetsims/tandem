@@ -25,6 +25,7 @@ import PhetioObject from './PhetioObject.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = phetio.PhetioIDUtils.CAPSULE_SUFFIX;
@@ -42,7 +43,8 @@ type SelfOptions = {
   disposeOnClear?: boolean;
 };
 
-export type PhetioCapsuleOptions = SelfOptions & PhetioDynamicElementContainerOptions;
+// The container suffix has to be "Capsule" or we need to change some logic in PhetioIDUtils.getArchetypalPhetioID
+export type PhetioCapsuleOptions = SelfOptions & StrictOmit<PhetioDynamicElementContainerOptions, 'containerSuffix'>;
 
 class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
