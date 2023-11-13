@@ -342,7 +342,7 @@ class Tandem {
   }
 
   /**
-   * For API validation, each PhetioObject has a corresponding concrete PhetioObject for comparison. Non-dynamic
+   * For API validation, each PhetioObject has a corresponding archetype PhetioObject for comparison. Non-dynamic
    * PhetioObjects have the trivial case where its archetypal phetioID is the same as its phetioID.
    */
   public getArchetypalPhetioID(): PhetioID {
