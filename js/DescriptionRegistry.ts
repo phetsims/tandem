@@ -1,7 +1,9 @@
 // Copyright 2023, University of Colorado Boulder
 
 /**
+ * Registry for all objects with a tandem/descriptionTandem set, for use by the description system.
  *
+ * NOTE: Experimental currently, see https://github.com/phetsims/joist/issues/941
  *
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
@@ -18,15 +20,23 @@ type DescriptionEntry = {
   [ K: string ]: DescriptionEntry | PhetioObject | null;
 };
 
+type TandemID = string;
+
 export default class DescriptionRegistry {
+  // Provides an object-structure matching the tandem hierarchy. On anything with a tandem with a matching
+  // PhetioObject, it will be set as the _value property.
+  // E.g. root.density.introScreen.model._value will be the IntroScreen object.
   public static readonly root: DescriptionEntry = {};
 
-  public static readonly map: Map<string, PhetioObject> = new Map<string, PhetioObject>();
-  public static readonly inverseMap: Map<PhetioObject, string> = new Map<PhetioObject, string>();
+  // Map from TandemID to PhetioObject, so we can pull out the PhetioObject for a given tandemID
+  public static readonly map: Map<TandemID, PhetioObject> = new Map<TandemID, PhetioObject>();
+
+  // Map from PhetioObject to TandemID, since the phet-io system is required for setting tandems on objects.
+  public static readonly inverseMap: Map<PhetioObject, TandemID> = new Map<PhetioObject, TandemID>();
 
   // tandemID, phetioObject
-  public static readonly addedEmitter = new TinyEmitter<[ string, PhetioObject ]>();
-  public static readonly removedEmitter = new TinyEmitter<[ string, PhetioObject ]>();
+  public static readonly addedEmitter = new TinyEmitter<[ TandemID, PhetioObject ]>();
+  public static readonly removedEmitter = new TinyEmitter<[ TandemID, PhetioObject ]>();
 
   public static add( tandem: Tandem, phetioObject: PhetioObject ): void {
     DescriptionRegistry.map.set( tandem.phetioID, phetioObject );
