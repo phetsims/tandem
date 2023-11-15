@@ -199,7 +199,7 @@ class PhetioObject extends Disposable {
   protected initializePhetioObject( baseOptions: Partial<PhetioObjectOptions>, providedOptions: PhetioObjectOptions ): void {
 
     assert && assert( !baseOptions.hasOwnProperty( 'isDisposable' ), 'baseOptions should not contain isDisposable' );
-    super.initializeDisposable( providedOptions );
+    this.initializeDisposable( providedOptions );
 
     assert && assert( providedOptions, 'initializePhetioObject must be called with providedOptions' );
 
