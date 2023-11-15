@@ -28,6 +28,7 @@ import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
+import DescriptionRegistry from './DescriptionRegistry.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
@@ -60,6 +61,9 @@ const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementN
 
   // Subtypes can use `Tandem.REQUIRED` to require a named tandem passed in
   tandem: Tandem.OPTIONAL,
+
+  // Defines description-specific tandems that do NOT affect the phet-io system.
+  descriptionTandem: Tandem.OPTIONAL,
 
   // Defines API methods, events and serialization
   phetioType: IOType.ObjectIO,
@@ -125,6 +129,7 @@ type SelfOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 
 
   // This is the only place in the project where this is allowed
   tandem?: Tandem; // eslint-disable-line bad-sim-text
+  descriptionTandem?: Tandem;
   phetioType?: IOType;
   phetioEventType?: EventType;
   phetioEventMetadata?: EventMetadata | null;
@@ -204,6 +209,10 @@ class PhetioObject extends Disposable {
     // Make sure that required tandems are supplied
     if ( assert && Tandem.VALIDATION && providedOptions.tandem && providedOptions.tandem.required ) {
       assert( providedOptions.tandem.supplied, 'required tandems must be supplied' );
+    }
+
+    if ( providedOptions.tandem && providedOptions.tandem.supplied ) {
+      DescriptionRegistry.add( providedOptions.tandem, this );
     }
 
     // The presence of `tandem` indicates if this PhetioObject can be initialized. If not yet initialized, perhaps
@@ -813,6 +822,8 @@ class PhetioObject extends Disposable {
         } );
       } );
     }
+
+    DescriptionRegistry.remove( this );
 
     // Detach from listeners and dispose the corresponding tandem. This must happen in PhET-iO brand and PhET brand
     // because in PhET brand, PhetioDynamicElementContainer dynamic elements would memory leak tandems (parent tandems
