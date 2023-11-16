@@ -6,7 +6,7 @@ import tandemNamespace from './tandemNamespace.js';
 import StringIO from './types/StringIO.js';
 
 /**
- * Property that controls the view of PhET-iO elements, predominantly in Studio.
+ * Property that controls the view of PhET-iO Elements, predominantly in Studio.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Sam Reid (PhET Interactive Simulations)

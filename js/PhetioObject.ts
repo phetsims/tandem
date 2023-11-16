@@ -2,7 +2,7 @@
 
 /**
  * Base type that provides PhET-iO features. An instrumented PhetioObject is referred to on the wrapper side/design side
- * as a "PhET-iO element".  Note that sims may have hundreds or thousands of PhetioObjects, so performance and memory
+ * as a "PhET-iO Element".  Note that sims may have hundreds or thousands of PhetioObjects, so performance and memory
  * considerations are important.  For this reason, initializePhetioObject is only called in PhET-iO brand, which means
  * many of the getters such as `phetioState` and `phetioDocumentation` will not work in other brands. We have opted
  * to have these getters throw assertion errors in other brands to help identify problems if these are called
@@ -341,7 +341,7 @@ class PhetioObject extends Disposable {
       this._phetioEventMetadata.playback = true;
     }
 
-    // Alert that this PhetioObject is ready for cross-frame communication (thus becoming a "PhET-iO element" on the wrapper side.
+    // Alert that this PhetioObject is ready for cross-frame communication (thus becoming a "PhET-iO Element" on the wrapper side.
     this.tandem.addPhetioObject( this );
     this.phetioObjectInitialized = true;
 
@@ -870,15 +870,15 @@ class PhetioObject extends Disposable {
   }
 
   // Public facing documentation, no need to include metadata that may we don't want clients knowing about
-  public static readonly METADATA_DOCUMENTATION = 'Get metadata about the PhET-iO element. This includes the following keys:<ul>' +
+  public static readonly METADATA_DOCUMENTATION = 'Get metadata about the PhET-iO Element. This includes the following keys:<ul>' +
                                                   '<li><strong>phetioTypeName:</strong> The name of the PhET-iO Type\n</li>' +
-                                                  '<li><strong>phetioDocumentation:</strong> default - null. Useful notes about a PhET-iO element, shown in the PhET-iO Studio Wrapper</li>' +
-                                                  '<li><strong>phetioState:</strong> default - true. When true, includes the PhET-iO element in the PhET-iO state\n</li>' +
-                                                  '<li><strong>phetioReadOnly:</strong> default - false. When true, you can only get values from the PhET-iO element; no setting allowed.\n</li>' +
+                                                  '<li><strong>phetioDocumentation:</strong> default - null. Useful notes about a PhET-iO Element, shown in the PhET-iO Studio Wrapper</li>' +
+                                                  '<li><strong>phetioState:</strong> default - true. When true, includes the PhET-iO Element in the PhET-iO state\n</li>' +
+                                                  '<li><strong>phetioReadOnly:</strong> default - false. When true, you can only get values from the PhET-iO Element; no setting allowed.\n</li>' +
                                                   '<li><strong>phetioEventType:</strong> default - MODEL. The category of event that this element emits to the PhET-iO Data Stream.\n</li>' +
                                                   '<li><strong>phetioDynamicElement:</strong> default - false. If this element is a "dynamic element" that can be created and destroyed throughout the lifetime of the sim (as opposed to existing forever).\n</li>' +
                                                   '<li><strong>phetioIsArchetype:</strong> default - false. If this element is an archetype for a dynamic element.\n</li>' +
-                                                  '<li><strong>phetioFeatured:</strong> default - false. If this is a featured PhET-iO element.\n</li>' +
+                                                  '<li><strong>phetioFeatured:</strong> default - false. If this is a featured PhET-iO Element.\n</li>' +
                                                   '<li><strong>phetioArchetypePhetioID:</strong> default - \'\'. If an applicable dynamic element, this is the phetioID of its archetype.\n</li></ul>';
 
 

@@ -1,7 +1,7 @@
 // Copyright 2023, University of Colorado Boulder
 
 /**
- * Property that controls the selection view of PhET-iO elements, predominately in Studio.
+ * Property that controls the selection view of PhET-iO Elements, predominately in Studio.
  *
  * @author Michael Kauzmann (PhET Interactive Simulations)
  * @author Sam Reid (PhET Interactive Simulations)

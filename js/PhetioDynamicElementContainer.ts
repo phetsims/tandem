@@ -5,7 +5,7 @@
  * features like creating the archetype for the PhET-iO API, and managing created/disposed data stream events.
  *
  * "Dynamic" is an overloaded term, so allow me to explain what it means in the context of this type. A "dynamic element"
- * is an instrumented PhET-iO element that is conditionally in the PhET-iO API. Most commonly this is because elements
+ * is an instrumented PhET-iO Element that is conditionally in the PhET-iO API. Most commonly this is because elements
  * can be created and destroyed during the runtime of the sim. Another "dynamic element" for the PhET-iO project is when
  * an element may or may not be created based on a query parameter. In this case, even if the object then exists for the
  * lifetime of the sim, we may still call this "dynamic" as it pertains to this type, and the PhET-iO API.

@@ -46,7 +46,7 @@
      * append( 'myScreen.myControlPanel', 'myComboBox' )
      * -->  'myScreen.myControlPanel.myComboBox'
      * @public
-     * @param {string} phetioID - the ID of the PhET-iO element
+     * @param {string} phetioID - the ID of the PhET-iO Element
      * @param {string|string[]} componentNames - the name or list of names to append to the ID
      * @returns {string} - the appended phetioID
      */
@@ -64,13 +64,13 @@
 
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
-     * Given a phetioID for a PhET-iO element, get the part of that ID that pertains to the component (basically the
+     * Given a phetioID for a PhET-iO Element, get the part of that ID that pertains to the component (basically the
      * tail piece).
      * @example
      * getComponentName( 'myScreen.myControlPanel.myComboBox' )
      * -->  'myComboBox'
      * @public
-     * @param {string} phetioID - the ID of the PhET-iO element
+     * @param {string} phetioID - the ID of the PhET-iO Element
      * @returns {string} - the component name
      */
     getComponentName: function( phetioID ) {
@@ -86,12 +86,12 @@
 
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
-     * Given a phetioID for a PhET-iO element, get the phetioID of the parent component.
+     * Given a phetioID for a PhET-iO Element, get the phetioID of the parent component.
      * @example
      * getParentID( 'myScreen.myControlPanel.myComboBox' )
      * -->  'myScreen.myControlPanel'
      * @public
-     * @param {string} phetioID - the ID of the PhET-iO element
+     * @param {string} phetioID - the ID of the PhET-iO Element
      * @returns {string|null} - the phetioID of the parent, or null if there is no parent
      */
     getParentID: function( phetioID ) {
@@ -102,7 +102,7 @@
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
      * Given a phetioID for a instrumented object, get a string that can be used to assign an ID to a DOM element
-     * @param {string} phetioID - the ID of the PhET-iO element
+     * @param {string} phetioID - the ID of the PhET-iO Element
      * @returns {string}
      * @public
      */
