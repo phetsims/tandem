@@ -14,11 +14,10 @@ import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
-import ioTypeCaches from '../ioTypeCaches.js';
+import IOTypeCache from '../IOTypeCache.js';
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new Map<string, IOType>();
-ioTypeCaches.register( cache );
+const cache = new IOTypeCache<string>();
 
 const ARRAY_OF_ARRAY_VALIDATOR = {
   valueType: Array,

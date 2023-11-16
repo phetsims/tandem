@@ -24,7 +24,7 @@ import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
-import ioTypeCaches from './ioTypeCaches.js';
+import IOTypeCache from './IOTypeCache.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
@@ -41,8 +41,7 @@ type SelfOptions = {
 export type PhetioGroupOptions = SelfOptions & PhetioDynamicElementContainerOptions;
 
 // cache each parameterized IOType so that it is only created once.
-const cache = new Map<IOType, IOType>();
-ioTypeCaches.register( cache );
+const cache = new IOTypeCache();
 
 class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private readonly _array: T[];

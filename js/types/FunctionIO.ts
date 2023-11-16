@@ -9,12 +9,11 @@
 
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
-import ioTypeCaches from '../ioTypeCaches.js';
+import IOTypeCache from '../IOTypeCache.js';
 
 
 // cache each parameterized IOType so that it is only created once
-const cache = new Map<string, IOType>();
-ioTypeCaches.register( cache );
+const cache = new IOTypeCache<string>();
 
 /**
  * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapped IO Type for

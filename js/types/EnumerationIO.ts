@@ -10,11 +10,10 @@ import TEnumeration, { EnumerationContainer } from '../../../phet-core/js/TEnume
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 import tandemNamespace from '../tandemNamespace.js';
-import ioTypeCaches from '../ioTypeCaches.js';
+import IOTypeCache from '../IOTypeCache.js';
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new Map<TEnumeration<EnumerationValue>, IOType>();
-ioTypeCaches.register( cache );
+const cache = new IOTypeCache<TEnumeration<EnumerationValue>>();
 
 const joinKeys = ( keys: string[] ) => keys.join( '|' );
 

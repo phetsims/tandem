@@ -26,7 +26,7 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import ArrayIO from './types/ArrayIO.js';
 import NullableIO from './types/NullableIO.js';
 import StringIO from './types/StringIO.js';
-import ioTypeCaches from './ioTypeCaches.js';
+import IOTypeCache from './IOTypeCache.js';
 
 
 const EMPTY_ARRAY: Parameter[] = [];
@@ -194,8 +194,7 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
 const getTypeName = ( ioType: IOType ) => ioType.typeName;
 
 // cache each parameterized IOType so that it is only created once.
-const cache = new Map<string, IOType>();
-ioTypeCaches.register( cache );
+const cache = new IOTypeCache<string>();
 
 tandemNamespace.register( 'PhetioAction', PhetioAction );
 export default PhetioAction;

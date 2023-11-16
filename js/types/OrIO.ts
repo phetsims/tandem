@@ -19,11 +19,10 @@ import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
-import ioTypeCaches from '../ioTypeCaches.js';
+import IOTypeCache from '../IOTypeCache.js';
 
 // cache each parameterized IOType so that it is only created once
-const cache = new Map<string, IOType>();
-ioTypeCaches.register( cache );
+const cache = new IOTypeCache<string>();
 
 /**
  * Parametric type constructor function, do not use `new`
