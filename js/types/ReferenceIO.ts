@@ -14,9 +14,11 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StringIO from './StringIO.js';
 import { PhetioID } from '../TandemConstants.js';
+import ioTypeCaches from '../ioTypeCaches.js';
 
 // {Map.<cacheKey:string|*, IOType>} - Cache each parameterized ReferenceIO so that it is only created once
 const cache = new Map<IOType, IOType>();
+ioTypeCaches.register( cache );
 
 export type ReferenceIOState = {
   phetioID: PhetioID;

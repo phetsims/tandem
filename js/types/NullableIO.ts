@@ -20,9 +20,11 @@ import Validation from '../../../axon/js/Validation.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
+import ioTypeCaches from '../ioTypeCaches.js';
 
 // Cache each parameterized IOType so that it is only created once
 const cache = new Map<IOType, IOType>();
+ioTypeCaches.register( cache );
 
 const NullableIO = <ParameterType, ParameterStateType extends PatternStateSelfType, PatternStateSelfType>( parameterType: IOType<ParameterType, ParameterStateType, PatternStateSelfType> ): IOType => {
 

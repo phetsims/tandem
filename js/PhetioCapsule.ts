@@ -26,12 +26,14 @@ import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import ioTypeCaches from './ioTypeCaches.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = phetio.PhetioIDUtils.CAPSULE_SUFFIX;
 
 // cache each parameterized IOType so that it is only created once.
 const cache = new Map<IOType, IOType>();
+ioTypeCaches.register( cache );
 
 type SelfOptions = {
 

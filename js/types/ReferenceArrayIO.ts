@@ -13,9 +13,11 @@ import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 import ArrayIO from './ArrayIO.js';
+import ioTypeCaches from '../ioTypeCaches.js';
 
 // Cache each parameterized IOType so that it is only created once.
 const cache = new Map<IOType, IOType>();
+ioTypeCaches.register( cache );
 
 /**
  * Parametric IO Type constructor.  Given an element type, this function returns an appropriate array IO Type.
