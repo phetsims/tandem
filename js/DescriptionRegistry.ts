@@ -34,14 +34,18 @@ export default class DescriptionRegistry {
   // Map from PhetioObject to TandemID, since the phet-io system is required for setting tandems on objects.
   public static readonly inverseMap: Map<PhetioObject, TandemID> = new Map<PhetioObject, TandemID>();
 
-  // tandemID, phetioObject
+  // Emits with (tandemID, phetioObject) on PhetioObject addition/removal.
   public static readonly addedEmitter = new TinyEmitter<[ TandemID, PhetioObject ]>();
   public static readonly removedEmitter = new TinyEmitter<[ TandemID, PhetioObject ]>();
 
+  /**
+   * Called when a PhetioObject is created with a tandem, or when a tandem is set on a PhetioObject.
+   */
   public static add( tandem: Tandem, phetioObject: PhetioObject ): void {
     DescriptionRegistry.map.set( tandem.phetioID, phetioObject );
     DescriptionRegistry.inverseMap.set( phetioObject, tandem.phetioID );
 
+    // Traverse our DescriptionEntries, creating them as needed
     const bits = tandem.phetioID.split( '.' );
     let current: DescriptionEntry = DescriptionRegistry.root;
     for ( let i = 0; i < bits.length; i++ ) {
@@ -52,11 +56,16 @@ export default class DescriptionRegistry {
       }
       current = current[ bit ] as DescriptionEntry;
     }
+
+    // Tag the _value on the leaf so it's accessible
     current._value = phetioObject;
 
     DescriptionRegistry.addedEmitter.emit( tandem.phetioID, phetioObject );
   }
 
+  /**
+   * Called when a PhetioObject is disposed.
+   */
   public static remove( phetioObject: PhetioObject ): void {
     if ( DescriptionRegistry.inverseMap.has( phetioObject ) ) {
 
@@ -66,6 +75,7 @@ export default class DescriptionRegistry {
       DescriptionRegistry.inverseMap.delete( phetioObject );
       DescriptionRegistry.map.delete( tandemID );
 
+      // Traverse our DescriptionEntries, recording the "trail" of entries
       const bits = tandemID.split( '.' );
       const entries: DescriptionEntry[] = [];
       let current: DescriptionEntry = DescriptionRegistry.root;
@@ -81,10 +91,12 @@ export default class DescriptionRegistry {
         }
       }
 
+      // If we have the full trail, remove the tagged _value
       if ( entries.length === bits.length ) {
         delete current._value;
       }
 
+      // Remove empty entries recursively
       for ( let i = entries.length - 1; i >= 0; i-- ) {
         const entry = entries[ i ];
         if ( entry && Object.keys( entry ).length === 0 ) {
