@@ -64,7 +64,7 @@ export type IOTypeAPI = {
   dataDefaults?: Record<string, unknown>;
   methodOrder?: string[];
   stateSchema?: StateSchemaAPI;
-  parameterTypes?: string[]; // each typeName
+  parameterTypes?: string[]; // each ioTypeName
 };
 export type PhetioTypes = Record<IOTypeName, IOTypeAPI>;
 
