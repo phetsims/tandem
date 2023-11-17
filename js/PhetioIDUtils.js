@@ -99,6 +99,7 @@
      * @param {string} phetioID - the ID of the PhET-iO element
      * @returns {string}
      * @public
+     * @deprecated
      */
     getDOMElementID: function( phetioID ) {
       return `phetioID:${phetioID}`;
