@@ -12,7 +12,7 @@ import validate from '../../../axon/js/validate.js';
 import Validation, { Validator } from '../../../axon/js/Validation.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import PhetioConstants from '../PhetioConstants.js';
-import TandemConstants, { IOTypeName, PhetioObjectMetadata } from '../TandemConstants.js';
+import TandemConstants, { IOTypeName, PhetioElementMetadata } from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 import StateSchema, { CompositeSchema, CompositeStateObjectType } from './StateSchema.js';
 import type PhetioObject from '../PhetioObject.js';
@@ -73,7 +73,7 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // If anything is provided here, then corresponding PhetioObjects that use this IOType should override
   // PhetioObject.getMetadata() to add what keys they need for their specific type.  Cannot specify redundant values
   // (that an ancestor already specified).
-  metadataDefaults?: Partial<PhetioObjectMetadata>;
+  metadataDefaults?: Partial<PhetioElementMetadata>;
 
   // Text that describes the IO Type, presented to the PhET-iO Client in Studio, supports HTML markup.
   documentation?: string;
@@ -156,7 +156,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   public readonly documentation?: string;
   public readonly methods?: Record<string, IOTypeMethod>;
   public readonly events: string[];
-  public readonly metadataDefaults?: Partial<PhetioObjectMetadata>;
+  public readonly metadataDefaults?: Partial<PhetioElementMetadata>;
   public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
   public readonly parameterTypes?: IOType[];
@@ -220,7 +220,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
     }, providedOptions );
 
     if ( assert && supertype ) {
-      ( Object.keys( options.metadataDefaults ) as ( keyof PhetioObjectMetadata )[] ).forEach( metadataDefaultKey => {
+      ( Object.keys( options.metadataDefaults ) as ( keyof PhetioElementMetadata )[] ).forEach( metadataDefaultKey => {
         assert && supertype.getAllMetadataDefaults().hasOwnProperty( metadataDefaultKey ) &&
         assert( supertype.getAllMetadataDefaults()[ metadataDefaultKey ] !== options.metadataDefaults[ metadataDefaultKey ],
           `${metadataDefaultKey} should not have the same default value as the ancestor metadata default.` );
@@ -405,7 +405,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   /**
    * Return all the metadata defaults (for the entire IO Type hierarchy)
    */
-  public getAllMetadataDefaults(): Partial<PhetioObjectMetadata> {
+  public getAllMetadataDefaults(): Partial<PhetioElementMetadata> {
     return _.merge( {}, this.supertype ? this.supertype.getAllMetadataDefaults() : {}, this.metadataDefaults );
   }
 

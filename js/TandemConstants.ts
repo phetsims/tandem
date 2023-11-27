@@ -23,7 +23,7 @@ export type PhetioElementData = {
 };
 
 export type PhetioElement = {
-  _metadata: PhetioObjectMetadata;
+  _metadata: PhetioElementMetadata;
   _data?: PhetioElementData;
 };
 
@@ -60,7 +60,7 @@ export type IOTypeAPI = {
   typeName: IOTypeName;
   documentation?: string;
   events: string[];
-  metadataDefaults?: Partial<PhetioObjectMetadata>;
+  metadataDefaults?: Partial<PhetioElementMetadata>;
   dataDefaults?: Record<string, unknown>;
   methodOrder?: string[];
   stateSchema?: StateSchemaAPI;
@@ -68,7 +68,7 @@ export type IOTypeAPI = {
 };
 export type PhetioTypes = Record<IOTypeName, IOTypeAPI>;
 
-export type PhetioOverrides = Record<string, Partial<PhetioObjectMetadata>>;
+export type PhetioOverrides = Record<string, Partial<PhetioElementMetadata>>;
 
 // Abstraction for flattened or treelike PhetioAPI
 export type AbstractPhetioAPI = {
@@ -89,7 +89,7 @@ export type PhetioAPI = AbstractPhetioAPI & { phetioElements: PhetioElements };
 // each out so that the keys are phetioIDs.
 export type FlattenedAPIPhetioElements = Record<PhetioID, PhetioElement>;
 
-export type PhetioObjectMetadata = {
+export type PhetioElementMetadata = {
 
   // Used in PhetioObjectOptions
   phetioState: boolean;
@@ -111,7 +111,7 @@ export type PhetioObjectMetadata = {
   phetioDynamicElementName?: string | null;
 };
 
-const metadataDefaults: PhetioObjectMetadata & PickRequired<PhetioObjectMetadata, 'phetioFeatured'> = {
+const metadataDefaults: PhetioElementMetadata & PickRequired<PhetioElementMetadata, 'phetioFeatured'> = {
   phetioTypeName: OBJECT_IO_TYPE_NAME,
   phetioDocumentation: '',
   phetioState: true,

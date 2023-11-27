@@ -23,7 +23,7 @@ import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
-import TandemConstants, { PhetioID, PhetioObjectMetadata } from './TandemConstants.js';
+import TandemConstants, { PhetioElementMetadata, PhetioID } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
@@ -124,7 +124,7 @@ assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType )
   'phetioEventType must have the same default as the default metadata values.' );
 
 // Options for creating a PhetioObject
-type SelfOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
+type SelfOptions = StrictOmit<Partial<PhetioElementMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
   'phetioIsArchetype' | 'phetioEventType'> & {
 
   // This is the only place in the project where this is allowed
@@ -143,8 +143,11 @@ type SelfOptions = StrictOmit<Partial<PhetioObjectMetadata>, 'phetioTypeName' | 
 };
 export type PhetioObjectOptions = SelfOptions & DisposableOptions;
 
-type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioObjectMetadata, 'phetioTypeName' | 'phetioDynamicElementName'> ) | 'phetioType';
+type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioElementMetadata, 'phetioTypeName' | 'phetioDynamicElementName'> ) | 'phetioType';
 
+// A type that is used for the structural typing when gathering metadata. We just need a "PhetioObject-like" entity
+// to pull the API metadata from. Thus, this is the "input" to logic that would pull the metadata keys into an object
+// for the PhetioAPI.
 // eslint-disable-next-line phet-io-object-options-should-not-pick-from-phet-io-object
 export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
 
@@ -159,7 +162,7 @@ class PhetioObject extends Disposable {
 
   // See documentation in DEFAULTS
   public phetioIsArchetype!: boolean;
-  public phetioBaselineMetadata!: PhetioObjectMetadata | null;
+  public phetioBaselineMetadata!: PhetioElementMetadata | null;
   private _phetioType!: IOType;
   private _phetioState!: boolean;
   private _phetioReadOnly!: boolean;
@@ -847,9 +850,9 @@ class PhetioObject extends Disposable {
    *                          (see usage initializePhetioObject). If not provided, will instead use the value of "this"
    * @returns - metadata plucked from the passed in parameter
    */
-  public getMetadata( object?: PhetioObjectMetadataInput ): PhetioObjectMetadata {
+  public getMetadata( object?: PhetioObjectMetadataInput ): PhetioElementMetadata {
     object = object || this;
-    const metadata: PhetioObjectMetadata = {
+    const metadata: PhetioElementMetadata = {
       phetioTypeName: object.phetioType.typeName,
       phetioDocumentation: object.phetioDocumentation,
       phetioState: object.phetioState,

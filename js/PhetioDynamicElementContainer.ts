@@ -25,7 +25,7 @@ import PhetioObject, { PhetioObjectMetadataInput, PhetioObjectOptions } from './
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import { PhetioObjectMetadata, PhetioState } from './TandemConstants.js';
+import { PhetioElementMetadata, PhetioState } from './TandemConstants.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import TEmitter from '../../axon/js/TEmitter.js';
 import StringIO from './types/StringIO.js';
@@ -452,7 +452,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
   /**
    * Add the phetioDynamicElementName for API tracking
    */
-  public override getMetadata( object: PhetioObjectMetadataInput ): PhetioObjectMetadata {
+  public override getMetadata( object: PhetioObjectMetadataInput ): PhetioElementMetadata {
     const metadata = super.getMetadata( object );
     assert && assert(
       !metadata.hasOwnProperty( 'phetioDynamicElementName' ),

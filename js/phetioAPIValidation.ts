@@ -35,7 +35,7 @@ import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import PhetioObject, { LinkedElement } from './PhetioObject.js';
-import { PhetioID, PhetioObjectMetadata } from './TandemConstants.js';
+import { PhetioElementMetadata, PhetioID } from './TandemConstants.js';
 
 // constants
 // The API-tracked and validated metadata keys
@@ -258,7 +258,7 @@ class PhetioAPIValidation {
   /**
    * Compare a dynamic phetioObject's metadata to the expected metadata
    */
-  private checkDynamicInstanceAgainstArchetype( phetioObject: PhetioObject, archetypeMetadata: PhetioObjectMetadata, source: string ): void {
+  private checkDynamicInstanceAgainstArchetype( phetioObject: PhetioObject, archetypeMetadata: PhetioElementMetadata, source: string ): void {
     const actualMetadata = phetioObject.getMetadata();
     KEYS_TO_CHECK.forEach( key => {
 
