@@ -81,8 +81,12 @@ export type AbstractPhetioAPI = {
   phetioTypes: PhetioTypes;
 };
 
+// The PhET-iO API json structure as it appears in the api files. This nests PhET-iO Elements like the Studio tree, in
+// part to save space in the file.
 export type PhetioAPI = AbstractPhetioAPI & { phetioElements: PhetioElements };
 
+// The PhET-iO API as it is easiest to use in code. This takes PhetioAPI type (nested elements) and "expands" (flattens)
+// each out so that the keys are phetioIDs.
 export type FlattenedAPIPhetioElements = Record<PhetioID, PhetioElement>;
 
 export type PhetioObjectMetadata = {
