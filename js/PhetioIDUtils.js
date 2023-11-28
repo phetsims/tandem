@@ -101,7 +101,7 @@
 
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
-     * Given a phetioID for a instrumented object, get a string that can be used to assign an ID to a DOM element
+     * Given a phetioID for an instrumented object, get a string that can be used to assign an ID to a DOM element
      * @param {string} phetioID - the ID of the PhET-iO Element
      * @returns {string}
      * @public
