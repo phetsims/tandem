@@ -5,12 +5,15 @@
  * and more information.
  *
  * There are two types of StateSchema:
- * - The first serves as a "value", when the state of an IOType is just a value. In
+ * - The first is a stateSchema "value". This is when the state of an IOType is itself a value in the state. In
  * effect, this just serves as boilerplate, and isn't the primary usage of stateSchema. For example, a StringIO or
  * NumberIO.
- * - The second is a "composite", where the state of an IOType is made from sub-components, each of which have an IOType.
+ * - The second is a "composite", where the state of an IOType is made from subcomponents, each of which have an IOType.
  * A composite schema was named because it is a sum of its parts. For example a BunnyIO has multiple components that
  * make it up (mother/father/age/etc). Check which type of StateSchema your instance is with StateSchema.isComposite().
+ *
+ * When stored in the API, StateSchema values are stored as strings, see StateSchema.asValue, and composite state schemas
+ * are stored as objects with values that are each IOType names.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
@@ -37,7 +40,7 @@ export type CompositeSchema<SelfStateType> = {
   [K in keyof SelfStateType]: IOType
 };
 
-// As provided in the PhET-iO API json
+// As provided in the PhET-iO API json.
 type CompositeSchemaAPI = Record<string, IOTypeName>;
 
 // The schema of the stateObject value
