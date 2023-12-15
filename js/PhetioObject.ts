@@ -656,7 +656,7 @@ class PhetioObject extends Disposable {
       const toRemove = this.linkedElements.filter( linkedElement => linkedElement.element === potentiallyLinkedElement );
       toRemove.forEach( linkedElement => {
         linkedElement.dispose();
-        arrayRemove( this.linkedElements, linkedElement );
+        arrayRemove( this.linkedElements!, linkedElement );
       } );
     }
   }
