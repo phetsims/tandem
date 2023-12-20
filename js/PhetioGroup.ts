@@ -88,7 +88,9 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     } );
 
     assert && this.countProperty.link( count => {
-      assert && assert( count === this._array.length, `${this.countProperty.tandem.phetioID} listener fired and array length differs, count=${count}, arrayLength=${this._array.length}` );
+      if ( assert && !isSettingPhetioStateProperty.value ) {
+        assert && assert( count === this._array.length, `${this.countProperty.tandem.phetioID} listener fired and array length differs, count=${count}, arrayLength=${this._array.length}` );
+      }
     } );
 
     // countProperty can be overwritten during state set, see PhetioGroup.createIndexedElement(), and so this assertion
