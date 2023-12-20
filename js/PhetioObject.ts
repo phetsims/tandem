@@ -87,7 +87,7 @@ const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementN
   phetioEventType: EventType.MODEL,
 
   // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents
-  // and Client.launchSim option
+  // and Client.launchSimulation option
   // @deprecated - see https://github.com/phetsims/phet-io/issues/1629#issuecomment-608002410
   phetioHighFrequency: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioHighFrequency,
 
