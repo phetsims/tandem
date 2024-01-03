@@ -1,7 +1,7 @@
 // Copyright 2020-2023, University of Colorado Boulder
 
 /**
- * IO Type for JS's built-in Float64Array type
+ * PhET-iO Type for JS's built-in Float64Array type
  *
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  * @author Chris Klusendorf

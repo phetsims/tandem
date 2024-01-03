@@ -33,7 +33,7 @@ const ReferenceIO = ( parameterType: IOType ): IOType => {
     assert && assert( typeof parameterType.typeName === 'string', 'type name should be a string' );
     cache.set( cacheKey, new IOType( `ReferenceIO<${parameterType.typeName}>`, {
       isValidValue: value => Validation.isValueValid( value, parameterType.validator ),
-      documentation: 'Uses reference identity for serializing and deserializing, and validates based on its parameter IO Type.',
+      documentation: 'Uses reference identity for serializing and deserializing, and validates based on its parameter PhET-iO Type.',
       parameterTypes: [ parameterType ],
 
       /**

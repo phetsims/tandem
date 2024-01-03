@@ -18,7 +18,7 @@ const DynamicMarkerIO = new IOType<IntentionalAny, object>( 'DynamicMarkerIO', {
     return {}; // empty object just as a placeholder
   },
   isValidValue: _.stubTrue, // accepts any type.
-  documentation: 'IO Type used as a place holder for dynamic elements to be created when set for state.'
+  documentation: 'PhET-iO Type used as a place holder for dynamic elements to be created when set for state.'
 } );
 
 tandemNamespace.register( 'DynamicMarkerIO', DynamicMarkerIO );

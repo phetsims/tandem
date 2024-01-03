@@ -1,7 +1,7 @@
 // Copyright 2018-2023, University of Colorado Boulder
 
 /**
- * IO Type for JS's built-in function type.
+ * PhET-iO Type for JS's built-in function type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -16,11 +16,11 @@ import IOTypeCache from '../IOTypeCache.js';
 const cache = new IOTypeCache<string>();
 
 /**
- * Parametric IO Type constructor--given return type and parameter types, this function returns a type wrapped IO Type for
- * that "class" of functions. "Class" here refers to the supported parameter and return IO Types.
- * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
- * @param returnType - IO Type of the return type of the function that can support cross-frame serialization
- * @param functionParameterTypes - IO Types for the individual arguments of the function.
+ * Parametric IOType constructor--given return type and parameter types, this function returns a type wrapped IOType for
+ * that "class" of functions. "Class" here refers to the supported parameter and return IOTypes.
+ * This caching implementation should be kept in sync with the other parametric IOType caching implementations.
+ * @param returnType - IOType of the return type of the function that can support cross-frame serialization
+ * @param functionParameterTypes - IOTypes for the individual arguments of the function.
  */
 const FunctionIO = ( returnType: IOType, functionParameterTypes: IOType[] ): IOType => {
   for ( let i = 0; i < functionParameterTypes.length; i++ ) {

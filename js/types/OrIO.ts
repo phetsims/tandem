@@ -1,7 +1,7 @@
 // Copyright 2020-2023, University of Colorado Boulder
 
 /**
- * Parametric IO Type that adds support for serializing an element as multiple types, as a composite. Serialization occurs
+ * Parametric IOType that adds support for serializing an element as multiple types, as a composite. Serialization occurs
  * via a first-come-first-serialize basis, where the first parameterType will be the
  *
  * Sample usage:
@@ -26,7 +26,7 @@ const cache = new IOTypeCache<string>();
 
 /**
  * Parametric type constructor function, do not use `new`
- * @param parameterTypes - a list of IO Type to combine into a single composite
+ * @param parameterTypes - a list of IOType to combine into a single composite
  */
 const OrIO = ( parameterTypes: IOType[] ): IOType => {
   assert && assert( Array.isArray( parameterTypes ), 'OrIO needs to be an array' );
@@ -45,7 +45,7 @@ const OrIO = ( parameterTypes: IOType[] ): IOType => {
       return false;
     };
     cache.set( key, new IOType( `OrIO<${typeNames.join( ', ' )}>`, {
-      documentation: 'An IOType adding support for a composite type that can be any of its parameters.',
+      documentation: 'A PhET-iO Type adding support for a composite type that can be any of its parameters.',
       parameterTypes: parameterTypes,
       isValidValue: isValidValue,
 

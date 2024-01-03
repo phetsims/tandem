@@ -1,7 +1,7 @@
 // Copyright 2021-2023, University of Colorado Boulder
 
 /**
- * IO Type for JS's built-in Map type.
+ * PhET-iO Type for JS's built-in Map type.
  *
  * NOTE: This has not been reviewed, tested or used in production code yet.
  *
@@ -27,8 +27,8 @@ const ARRAY_OF_ARRAY_VALIDATOR = {
 export type MapStateObject<KState, VState> = Array<[ KState, VState ]>;
 
 /**
- * Parametric IO Type constructor.  Given an element type, this function returns an appropriate map IO Type.
- * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
+ * Parametric IOType constructor.  Given an element type, this function returns an appropriate map IOType.
+ * This caching implementation should be kept in sync with the other parametric IOType caching implementations.
  */
 function MapIO<KType, KStateType, VType, VStateType>( keyType: IOType<KType, KStateType>, valueType: IOType<VType, VStateType> ): IOType {
 
@@ -64,7 +64,7 @@ function MapIO<KType, KStateType, VType, VStateType>( keyType: IOType<KType, KSt
         // @ts-expect-error not sure how to demonstrate that the argument is readonly, since it is dynamically created
         return new Map( result );
       },
-      documentation: 'IO Type for the built-in JS Map type, with the key and value types specified.',
+      documentation: 'PhET-iO Type for the built-in JS Map type, with the key and value types specified.',
       stateSchema: StateSchema.asValue( `Map<${keyType.typeName},${valueType.typeName}>`, {
         isValidValue: stateObject => {
           if ( !Validation.isValueValid( stateObject, ARRAY_OF_ARRAY_VALIDATOR ) ) {

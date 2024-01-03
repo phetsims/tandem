@@ -1,8 +1,8 @@
 // Copyright 2020-2023, University of Colorado Boulder
 
 /**
- * IO Types form a synthetic type system used to describe PhET-iO Elements. A PhET-iO Element is an instrumented PhetioObject
- * that is interoperable from the "wrapper" frame (outside the sim frame). An IO Type includes documentation, methods,
+ * IOTypes form a synthetic type system used to describe PhET-iO Elements. A PhET-iO Element is an instrumented PhetioObject
+ * that is interoperable from the "wrapper" frame (outside the sim frame). An IOType includes documentation, methods,
  * names, serialization, etc.
  *
  * @author Sam Reid (PhET Interactive Simulations)
@@ -23,7 +23,7 @@ import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
 /**
- * Estimate the core type name from a given IO Type name.
+ * Estimate the core type name from a given IOType name.
  */
 const getCoreTypeName = ( ioTypeName: IOTypeName ): string => {
   const index = ioTypeName.indexOf( PhetioConstants.IO_TYPE_SUFFIX );
@@ -57,7 +57,7 @@ type StateSchemaOption<T, StateType extends SelfStateType, SelfStateType> = (
 
 type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
 
-  // IO Types form an object tree like a type hierarchy. If the supertype is specified, attributes such as
+  // IOTypes form an object tree like a type hierarchy. If the supertype is specified, attributes such as
   // toStateObject, fromStateObject, stateObjectToCreateElementArguments, applyState, addChildElement
   // will be inherited from the supertype (unless overridden).  It is also used in features such as schema validation,
   // data/metadata default calculations.
@@ -66,24 +66,24 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // The list of events that can be emitted at this level (does not include events from supertypes).
   events?: string[];
 
-  // Key/value pairs indicating the defaults for the IO Type data, just for this level (do not specify parent defaults)
+  // Key/value pairs indicating the defaults for the IOType data, just for this level (do not specify parent defaults)
   dataDefaults?: Record<string, unknown>;
 
-  // Key/value pairs indicating the defaults for the IO Type metadata.
+  // Key/value pairs indicating the defaults for the IOType metadata.
   // If anything is provided here, then corresponding PhetioObjects that use this IOType should override
   // PhetioObject.getMetadata() to add what keys they need for their specific type.  Cannot specify redundant values
   // (that an ancestor already specified).
   metadataDefaults?: Partial<PhetioElementMetadata>;
 
-  // Text that describes the IO Type, presented to the PhET-iO Client in Studio, supports HTML markup.
+  // Text that describes the IOType, presented to the PhET-iO Client in Studio, supports HTML markup.
   documentation?: string;
 
-  // The public methods available for this IO Type. Each method is not just a function,
+  // The public methods available for this IOType. Each method is not just a function,
   // but a collection of metadata about the method to be able to serialize parameters and return types and provide
   // better documentation.
   methods?: Record<string, IOTypeMethod>;
 
-  // IO Types can specify the order that methods appear in the documentation by putting their names in this
+  // IOTypes can specify the order that methods appear in the documentation by putting their names in this
   // list. This list is only for the methods defined at this level in the type hierarchy. After the methodOrder
   // specified, the methods follow in the order declared in the implementation (which isn't necessarily stable).
   methodOrder?: string[];
@@ -120,7 +120,7 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // For Dynamic Element Deserialization: converts the state object to arguments
   // for a `create` function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that
   // other non-serialized args (not dealt with here) may be supplied as closure variables. This function only needs
-  // to be implemented on IO Types whose core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
+  // to be implemented on IOTypes whose core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
   // elements.
   // see https://github.com/phetsims/phet-io/blob/main/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
   stateObjectToCreateElementArguments?: ( s: StateType ) => unknown[];
@@ -178,7 +178,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   /**
    * @param typeName - The name that this IOType will have in the public PhET-iO API. In general, this should
    *    only be word characters, ending in "IO". Parametric types are a special subset of IOTypes that include their
-   *    parameters in their typeName. If an IOType's parameters are other IO Type(s), then they should be included within
+   *    parameters in their typeName. If an IOType's parameters are other IOType(s), then they should be included within
    *    angle brackets, like "PropertyIO<BooleanIO>". Some other types use a more custom format for displaying their
    *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
    *    with an open paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
@@ -204,7 +204,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
       dataDefaults: {},
       methodOrder: [],
       parameterTypes: [],
-      documentation: `IO Type for ${getCoreTypeName( typeName )}`,
+      documentation: `PhET-iO Type for ${getCoreTypeName( typeName )}`,
       isFunctionType: false,
 
       /**** STATE ****/
@@ -295,7 +295,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
 
         // Validate that the provided stateObject is of the expected schema
         // NOTE: Cannot use this.validateStateObject because options adopts supertype.applyState, which is bounds to the
-        // parent IO Type. This prevents correct validation because the supertype doesn't know about the subtype schemas.
+        // parent IOType. This prevents correct validation because the supertype doesn't know about the subtype schemas.
         // @ts-expect-error we cannot type check against PhetioObject from this file
         assert && coreObject.phetioType && coreObject.phetioType.validateStateObject( stateObject );
       }
@@ -316,7 +316,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
 
       assert && assert( supertype || this.typeName === 'ObjectIO', 'supertype is required' );
       assert && assert( !this.typeName.includes( '.' ), 'Dots should not appear in type names' );
-      assert && assert( this.typeName.split( /[<(]/ )[ 0 ].endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IO Type name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
+      assert && assert( this.typeName.split( /[<(]/ )[ 0 ].endsWith( PhetioConstants.IO_TYPE_SUFFIX ), `IOType name must end with ${PhetioConstants.IO_TYPE_SUFFIX}` );
       assert && assert( this.hasOwnProperty( 'typeName' ), 'this.typeName is required' );
 
       // assert that each public method adheres to the expected schema
@@ -403,14 +403,14 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   }
 
   /**
-   * Return all the metadata defaults (for the entire IO Type hierarchy)
+   * Return all the metadata defaults (for the entire IOType hierarchy)
    */
   public getAllMetadataDefaults(): Partial<PhetioElementMetadata> {
     return _.merge( {}, this.supertype ? this.supertype.getAllMetadataDefaults() : {}, this.metadataDefaults );
   }
 
   /**
-   * Return all the data defaults (for the entire IO Type hierarchy)
+   * Return all the data defaults (for the entire IOType hierarchy)
    */
   public getAllDataDefaults(): Record<string, unknown> {
     return _.merge( {}, this.supertype ? this.supertype.getAllDataDefaults() : {}, this.dataDefaults );
@@ -478,7 +478,7 @@ const DEFAULT_STATE = null;
 IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE_NAME, {
   isValidValue: () => true,
   supertype: null,
-  documentation: 'The root of the IO Type hierarchy',
+  documentation: 'The root of the PhET-iO Type hierarchy',
   toStateObject: ( coreObject: PhetioObject ) => {
 
     if ( phet && phet.tandem && phet.tandem.Tandem.VALIDATION ) {
@@ -488,7 +488,7 @@ IOType.ObjectIO = new IOType<PhetioObject, null>( TandemConstants.OBJECT_IO_TYPE
       assert && assert( !coreObject.phetioState,
         `fell back to root serialization state for ${coreObject.tandem.phetioID}. Potential solutions:
          * mark the type as phetioState: false
-         * create a custom toStateObject method in your IO Type
+         * create a custom toStateObject method in your IOType
          * perhaps you have everything right, but forgot to pass in the IOType via phetioType in the constructor` );
     }
     return DEFAULT_STATE;

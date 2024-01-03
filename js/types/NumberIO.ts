@@ -1,7 +1,7 @@
 // Copyright 2018-2022, University of Colorado Boulder
 
 /**
- * IO Type for JS's built-in number type.
+ * PhET-iO Type for JS's built-in number type.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)
@@ -13,7 +13,7 @@ import StateSchema from './StateSchema.js';
 
 const NumberIO = new IOType<number, number>( 'NumberIO', {
   valueType: 'number',
-  documentation: 'IO Type for Javascript\'s number primitive type',
+  documentation: 'PhET-iO Type for Javascript\'s number primitive type',
   toStateObject: _.identity,
   fromStateObject: stateObject => stateObject,
   stateSchema: StateSchema.asValue<number, number>( 'number', {

@@ -9,7 +9,7 @@ import tandemNamespace from './tandemNamespace.js';
  */
 const PhetioConstants = {
 
-  // Suffix that is required for all IO Type class names
+  // Suffix that is required for all IOType class names
   IO_TYPE_SUFFIX: 'IO'
 };
 

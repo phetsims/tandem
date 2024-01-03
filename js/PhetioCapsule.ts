@@ -143,8 +143,8 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
   }
 
   /**
-   * Parametric IO Type constructor.  Given an element type, this function returns a PhetioCapsule IO Type.
-   * This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
+   * Parametric IOType constructor.  Given an element type, this function returns a PhetioCapsule IOType.
+   * This caching implementation should be kept in sync with the other parametric IOType caching implementations.
    * @param parameterType
    * @constructor
    */

@@ -1,7 +1,7 @@
 // Copyright 2018-2022, University of Colorado Boulder
 
 /**
- * IO Type use to signify a function has no return value.
+ * IOType use to signify a function has no return value.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Andrew Adare (PhET Interactive Simulations)

@@ -222,7 +222,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
    * When creating a view element that corresponds to a specific model element, we match the tandem name index suffix
    * so that electron_0 corresponds to electronNode_0 and so on.
    * @param tandemName - the tandem name of the model element
-   * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
+   * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IOType
    *                                      `stateObjectToCreateElementArguments` method
    */
   public createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ): T {
@@ -239,7 +239,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
 
   /**
    * Creates the next group element.
-   * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IO Type
+   * @param argsForCreateFunction - args to be passed to the create function, specified there are in the IOType
    *                                      `stateObjectToCreateElementArguments` method
    */
   public createNextElement( ...argsForCreateFunction: P ): T {
@@ -283,7 +283,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   }
 
   /**
-   * Parametric IO Type constructor.  Given an element type, this function returns a PhetioGroup IO Type.
+   * Parametric IOType constructor.  Given an element type, this function returns a PhetioGroup IOType.
    */
   public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType extends ParameterStateSelfType, ParameterStateSelfType>( parameterType: IOType<ParameterType, ParameterStateType, ParameterStateSelfType> ): IOType => {
 

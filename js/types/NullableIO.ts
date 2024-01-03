@@ -1,7 +1,7 @@
 // Copyright 2018-2023, University of Colorado Boulder
 
 /**
- * Parametric IO Type that adds support for null values in toStateObject/fromStateObject. This type is to
+ * Parametric IOType that adds support for null values in toStateObject/fromStateObject. This type is to
  * prevent the propagation of null handling, mainly in to/fromStateObject, in each type. This also makes null
  * explicit for phet-io.
  *
@@ -31,7 +31,7 @@ const NullableIO = <ParameterType, ParameterStateType extends PatternStateSelfTy
 
   if ( !cache.has( parameterType ) ) {
     cache.set( parameterType, new IOType<ParameterType | null, ParameterStateType | null>( `NullableIO<${parameterType.typeName}>`, {
-      documentation: 'An IOType adding support for null in addition to the behavior of its parameter.',
+      documentation: 'A PhET-iO Type adding support for null in addition to the behavior of its parameter.',
       isValidValue: instance => instance === null || Validation.isValueValid( instance, parameterType.validator ),
       parameterTypes: [ parameterType ],
 

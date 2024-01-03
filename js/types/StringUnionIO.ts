@@ -21,7 +21,7 @@ const StringUnionIO = <ParameterType extends readonly string[]>( unionValues: Pa
   if ( !cache.has( unionValues ) ) {
     const typeName = unionValues.join( ',' );
     cache.set( unionValues, new IOType<string, string>( `StringUnionIO<${typeName}>`, {
-      documentation: 'An IOType validating on specific string values.',
+      documentation: 'A PhET-iO Type validating on specific string values.',
       isValidValue: instance => unionValues.includes( instance ),
 
       // serializing strings here

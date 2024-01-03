@@ -20,7 +20,7 @@ const joinKeys = ( keys: string[] ) => keys.join( '|' );
 const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: EnumerationContainer<T> ): IOType => {
   const enumeration = enumerationContainer.enumeration;
 
-  // This caching implementation should be kept in sync with the other parametric IO Type caching implementations.
+  // This caching implementation should be kept in sync with the other parametric IOType caching implementations.
   if ( !cache.has( enumeration ) ) {
 
     // Enumeration supports additional documentation, so the values can be described.
@@ -33,7 +33,7 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: Enumer
 
     assert && assert(
       !Array.from( cache.values() ).find( ioType => ioType.typeName === ioTypeName ),
-      'There was already another IO Type with the same name: ' + ioTypeName
+      'There was already another IOType with the same name: ' + ioTypeName
     );
 
     cache.set( enumeration, new IOType<T, string>( ioTypeName, {

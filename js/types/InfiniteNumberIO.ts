@@ -1,7 +1,7 @@
 // Copyright 2018-2022, University of Colorado Boulder
 
 /**
- * IO Type for JS's built-in number type, but adds explicit support for positive and negative infinity.
+ * PhET-iO Type for JS's built-in number type, but adds explicit support for positive and negative infinity.
  * Typical use cases should use NumberIO, but if you have a case that must support infinities, please
  * use this instead.
  *
@@ -17,7 +17,7 @@ export type InfiniteNumberStateObject = number | 'POSITIVE_INFINITY' | 'NEGATIVE
 
 const InfiniteNumberIO = new IOType<number, InfiniteNumberStateObject>( 'InfiniteNumberIO', {
   valueType: 'number',
-  documentation: 'IO Type for Javascript\'s number primitive type',
+  documentation: 'PhET-iO Type for Javascript\'s number primitive type',
   toStateObject: value => value === Number.POSITIVE_INFINITY ? 'POSITIVE_INFINITY' :
                           value === Number.NEGATIVE_INFINITY ? 'NEGATIVE_INFINITY' :
                           value,

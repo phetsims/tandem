@@ -9,11 +9,11 @@ import ValueIO from './ValueIO.js';
 type ObjectIOState = Record<string, IntentionalAny>;
 const noExtraPrototype = ( object: object ) => Object.getPrototypeOf( object ) === Object.prototype;
 /**
- * IO Type intended for usage with object literals, primarily for toStateObject/fromStateObject.
+ * IOType intended for usage with object literals, primarily for toStateObject/fromStateObject.
  * @author Sam Reid (PhET Interactive Simulations)
  */
 const ObjectLiteralIO = new IOType<object, ObjectIOState>( 'ObjectLiteralIO', {
-  documentation: 'IO Type for object literals',
+  documentation: 'PhET-iO Type for object literals',
   isValidValue: noExtraPrototype,
   supertype: ValueIO,
   stateSchema: StateSchema.asValue<ObjectIOState, ObjectIOState>( 'object', { valueType: Object, isValidValue: noExtraPrototype } ),
