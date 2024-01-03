@@ -54,7 +54,7 @@ export type CompositeStateSchemaAPI = Record<string, IOTypeName>;
 export type StateSchemaAPI = string | CompositeStateSchemaAPI;
 
 // The API schema, for the actual class on the sim side see IOType.ts
-export type IOTypeAPI = {
+export type PhetioType = {
   methods: Methods;
   supertype?: string; // no supertype for root of hierarchy
   typeName: IOTypeName;
@@ -66,7 +66,7 @@ export type IOTypeAPI = {
   stateSchema?: StateSchemaAPI;
   parameterTypes?: string[]; // each ioTypeName
 };
-export type PhetioTypes = Record<IOTypeName, IOTypeAPI>;
+export type PhetioTypes = Record<IOTypeName, PhetioType>;
 
 export type PhetioOverrides = Record<string, Partial<PhetioElementMetadata>>;
 
