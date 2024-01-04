@@ -1,4 +1,4 @@
-// Copyright 2018-2023, University of Colorado Boulder
+// Copyright 2018-2024, University of Colorado Boulder
 
 /**
  * Parametric IOType that adds support for null values in toStateObject/fromStateObject. This type is to

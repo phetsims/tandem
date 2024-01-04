@@ -1,4 +1,4 @@
-// Copyright 2023, University of Colorado Boulder
+// Copyright 2023-2024, University of Colorado Boulder
 
 /**
  * PhET-iO Type for using that same reference of the JS's built-in Array type. Unlike ArrayIO, ReferenceArrayIO will use
