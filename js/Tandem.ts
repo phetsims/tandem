@@ -587,6 +587,11 @@ class Tandem {
    * Use this as the parent tandem for Properties that are related to sim-specific preferences.
    */
   public static readonly PREFERENCES = Tandem.GLOBAL_MODEL.createTandem( 'preferences' );
+
+  /**
+   * Use this as the parent tandem for RegionAndCulturePortrayal instances in your sim.
+   */
+  public static readonly REGION_CULTURE_PORTRAYALS = Tandem.PREFERENCES.createTandem( 'regionAndCulturePortrayals' );
 }
 
 Tandem.addLaunchListener( () => {
