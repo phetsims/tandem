@@ -1,4 +1,4 @@
-// Copyright 2015-2023, University of Colorado Boulder
+// Copyright 2015-2024, University of Colorado Boulder
 
 /**
  * Tandem defines a set of trees that are used to assign unique identifiers to PhetioObjects in PhET simulations and
