@@ -40,8 +40,14 @@ type SelfOptions = {
   // are never disposed. This allows us to avoid extensive unnecessary work implementing dispose for these elements.
   // If true, dispose the element when cleared. If set to false, clear() will basically be a no-op, which can be
   // useful if you want to support lazy creation, but if this is not a true "dynamic element". This will also cause an
-  // assertion if ever trying to call disposeElement on this.
+  // assertion if ever trying to call disposeElement on this. https://github.com/phetsims/phet-io/issues/1810
   disposeOnClear?: boolean;
+
+  // Only applicable if disposing during clear. This is an optimization to prevent the need to recreate the element each
+  // time PhET-iO state is set. Defaults to false. This should only be true if your dynamic element can be mutated
+  // with state, and doesn't need construction to be run during state set. This should be set to true when supporting
+  // heterogeneous capsules. https://github.com/phetsims/phet-io/issues/1810
+  disposeCreatedOnStateSet?: boolean;
 };
 
 // The container suffix has to be "Capsule" or we need to change some logic in PhetioIDUtils.getArchetypalPhetioID
@@ -50,6 +56,7 @@ export type PhetioCapsuleOptions = SelfOptions & StrictOmit<PhetioDynamicElement
 class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioDynamicElementContainer<T, P> {
   private element: T | null;
   private readonly disposeOnClear: boolean;
+  private readonly disposeCreatedOnStateSet: boolean;
 
   /**
    * @param createElement - function that creates the encapsulated element
@@ -63,13 +70,15 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
       // The capsule's tandem name must have this suffix, and the base tandem name for its wrapped element
       // will consist of the capsule's tandem name with this suffix stripped off.
       containerSuffix: DEFAULT_CONTAINER_SUFFIX,
-      disposeOnClear: true
+      disposeOnClear: true,
+      disposeCreatedOnStateSet: false
     }, providedOptions );
 
     super( createElement, defaultArguments, options );
 
     this.element = null;
     this.disposeOnClear = options.disposeOnClear;
+    this.disposeCreatedOnStateSet = options.disposeCreatedOnStateSet;
   }
 
   /**
@@ -111,7 +120,9 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
 
     if ( this.element && this.disposeOnClear ) {
       const appearsInState = options.phetioState && ( options.phetioState.hasOwnProperty( this.element.phetioID ) ?? false );
-      if ( !appearsInState ) {
+
+      // This option forces disposal on clear, otherwise we don't clear if the element exists in state
+      if ( this.disposeCreatedOnStateSet || !appearsInState ) {
         this.disposeElement();
       }
     }
