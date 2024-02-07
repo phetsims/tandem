@@ -32,15 +32,15 @@ export type Parameter = {
 const EMPTY_ARRAY: Parameter[] = [];
 assert && Object.freeze( EMPTY_ARRAY );
 
-// allowed keys to options.parameters
+// Allowed keys to options.parameters, the parameters to emit.
 const PARAMETER_KEYS = [
   'name', // required for phet-io instrumented Actions
   'phetioType', // required for phet-io instrumented Actions
   'phetioDocumentation', // optional, additional documentation for this specific parameter
 
-  // specify this to keep the parameter private to the PhET-iO API. To support emitting and executing over
-  // the PhET-iO API, phetioPrivate parameters must not ever be before a public one. For example
-  // `emit1( public1, private1, public2)` is not allowed. Instead it must be ordered like `emit( public1, public2, private1 )`
+  // Specify this to keep the parameter private to the PhET-iO API. To support emitting and executing over the PhET-iO
+  // API, phetioPrivate parameters must not ever be before a public one. For example `emit1( public1, private1, public2)`
+  // is not allowed. Instead, it must be ordered like `emit( public1, public2, private1 )`
   'phetioPrivate'
 
 ].concat( Validation.VALIDATOR_KEYS );
@@ -50,6 +50,9 @@ const paramToPhetioType = ( param: Parameter ) => param.phetioType!;
 const paramToName = ( param: Parameter ) => param.name!;
 
 type SelfOptions = {
+
+  // The parameters to the emit method that will be called.
+  // See PARAMETER_KEYS for a list of legal keys, their types, and documentation.
   parameters?: Parameter[];
   phetioOuterType: ( t: IOType[] ) => IOType;
   hasListenerOrderDependencies?: boolean;
@@ -66,9 +69,8 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
   public constructor( providedOptions?: PhetioDataHandlerOptions ) {
     const options = optionize<PhetioDataHandlerOptions, SelfOptions, PhetioObjectOptions>()( {
 
-      // see PARAMETER_KEYS for a list of legal keys, their types, and documentation
+      // SelfOptions
       parameters: EMPTY_ARRAY,
-
       hasListenerOrderDependencies: false,
 
       // phet-io - see PhetioObject.js for doc
