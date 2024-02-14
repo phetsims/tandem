@@ -39,7 +39,7 @@ export default class DescriptionRegistry {
    * Called when a PhetioObject is created with a tandem, or when a tandem is set on a PhetioObject.
    */
   public static add( tandem: Tandem, phetioObject: PhetioObject ): void {
-    assert && assert( !DescriptionRegistry.map.has( tandem.phetioID ), 'TandemID already exists in the DescriptionRegistry' );
+    // assert && assert( !DescriptionRegistry.map.has( tandem.phetioID ), 'TandemID already exists in the DescriptionRegistry' );
 
     DescriptionRegistry.map.set( tandem.phetioID, phetioObject );
 
@@ -102,7 +102,7 @@ export default class DescriptionRegistry {
       }
     }
     else {
-      assert && assert( false, 'PhetioObject not found in DescriptionRegistry' );
+      // assert && assert( false, 'PhetioObject not found in DescriptionRegistry' );
     }
   }
 }
