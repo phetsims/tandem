@@ -43,6 +43,12 @@ const UNALLOWED_TANDEM_NAMES = [
 
 const REQUIRED_TANDEM_NAME = 'requiredTandem';
 const OPTIONAL_TANDEM_NAME = 'optionalTandem';
+
+const FORBIDDEN_SUPPLIED_TANDEM_NAMES = [
+  REQUIRED_TANDEM_NAME,
+  OPTIONAL_TANDEM_NAME
+];
+
 const TEST_TANDEM_NAME = 'test';
 const INTER_TERM_SEPARATOR = phetio.PhetioIDUtils.INTER_TERM_SEPARATOR;
 export const DYNAMIC_ARCHETYPE_NAME = phetio.PhetioIDUtils.ARCHETYPE;
@@ -125,6 +131,9 @@ class Tandem {
 
     assert && assert( options.isValidTandemName( name ), `invalid tandem name: ${name}` );
 
+    assert && assert( !options.supplied || FORBIDDEN_SUPPLIED_TANDEM_NAMES.every( forbiddenName => !name.includes( forbiddenName ) ),
+      `forbidden supplied tandem name: ${name}. If a tandem is not supplied, its name should not be used to create a supplied tandem.` );
+
     this.children = {};
 
     if ( this.parentTandem ) {
@@ -134,6 +143,7 @@ class Tandem {
 
     this.required = options.required;
     this.supplied = options.supplied;
+
   }
 
   // Get the regex to test for a valid tandem name, given the char class for your specific tandem. In the regex

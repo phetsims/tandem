@@ -57,6 +57,8 @@ type StartEventOptions = {
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
 
+const ENABLE_DESCRIPTION_REGISTRY = !!window.phet?.chipper?.queryParameters?.supportsDescriptionPlugin;
+
 const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementName'>> = {
 
   // Subtypes can use `Tandem.REQUIRED` to require a named tandem passed in
@@ -214,7 +216,7 @@ class PhetioObject extends Disposable {
       assert( providedOptions.tandem.supplied, 'required tandems must be supplied' );
     }
 
-    if ( providedOptions.tandem && providedOptions.tandem.supplied ) {
+    if ( ENABLE_DESCRIPTION_REGISTRY && providedOptions.tandem && providedOptions.tandem.supplied ) {
       DescriptionRegistry.add( providedOptions.tandem, this );
     }
 
@@ -826,7 +828,7 @@ class PhetioObject extends Disposable {
       } );
     }
 
-    if ( this.isPhetioInstrumented() ) {
+    if ( ENABLE_DESCRIPTION_REGISTRY && this.tandem && this.tandem.supplied ) {
       DescriptionRegistry.remove( this );
     }
 
