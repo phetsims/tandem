@@ -1,4 +1,4 @@
-// Copyright 2023, University of Colorado Boulder
+// Copyright 2023-2024, University of Colorado Boulder
 
 /**
  * Registry for all objects with a tandem/descriptionTandem set, for use by the description system.
