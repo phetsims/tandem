@@ -116,6 +116,7 @@ const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementN
   // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
   phetioEventMetadata: null,
 
+  // null means no constraint on tandem name.
   tandemNameSuffix: null
 };
 
@@ -136,11 +137,10 @@ type SelfOptions = StrictOmit<Partial<PhetioElementMetadata>, 'phetioTypeName' |
   phetioEventType?: EventType;
   phetioEventMetadata?: EventMetadata | null;
 
-  // Require that the given tandem's name ends in the provided string. This is help with naming conventions. If an
-  // array of multiple suffixes are provided, require that the provided tandem matches any of the supplied
-  // tandemNameSuffix values. First character is not case sensitive to support cases like
-  // sim.screen1.view.thermometerNode
-  // sim.screen1.view.upperThermometerNode
+  // The element's tandem name must have a specified suffix. This is to enforce naming conventions for PhET-iO.
+  // If string[] is provided, the tandem name must have a suffix that matches one of the strings in the array.
+  // null means that there is no constraint on tandem name. The first character is not case-sensitive, to support
+  // uses like 'thermometerNode' versus 'upperThermometerNode'.
   tandemNameSuffix?: string | string[] | null;
 };
 export type PhetioObjectOptions = SelfOptions & DisposableOptions;
