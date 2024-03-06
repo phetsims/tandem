@@ -9,12 +9,12 @@
  */
 
 import PhetioObject from './PhetioObject.js';
-import TEmitter from '../../axon/js/TEmitter.js';
+import { TReadOnlyEmitter } from '../../axon/js/TEmitter.js';
 import { FullPhetioState } from './TandemConstants.js';
 import TReadOnlyProperty from '../../axon/js/TReadOnlyProperty.js';
 
 export type TPhetioStateEngine = {
-  onBeforeApplyStateEmitter: TEmitter<[ PhetioObject ]>;
-  undeferEmitter: TEmitter<[ FullPhetioState ]>;
+  onBeforeApplyStateEmitter: TReadOnlyEmitter<[ PhetioObject ]>;
+  undeferEmitter: TReadOnlyEmitter<[ FullPhetioState ]>;
   isSettingStateProperty: TReadOnlyProperty<boolean>;
 };
