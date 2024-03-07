@@ -1,4 +1,4 @@
-// Copyright 2023, University of Colorado Boulder
+// Copyright 2023-2024, University of Colorado Boulder
 
 /**
  * The PhetioStateEngine is defined in the phet-io/ repo, so is not available to developers that cannot clone that repo.
