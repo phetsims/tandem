@@ -1,4 +1,4 @@
-// Copyright 2023, University of Colorado Boulder
+// Copyright 2023-2024, University of Colorado Boulder
 
 import Property from '../../axon/js/Property.js';
 import Tandem from './Tandem.js';
