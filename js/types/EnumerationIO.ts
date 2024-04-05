@@ -43,7 +43,7 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: Enumer
       fromStateObject: ( stateObject: string ): T => {
         assert && assert( typeof stateObject === 'string', 'unsupported EnumerationIO value type, expected string' ); // eslint-disable-line no-simple-type-checking-assertions
         assert && assert( keys.includes( stateObject ), `Unrecognized value: ${stateObject}` );
-        return enumeration.getValue( stateObject )!;
+        return enumeration.getValue( stateObject );
       },
       stateSchema: StateSchema.asValue<EnumerationValue, string>( `${joinKeys( keys )}`, {
         isValidValue: ( key: string ) => keys.includes( key )

@@ -279,7 +279,7 @@ export default class StateSchema<T, SelfStateType> {
    */
   public getStateSchemaAPI(): string | CompositeSchemaAPI {
     if ( this.isComposite() ) {
-      return _.mapValues( this.compositeSchema, value => value.typeName )!;
+      return _.mapValues( this.compositeSchema, value => value.typeName );
     }
     else {
       return this.displayString;
