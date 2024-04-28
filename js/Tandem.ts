@@ -487,7 +487,7 @@ class Tandem {
   /**
    * The root tandem for a simulation
    */
-  public static readonly ROOT = new Tandem.RootTandem( null, _.camelCase( packageJSON.name ) );
+  public static readonly ROOT: Tandem = new Tandem.RootTandem( null, _.camelCase( packageJSON.name ) );
 
   /**
    * Many simulation elements are nested under "general". This tandem is for elements that exists in all sims. For a
