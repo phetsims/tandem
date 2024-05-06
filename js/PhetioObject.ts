@@ -500,7 +500,7 @@ class PhetioObject extends Disposable {
    * End an event on the nested PhET-iO data stream. It this object was disposed or dataStream.start was not called,
    * this is a no-op.
    */
-  public phetioEndEvent(): void {
+  public phetioEndEvent( assertCorrectIndices = false ): void {
     if ( PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
 
       assert && assert( this.phetioMessageStack.length > 0, 'Must have messages to pop' );
@@ -511,7 +511,7 @@ class PhetioObject extends Disposable {
         return;
       }
       this.phetioPlayback && phet.phetio.dataStream.popNonPlaybackable();
-      phet.phetio.dataStream.end( topMessageIndex );
+      phet.phetio.dataStream.end( topMessageIndex, assertCorrectIndices );
     }
   }
 
