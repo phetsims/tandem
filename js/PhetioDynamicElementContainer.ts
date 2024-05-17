@@ -251,7 +251,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
 
     // Once the sim has started, any archetypes being created are likely done so because they are nested PhetioGroups.
     if ( _.hasIn( window, 'phet.joist.sim' ) && phet.joist.sim.isConstructionCompleteProperty.value ) {
-      assert && assert( false, 'nested DynacmicElementContainers are not currently supported' );
+      assert && assert( false, 'nested DynamicElementContainers are not currently supported' );
       return null;
     }
 
