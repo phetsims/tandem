@@ -250,7 +250,12 @@ class PhetioAPIValidation {
 
     // If ?phetioPrintAPIProblems is present, then ignore assertions until the sim has started up.
     if ( this.simHasStarted || !phet.preloads.phetio.queryParameters.phetioPrintAPIProblems ) {
-      assert && assert( false, `PhET-iO API error:\n${mismatchMessage}` );
+      if ( phet.preloads.phetio.queryParameters.phetioPrintAPIProblems ) {
+        console.error( 'API Problems:', this.apiMismatches );
+      }
+      else {
+        assert && assert( false, `PhET-iO API error:\n${mismatchMessage}` );
+      }
     }
   }
 
