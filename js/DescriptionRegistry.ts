@@ -23,6 +23,10 @@ type DescriptionEntry = {
 type TandemID = string;
 
 export default class DescriptionRegistry {
+
+  // Feature flag, disabled until is ready for production, see https://github.com/phetsims/joist/issues/941
+  public static readonly ENABLED = false;
+
   // Provides an object-structure matching the tandem hierarchy. On anything with a tandem with a matching
   // PhetioObject, it will be set as the _value property.
   // E.g. root.density.introScreen.model._value will be the IntroScreen object.
@@ -39,6 +43,9 @@ export default class DescriptionRegistry {
    * Called when a PhetioObject is created with a tandem, or when a tandem is set on a PhetioObject.
    */
   public static add( tandem: Tandem, phetioObject: PhetioObject ): void {
+    if ( !DescriptionRegistry.ENABLED ) {
+      return;
+    }
     assert && assert( !DescriptionRegistry.map.has( tandem.phetioID ), 'TandemID already exists in the DescriptionRegistry' );
 
     DescriptionRegistry.map.set( tandem.phetioID, phetioObject );
@@ -65,6 +72,11 @@ export default class DescriptionRegistry {
    * Called when a PhetioObject is disposed.
    */
   public static remove( phetioObject: PhetioObject ): void {
+
+    if ( !DescriptionRegistry.ENABLED ) {
+      return;
+    }
+
     const tandemID = phetioObject.phetioID;
 
     if ( DescriptionRegistry.map.has( tandemID ) ) {
