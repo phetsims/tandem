@@ -15,6 +15,7 @@ import IOType from './IOType.js';
 import StringIO from './StringIO.js';
 import { PhetioID } from '../TandemConstants.js';
 import IOTypeCache from '../IOTypeCache.js';
+import Tandem from '../Tandem.js';
 
 // Cache each parameterized ReferenceIO so that it is only created once
 const cache = new IOTypeCache();
@@ -41,6 +42,7 @@ const ReferenceIO = ( parameterType: IOType ): IOType => {
        * directly to use this implementation.
        */
       toStateObject( phetioObject ): ReferenceIOState {
+        assert && Tandem.VALIDATION && assert( phetioObject.isPhetioInstrumented(), 'Cannot reference an uninstrumented object', phetioObject );
 
         // NOTE: We cannot assert that phetioObject.phetioState === false here because sometimes ReferenceIO is used statically like
         // ReferenceIO( Vector2IO ).toStateObject( myVector );
