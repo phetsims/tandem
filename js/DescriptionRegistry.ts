@@ -25,7 +25,7 @@ type TandemID = string;
 export default class DescriptionRegistry {
 
   // Feature flag, disabled until is ready for production, see https://github.com/phetsims/joist/issues/941
-  public static readonly ENABLED = false;
+  public static readonly ENABLED = !!( window?.phet?.chipper?.queryParameters?.supportsDescriptionPlugin );
 
   // Provides an object-structure matching the tandem hierarchy. On anything with a tandem with a matching
   // PhetioObject, it will be set as the _value property.
