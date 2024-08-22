@@ -13,6 +13,7 @@
  * 3. Any schema entries in the overrides file must exist in the baseline API
  * 4. Any schema entries in the overrides file must be different from its baseline counterpart
  * 5. Dynamic element metadata should match the archetype in the API.
+ * 6. All entries in the API should be instrumented (no usages of optional/requiredTandem as phetioIDs)
  *
  * Terminology:
  * schema: specified through preloads. The full schema is the baseline plus the overrides, but those parts can be
@@ -35,7 +36,7 @@ import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import PhetioObject, { LinkedElement } from './PhetioObject.js';
-import { PhetioElementMetadata, PhetioID } from './TandemConstants.js';
+import { PhetioAPI, PhetioElementMetadata, PhetioID } from './TandemConstants.js';
 
 // constants
 // The API-tracked and validated metadata keys
@@ -120,6 +121,21 @@ class PhetioAPIValidation {
                             preferencesKey.includes( '.simulationModel.' ) ),
           'most preferences should be phetioState: false, key=' + preferencesKey );
       } );
+  }
+
+  // Validation checks that can be made on the API JSON object directly
+  public validateFullAPI( api: PhetioAPI ): void {
+    if ( this.enabled ) {
+      const string = JSON.stringify( api );
+      [ Tandem.OPTIONAL.name, Tandem.REQUIRED.name ].forEach( name => {
+        if ( string.includes( name ) ) {
+          this.assertAPIError( {
+            phetioID: name,
+            ruleInViolation: '6. All entries in the API should be instrumented (no usages of optional/requiredTandem as phetioIDs)'
+          } );
+        }
+      } );
+    }
   }
 
   /**
