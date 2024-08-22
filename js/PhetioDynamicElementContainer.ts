@@ -69,7 +69,7 @@ function archetypeCast<T>( archetype: T | null ): T {
   return archetype;
 }
 
-abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends IntentionalAny[] = []> extends PhetioObject {
+abstract class PhetioDynamicElementContainer<T extends PhetioObject, CreateElementArguments extends IntentionalAny[] = []> extends PhetioObject {
   private readonly _archetype: T | null;
   public readonly elementCreatedEmitter: TEmitter<[ T, string ]>;
   public readonly elementDisposedEmitter: TEmitter<[ T, string ]>;
@@ -78,10 +78,10 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
   private readonly deferredDisposals: T[];
   public readonly supportsDynamicState: boolean; // (phet-io internal)
   protected phetioDynamicElementName: string;
-  protected createElement: ( t: Tandem, ...args: P ) => T;
+  protected createElement: ( t: Tandem, ...args: CreateElementArguments ) => T;
 
   // Arguments passed to the archetype when creating it.
-  protected defaultArguments: P | ( () => P );
+  protected defaultArguments: CreateElementArguments | ( () => CreateElementArguments );
 
   /**
    * @param createElement - function that creates a dynamic readonly element to be housed in
@@ -90,7 +90,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
    * @param defaultArguments - arguments passed to createElement when creating the archetype
    * @param [providedOptions] - describe the Group itself
    */
-  public constructor( createElement: ( t: Tandem, ...args: P ) => T, defaultArguments: P | ( () => P ), providedOptions?: PhetioDynamicElementContainerOptions ) {
+  public constructor( createElement: ( t: Tandem, ...args: CreateElementArguments ) => T, defaultArguments: CreateElementArguments | ( () => CreateElementArguments ), providedOptions?: PhetioDynamicElementContainerOptions ) {
 
     const options = optionize<PhetioDynamicElementContainerOptions, SelfOptions, PhetioObjectOptions>()( {
       phetioState: false, // elements are included in state, but the container will exist in the downstream sim.
@@ -246,8 +246,16 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
    * Archetypes are created to generate the baseline file, or to validate against an existing baseline file.  They are
    * PhetioObjects and registered with the phetioEngine, but not send out via notifications from PhetioEngine.phetioElementAddedEmitter(),
    * because they are intended for internal usage only.  Archetypes should not be created in production code.
+   *
+   * PhetioDynamicElementContainer calls this method internally to create and assign its own archetype, but this method
+   * can additionally be called with alternate archetypeTandem and/or createElementArgs to create alternate archetypes.
+   * This can be necessary in situations that require archetypes provided to other archetypes, or with other forms
+   * of dependency injection, such as in https://github.com/phetsims/tandem/issues/312
    */
-  private createArchetype(): T | null {
+  public createArchetype(
+    archetypeTandem = this.tandem.createTandem( DYNAMIC_ARCHETYPE_NAME ),
+    createElementArgs: ( CreateElementArguments | ( () => CreateElementArguments ) ) = this.defaultArguments
+  ): T | null {
 
     // Once the sim has started, any archetypes being created are likely done so because they are nested PhetioGroups.
     if ( _.hasIn( window, 'phet.joist.sim' ) && phet.joist.sim.isConstructionCompleteProperty.value ) {
@@ -257,12 +265,12 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
 
     // When generating the baseline, output the schema for the archetype
     if ( Tandem.PHET_IO_ENABLED && phet.preloads.phetio.createArchetypes ) {
-      const defaultArgs = Array.isArray( this.defaultArguments ) ? this.defaultArguments : this.defaultArguments();
+      const archetypeArgs = Array.isArray( createElementArgs ) ? createElementArgs : createElementArgs();
 
       // The create function takes a tandem plus the default args
-      assert && assert( this.createElement.length === defaultArgs.length + 1, 'mismatched number of arguments' );
+      assert && assert( this.createElement.length === archetypeArgs.length + 1, 'mismatched number of arguments' );
 
-      const archetype = this.createElement( this.tandem.createTandem( DYNAMIC_ARCHETYPE_NAME ), ...defaultArgs );
+      const archetype = this.createElement( archetypeTandem, ...archetypeArgs );
 
       // Mark the archetype for inclusion in the baseline schema
       if ( this.isPhetioInstrumented() ) {
@@ -281,7 +289,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, P extends I
    * @param argsForCreateFunction
    * @param containerParameterType - null in PhET brand
    */
-  public createDynamicElement( componentName: string, argsForCreateFunction: P, containerParameterType: IOType | null ): T {
+  public createDynamicElement( componentName: string, argsForCreateFunction: CreateElementArguments, containerParameterType: IOType | null ): T {
     assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
     // create with default state and substructure, details will need to be set by setter methods.
