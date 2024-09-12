@@ -25,6 +25,7 @@ import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 import IOTypeCache from './IOTypeCache.js';
+import phetioStateSetEmitter from './phetioStateSetEmitter.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
@@ -95,7 +96,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
 
     // countProperty can be overwritten during state set, see PhetioGroup.createIndexedElement(), and so this assertion
     // makes sure that the final length of the elements array matches the expected count from the state.
-    assert && Tandem.VALIDATION && phet.phetio.phetioEngine.phetioStateEngine.stateSetEmitter.addListener( ( state: Record<string, IntentionalAny> ) => {
+    assert && Tandem.VALIDATION && phetioStateSetEmitter.addListener( ( state: Record<string, IntentionalAny> ) => {
 
       // This supports cases when only partial state is being set
       if ( state[ this.countProperty.tandem.phetioID ] ) {
