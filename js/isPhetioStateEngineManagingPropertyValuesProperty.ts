@@ -1,4 +1,4 @@
-// Copyright 2023, University of Colorado Boulder
+// Copyright 2023-2024, University of Colorado Boulder
 
 /**
  * Property that is set to true when the PhET-iO State Engine is managing Property values, see ReadOnlyProperty.set()
