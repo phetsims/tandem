@@ -22,6 +22,8 @@ import StateSchema, { APIStateKeys, CompositeSchema, CompositeStateObjectType } 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
+const truthy = ( x: IntentionalAny ): boolean => !!x;
+
 // Global flag that triggers pruning the state object down to only that which gets tracked by the PhET-iO API, see
 // apiStateKeys to opt into api state tracking
 let GETTING_STATE_FOR_API = false;
@@ -328,10 +330,9 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
            // When running a nested toStateObject call while generating api state, values should be opt in, because the
            // element state has asked for these values. For example PropertyIO<RangeIO> wants to see min/max state in
            // its validValues.
-           !( API_STATE_NESTED_COUNT > 1 && this.getAllAPIStateKeyValues().filter( _.identity ).length === 0 )
+           !( API_STATE_NESTED_COUNT > 1 && this.apiStateKeysProvided() )
       ) {
 
-        // TODO: SR: Note that this means you are going to get the whole state, and then ditch it, so in a nested call it isn't clear if that value will ACTUALLY be used in the API (Range/Vector2/etc). https://github.com/phetsims/phet-io/issues/1951
         // TODO: AFTER_COMMIT: Typescript check, https://github.com/phetsims/phet-io/issues/1951
         resolvedStateObject = _.pick( stateObject, this.getAllAPIStateKeys() ) as StateType;
       }
@@ -489,16 +490,26 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   }
 
   /**
-   * Return all the data defaults (for the entire IOType hierarchy)
+   * Return all the apiStateKey option values (for the entire IOType hierarchy)
+   * For example:
+   *  [ null, null, ['validValues'], null ] if there were three supertypes, and your parent was the only IOType with apiStateKeys
    */
-  public getAllAPIStateKeyValues( apiStateKeysPerLevel: ( APIStateKeys | null )[] = [] ): ( APIStateKeys | null )[] {
+  private getAllAPIStateKeyValues( apiStateKeysPerLevel: ( APIStateKeys | null )[] = [] ): ( APIStateKeys | null )[] {
     this.supertype && this.supertype.getAllAPIStateKeyValues( apiStateKeysPerLevel );
     apiStateKeysPerLevel.push( this.stateSchema?.apiStateKeys || null );
     return apiStateKeysPerLevel;
   }
 
   /**
-   * Return all the data defaults (for the entire IOType hierarchy)
+   * See if any IOType up the hierarchy actually supplied apiStateKeys, even in `[]`, meaning "don't opt-in to nested
+   * API state.
+   */
+  private apiStateKeysProvided(): boolean {
+    return this.getAllAPIStateKeyValues().filter( truthy ).length === 0;
+  }
+
+  /**
+   * Return all the apiStateKeys (for the entire IOType hierarchy) in one array.
    */
   public getAllAPIStateKeys(): APIStateKeys {
     return _.concat( ...this.getAllAPIStateKeyValues().map( x => x || [] ) );
