@@ -325,7 +325,6 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
       // TODO: AFTER_COMMIT Simplify boolean logic, https://github.com/phetsims/phet-io/issues/1951
       if ( GETTING_STATE_FOR_API && this.isCompositeStateSchema() ) {
         assert && assert( API_STATE_NESTED_COUNT > 0, 'must be one level deep or more when getting API' );
-        console.log( this.typeName, this.getAllAPIStateKeyValues() );
         if ( API_STATE_NESTED_COUNT > 1 && this.getAllAPIStateKeyValues().filter( _.identity ).length === 0 ) {
           resolvedStateObject = stateObject;
         }
