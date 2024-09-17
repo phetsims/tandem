@@ -322,17 +322,18 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
       let resolvedStateObject: StateType;
 
       // TODO: Do the Range/blarg test one more time to make sure this is better, https://github.com/phetsims/phet-io/issues/1951
-      // TODO: AFTER_COMMIT Simplify boolean logic, https://github.com/phetsims/phet-io/issues/1951
-      if ( GETTING_STATE_FOR_API && this.isCompositeStateSchema() ) {
-        assert && assert( API_STATE_NESTED_COUNT > 0, 'must be one level deep or more when getting API' );
-        if ( API_STATE_NESTED_COUNT > 1 && this.getAllAPIStateKeyValues().filter( _.identity ).length === 0 ) {
-          resolvedStateObject = stateObject;
-        }
-        else {
-          // TODO: SR: Note that this means you are going to get the whole state, and then ditch it, so in a nested call it isn't clear if that value will ACTUALLY be used in the API (Range/Vector2/etc). https://github.com/phetsims/phet-io/issues/1951
-          // TODO: AFTER_COMMIT: Typescript check, https://github.com/phetsims/phet-io/issues/1951
-          resolvedStateObject = _.pick( stateObject, this.getAllAPIStateKeys() ) as StateType;
-        }
+      // When getting API state, prune out any state that don't opt in as desired for API tracking, see apiStateKeys
+      if ( GETTING_STATE_FOR_API && this.isCompositeStateSchema() &&
+
+           // When running a nested toStateObject call while generating api state, values should be opt in, because the
+           // element state has asked for these values. For example PropertyIO<RangeIO> wants to see min/max state in
+           // its validValues.
+           !( API_STATE_NESTED_COUNT > 1 && this.getAllAPIStateKeyValues().filter( _.identity ).length === 0 )
+      ) {
+
+        // TODO: SR: Note that this means you are going to get the whole state, and then ditch it, so in a nested call it isn't clear if that value will ACTUALLY be used in the API (Range/Vector2/etc). https://github.com/phetsims/phet-io/issues/1951
+        // TODO: AFTER_COMMIT: Typescript check, https://github.com/phetsims/phet-io/issues/1951
+        resolvedStateObject = _.pick( stateObject, this.getAllAPIStateKeys() ) as StateType;
       }
       else {
         resolvedStateObject = stateObject;
