@@ -14,5 +14,6 @@ import './PhetioObjectTests.js';
 import './TandemTests.js';
 import './types/IOTypeTests.js';
 import './types/InfiniteNumberIOTests.js';
+import './isInitialStateCompatibleTests.js';
 
 qunitStart();
