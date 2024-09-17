@@ -432,12 +432,6 @@ class Tandem {
   public static readonly PHET_IO_ENABLED = PHET_IO_ENABLED;
 
   /**
-   * When generating an API (whether to output a file or for in-memory comparison), this is marked as true.
-   */
-  public static readonly API_GENERATION = Tandem.PHET_IO_ENABLED && ( phet.preloads.phetio.queryParameters.phetioPrintAPI ||
-                                                                      phet.preloads.phetio.queryParameters.phetioCompareAPI );
-
-  /**
    * If PhET-iO is running with validation enabled.
    */
   public static readonly VALIDATION = VALIDATION;

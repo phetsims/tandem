@@ -37,8 +37,13 @@ import { IOTypeName } from '../TandemConstants.js';
  * composite schema.
  */
 export type CompositeSchema<SelfStateType> = {
+  // [K in keyof SelfStateType]: IOType | { myIOType: IOType; isAPIStateful: true };
   [K in keyof SelfStateType]: IOType
 };
+
+
+// TODO: AFTER_COMMIT Can "string[]" be a better type for only composite schemas? https://github.com/phetsims/phet-io/issues/1951
+export type APIStateKeys = string[];
 
 // As provided in the PhET-iO API json.
 type CompositeSchemaAPI = Record<string, IOTypeName>;
@@ -64,6 +69,10 @@ type StateSchemaOptions<SelfStateType> = {
   // their stateful parts, instead of a "value" themselves.
   // An object literal of keys that correspond to an IOType
   compositeSchema?: null | CompositeSchema<SelfStateType>;
+
+  // A list of keys found in this IOType's composite state that should be API tracked. See IOType options.apiStateKeys
+  // for more info.
+  apiStateKeys?: APIStateKeys | null;
 };
 
 export default class StateSchema<T, SelfStateType> {
@@ -72,22 +81,36 @@ export default class StateSchema<T, SelfStateType> {
 
   // "composite" state schemas are treated differently that value state schemas
   public readonly compositeSchema: null | CompositeSchema<SelfStateType>;
+  public readonly apiStateKeys: APIStateKeys | null;
 
   public constructor( providedOptions?: StateSchemaOptions<SelfStateType> ) {
 
     // Either create with compositeSchema, or specify a that this state is just a value
-    assert && assertMutuallyExclusiveOptions( providedOptions, [ 'compositeSchema' ], [ 'displayString', 'validator' ] );
+    assert && assertMutuallyExclusiveOptions( providedOptions,
+      [ 'compositeSchema', 'apiStateKeys' ],
+      [ 'displayString', 'validator' ]
+    );
 
     const options = optionize<StateSchemaOptions<SelfStateType>>()( {
       displayString: '',
       validator: null,
-      compositeSchema: null
+      compositeSchema: null,
+      apiStateKeys: null
     }, providedOptions );
 
     this.displayString = options.displayString;
     this.validator = options.validator;
 
     this.compositeSchema = options.compositeSchema;
+    this.apiStateKeys = options.apiStateKeys;
+
+    if ( assert && options.apiStateKeys ) {
+      assert && assert( options.compositeSchema, 'apiStateKeys can only be specified by a composite state schema.' );
+      assert && options.apiStateKeys.forEach( apiStateKey => {
+        assert && assert( options.compositeSchema!.hasOwnProperty( apiStateKey ),
+          `apiStateKey not part of composite state schema: ${apiStateKey}` );
+      } );
+    }
   }
 
   /**

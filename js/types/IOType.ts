@@ -11,16 +11,21 @@
 import validate from '../../../axon/js/validate.js';
 import Validation, { Validator } from '../../../axon/js/Validation.js';
 import optionize from '../../../phet-core/js/optionize.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import PhetioConstants from '../PhetioConstants.js';
+import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
+import type PhetioObject from '../PhetioObject.js';
 import TandemConstants, { IOTypeName, PhetioElementMetadata } from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
-import StateSchema, { CompositeSchema, CompositeStateObjectType } from './StateSchema.js';
-import type PhetioObject from '../PhetioObject.js';
-import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
-import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
+import StateSchema, { APIStateKeys, CompositeSchema, CompositeStateObjectType } from './StateSchema.js';
 
 // constants
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
+
+// Global flag that triggers pruning the state object down to only that which gets tracked by the PhET-iO API, see
+// apiStateKeys to opt into api state tracking
+let GETTING_STATE_FOR_API = false;
+let API_STATE_NESTED_COUNT = 0;
 
 /**
  * Estimate the core type name from a given IOType name.
@@ -106,6 +111,31 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // For phetioState: true objects, this should be required, but may be specified in the parent IOType, like in DerivedPropertyIO
   stateSchema?: StateSchemaOption<T, StateType, SelfStateType>;
 
+  /**
+   * A list of keys found in this IOType's composite state that should be API tracked.
+   * Initial states are tracked in api file for each stateful instance, this means that those value changes can
+   * trigger api changes. This doesn't occur by default, so instead you must opt into to value-based api tracking like
+   * this.
+   * This option is mostly recognizing that it is less than ideal the metadata the describes what kind of values
+   * a PhEt-iO Element could be are in state, even though they probably shouldn't be. Like PropertyIO.validValues. We
+   * are likely never going to change that, due to complexity and backwards compatibility needs, so this option allows
+   * API tracking for state like that, without incurring the cost of tracking useless value changes (PropertyIO.value,
+   * for example).
+   *
+   * By default, state used by another PhET-iO Element that is opting into api tracking will be added to the API. For
+   * example, because PropertyIO.validValues opts into api tracking, a PropertyIO<RangeIO> will show validValues with full
+   * RangeIO state objects in it. This is because RangeIO doesn't provide any apiStateKeys. Thus, we say that nested
+   * state objects are "opt out" for this behavior, since you could remove the min/max keys from the above example if
+   * you provided apiStateKeys:[], instead of the default of "null".
+   *
+   * NOTE! These are still just values! They will still be set for state, and it doesn't exclude you from any state-like
+   * behavior. This option doesn't change anything for state-setting, just for the logic of API comparison/compatibility
+   * checking.
+   *
+   * Solution developed in https://github.com/phetsims/phet-io/issues/1951
+   */
+  apiStateKeys?: APIStateKeys | null;
+
   // Serialize the core object. Most often this looks like an object literal that holds data about the PhetioObject
   // instance. This is likely superfluous to just providing a stateSchema of composite key/IOType values, which will
   // create a default toStateObject based on the schema.
@@ -170,7 +200,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   public readonly isFunctionType: boolean;
 
   // The StateSchema (type) that the option is made into. The option is more flexible than the class.
-  public readonly stateSchema: StateSchema<T, SelfStateType>;
+  public readonly stateSchema: StateSchema<T, SelfStateType> | null;
 
   // The base IOType for the entire hierarchy.
   public static ObjectIO: IOType;
@@ -215,6 +245,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
       applyState: supertype && supertype.applyState,
 
       stateSchema: null,
+      apiStateKeys: null,
       defaultDeserializationMethod: 'fromStateObject',
       addChildElement: supertype && supertype.addChildElement
     }, providedOptions );
@@ -242,13 +273,15 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
     this.defaultDeserializationMethod = options.defaultDeserializationMethod;
 
     if ( options.stateSchema === null || options.stateSchema instanceof StateSchema ) {
-      // @ts-expect-error https://github.com/phetsims/tandem/issues/263
-      this.stateSchema = options.stateSchema;
+      this.stateSchema = options.stateSchema as ( null | StateSchema<T, SelfStateType> );
     }
     else {
       const compositeSchema = typeof options.stateSchema === 'function' ? options.stateSchema( this ) : options.stateSchema;
 
-      this.stateSchema = new StateSchema<T, SelfStateType>( { compositeSchema: compositeSchema } );
+      this.stateSchema = new StateSchema<T, SelfStateType>( {
+        compositeSchema: compositeSchema,
+        apiStateKeys: options.apiStateKeys
+      } );
     }
 
     // Assert that toStateObject method is provided for value StateSchemas. Do this with the following logic:
@@ -257,17 +290,19 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
     assert && assert( !this.stateSchema || ( toStateObjectSupplied || this.stateSchema.isComposite() ),
       'toStateObject method must be provided for value StateSchemas' );
 
+    // TODO: AFTER_COMMIT make this function an instance method, https://github.com/phetsims/phet-io/issues/1951
     this.toStateObject = ( coreObject: T ) => {
+      API_STATE_NESTED_COUNT++;
       validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
 
-      let toStateObject;
+      let stateObject;
 
       // Only do this non-standard toStateObject function if there is a stateSchema but no toStateObject provided
       if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
-        toStateObject = this.defaultToStateObject( coreObject );
+        stateObject = this.defaultToStateObject( coreObject );
       }
       else {
-        toStateObject = options.toStateObject( coreObject );
+        stateObject = options.toStateObject( coreObject );
       }
 
       // Validate, but only if this IOType instance has more to validate than the supertype
@@ -280,9 +315,31 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
         // in a state call `toStateObject`, and the "n" portion is based on how many IOTypes in the hierarchy define a
         // toStateObject or stateSchema. In the future we could potentially improve performance by having validateStateObject
         // only check against the schema at this level, but then extra keys in the stateObject would not be caught. From work done in https://github.com/phetsims/phet-io/issues/1774
-        assert && this.validateStateObject( toStateObject );
+        // TODO: fix this to work with apiStateKeys instead of bypassing, https://github.com/phetsims/phet-io/issues/1951
+        assert && !GETTING_STATE_FOR_API && this.validateStateObject( stateObject );
       }
-      return toStateObject;
+
+      let resolvedStateObject: StateType;
+
+      // TODO: Do the Range/blarg test one more time to make sure this is better, https://github.com/phetsims/phet-io/issues/1951
+      // TODO: AFTER_COMMIT Simplify boolean logic, https://github.com/phetsims/phet-io/issues/1951
+      if ( GETTING_STATE_FOR_API && this.isCompositeStateSchema() ) {
+        assert && assert( API_STATE_NESTED_COUNT > 0, 'must be one level deep or more when getting API' );
+        console.log( this.typeName, this.getAllAPIStateKeyValues() );
+        if ( API_STATE_NESTED_COUNT > 1 && this.getAllAPIStateKeyValues().filter( _.identity ).length === 0 ) {
+          resolvedStateObject = stateObject;
+        }
+        else {
+          // TODO: SR: Note that this means you are going to get the whole state, and then ditch it, so in a nested call it isn't clear if that value will ACTUALLY be used in the API (Range/Vector2/etc). https://github.com/phetsims/phet-io/issues/1951
+          // TODO: AFTER_COMMIT: Typescript check, https://github.com/phetsims/phet-io/issues/1951
+          resolvedStateObject = _.pick( stateObject, this.getAllAPIStateKeys() ) as StateType;
+        }
+      }
+      else {
+        resolvedStateObject = stateObject;
+      }
+      API_STATE_NESTED_COUNT--;
+      return resolvedStateObject;
     };
     this.fromStateObject = options.fromStateObject;
     this.stateObjectToCreateElementArguments = options.stateObjectToCreateElementArguments;
@@ -339,6 +396,14 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
           // Make sure events are not listed again
           assert && assert( !_.some( typeHierarchy, t => t.events.includes( event ) ), `IOType should not declare event that parent also has: ${event}` );
         } );
+
+        // TODO: AFTER_COMMIT Side slip: assert that stateSchema keys cannot be for supertype options? https://github.com/phetsims/phet-io/issues/1951
+        if ( this.stateSchema?.apiStateKeys ) {
+          const supertypeAPIKeys = supertype.getAllAPIStateKeys();
+          this.stateSchema?.apiStateKeys.forEach( apiStateKey => {
+            assert && assert( !supertypeAPIKeys.includes( apiStateKey ), `apiStateKey is already in the super: ${apiStateKey}` );
+          } );
+        }
       }
       else {
 
@@ -414,6 +479,45 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
    */
   public getAllDataDefaults(): Record<string, unknown> {
     return _.merge( {}, this.supertype ? this.supertype.getAllDataDefaults() : {}, this.dataDefaults );
+  }
+
+  /**
+   * This cannot be in stateSchema, because some IOTypes do not have stateSchema instances, but their supertype does.
+   */
+  private isCompositeStateSchema(): boolean {
+    return this.supertype?.isCompositeStateSchema() || !!this.stateSchema?.compositeSchema;
+  }
+
+  /**
+   * Return all the data defaults (for the entire IOType hierarchy)
+   */
+  public getAllAPIStateKeyValues( apiStateKeysPerLevel: ( APIStateKeys | null )[] = [] ): ( APIStateKeys | null )[] {
+    this.supertype && this.supertype.getAllAPIStateKeyValues( apiStateKeysPerLevel );
+    apiStateKeysPerLevel.push( this.stateSchema?.apiStateKeys || null );
+    return apiStateKeysPerLevel;
+  }
+
+  /**
+   * Return all the data defaults (for the entire IOType hierarchy)
+   */
+  public getAllAPIStateKeys(): APIStateKeys {
+    return _.concat( ...this.getAllAPIStateKeyValues().map( x => x || [] ) );
+  }
+
+  /**
+   * Get the state object for a PhET-iO Element, but only the entries that should be tracked by the PhET-iO API. See
+   * StateSchema.apiStateKeys for details. This implementation sets a global to make sure that nested state also only
+   * selects the apiStateKeys for api tracking (PropertyIO<RangeIO> could have validValues of PointIO that shouldn't
+   * include non-tracked values of PointIO, if there are any).
+   */
+  public toStateObjectForAPI( coreObject: T ): StateType {
+    assert && assert( !GETTING_STATE_FOR_API, 'API state cannot nest due to limitation of the global' );
+    GETTING_STATE_FOR_API = true;
+    assert && assert( API_STATE_NESTED_COUNT === 0, 'not nested before getting API state' );
+    const stateObjectForAPIOnly = this.toStateObject( coreObject );
+    assert && assert( API_STATE_NESTED_COUNT === 0, 'not nested after getting API state' );
+    GETTING_STATE_FOR_API = false;
+    return stateObjectForAPIOnly;
   }
 
   /**

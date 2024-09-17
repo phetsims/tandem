@@ -28,7 +28,8 @@ const LinkedElementIO = new IOType( 'LinkedElementIO', {
   applyState: _.noop,
   stateSchema: {
     elementID: StringIO
-  }
+  },
+  apiStateKeys: [ 'elementID' ]
 } );
 
 tandemNamespace.register( 'LinkedElementIO', LinkedElementIO );

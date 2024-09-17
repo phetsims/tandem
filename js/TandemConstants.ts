@@ -64,18 +64,21 @@ export type PhetioType = {
   dataDefaults?: Record<string, unknown>;
   methodOrder?: string[];
   stateSchema?: StateSchemaAPI;
+  apiStateKeys?: ( keyof CompositeStateSchemaAPI )[];
   parameterTypes?: string[]; // each ioTypeName
 };
 export type PhetioTypes = Record<IOTypeName, PhetioType>;
 
 export type PhetioOverrides = Record<string, Partial<PhetioElementMetadata>>;
 
+export type PhetioAPIVersion = {
+  major: number;
+  minor: number;
+};
+
 // Abstraction for flattened or treelike PhetioAPI
 export type AbstractPhetioAPI = {
-  version: {
-    major: number;
-    minor: number;
-  };
+  version: PhetioAPIVersion;
   phetioFullAPI?: boolean;
   sim: string;
   phetioTypes: PhetioTypes;
