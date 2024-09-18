@@ -15,7 +15,7 @@ import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import PhetioConstants from '../PhetioConstants.js';
 import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
 import type PhetioObject from '../PhetioObject.js';
-import TandemConstants, { IOTypeName, PhetioElementMetadata } from '../TandemConstants.js';
+import TandemConstants, { IOTypeName, Method, Methods, PhetioElementMetadata, PhetioType } from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 import StateSchema, { APIStateKeys, CompositeSchema, CompositeStateObjectType } from './StateSchema.js';
 
@@ -582,7 +582,71 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   public toString(): IOTypeName {
     return this.typeName;
   }
+
+  /**
+   * Return an object that indicates the API type, including documentation, methods & signatures, supertypes, etc.
+   * The object is intended for serialization via JSON.stringify().
+   *
+   * This function could be static, but that doesn't work well with the singleton pattern, so keep in on the prototype.
+   */
+  public getAPI(): PhetioType {
+
+    // Enumerate the methods specific to the type (not for supertype).
+    const methods: Methods = {};
+    const methodNames = _.keys( this.methods );
+
+    // iterate over each method
+    for ( let i = 0; i < methodNames.length; i++ ) {
+      const methodName = methodNames[ i ];
+      const method = this.methods![ methodName ];
+
+      const m: Method = {
+
+        // Return names for parameter types and return types to prevent loops in type graph
+        returnType: method.returnType.typeName,
+        parameterTypes: method.parameterTypes.map( mapAPIForType ),
+        documentation: method.documentation
+      };
+
+      // invocableForReadOnlyElements===false is opt-in
+      if ( method.invocableForReadOnlyElements === false ) {
+        m.invocableForReadOnlyElements = false;
+      }
+      methods[ methodName ] = m;
+    }
+
+    const supertype = this.supertype;
+
+    // Return all parts of the API as an object
+    const phetioType: PhetioType = {
+      methods: methods,
+      supertype: supertype ? supertype.typeName : supertype,
+      typeName: this.typeName,
+      documentation: this.documentation,
+      events: this.events,
+      metadataDefaults: this.metadataDefaults,
+      dataDefaults: this.dataDefaults,
+      methodOrder: this.methodOrder
+    };
+
+    if ( this.stateSchema ) {
+      phetioType.stateSchema = this.stateSchema.getStateSchemaAPI();
+
+      if ( this.stateSchema.apiStateKeys && this.stateSchema.apiStateKeys.length > 0 ) {
+        phetioType.apiStateKeys = this.stateSchema.apiStateKeys;
+      }
+    }
+
+    // This way we don't have this key unless there are parameterTypes possible (empty array allowed)
+    if ( this.parameterTypes ) {
+      phetioType.parameterTypes = this.parameterTypes.map( mapAPIForType );
+    }
+
+    return phetioType;
+  }
 }
+
+const mapAPIForType = ( parameterType: IOType ): string => parameterType.typeName;
 
 // default state value
 const DEFAULT_STATE = null;
