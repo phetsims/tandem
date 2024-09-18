@@ -41,8 +41,6 @@ export type CompositeSchema<SelfStateType> = {
   [K in keyof SelfStateType]: IOType
 };
 
-
-// TODO: AFTER_COMMIT Can "string[]" be a better type for only composite schemas? https://github.com/phetsims/phet-io/issues/1951
 export type APIStateKeys = string[];
 
 // As provided in the PhET-iO API json.

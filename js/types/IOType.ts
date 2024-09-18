@@ -307,8 +307,11 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
         stateObject = options.toStateObject( coreObject );
       }
 
-      // Validate, but only if this IOType instance has more to validate than the supertype
-      if ( toStateObjectSupplied || stateSchemaSupplied ) {
+      // Do not validate the api state, which get's pruned based on provided apiStateKeys, only validate the complete state
+      if ( assert && !GETTING_STATE_FOR_API &&
+
+           // only if this IOType instance has more to validate than the supertype
+           ( toStateObjectSupplied || stateSchemaSupplied ) ) {
 
         // Only validate the stateObject if it is phetioState:true.
         // This is an n*m algorithm because for each time toStateObject is called and needs validation, this.validateStateObject
@@ -317,13 +320,11 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
         // in a state call `toStateObject`, and the "n" portion is based on how many IOTypes in the hierarchy define a
         // toStateObject or stateSchema. In the future we could potentially improve performance by having validateStateObject
         // only check against the schema at this level, but then extra keys in the stateObject would not be caught. From work done in https://github.com/phetsims/phet-io/issues/1774
-        // TODO: fix this to work with apiStateKeys instead of bypassing, https://github.com/phetsims/phet-io/issues/1951
-        assert && !GETTING_STATE_FOR_API && this.validateStateObject( stateObject );
+        this.validateStateObject( stateObject );
       }
 
       let resolvedStateObject: StateType;
 
-      // TODO: Do the Range/blarg test one more time to make sure this is better, https://github.com/phetsims/phet-io/issues/1951
       // When getting API state, prune out any state that don't opt in as desired for API tracking, see apiStateKeys
       if ( GETTING_STATE_FOR_API && this.isCompositeStateSchema() &&
 
@@ -332,8 +333,6 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
            // its validValues.
            !( API_STATE_NESTED_COUNT > 1 && this.apiStateKeysProvided() )
       ) {
-
-        // TODO: AFTER_COMMIT: Typescript check, https://github.com/phetsims/phet-io/issues/1951
         resolvedStateObject = _.pick( stateObject, this.getAllAPIStateKeys() ) as StateType;
       }
       else {
