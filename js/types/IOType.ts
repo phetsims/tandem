@@ -141,13 +141,13 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // Serialize the core object. Most often this looks like an object literal that holds data about the PhetioObject
   // instance. This is likely superfluous to just providing a stateSchema of composite key/IOType values, which will
   // create a default toStateObject based on the schema.
-  toStateObject?: ( t: T ) => StateType;
+  toStateObject?: ( ( t: T ) => StateType ) | null;
 
   // ******** DESERIALIZATION ******** //
 
   // For Data Type Deserialization. Decodes the object from a state (see toStateObject) into an instance of the core type.
   // see https://github.com/phetsims/phet-io/blob/main/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
-  fromStateObject?: ( s: StateType ) => T;
+  fromStateObject?: ( ( s: StateType ) => T ) | null;
 
   // For Dynamic Element Deserialization: converts the state object to arguments
   // for a `create` function in PhetioGroup or other PhetioDynamicElementContainer creation function. Note that
@@ -155,7 +155,7 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // to be implemented on IOTypes whose core type is phetioDynamicElement: true, such as PhetioDynamicElementContainer
   // elements.
   // see https://github.com/phetsims/phet-io/blob/main/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
-  stateObjectToCreateElementArguments?: ( s: StateType ) => unknown[];
+  stateObjectToCreateElementArguments?: ( ( s: StateType ) => unknown[] ) | null;
 
   // For Reference Type Deserialization:  Applies the state (see toStateObject)
   // value to the instance. When setting PhET-iO state, this function will be called on an instrumented instance to set the
@@ -165,7 +165,7 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // to deserialize each sub-component, but in some circumstances, you will want your child to deserialize by also using applyState.
   // See options.defaultDeserializationMethod to configure this case.
   // see https://github.com/phetsims/phet-io/blob/main/doc/phet-io-instrumentation-technical-guide.md#three-types-of-deserialization
-  applyState?: ( t: T, state: StateType ) => void;
+  applyState?: ( ( t: T, state: StateType ) => void ) | null;
 
   // For use when this IOType is part of a composite stateSchema in another IOType.  When
   // using serialization methods by supplying only stateSchema, then deserialization
@@ -192,10 +192,14 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
   public readonly parameterTypes?: IOType[];
-  public readonly toStateObject: ( t: T ) => StateType;
-  public readonly fromStateObject: ( state: StateType ) => T;
-  public readonly stateObjectToCreateElementArguments: ( s: StateType ) => unknown[]; // TODO: instead of unknown this is the second parameter type for PhetioDynamicElementContainer. How? https://github.com/phetsims/tandem/issues/261
-  public readonly applyState: ( object: T, state: StateType ) => void;
+
+  private readonly toStateObjectOption: ( ( t: T ) => StateType ) | null;
+  public readonly fromStateObjectOption: ( ( state: StateType ) => T ) | null;
+  private readonly applyStateOption: ( ( t: T, state: StateType ) => void ) | null;
+
+  // TODO: instead of unknown this is the second parameter type for PhetioDynamicElementContainer. How? https://github.com/phetsims/tandem/issues/261
+  public readonly stateObjectToCreateElementArgumentsOption: ( ( s: StateType ) => unknown[] ) | null;
+
   public readonly addChildElement: AddChildElement;
   public readonly validator: Validator<T>;
   public readonly defaultDeserializationMethod: DeserializationType;
@@ -206,6 +210,10 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
 
   // The base IOType for the entire hierarchy.
   public static ObjectIO: IOType;
+
+  private readonly toStateObjectSupplied: boolean;
+  private readonly stateSchemaSupplied: boolean;
+  private readonly applyStateSupplied: boolean;
 
   /**
    * @param typeName - The name that this IOType will have in the public PhET-iO API. In general, this should
@@ -241,10 +249,10 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
 
       /**** STATE ****/
 
-      toStateObject: supertype && supertype.toStateObject,
-      fromStateObject: supertype && supertype.fromStateObject,
-      stateObjectToCreateElementArguments: supertype && supertype.stateObjectToCreateElementArguments,
-      applyState: supertype && supertype.applyState,
+      toStateObject: null,
+      fromStateObject: null,
+      stateObjectToCreateElementArguments: null,
+      applyState: null,
 
       stateSchema: null,
       apiStateKeys: null,
@@ -292,80 +300,14 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
     assert && assert( !this.stateSchema || ( toStateObjectSupplied || this.stateSchema.isComposite() ),
       'toStateObject method must be provided for value StateSchemas' );
 
-    // TODO: AFTER_COMMIT make this function an instance method, https://github.com/phetsims/phet-io/issues/1951
-    this.toStateObject = ( coreObject: T ) => {
-      API_STATE_NESTED_COUNT++;
-      validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
+    this.toStateObjectOption = options.toStateObject;
+    this.fromStateObjectOption = options.fromStateObject;
+    this.applyStateOption = options.applyState;
+    this.stateObjectToCreateElementArgumentsOption = options.stateObjectToCreateElementArguments;
 
-      let stateObject;
-
-      // Only do this non-standard toStateObject function if there is a stateSchema but no toStateObject provided
-      if ( !toStateObjectSupplied && stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
-        stateObject = this.defaultToStateObject( coreObject );
-      }
-      else {
-        stateObject = options.toStateObject( coreObject );
-      }
-
-      // Do not validate the api state, which get's pruned based on provided apiStateKeys, only validate the complete state
-      if ( assert && !GETTING_STATE_FOR_API &&
-
-           // only if this IOType instance has more to validate than the supertype
-           ( toStateObjectSupplied || stateSchemaSupplied ) ) {
-
-        // Only validate the stateObject if it is phetioState:true.
-        // This is an n*m algorithm because for each time toStateObject is called and needs validation, this.validateStateObject
-        // looks all the way up the IOType hierarchy. This is not efficient, but gains us the ability to make sure that
-        // the stateObject doesn't have any superfluous, unexpected keys. The "m" portion is based on how many sub-properties
-        // in a state call `toStateObject`, and the "n" portion is based on how many IOTypes in the hierarchy define a
-        // toStateObject or stateSchema. In the future we could potentially improve performance by having validateStateObject
-        // only check against the schema at this level, but then extra keys in the stateObject would not be caught. From work done in https://github.com/phetsims/phet-io/issues/1774
-        this.validateStateObject( stateObject );
-      }
-
-      let resolvedStateObject: StateType;
-
-      // When getting API state, prune out any state that don't opt in as desired for API tracking, see apiStateKeys
-      if ( GETTING_STATE_FOR_API && this.isCompositeStateSchema() &&
-
-           // When running a nested toStateObject call while generating api state, values should be opt in, because the
-           // element state has asked for these values. For example PropertyIO<RangeIO> wants to see min/max state in
-           // its validValues.
-           !( API_STATE_NESTED_COUNT > 1 && this.apiStateKeysProvided() )
-      ) {
-        resolvedStateObject = _.pick( stateObject, this.getAllAPIStateKeys() ) as StateType;
-      }
-      else {
-        resolvedStateObject = stateObject;
-      }
-      API_STATE_NESTED_COUNT--;
-      return resolvedStateObject;
-    };
-    this.fromStateObject = options.fromStateObject;
-    this.stateObjectToCreateElementArguments = options.stateObjectToCreateElementArguments;
-
-    this.applyState = ( coreObject: T, stateObject: StateType ) => {
-      validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
-
-      // Validate, but only if this IOType instance has more to validate than the supertype
-      if ( applyStateSupplied || stateSchemaSupplied ) {
-
-        // Validate that the provided stateObject is of the expected schema
-        // NOTE: Cannot use this.validateStateObject because options adopts supertype.applyState, which is bounds to the
-        // parent IOType. This prevents correct validation because the supertype doesn't know about the subtype schemas.
-        // @ts-expect-error we cannot type check against PhetioObject from this file
-        assert && coreObject.phetioType && coreObject.phetioType.validateStateObject( stateObject );
-      }
-
-      // Only do this non-standard applyState function from stateSchema if there is a stateSchema but no applyState provided
-      if ( !applyStateSupplied && stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
-        this.defaultApplyState( coreObject, stateObject as CompositeStateObjectType );
-      }
-      else {
-        options.applyState( coreObject, stateObject );
-      }
-    };
-
+    this.toStateObjectSupplied = toStateObjectSupplied;
+    this.applyStateSupplied = applyStateSupplied;
+    this.stateSchemaSupplied = stateSchemaSupplied;
     this.isFunctionType = options.isFunctionType;
     this.addChildElement = options.addChildElement;
 
@@ -415,6 +357,98 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
       }
     }
   }
+
+  public toStateObject( coreObject: T ): StateType {
+    API_STATE_NESTED_COUNT++;
+    // validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
+
+    let stateObject;
+
+    // Only do this non-standard toStateObject function if there is a stateSchema but no toStateObject provided
+    if ( !this.toStateObjectSupplied && this.stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
+      stateObject = this.defaultToStateObject( coreObject );
+    }
+    else {
+      assert && !this.toStateObjectOption && assert( this.supertype,
+        'supertype expected if no toStateObject option is provided' );
+      stateObject = this.toStateObjectOption ? this.toStateObjectOption( coreObject ) : this.supertype!.toStateObject( coreObject );
+    }
+
+    // Do not validate the api state, which get's pruned based on provided apiStateKeys, only validate the complete state
+    if ( assert && !GETTING_STATE_FOR_API &&
+
+         // only if this IOType instance has more to validate than the supertype
+         ( this.toStateObjectSupplied || this.stateSchemaSupplied ) ) {
+
+      // Only validate the stateObject if it is phetioState:true.
+      // This is an n*m algorithm because for each time toStateObject is called and needs validation, this.validateStateObject
+      // looks all the way up the IOType hierarchy. This is not efficient, but gains us the ability to make sure that
+      // the stateObject doesn't have any superfluous, unexpected keys. The "m" portion is based on how many sub-properties
+      // in a state call `toStateObject`, and the "n" portion is based on how many IOTypes in the hierarchy define a
+      // toStateObject or stateSchema. In the future we could potentially improve performance by having validateStateObject
+      // only check against the schema at this level, but then extra keys in the stateObject would not be caught. From work done in https://github.com/phetsims/phet-io/issues/1774
+      this.validateStateObject( stateObject );
+    }
+
+    let resolvedStateObject: StateType;
+
+    // When getting API state, prune out any state that don't opt in as desired for API tracking, see apiStateKeys
+    if ( GETTING_STATE_FOR_API && this.isCompositeStateSchema() &&
+
+         // When running a nested toStateObject call while generating api state, values should be opt in, because the
+         // element state has asked for these values. For example PropertyIO<RangeIO> wants to see min/max state in
+         // its validValues.
+         !( API_STATE_NESTED_COUNT > 1 && this.apiStateKeysProvided() )
+    ) {
+      resolvedStateObject = _.pick( stateObject, this.getAllAPIStateKeys() ) as StateType;
+    }
+    else {
+      resolvedStateObject = stateObject;
+    }
+    API_STATE_NESTED_COUNT--;
+    return resolvedStateObject;
+  }
+
+  public fromStateObject( stateObject: StateType ): T {
+    if ( this.fromStateObjectOption ) {
+      return this.fromStateObjectOption( stateObject );
+    }
+    assert && assert( this.supertype );
+    return this.supertype!.fromStateObject( stateObject );
+  }
+
+  public applyState( coreObject: T, stateObject: StateType ): void {
+    validate( coreObject, this.validator, VALIDATE_OPTIONS_FALSE );
+
+    // Validate, but only if this IOType instance has more to validate than the supertype
+    if ( this.applyStateSupplied || this.stateSchemaSupplied ) {
+
+      // Validate that the provided stateObject is of the expected schema
+      // NOTE: Cannot use this.validateStateObject because options adopts supertype.applyState, which is bounds to the
+      // parent IOType. This prevents correct validation because the supertype doesn't know about the subtype schemas.
+      // @ts-expect-error we cannot type check against PhetioObject from this file
+      assert && coreObject.phetioType && coreObject.phetioType.validateStateObject( stateObject );
+    }
+
+    // Only do this non-standard applyState function from stateSchema if there is a stateSchema but no applyState provided
+    if ( !this.applyStateSupplied && this.stateSchemaSupplied && this.stateSchema && this.stateSchema.isComposite() ) {
+      this.defaultApplyState( coreObject, stateObject as CompositeStateObjectType );
+    }
+    else {
+      assert && !this.applyStateOption && assert( this.supertype,
+        'supertype expected if no applyState option is provided' );
+      this.applyStateOption ? this.applyStateOption( coreObject, stateObject ) : this.supertype!.applyState( coreObject, stateObject );
+    }
+  }
+
+  public stateObjectToCreateElementArguments( stateObject: StateType ): unknown[] {
+    if ( this.stateObjectToCreateElementArgumentsOption ) {
+      return this.stateObjectToCreateElementArgumentsOption( stateObject );
+    }
+    assert && assert( this.supertype );
+    return this.supertype!.stateObjectToCreateElementArguments( stateObject );
+  }
+
 
   // Include state from all composite state schemas up and down the type hierarchy (children overriding parents).
   private defaultToStateObject( coreObject: T ): StateType {
