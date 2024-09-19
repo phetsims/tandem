@@ -9,11 +9,11 @@
  */
 
 import Validation from '../../../axon/js/Validation.js';
+import IOTypeCache from '../IOTypeCache.js';
 import tandemNamespace from '../tandemNamespace.js';
+import ArrayIO from './ArrayIO.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
-import ArrayIO from './ArrayIO.js';
-import IOTypeCache from '../IOTypeCache.js';
 
 // Cache each parameterized IOType so that it is only created once.
 const cache = new IOTypeCache();
@@ -33,7 +33,7 @@ const ReferenceArrayIO = <ParameterType, ParameterStateType>( parameterType: IOT
         return _.every( array, element => Validation.isValueValid( element, parameterType.validator ) );
       },
       parameterTypes: [ parameterType ],
-      toStateObject: ArrayIO( parameterType ).toStateObject,
+      toStateObject: coreObject => ArrayIO( parameterType ).toStateObject( coreObject ),
       applyState: ( originalArray, stateObject ) => {
         originalArray.length = 0;
         originalArray.push( ...ArrayIO( parameterType ).fromStateObject( stateObject ) );
