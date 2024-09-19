@@ -339,7 +339,6 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
           assert && assert( !_.some( typeHierarchy, t => t.events.includes( event ) ), `IOType should not declare event that parent also has: ${event}` );
         } );
 
-        // TODO: AFTER_COMMIT Side slip: assert that stateSchema keys cannot be for supertype options? https://github.com/phetsims/phet-io/issues/1951
         if ( this.stateSchema?.apiStateKeys ) {
           const supertypeAPIKeys = supertype.getAllAPIStateKeys();
           this.stateSchema?.apiStateKeys.forEach( apiStateKey => {
