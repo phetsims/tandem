@@ -9,16 +9,16 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
-import optionize from '../../phet-core/js/optionize.js';
-import PhetioObject, { PhetioObjectOptions } from './PhetioObject.js';
-import Tandem from './Tandem.js';
-import IOType from './types/IOType.js';
 import axon from '../../axon/js/axon.js';
 import validate from '../../axon/js/validate.js';
 import Validation, { Validator } from '../../axon/js/Validation.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
+import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import PhetioObject, { PhetioObjectOptions } from './PhetioObject.js';
+import Tandem from './Tandem.js';
+import IOType from './types/IOType.js';
 
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 

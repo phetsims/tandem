@@ -14,23 +14,23 @@
  */
 
 import Emitter from '../../axon/js/Emitter.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import TEmitter from '../../axon/js/TEmitter.js';
 import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
-import PickRequired from '../../phet-core/js/types/PickRequired.js';
 import optionize from '../../phet-core/js/optionize.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import PickRequired from '../../phet-core/js/types/PickRequired.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import DynamicTandem from './DynamicTandem.js';
+import isClearingPhetioDynamicElementsProperty from './isClearingPhetioDynamicElementsProperty.js';
+import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 import PhetioObject, { PhetioObjectMetadataInput, PhetioObjectOptions } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
+import { PhetioElementMetadata, PhetioState } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import { PhetioElementMetadata, PhetioState } from './TandemConstants.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import TEmitter from '../../axon/js/TEmitter.js';
 import StringIO from './types/StringIO.js';
-import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
-import isClearingPhetioDynamicElementsProperty from './isClearingPhetioDynamicElementsProperty.js';
 
 export type ClearOptions = {
   phetioState?: PhetioState | null;

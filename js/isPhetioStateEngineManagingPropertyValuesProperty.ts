@@ -9,8 +9,8 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import tandemNamespace from './tandemNamespace.js';
 import TinyProperty from '../../axon/js/TinyProperty.js';
+import tandemNamespace from './tandemNamespace.js';
 
 const isPhetioStateEngineManagingPropertyValuesProperty = new TinyProperty( false );
 

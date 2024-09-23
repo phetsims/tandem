@@ -13,12 +13,15 @@
  */
 
 import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
-import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
 import validate from '../../axon/js/validate.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize, { combineOptions, EmptySelfOptions, OptionizeDefaults } from '../../phet-core/js/optionize.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
+import DescriptionRegistry from './DescriptionRegistry.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
@@ -26,9 +29,6 @@ import Tandem from './Tandem.js';
 import TandemConstants, { PhetioElementMetadata, PhetioID } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
-import DescriptionRegistry from './DescriptionRegistry.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;

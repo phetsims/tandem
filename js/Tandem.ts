@@ -11,10 +11,10 @@
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
+import PickOptional from '../../phet-core/js/types/PickOptional.js';
 import PhetioObject, { PhetioObjectOptions } from './PhetioObject.js';
 import TandemConstants, { PhetioID } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
-import PickOptional from '../../phet-core/js/types/PickOptional.js';
 
 // constants
 // Tandem can't depend on joist, so cannot use packageJSON module

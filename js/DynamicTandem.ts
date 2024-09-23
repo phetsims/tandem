@@ -8,11 +8,11 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import Tandem, { TandemOptions } from './Tandem.js';
-import tandemNamespace from './tandemNamespace.js';
-import optionize, { EmptySelfOptions } from '../../phet-core/js/optionize.js';
 import TandemConstants from './TandemConstants.js';
+import tandemNamespace from './tandemNamespace.js';
 
 type DynamicTandemOptions = StrictOmit<TandemOptions, 'isValidTandemName'>;
 

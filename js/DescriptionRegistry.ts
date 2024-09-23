@@ -8,10 +8,10 @@
  * @author Jonathan Olson <jonathan.olson@colorado.edu>
  */
 
-import tandemNamespace from './tandemNamespace.js';
+import TinyEmitter from '../../axon/js/TinyEmitter.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
-import TinyEmitter from '../../axon/js/TinyEmitter.js';
+import tandemNamespace from './tandemNamespace.js';
 
 type DescriptionEntry = {
   // Boo, this doesn't work

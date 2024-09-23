@@ -8,11 +8,11 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import PhetioObject from './PhetioObject.js';
-import { TReadOnlyEmitter } from '../../axon/js/TEmitter.js';
-import { FullPhetioState } from './TandemConstants.js';
-import TReadOnlyProperty from '../../axon/js/TReadOnlyProperty.js';
 import Emitter from '../../axon/js/Emitter.js';
+import { TReadOnlyEmitter } from '../../axon/js/TEmitter.js';
+import TReadOnlyProperty from '../../axon/js/TReadOnlyProperty.js';
+import PhetioObject from './PhetioObject.js';
+import { FullPhetioState } from './TandemConstants.js';
 
 export type TPhetioStateEngine = {
   onBeforeApplyStateEmitter: TReadOnlyEmitter<[ PhetioObject ]>;

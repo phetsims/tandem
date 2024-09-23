@@ -32,11 +32,11 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import PhetioObject, { LinkedElement } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
+import { PhetioAPI, PhetioElementMetadata, PhetioID } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import PhetioObject, { LinkedElement } from './PhetioObject.js';
-import { PhetioAPI, PhetioElementMetadata, PhetioID } from './TandemConstants.js';
 
 // constants
 // The API-tracked and validated metadata keys

@@ -13,11 +13,11 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import tandemNamespace from './tandemNamespace.js';
-import { FullPhetioState } from './TandemConstants.js';
 import Emitter from '../../axon/js/Emitter.js';
 import TEmitter, { TReadOnlyEmitter } from '../../axon/js/TEmitter.js';
 import Tandem from './Tandem.js';
+import { FullPhetioState } from './TandemConstants.js';
+import tandemNamespace from './tandemNamespace.js';
 
 // This one is for specialized usage in the PhetioStateEngine, which changes the value. DO NOT USE in sim code!
 export const writablePhetioStateSetEmitter: TEmitter<[ FullPhetioState, Tandem ]> = new Emitter( {

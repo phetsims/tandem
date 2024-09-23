@@ -18,14 +18,14 @@ import NumberProperty from '../../axon/js/NumberProperty.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import optionize from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
+import IOTypeCache from './IOTypeCache.js';
+import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 import PhetioDynamicElementContainer, { ClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
 import PhetioObject from './PhetioObject.js';
+import phetioStateSetEmitter from './phetioStateSetEmitter.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
-import IOTypeCache from './IOTypeCache.js';
-import phetioStateSetEmitter from './phetioStateSetEmitter.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
