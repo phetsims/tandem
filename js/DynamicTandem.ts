@@ -1,4 +1,4 @@
-// Copyright 2019-2023, University of Colorado Boulder
+// Copyright 2019-2024, University of Colorado Boulder
 
 /**
  * A tandem for a dynamic element that stores the name of the archetype that defines its dynamic element's schema.
