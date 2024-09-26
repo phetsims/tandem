@@ -131,7 +131,7 @@ type SelfOptions = StrictOmit<Partial<PhetioElementMetadata>, 'phetioTypeName' |
   'phetioIsArchetype' | 'phetioEventType'> & {
 
   // This is the only place in the project where this is allowed
-  tandem?: Tandem; // eslint-disable-line bad-sim-text
+  tandem?: Tandem; // eslint-disable-line phet/bad-sim-text
   descriptionTandem?: Tandem;
   phetioType?: IOType;
   phetioEventType?: EventType;
@@ -150,7 +150,7 @@ type PhetioObjectMetadataKeys = keyof ( StrictOmit<PhetioElementMetadata, 'pheti
 // A type that is used for the structural typing when gathering metadata. We just need a "PhetioObject-like" entity
 // to pull the API metadata from. Thus, this is the "input" to logic that would pull the metadata keys into an object
 // for the PhetioAPI.
-// eslint-disable-next-line phet-io-object-options-should-not-pick-from-phet-io-object
+// eslint-disable-next-line phet/phet-io-object-options-should-not-pick-from-phet-io-object
 export type PhetioObjectMetadataInput = Pick<PhetioObject, PhetioObjectMetadataKeys>;
 
 class PhetioObject extends Disposable {

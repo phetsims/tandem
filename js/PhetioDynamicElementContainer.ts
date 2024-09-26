@@ -300,7 +300,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, CreateEleme
     }
     else {
       createdObjectTandem = this.tandem.createTandem( componentName, this.tandem.getExtendedOptions() );
-      assert && assert( createdObjectTandem instanceof DynamicTandem, 'createdObjectTandem should be an instance of DynamicTandem' ); // eslint-disable-line no-simple-type-checking-assertions
+      assert && assert( createdObjectTandem instanceof DynamicTandem, 'createdObjectTandem should be an instance of DynamicTandem' ); // eslint-disable-line phet/no-simple-type-checking-assertions
     }
 
     const createdObject = this.createElement( createdObjectTandem, ...argsForCreateFunction );

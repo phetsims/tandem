@@ -41,7 +41,7 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: Enumer
       documentation: `Possible values: ${keys.join( ', ' )}.${additionalDocs}`,
       toStateObject: ( value: T ) => enumeration.getKey( value ),
       fromStateObject: ( stateObject: string ): T => {
-        assert && assert( typeof stateObject === 'string', 'unsupported EnumerationIO value type, expected string' ); // eslint-disable-line no-simple-type-checking-assertions
+        assert && assert( typeof stateObject === 'string', 'unsupported EnumerationIO value type, expected string' ); // eslint-disable-line phet/no-simple-type-checking-assertions
         assert && assert( keys.includes( stateObject ), `Unrecognized value: ${stateObject}` );
         return enumeration.getValue( stateObject );
       },

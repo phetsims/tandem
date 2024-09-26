@@ -303,7 +303,7 @@ class Tandem {
       return currentChild;
     }
     else {
-      return new Tandem( this, name, options ); // eslint-disable-line bad-sim-text
+      return new Tandem( this, name, options ); // eslint-disable-line phet/bad-sim-text
     }
   }
 
