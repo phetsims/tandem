@@ -11,6 +11,7 @@
 import TinyEmitter from '../../axon/js/TinyEmitter.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from './tandemNamespace.js';
 
 type DescriptionEntry = {
@@ -19,6 +20,10 @@ type DescriptionEntry = {
 
   [ K: string ]: DescriptionEntry | PhetioObject | null;
 };
+
+// Any sort of object that can have some value set to it. Often a PhetioObject, but not always if creating custom
+// tandems for this registry.
+type Settable = IntentionalAny;
 
 type TandemID = string;
 
@@ -32,8 +37,9 @@ export default class DescriptionRegistry {
   // E.g. root.density.introScreen.model._value will be the IntroScreen object.
   public static readonly root: DescriptionEntry = {};
 
-  // Map from TandemID to PhetioObject, so we can pull out the PhetioObject for a given tandemID
-  public static readonly map: Map<TandemID, PhetioObject> = new Map<TandemID, PhetioObject>();
+  // Map from TandemID to the settable object, so we can find the object from a given tandemID. This
+  // will often be a PhetioObject, but may be other objects with a custom tandem (that are not part of the PhET-iO API).
+  public static readonly map: Map<TandemID, Settable> = new Map<TandemID, Settable>();
 
   // Emits with (tandemID, phetioObject) on PhetioObject addition/removal.
   public static readonly addedEmitter = new TinyEmitter<[ TandemID, PhetioObject ]>();
@@ -41,14 +47,15 @@ export default class DescriptionRegistry {
 
   /**
    * Called when a PhetioObject is created with a tandem, or when a tandem is set on a PhetioObject.
+   * Can also be called with a custom tandem that is not part of the PhET-iO API.
    */
-  public static add( tandem: Tandem, phetioObject: PhetioObject ): void {
+  public static add( tandem: Tandem, settable: Settable ): void {
     if ( !DescriptionRegistry.ENABLED ) {
       return;
     }
     assert && assert( !DescriptionRegistry.map.has( tandem.phetioID ), 'TandemID already exists in the DescriptionRegistry' );
 
-    DescriptionRegistry.map.set( tandem.phetioID, phetioObject );
+    DescriptionRegistry.map.set( tandem.phetioID, settable );
 
     // Traverse our DescriptionEntries, creating them as needed
     const bits = tandem.phetioID.split( '.' );
@@ -63,25 +70,25 @@ export default class DescriptionRegistry {
     }
 
     // Tag the _value on the leaf so it's accessible
-    current._value = phetioObject;
+    current._value = settable;
 
-    DescriptionRegistry.addedEmitter.emit( tandem.phetioID, phetioObject );
+    DescriptionRegistry.addedEmitter.emit( tandem.phetioID, settable );
   }
 
   /**
-   * Called when a PhetioObject is disposed.
+   * Called when a PhetioObject is disposed, or when you want to remove a custom tandem that is not part of the PhET-iO API.
    */
-  public static remove( phetioObject: PhetioObject ): void {
+  public static remove( settable: Settable ): void {
 
     if ( !DescriptionRegistry.ENABLED ) {
       return;
     }
 
-    const tandemID = phetioObject.phetioID;
+    const tandemID = settable.phetioID;
 
     if ( DescriptionRegistry.map.has( tandemID ) ) {
 
-      DescriptionRegistry.removedEmitter.emit( tandemID, phetioObject );
+      DescriptionRegistry.removedEmitter.emit( tandemID, settable );
       DescriptionRegistry.map.delete( tandemID );
 
       // Traverse our DescriptionEntries, recording the "trail" of entries
@@ -114,7 +121,7 @@ export default class DescriptionRegistry {
       }
     }
     else {
-      assert && assert( false, 'PhetioObject not found in DescriptionRegistry' );
+      assert && assert( false, 'PhetioObject/Settable not found in DescriptionRegistry' );
     }
   }
 }
