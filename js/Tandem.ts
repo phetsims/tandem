@@ -11,8 +11,7 @@
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
-import PickOptional from '../../phet-core/js/types/PickOptional.js';
-import PhetioObject, { PhetioObjectOptions } from './PhetioObject.js';
+import PhetioObject from './PhetioObject.js';
 import TandemConstants, { PhetioID } from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 
@@ -592,32 +591,6 @@ class Tandem {
    * Use this as the parent tandem for Properties that are related to sim-specific preferences.
    */
   public static readonly PREFERENCES = Tandem.GLOBAL_MODEL.createTandem( 'preferences' );
-
-  /**
-   * Convenience method to get an accessibleName from providedOptions, see tandemNameToAccessibleName
-   */
-  public static toAccessibleName( providedOptions: PickOptional<PhetioObjectOptions, 'tandem'> | undefined, suffix: string ): string | null {
-    if ( providedOptions && providedOptions.tandem && providedOptions.tandem.supplied ) {
-      return Tandem.tandemNameToAccessibleName( providedOptions.tandem.name, suffix );
-    }
-    return null;
-  }
-
-  /**
-   * Tandem names can be used to create accessible names for screen readers. This method will convert a tandem name to
-   * a human-readable name. For example, 'resetAllButton' would become 'Reset All'.
-   */
-  public static tandemNameToAccessibleName( tandemName: string, suffix: string ): string | null {
-    assert && assert( tandemName.toLowerCase().endsWith( suffix.toLowerCase() ), `suffix should be at the end of the tandem name: ${tandemName}` );
-
-    // trim the suffix
-    const withoutSuffix = tandemName.slice( 0, -suffix.length );
-
-    const whitespaceName = withoutSuffix.replace( /([A-Z])/g, ' $1' ).trim();
-
-    // capitalize the first letter of each word, no matter how many words
-    return whitespaceName.replace( /\b\w/g, c => c.toUpperCase() );
-  }
 }
 
 Tandem.addLaunchListener( () => {
