@@ -7,9 +7,9 @@
  * @author Andrew Adare (PhET Interactive Simulations)
  */
 
+import IOTypeCache from '../IOTypeCache.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
-import IOTypeCache from '../IOTypeCache.js';
 
 
 // cache each parameterized IOType so that it is only created once

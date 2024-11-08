@@ -17,10 +17,10 @@
  */
 
 import Validation from '../../../axon/js/Validation.js';
+import IOTypeCache from '../IOTypeCache.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
-import IOTypeCache from '../IOTypeCache.js';
 
 // Cache each parameterized IOType so that it is only created once
 const cache = new IOTypeCache();

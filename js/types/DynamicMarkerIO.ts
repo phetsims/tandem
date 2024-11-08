@@ -7,9 +7,9 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
-import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 
 const DynamicMarkerIO = new IOType<IntentionalAny, object>( 'DynamicMarkerIO', {
   supertype: IOType.ObjectIO,

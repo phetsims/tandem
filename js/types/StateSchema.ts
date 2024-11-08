@@ -22,10 +22,10 @@
 import Validation, { Validator } from '../../../axon/js/Validation.js';
 import assertMutuallyExclusiveOptions from '../../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import optionize from '../../../phet-core/js/optionize.js';
-import tandemNamespace from '../tandemNamespace.js';
-import IOType from './IOType.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import { IOTypeName } from '../TandemConstants.js';
+import tandemNamespace from '../tandemNamespace.js';
+import IOType from './IOType.js';
 
 /**
  * This is the primary functionality of the StateSchema class. An IOType can be provided a composite schema like so:

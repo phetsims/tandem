@@ -10,12 +10,12 @@
 
 import Validation from '../../../axon/js/Validation.js';
 import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
+import IOTypeCache from '../IOTypeCache.js';
+import Tandem from '../Tandem.js';
+import { PhetioID } from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StringIO from './StringIO.js';
-import { PhetioID } from '../TandemConstants.js';
-import IOTypeCache from '../IOTypeCache.js';
-import Tandem from '../Tandem.js';
 
 // Cache each parameterized ReferenceIO so that it is only created once
 const cache = new IOTypeCache();

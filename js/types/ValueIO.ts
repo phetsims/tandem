@@ -1,9 +1,9 @@
 // Copyright 2021-2024, University of Colorado Boulder
 
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
-import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 
 /**
  * IOType that uses value semantics for toStateObject/fromStateObject

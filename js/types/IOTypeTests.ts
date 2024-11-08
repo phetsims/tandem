@@ -6,8 +6,8 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import IOType from './IOType.js';
 import BooleanIO from './BooleanIO.js';
+import IOType from './IOType.js';
 import NumberIO from './NumberIO.js';
 import StringIO from './StringIO.js';
 
