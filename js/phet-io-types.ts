@@ -108,3 +108,5 @@ export type PhetioElementMetadata = {
   // For PhetioDynamicElementContainer.
   phetioDynamicElementName?: string | null;
 };
+
+export type PhetioElementMetadataValue = PhetioElementMetadata[keyof PhetioElementMetadata];
