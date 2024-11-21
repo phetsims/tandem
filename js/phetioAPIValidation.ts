@@ -34,7 +34,7 @@
 
 import PhetioObject, { LinkedElement } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
-import { PhetioAPI, PhetioElementMetadata, PhetioID } from './TandemConstants.js';
+import { PhetioAPI, PhetioElementMetadata, PhetioID } from './phet-io-types.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 

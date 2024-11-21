@@ -11,8 +11,9 @@
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
+import { PhetioID } from './phet-io-types.js';
 import PhetioObject from './PhetioObject.js';
-import TandemConstants, { PhetioID } from './TandemConstants.js';
+import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // constants

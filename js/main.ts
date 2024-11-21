@@ -5,7 +5,7 @@
  */
 
 import tandemNamespace from './tandemNamespace.js';
-
+import './phet-io-types.js';
 import './types/ArrayIO.js';
 import './types/BooleanIO.js';
 import './types/DynamicMarkerIO.js';

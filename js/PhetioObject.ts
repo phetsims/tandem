@@ -24,9 +24,10 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import DescriptionRegistry from './DescriptionRegistry.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
+import { PhetioElementMetadata, PhetioID } from './phet-io-types.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
 import Tandem from './Tandem.js';
-import TandemConstants, { PhetioElementMetadata, PhetioID } from './TandemConstants.js';
+import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 

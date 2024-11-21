@@ -27,7 +27,7 @@ import isClearingPhetioDynamicElementsProperty from './isClearingPhetioDynamicEl
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 import PhetioObject, { PhetioObjectMetadataInput, PhetioObjectOptions } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
-import { PhetioElementMetadata, PhetioState } from './TandemConstants.js';
+import { PhetioElementMetadata, PhetioState } from './phet-io-types.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 import StringIO from './types/StringIO.js';

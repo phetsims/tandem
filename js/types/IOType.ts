@@ -12,10 +12,11 @@ import validate from '../../../axon/js/validate.js';
 import Validation, { Validator } from '../../../axon/js/Validation.js';
 import optionize from '../../../phet-core/js/optionize.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
+import { IOTypeName, Method, Methods, PhetioElementMetadata, PhetioType } from '../phet-io-types.js';
 import PhetioConstants from '../PhetioConstants.js';
 import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
 import type PhetioObject from '../PhetioObject.js';
-import TandemConstants, { IOTypeName, Method, Methods, PhetioElementMetadata, PhetioType } from '../TandemConstants.js';
+import TandemConstants from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
 import StateSchema, { APIStateKeys, CompositeSchema, CompositeStateObjectType } from './StateSchema.js';
 
