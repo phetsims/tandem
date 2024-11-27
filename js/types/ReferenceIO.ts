@@ -11,8 +11,8 @@
 import Validation from '../../../axon/js/Validation.js';
 import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
 import IOTypeCache from '../IOTypeCache.js';
-import Tandem from '../Tandem.js';
 import { PhetioID } from '../phet-io-types.js';
+import Tandem from '../Tandem.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StringIO from './StringIO.js';
