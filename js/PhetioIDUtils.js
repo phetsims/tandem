@@ -37,7 +37,7 @@
    * structure of the phetioID. Available in the main PhET-iO js import.
    * @namespace
    */
-  window.phetio.PhetioIDUtils = {
+  window.phetio.PhetioIDUtils = { // eslint-disable-line phet/bad-sim-text
 
     // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
     /**
