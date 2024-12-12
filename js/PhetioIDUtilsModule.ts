@@ -1,4 +1,4 @@
-// Copyright 2017-2023, University of Colorado Boulder
+// Copyright 2024, University of Colorado Boulder
 
 /**
  * TODO: Don't use this file, convert the UMD into a module, https://github.com/phetsims/tandem/issues/316
