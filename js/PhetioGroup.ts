@@ -21,6 +21,7 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import IOTypeCache from './IOTypeCache.js';
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 import PhetioDynamicElementContainer, { ClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
+import PhetioIDUtilsModule from './PhetioIDUtilsModule.js';
 import PhetioObject from './PhetioObject.js';
 import phetioStateSetEmitter from './phetioStateSetEmitter.js';
 import Tandem from './Tandem.js';
@@ -228,7 +229,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
    */
   public createCorrespondingGroupElement( tandemName: string, ...argsForCreateFunction: P ): T {
 
-    const index = window.phetio.PhetioIDUtils.getGroupElementIndex( tandemName );
+    const index = PhetioIDUtilsModule.getGroupElementIndex( tandemName );
 
     // If the specified index overlapped with the next available index, bump it up so there is no collision on the
     // next createNextElement
@@ -267,7 +268,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     assert && isSettingPhetioStateProperty.value && assert( fromStateSetting,
       'dynamic elements should only be created by the state engine when setting state.' );
 
-    const componentName = this.phetioDynamicElementName + window.phetio.PhetioIDUtils.GROUP_SEPARATOR + index;
+    const componentName = this.phetioDynamicElementName + PhetioIDUtilsModule.GROUP_SEPARATOR + index;
 
     // Don't access phetioType in PhET brand
     const containerParameterType = Tandem.PHET_IO_ENABLED ? this.phetioType.parameterTypes![ 0 ] : null;
@@ -318,7 +319,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
           // setting engine.
           const args = parameterType.stateObjectToCreateElementArguments( stateObject );
 
-          const index = window.phetio.PhetioIDUtils.getGroupElementIndex( componentName );
+          const index = PhetioIDUtilsModule.getGroupElementIndex( componentName );
 
           // @ts-expect-error args is of type P, but we can't really communicate that here
           const groupElement = group.createIndexedElement( index, args, true );

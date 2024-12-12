@@ -6,11 +6,14 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import PhetioIDUtilsModule from './PhetioIDUtilsModule.js';
+
+const PhetioIDUtils = PhetioIDUtilsModule;
+
 QUnit.module( 'PhetioIDUtils' );
 
 QUnit.test( 'PhetioIDUtils.append', assert => {
 
-  const PhetioIDUtils = window.phetio.PhetioIDUtils;
   assert.equal(
     PhetioIDUtils.append( 'circuitConstructionKitDc.introScreen.model.circuit.voltageProperty', 'rangeProperty' ),
     'circuitConstructionKitDc.introScreen.model.circuit.voltageProperty.rangeProperty',
@@ -35,7 +38,6 @@ QUnit.test( 'PhetioIDUtils.append', assert => {
 
 QUnit.test( 'Test archetype mapping', assert => {
 
-  const PhetioIDUtils = window.phetio.PhetioIDUtils;
   assert.equal(
     PhetioIDUtils.getArchetypalPhetioID(
       'circuitConstructionKitDc.introScreen.model.circuit.batteryGroup.battery_0.powerDissipatedProperty.dependencies.circuitConstructionKitDc-introScreen-model-circuit-batteryGroup-battery_0-currentProperty' ),
