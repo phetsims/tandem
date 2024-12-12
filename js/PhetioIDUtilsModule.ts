@@ -9,6 +9,8 @@
 import './PhetioIDUtils.js';
 import affirm from '../../perennial-alias/js/browser-and-node/affirm.js';
 
+// eslint-disable-next-line phet/bad-sim-text
 affirm( window.phetio.PhetioIDUtils, 'window.phetio.PhetioIDUtils should be a global' );
 
+// eslint-disable-next-line phet/bad-sim-text
 export default window.phetio.PhetioIDUtils;
