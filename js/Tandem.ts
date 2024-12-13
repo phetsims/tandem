@@ -9,6 +9,7 @@
  */
 
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
+import isPhetioEnabled from '../../phet-core/js/isPhetioEnabled.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
 import { PhetioID } from './phet-io-types.js';
@@ -21,7 +22,7 @@ import tandemNamespace from './tandemNamespace.js';
 // Tandem can't depend on joist, so cannot use packageJSON module
 const packageJSON = _.hasIn( window, 'phet.chipper.packageObject' ) ? phet.chipper.packageObject : { name: 'placeholder' };
 
-const PHET_IO_ENABLED = _.hasIn( window, 'phet.preloads.phetio' );
+const PHET_IO_ENABLED = isPhetioEnabled;
 const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParameters.phetioPrintMissingTandems;
 
 // Validation defaults to true, but can be overridden to be false in package.json.
