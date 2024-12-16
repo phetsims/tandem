@@ -6,9 +6,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import PhetioIDUtilsModule from './PhetioIDUtilsModule.js';
-
-const PhetioIDUtils = PhetioIDUtilsModule;
+import PhetioIDUtils from './PhetioIDUtils.js';
 
 QUnit.module( 'PhetioIDUtils' );
 
