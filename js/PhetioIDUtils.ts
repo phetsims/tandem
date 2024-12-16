@@ -1,6 +1,9 @@
 // Copyright 2017-2024, University of Colorado Boulder
 
+import affirm from '../../perennial-alias/js/browser-and-node/affirm.js';
 import tandemNamespace from './tandemNamespace.js';
+
+/* eslint-disable phet/bad-typescript-text */
 
 /**
  * Utilities for creating and manipulating the unique identifiers assigned to instrumented PhET-iO instances, aka
@@ -13,8 +16,6 @@ import tandemNamespace from './tandemNamespace.js';
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
-
-import affirm from '../../perennial-alias/js/browser-and-node/affirm.js';
 
 // constants
 const SEPARATOR = '.';
@@ -49,9 +50,9 @@ class PhetioIDUtils {
    * @param {string|string[]} componentNames - the name or list of names to append to the ID
    * @returns {string} - the appended phetioID
    */
-  static append( phetioID, ...componentNames ) {
+  public static append( phetioID: string, ...componentNames: string[] ): string {
     componentNames.forEach( componentName => {
-      affirm( componentName.indexOf( SEPARATOR ) === -1, `separator appears in componentName: ${componentName}` );
+      affirm( !componentName.includes( SEPARATOR ), `separator appears in componentName: ${componentName}` );
       if ( componentName === '' ) {
         return;
       }
@@ -72,7 +73,7 @@ class PhetioIDUtils {
    * @param {string} phetioID - the ID of the PhET-iO Element
    * @returns {string} - the component name
    */
-  static getComponentName( phetioID ) {
+  public static getComponentName( phetioID: string ): string {
     affirm( phetioID.length > 0 );
     const indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
     if ( indexOfLastSeparator === -1 ) {
@@ -93,7 +94,7 @@ class PhetioIDUtils {
    * @param {string} phetioID - the ID of the PhET-iO Element
    * @returns {string|null} - the phetioID of the parent, or null if there is no parent
    */
-  static getParentID( phetioID ) {
+  public static getParentID( phetioID: string ): string | null {
     const indexOfLastSeparator = phetioID.lastIndexOf( SEPARATOR );
     return indexOfLastSeparator === -1 ? null : phetioID.substring( 0, indexOfLastSeparator );
   }
@@ -106,7 +107,7 @@ class PhetioIDUtils {
    * @public
    * @deprecated
    */
-  static getDOMElementID( phetioID ) {
+  public static getDOMElementID( phetioID: string ): string {
     return `phetioID:${phetioID}`;
   }
 
@@ -124,7 +125,7 @@ class PhetioIDUtils {
    * @public
    * @returns {string|null} - null if there is no screen component name in the phetioID
    */
-  static getScreenID( phetioID ) {
+  public static getScreenID( phetioID: string ): string | null {
     const screenIDParts = [];
     const phetioIDParts = phetioID.split( SEPARATOR );
     for ( let i = 0; i < phetioIDParts.length; i++ ) {
@@ -148,8 +149,8 @@ class PhetioIDUtils {
    * --> 1
    * @public
    */
-  static getGroupElementIndex( componentName ) {
-    affirm( componentName.indexOf( this.GROUP_SEPARATOR ) >= 0,
+  public static getGroupElementIndex( componentName: string ): number {
+    affirm( componentName.includes( this.GROUP_SEPARATOR ),
       'component name for phetioID should have group element syntax' );
     return Number( componentName.split( this.GROUP_SEPARATOR )[ 1 ] );
   }
@@ -161,7 +162,7 @@ class PhetioIDUtils {
    * @returns {boolean}
    * @public
    */
-  static isAncestor( potentialAncestorPhetioID, potentialDescendantPhetioID ) {
+  public static isAncestor( potentialAncestorPhetioID: string, potentialDescendantPhetioID: string ): boolean {
     const ancestorComponents = potentialAncestorPhetioID.split( SEPARATOR );
     const descendantComponents = potentialDescendantPhetioID.split( SEPARATOR );
     for ( let i = 0; i < ancestorComponents.length; i++ ) {
@@ -184,7 +185,7 @@ class PhetioIDUtils {
    * @public
    * @returns {string}
    */
-  static getArchetypalPhetioID( phetioID ) {
+  public static getArchetypalPhetioID( phetioID: string ): string {
     const phetioIDParts = phetioID.split( SEPARATOR );
 
     for ( let i = 0; i < phetioIDParts.length; i++ ) {
@@ -209,7 +210,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static SEPARATOR = SEPARATOR;
+  public static readonly SEPARATOR = SEPARATOR;
 
 
   // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
@@ -219,7 +220,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static GROUP_SEPARATOR = GROUP_SEPARATOR;
+  public static readonly GROUP_SEPARATOR = GROUP_SEPARATOR;
 
 
   /**
@@ -231,7 +232,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static INTER_TERM_SEPARATOR = INTER_TERM_SEPARATOR;
+  public static readonly INTER_TERM_SEPARATOR = INTER_TERM_SEPARATOR;
 
 
   // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
@@ -241,7 +242,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static GENERAL_COMPONENT_NAME = GENERAL_COMPONENT_NAME;
+  public static readonly GENERAL_COMPONENT_NAME = GENERAL_COMPONENT_NAME;
 
 
   // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
@@ -251,7 +252,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static GLOBAL_COMPONENT_NAME = GLOBAL_COMPONENT_NAME;
+  public static readonly GLOBAL_COMPONENT_NAME = GLOBAL_COMPONENT_NAME;
 
 
   // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
@@ -261,7 +262,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static HOME_SCREEN_COMPONENT_NAME = HOME_SCREEN_COMPONENT_NAME;
+  public static readonly HOME_SCREEN_COMPONENT_NAME = HOME_SCREEN_COMPONENT_NAME;
 
 
   // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
@@ -271,7 +272,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static MODEL_COMPONENT_NAME = MODEL_COMPONENT_NAME;
+  public static readonly MODEL_COMPONENT_NAME = MODEL_COMPONENT_NAME;
 
 
   // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
@@ -281,7 +282,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static VIEW_COMPONENT_NAME = VIEW_COMPONENT_NAME;
+  public static readonly VIEW_COMPONENT_NAME = VIEW_COMPONENT_NAME;
 
 
   // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
@@ -291,7 +292,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static CONTROLLER_COMPONENT_NAME = CONTROLLER_COMPONENT_NAME;
+  public static readonly CONTROLLER_COMPONENT_NAME = CONTROLLER_COMPONENT_NAME;
 
 
   /**
@@ -300,7 +301,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static COLORS_COMPONENT_NAME = COLORS_COMPONENT_NAME;
+  public static readonly COLORS_COMPONENT_NAME = COLORS_COMPONENT_NAME;
 
 
   /**
@@ -309,7 +310,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static STRINGS_COMPONENT_NAME = STRINGS_COMPONENT_NAME;
+  public static readonly STRINGS_COMPONENT_NAME = STRINGS_COMPONENT_NAME;
 
 
   /**
@@ -318,7 +319,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static ARCHETYPE = ARCHETYPE;
+  public static readonly ARCHETYPE = ARCHETYPE;
 
 
   /**
@@ -327,7 +328,7 @@ class PhetioIDUtils {
    * @constant
    * @public
    */
-  static CAPSULE_SUFFIX = CAPSULE_SUFFIX;
+  public static readonly CAPSULE_SUFFIX = CAPSULE_SUFFIX;
 }
 
 tandemNamespace.register( 'PhetioIDUtils', PhetioIDUtils );
