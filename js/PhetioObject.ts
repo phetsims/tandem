@@ -26,7 +26,7 @@ import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import { PhetioElementMetadata, PhetioID } from './phet-io-types.js';
 import phetioAPIValidation from './phetioAPIValidation.js';
-import PhetioIDUtilsModule from './PhetioIDUtilsModule.js';
+import PhetioIDUtils from './PhetioIDUtils.js';
 import Tandem from './Tandem.js';
 import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -762,7 +762,7 @@ class PhetioObject extends Disposable {
     const children = Object.keys( this.tandem.children );
     const linkedChildren: LinkedElement[] = [];
     children.forEach( childName => {
-      const childPhetioID = PhetioIDUtilsModule.append( this.tandem.phetioID, childName );
+      const childPhetioID = PhetioIDUtils.append( this.tandem.phetioID, childName );
 
       // Note that if it doesn't find a phetioID, that may be a synthetic node with children but not itself instrumented.
       const phetioObject: PhetioObject | undefined = phet.phetio.phetioEngine.phetioElementMap[ childPhetioID ];
@@ -771,7 +771,7 @@ class PhetioObject extends Disposable {
       }
     } );
     const linkedTandemNames = linkedChildren.map( ( linkedElement: LinkedElement ): string => {
-      return PhetioIDUtilsModule.getComponentName( linkedElement.phetioID );
+      return PhetioIDUtils.getComponentName( linkedElement.phetioID );
     } );
     let linkedChild: LinkedElement | null = null;
     if ( linkedChildren.length === 1 ) {

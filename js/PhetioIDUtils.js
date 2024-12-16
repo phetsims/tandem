@@ -121,6 +121,7 @@ class PhetioIDUtils {
    * getScreenID( 'sim.general.activeProperty' )
    * --> null
    * @param {string} phetioID
+   * @public
    * @returns {string|null} - null if there is no screen component name in the phetioID
    */
   static getScreenID( phetioID ) {
@@ -180,6 +181,7 @@ class PhetioIDUtils {
    *
    * See unit tests and examples in PhetioIDUtilsTests.ts.
    * @param {string} phetioID
+   * @public
    * @returns {string}
    */
   static getArchetypalPhetioID( phetioID ) {

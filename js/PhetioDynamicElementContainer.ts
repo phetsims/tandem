@@ -26,7 +26,7 @@ import DynamicTandem from './DynamicTandem.js';
 import isClearingPhetioDynamicElementsProperty from './isClearingPhetioDynamicElementsProperty.js';
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 import { PhetioElementMetadata, PhetioState } from './phet-io-types.js';
-import PhetioIDUtilsModule from './PhetioIDUtilsModule.js';
+import PhetioIDUtils from './PhetioIDUtils.js';
 import PhetioObject, { PhetioObjectMetadataInput, PhetioObjectOptions } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -236,7 +236,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, CreateEleme
   private stateSetOnAllChildrenOfDynamicElement( dynamicElementID: string, stillToSetIDs: string[] ): boolean {
     for ( let i = 0; i < stillToSetIDs.length; i++ ) {
 
-      if ( PhetioIDUtilsModule.isAncestor( dynamicElementID, stillToSetIDs[ i ] ) ) {
+      if ( PhetioIDUtils.isAncestor( dynamicElementID, stillToSetIDs[ i ] ) ) {
         return false;
       }
     }

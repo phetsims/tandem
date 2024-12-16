@@ -13,7 +13,7 @@ import isPhetioEnabled from '../../phet-core/js/isPhetioEnabled.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
 import { PhetioID } from './phet-io-types.js';
-import PhetioIDUtilsModule from './PhetioIDUtilsModule.js';
+import PhetioIDUtils from './PhetioIDUtils.js';
 import PhetioObject from './PhetioObject.js';
 import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
@@ -53,8 +53,8 @@ const FORBIDDEN_SUPPLIED_TANDEM_NAMES = [
 ];
 
 const TEST_TANDEM_NAME = 'test';
-const INTER_TERM_SEPARATOR = PhetioIDUtilsModule.INTER_TERM_SEPARATOR;
-export const DYNAMIC_ARCHETYPE_NAME = PhetioIDUtilsModule.ARCHETYPE;
+const INTER_TERM_SEPARATOR = PhetioIDUtils.INTER_TERM_SEPARATOR;
+export const DYNAMIC_ARCHETYPE_NAME = PhetioIDUtils.ARCHETYPE;
 
 // used to keep track of missing tandems
 const missingTandems: {
@@ -115,7 +115,7 @@ class Tandem {
     this.parentTandem = parentTandem;
     this.name = name;
 
-    this.phetioID = this.parentTandem ? PhetioIDUtilsModule.append( this.parentTandem.phetioID, this.name )
+    this.phetioID = this.parentTandem ? PhetioIDUtils.append( this.parentTandem.phetioID, this.name )
                                       : this.name;
 
     // options (even subtype options) must be stored so they can be passed through to children
@@ -359,7 +359,7 @@ class Tandem {
    * PhetioObjects have the trivial case where its archetypal phetioID is the same as its phetioID.
    */
   public getArchetypalPhetioID(): PhetioID {
-    return PhetioIDUtilsModule.getArchetypalPhetioID( this.phetioID );
+    return PhetioIDUtils.getArchetypalPhetioID( this.phetioID );
   }
 
   /**
@@ -456,7 +456,7 @@ class Tandem {
   public static readonly bufferedPhetioObjects: PhetioObject[] = [];
 
   public createTandemFromPhetioID( phetioID: PhetioID ): Tandem {
-    return this.createTandem( phetioID.split( PhetioIDUtilsModule.SEPARATOR ).join( INTER_TERM_SEPARATOR ), {
+    return this.createTandem( phetioID.split( PhetioIDUtils.SEPARATOR ).join( INTER_TERM_SEPARATOR ), {
       isValidTandemName: ( name: string ) => Tandem.getRegexFromCharacterClass( TandemConstants.BASE_DERIVED_TANDEM_CHARACTER_CLASS ).test( name )
     } );
   }
@@ -468,11 +468,11 @@ class Tandem {
      */
     public override createTandem( name: string, options?: TandemOptions ): Tandem {
       if ( Tandem.VALIDATION ) {
-        const allowedOnRoot = name === PhetioIDUtilsModule.GLOBAL_COMPONENT_NAME ||
+        const allowedOnRoot = name === PhetioIDUtils.GLOBAL_COMPONENT_NAME ||
                               name === REQUIRED_TANDEM_NAME ||
                               name === OPTIONAL_TANDEM_NAME ||
                               name === TEST_TANDEM_NAME ||
-                              name === PhetioIDUtilsModule.GENERAL_COMPONENT_NAME ||
+                              name === PhetioIDUtils.GENERAL_COMPONENT_NAME ||
                               _.endsWith( name, Tandem.SCREEN_TANDEM_NAME_SUFFIX );
         assert && assert( allowedOnRoot, `tandem name not allowed on root: "${name}"; perhaps try putting it under general or global` );
       }
@@ -493,7 +493,7 @@ class Tandem {
    * @constant
    * @type {Tandem}
    */
-  private static readonly GENERAL = Tandem.ROOT.createTandem( PhetioIDUtilsModule.GENERAL_COMPONENT_NAME );
+  private static readonly GENERAL = Tandem.ROOT.createTandem( PhetioIDUtils.GENERAL_COMPONENT_NAME );
 
   /**
    * Used in unit tests
@@ -503,17 +503,17 @@ class Tandem {
   /**
    * Tandem for model simulation elements that are general to all sims.
    */
-  public static readonly GENERAL_MODEL = Tandem.GENERAL.createTandem( PhetioIDUtilsModule.MODEL_COMPONENT_NAME );
+  public static readonly GENERAL_MODEL = Tandem.GENERAL.createTandem( PhetioIDUtils.MODEL_COMPONENT_NAME );
 
   /**
    * Tandem for view simulation elements that are general to all sims.
    */
-  public static readonly GENERAL_VIEW = Tandem.GENERAL.createTandem( PhetioIDUtilsModule.VIEW_COMPONENT_NAME );
+  public static readonly GENERAL_VIEW = Tandem.GENERAL.createTandem( PhetioIDUtils.VIEW_COMPONENT_NAME );
 
   /**
    * Tandem for controller simulation elements that are general to all sims.
    */
-  public static readonly GENERAL_CONTROLLER = Tandem.GENERAL.createTandem( PhetioIDUtilsModule.CONTROLLER_COMPONENT_NAME );
+  public static readonly GENERAL_CONTROLLER = Tandem.GENERAL.createTandem( PhetioIDUtils.CONTROLLER_COMPONENT_NAME );
 
   /**
    * Simulation elements that don't belong in screens should be nested under "global". Note that this tandem should only
@@ -524,30 +524,30 @@ class Tandem {
    * @constant
    * @type {Tandem}
    */
-  private static readonly GLOBAL = Tandem.ROOT.createTandem( PhetioIDUtilsModule.GLOBAL_COMPONENT_NAME );
+  private static readonly GLOBAL = Tandem.ROOT.createTandem( PhetioIDUtils.GLOBAL_COMPONENT_NAME );
 
   /**
    * Model simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
    * tandem should only have simulation specific elements in them.
    */
-  public static readonly GLOBAL_MODEL = Tandem.GLOBAL.createTandem( PhetioIDUtilsModule.MODEL_COMPONENT_NAME );
+  public static readonly GLOBAL_MODEL = Tandem.GLOBAL.createTandem( PhetioIDUtils.MODEL_COMPONENT_NAME );
 
   /**
    * View simulation elements that don't belong in specific screens should be nested under this Tandem. Note that this
    * tandem should only have simulation specific elements in them.
    */
-  public static readonly GLOBAL_VIEW = Tandem.GLOBAL.createTandem( PhetioIDUtilsModule.VIEW_COMPONENT_NAME );
+  public static readonly GLOBAL_VIEW = Tandem.GLOBAL.createTandem( PhetioIDUtils.VIEW_COMPONENT_NAME );
 
   /**
    * Colors used in the simulation.
    */
-  public static readonly COLORS = Tandem.GLOBAL_VIEW.createTandem( PhetioIDUtilsModule.COLORS_COMPONENT_NAME );
+  public static readonly COLORS = Tandem.GLOBAL_VIEW.createTandem( PhetioIDUtils.COLORS_COMPONENT_NAME );
 
   /**
    * Colors used in the simulation.
    */
 
-  public static readonly STRINGS = Tandem.GENERAL_MODEL.createTandem( PhetioIDUtilsModule.STRINGS_COMPONENT_NAME );
+  public static readonly STRINGS = Tandem.GENERAL_MODEL.createTandem( PhetioIDUtils.STRINGS_COMPONENT_NAME );
 
   /**
    * Get the Tandem location for model strings. Provide the camelCased repo name for where the string should be

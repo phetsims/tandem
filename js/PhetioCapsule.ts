@@ -23,14 +23,14 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import IOTypeCache from './IOTypeCache.js';
 import isSettingPhetioStateProperty from './isSettingPhetioStateProperty.js';
 import PhetioDynamicElementContainer, { ClearOptions, PhetioDynamicElementContainerOptions } from './PhetioDynamicElementContainer.js';
-import PhetioIDUtilsModule from './PhetioIDUtilsModule.js';
+import PhetioIDUtils from './PhetioIDUtils.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
 
 // constants
-const DEFAULT_CONTAINER_SUFFIX = PhetioIDUtilsModule.CAPSULE_SUFFIX;
+const DEFAULT_CONTAINER_SUFFIX = PhetioIDUtils.CAPSULE_SUFFIX;
 
 // cache each parameterized IOType so that it is only created once.
 const cache = new IOTypeCache();
