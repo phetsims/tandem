@@ -10,8 +10,8 @@
 
 import TinyEmitter from '../../axon/js/TinyEmitter.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
-import PhetioObject from './PhetioObject.js';
-import Tandem from './Tandem.js';
+import type PhetioObject from './PhetioObject.js';
+import type Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 
 type DescriptionEntry = {

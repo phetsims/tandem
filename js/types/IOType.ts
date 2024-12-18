@@ -14,7 +14,7 @@ import optionize from '../../../phet-core/js/optionize.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import { IOTypeName, Method, Methods, PhetioElementMetadata, PhetioType } from '../phet-io-types.js';
 import PhetioConstants from '../PhetioConstants.js';
-import PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
+import type PhetioDynamicElementContainer from '../PhetioDynamicElementContainer.js';
 import type PhetioObject from '../PhetioObject.js';
 import TandemConstants from '../TandemConstants.js';
 import tandemNamespace from '../tandemNamespace.js';
