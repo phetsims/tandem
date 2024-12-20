@@ -1,10 +1,5 @@
 // Copyright 2017-2024, University of Colorado Boulder
 
-import affirm from '../../perennial-alias/js/browser-and-node/affirm.js';
-import tandemNamespace from './tandemNamespace.js';
-
-/* eslint-disable phet/bad-typescript-text */
-
 /**
  * Utilities for creating and manipulating the unique identifiers assigned to instrumented PhET-iO instances, aka
  * phetioIDs.
@@ -17,7 +12,11 @@ import tandemNamespace from './tandemNamespace.js';
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-// constants
+import affirm from '../../perennial-alias/js/browser-and-node/affirm.js';
+import tandemNamespace from './tandemNamespace.js';
+
+/* eslint-disable phet/bad-typescript-text */
+
 const SEPARATOR = '.';
 const GROUP_SEPARATOR = '_';
 const INTER_TERM_SEPARATOR = '-';
@@ -34,10 +33,16 @@ const ARCHETYPE = 'archetype';
 const CAPSULE_SUFFIX = 'Capsule';
 
 /**
- * Helpful methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the string
- * structure of the phetioID. Available in the main PhET-iO js import.
+ * Helpful static methods for manipulating phetioIDs. Used to minimize the amount of duplicated logic specific to the
+ * string structure of the phetioID. Available in the main PhET-iO js import as a global, or statically on PhetioClient.
+ * @hideconstructor
+ * @class
  */
 class PhetioIDUtils {
+
+  private constructor() {
+    affirm( false, 'should not construct a PhetioIDUtils' );
+  }
 
   // Private Doc: The below jsdoc is public to the PhET-iO API documentation. Change wisely.
   /**
