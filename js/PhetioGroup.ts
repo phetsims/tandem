@@ -1,4 +1,4 @@
-// Copyright 2019-2024, University of Colorado Boulder
+// Copyright 2019-2025, University of Colorado Boulder
 
 /**
  * Provides a placeholder in the static API for where dynamic elements may be created.  Checks that elements of the group
