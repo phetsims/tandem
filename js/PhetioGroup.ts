@@ -265,13 +265,13 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
     assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
 
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
-    assert && isSettingPhetioStateProperty.value && assert( fromStateSetting,
+    assert && isSettingPhetioStateProperty.value && this.isPhetioInstrumented() && assert( fromStateSetting,
       'dynamic elements should only be created by the state engine when setting state.' );
 
     const componentName = this.phetioDynamicElementName + PhetioIDUtils.GROUP_SEPARATOR + index;
 
     // Don't access phetioType in PhET brand
-    const containerParameterType = Tandem.PHET_IO_ENABLED ? this.phetioType.parameterTypes![ 0 ] : null;
+    const containerParameterType = Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() ? this.phetioType.parameterTypes![ 0 ] : null;
 
     const groupElement = this.createDynamicElement( componentName, argsForCreateFunction, containerParameterType );
 

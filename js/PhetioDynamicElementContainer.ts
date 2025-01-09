@@ -162,7 +162,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, CreateEleme
     } );
 
     // Emit to the data stream on element creation/disposal, no need to do this in PhET brand
-    if ( Tandem.PHET_IO_ENABLED ) {
+    if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
       this.elementCreatedEmitter.addListener( element => this.createdEventListener( element ) );
       this.elementDisposedEmitter.addListener( element => this.disposedEventListener( element ) );
     }
@@ -180,7 +180,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, CreateEleme
     if ( Tandem.PHET_IO_ENABLED && this.supportsDynamicState &&
 
          // don't clear archetypes because they are static.
-         !this.phetioIsArchetype ) {
+         !this.phetioIsArchetype && this.isPhetioInstrumented() ) {
 
       assert && assert( _.hasIn( window, 'phet.phetio.phetioEngine.phetioStateEngine' ),
         'PhetioDynamicElementContainers must be created once phetioEngine has been constructed' );
@@ -307,7 +307,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, CreateEleme
     const createdObject = this.createElement( createdObjectTandem, ...argsForCreateFunction );
 
     // This validation is only needed for PhET-iO brand
-    if ( Tandem.PHET_IO_ENABLED ) {
+    if ( Tandem.PHET_IO_ENABLED && this.isPhetioInstrumented() ) {
       assert && assert( containerParameterType !== null, 'containerParameterType must be provided in PhET-iO brand' );
 
       // Make sure the new group element matches the schema for elements.
