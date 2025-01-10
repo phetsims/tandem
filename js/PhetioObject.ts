@@ -73,7 +73,8 @@ const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementN
   phetioType: IOType.ObjectIO,
 
   // Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper. It's an html
-  // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio
+  // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio. NOTE! You must
+  // escape any HTML characters that are not intended to be rendered as HTML, use _.escape().
   phetioDocumentation: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDocumentation,
 
   // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, must be specified for

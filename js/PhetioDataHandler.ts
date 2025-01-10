@@ -221,7 +221,7 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
 
       const docText = param.phetioDocumentation ? ` - ${param.phetioDocumentation}` : '';
 
-      return `<li>${param.name}: ${param.phetioType!.typeName}${docText}</li>`;
+      return `<li>${param.name}: ${_.escape( param.phetioType!.typeName )}${docText}</li>`;
     };
 
     return currentPhetioDocumentation + ( parameters.length === 0 ? '<br>No parameters.' : `${'<br>The parameters are:<br/>' +
