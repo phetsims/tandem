@@ -9,7 +9,6 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
-import axon from '../../axon/js/axon.js';
 import validate from '../../axon/js/validate.js';
 import Validation, { Validator } from '../../axon/js/Validation.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
@@ -19,6 +18,7 @@ import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import PhetioObject, { PhetioObjectOptions } from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import IOType from './types/IOType.js';
+import tandemNamespace from './tandemNamespace.js';
 
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
@@ -229,5 +229,5 @@ class PhetioDataHandler<T extends IntentionalAny[] = []> extends PhetioObject {
   }
 }
 
-axon.register( 'PhetioDataHandler', PhetioDataHandler );
+tandemNamespace.register( 'PhetioDataHandler', PhetioDataHandler );
 export default PhetioDataHandler;
