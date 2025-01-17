@@ -294,9 +294,6 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
       cache.set( parameterType, new IOType<PhetioGroup<ParameterType>, IntentionalAny>( `PhetioGroupIO<${parameterType.typeName}>`, {
 
         isValidValue: ( v: IntentionalAny ) => {
-
-          // @ts-expect-error - handle built and unbuilt versions
-          const PhetioGroup = window.phet ? phet.tandem.PhetioGroup : tandemNamespace.PhetioGroup;
           return v instanceof PhetioGroup;
         },
         documentation: 'An array that sends notifications when its values have changed.',

@@ -38,6 +38,7 @@ import { LinkedElement } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
+import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 
 // constants
 // The API-tracked and validated metadata keys
@@ -177,7 +178,7 @@ class PhetioAPIValidation {
 
       // Here we need to kick this validation to the next frame to support construction in any order. Parent first, or
       // child first. Use namespace to avoid because timer is a PhetioObject.
-      phet.axon.animationFrameTimer.runOnNextTick( () => {
+      animationFrameTimer.runOnNextTick( () => {
 
         // The only instances that it's OK to create after startup are "dynamic instances" which are marked as such.
         if ( !phetioObject.phetioDynamicElement ) {
