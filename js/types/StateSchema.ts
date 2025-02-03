@@ -25,7 +25,7 @@ import optionize from '../../../phet-core/js/optionize.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import { IOTypeName } from '../phet-io-types.js';
 import tandemNamespace from '../tandemNamespace.js';
-import IOType from './IOType.js';
+import type IOType from './IOType.js';
 
 /**
  * This is the primary functionality of the StateSchema class. An IOType can be provided a composite schema like so:
@@ -287,7 +287,7 @@ export default class StateSchema<T, SelfStateType> {
 
       const keys = Object.keys( this.compositeSchema ) as ( keyof CompositeSchema<SelfStateType> )[];
       keys.forEach( stateSchemaKey => {
-        this.compositeSchema![ stateSchemaKey ] instanceof IOType && relatedTypes.push( this.compositeSchema![ stateSchemaKey ] );
+        relatedTypes.push( this.compositeSchema![ stateSchemaKey ] );
       } );
     }
     return relatedTypes;
