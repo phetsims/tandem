@@ -14,7 +14,7 @@ import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
 import { PhetioID } from './phet-io-types.js';
 import PhetioIDUtils from './PhetioIDUtils.js';
-import PhetioObject from './PhetioObject.js';
+import type PhetioObject from './PhetioObject.js';
 import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
 
