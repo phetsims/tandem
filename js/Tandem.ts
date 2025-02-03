@@ -438,6 +438,9 @@ class Tandem {
    */
   public static readonly VALIDATION = VALIDATION;
 
+  /**
+   * If phetioAPIValidation is enabled, this is mostly just readonly, except some internal logic for phet-io startup and qunit testing
+   */
   public static apiValidationEnabled = !!assert && Tandem.VALIDATION;
 
   /**
