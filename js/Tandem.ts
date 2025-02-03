@@ -438,6 +438,8 @@ class Tandem {
    */
   public static readonly VALIDATION = VALIDATION;
 
+  public static apiValidationEnabled = !!assert && Tandem.VALIDATION;
+
   /**
    * For the API file, the key name for the metadata section.
    */

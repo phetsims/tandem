@@ -32,13 +32,13 @@
  * @author Chris Klusendorf (PhET Interactive Simulations)
  */
 
+import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 import { PhetioAPI, PhetioElementMetadata, PhetioID } from './phet-io-types.js';
 import type PhetioObject from './PhetioObject.js';
 import { LinkedElement } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import IOType from './types/IOType.js';
-import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 
 // constants
 // The API-tracked and validated metadata keys
@@ -67,24 +67,20 @@ class PhetioAPIValidation {
   // keep track of when the sim has started.
   private simHasStarted = false;
 
-  // settable by qunitStart.js. Validation is only enabled when all screens are present.
-  public enabled: boolean = !!assert && Tandem.VALIDATION;
-
-
   // this must be all phet-io types so that the
   // following would fail: add a phetioType, then remove it, then add a different one under the same typeName.
   // A Note about memory: Every IOType that is loaded as a module is already loaded on the namespace. Therefore
   // this map doesn't add any memory by storing these. The exception to this is parametric IOTypes. It should be
   // double checked that anything being passed into a parametric type is memory safe. As of this writing, only IOTypes
   // are passed to parametric IOTypes, so this pattern remains memory leak free. Furthermore, this list is only
-  // populated when `this.enabled`.
+  // populated when `Tandem.apiValidationEnabled`.
   private everyPhetioType: Record<string, IOType> = {};
 
   /**
    * Callback when the simulation is ready to go, and all static PhetioObjects have been created.
    */
   public onSimStarted(): void {
-    if ( this.enabled && phet.joist.sim.allScreensCreated ) {
+    if ( Tandem.apiValidationEnabled && phet.joist.sim.allScreensCreated ) {
       this.validateOverridesFile();
       this.validatePreferencesModel();
     }
@@ -127,7 +123,7 @@ class PhetioAPIValidation {
 
   // Validation checks that can be made on the API JSON object directly
   public validateFullAPI( api: PhetioAPI ): void {
-    if ( this.enabled ) {
+    if ( Tandem.apiValidationEnabled ) {
       const string = JSON.stringify( api );
       [ Tandem.OPTIONAL.name, Tandem.REQUIRED.name ].forEach( name => {
         if ( string.includes( name ) ) {
@@ -144,7 +140,7 @@ class PhetioAPIValidation {
    * Checks if a removed phetioObject is part of a Group
    */
   public onPhetioObjectRemoved( phetioObject: PhetioObject ): void {
-    if ( !this.enabled ) {
+    if ( !Tandem.apiValidationEnabled ) {
       return;
     }
 
@@ -163,7 +159,7 @@ class PhetioAPIValidation {
    * Should be called from phetioEngine when a PhetioObject is added to the PhET-iO
    */
   public onPhetioObjectAdded( phetioObject: PhetioObject ): void {
-    if ( !this.enabled ) {
+    if ( !Tandem.apiValidationEnabled ) {
       return;
     }
 

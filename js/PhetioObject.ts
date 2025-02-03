@@ -25,7 +25,6 @@ import DescriptionRegistry from './DescriptionRegistry.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import { PhetioElementMetadata, PhetioID } from './phet-io-types.js';
-import phetioAPIValidation from './phetioAPIValidation.js';
 import PhetioIDUtils from './PhetioIDUtils.js';
 import Tandem from './Tandem.js';
 import TandemConstants from './TandemConstants.js';
@@ -271,7 +270,7 @@ class PhetioObject extends Disposable {
     // baseline is created when a sim is run with assertions to assist in phetioAPIValidation.  However, even when
     // assertions are disabled, some wrappers such as studio need to generate the baseline anyway.
     // not all metadata are passed through via options, so store baseline for these additional properties
-    this.phetioBaselineMetadata = ( phetioAPIValidation.enabled || phet.preloads.phetio.queryParameters.phetioEmitAPIBaseline ) ?
+    this.phetioBaselineMetadata = ( Tandem.apiValidationEnabled || phet.preloads.phetio.queryParameters.phetioEmitAPIBaseline ) ?
                                   this.getMetadata( merge( {
                                     phetioIsArchetype: this.phetioIsArchetype,
                                     phetioArchetypePhetioID: this.phetioArchetypePhetioID
