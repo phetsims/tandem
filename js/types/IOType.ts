@@ -103,6 +103,8 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // phetioCommandProcessor.wrapFunction
   isFunctionType?: boolean;
 
+  fuzzElement?: ( ( element: T, log: boolean ) => void ) | null;
+
   // ******** STATE ******** //
 
   // The specification for how the PhET-iO state will look for instances of this type. null specifies that the object
@@ -209,6 +211,8 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   // The StateSchema (type) that the option is made into. The option is more flexible than the class.
   public readonly stateSchema: StateSchema<T, SelfStateType> | null;
 
+  public readonly fuzzElement: Required<SelfOptions<T, StateType, SelfStateType>>['fuzzElement'];
+
   // The base IOType for the entire hierarchy.
   public static ObjectIO: IOType;
 
@@ -248,6 +252,8 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
       documentation: `PhET-iO Type for ${getCoreTypeName( typeName )}`,
       isFunctionType: false,
 
+      fuzzElement: null,
+
       /**** STATE ****/
 
       toStateObject: null,
@@ -276,6 +282,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
     this.dataDefaults = options.dataDefaults;
     this.methodOrder = options.methodOrder;
     this.parameterTypes = options.parameterTypes;
+    this.fuzzElement = options.fuzzElement;
 
     // Validation
     this.validator = _.pick( options, Validation.VALIDATOR_KEYS );
