@@ -371,12 +371,15 @@ class Tandem {
    *
    * Used for arrays, observable arrays, or when many elements of the same type are created and they do not otherwise
    * have unique identifiers.
+   *
+   * Typically, the initialIndex is 1, but we have left the option to keep as zero for legacy simulations that were
+   * designed before this convention.
    */
-  public createGroupTandem( name: string ): GroupTandem {
+  public createGroupTandem( name: string, initialIndex = 1 ): GroupTandem {
     if ( this.children[ name ] ) {
       return this.children[ name ] as GroupTandem;
     }
-    return new GroupTandem( this, name );
+    return new GroupTandem( this, name, initialIndex );
   }
 
   public equals( tandem: Tandem ): boolean {
@@ -613,19 +616,15 @@ Tandem.addLaunchListener( () => {
  * Group Tandem -- Declared in the same file to avoid circular reference errors in module loading.
  */
 class GroupTandem extends Tandem {
-  private readonly groupName: string;
-
-  // for generating indices from a pool
-  private groupMemberIndex: number;
 
   /**
    * create with Tandem.createGroupTandem
    */
-  public constructor( parentTandem: Tandem, name: string ) {
-    super( parentTandem, name );
-
-    this.groupName = name;
-    this.groupMemberIndex = 0;
+  public constructor( parentTandem: Tandem,
+                      private readonly groupName: string,
+                      private groupMemberIndex: number // for generating indices from a pool
+  ) {
+    super( parentTandem, groupName );
   }
 
   /**
