@@ -56,6 +56,12 @@ const TEST_TANDEM_NAME = 'test';
 const INTER_TERM_SEPARATOR = PhetioIDUtils.INTER_TERM_SEPARATOR;
 export const DYNAMIC_ARCHETYPE_NAME = PhetioIDUtils.ARCHETYPE;
 
+// Workaround for how we are stripping assertions. Separated out the if ( assert ).
+let assertEnabled = false;
+if ( assert ) {
+  assertEnabled = true;
+}
+
 // used to keep track of missing tandems
 const missingTandems: {
   required: Array<{ phetioID: PhetioID; stack: string }>;
@@ -444,7 +450,7 @@ class Tandem {
   /**
    * If phetioAPIValidation is enabled, this is mostly just readonly, except some internal logic for phet-io startup and qunit testing
    */
-  public static apiValidationEnabled = !!assert && Tandem.VALIDATION;
+  public static apiValidationEnabled = assertEnabled && Tandem.VALIDATION;
 
   /**
    * For the API file, the key name for the metadata section.

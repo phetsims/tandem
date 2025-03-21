@@ -477,7 +477,10 @@ class PhetioObject extends Disposable {
                                      !phet.phetio.dataStream.isEmittingLowFrequencyEvent();
 
       // TODO: If there is no dataStream global defined, then we should handle this differently as to not drop the event that is triggered, see https://github.com/phetsims/phet-io/issues/1846
-      const skipFromUndefinedDatastream = !assert && !_.hasIn( window, 'phet.phetio.dataStream' );
+      let skipFromUndefinedDatastream = !_.hasIn( window, 'phet.phetio.dataStream' );
+      if ( assert ) {
+        skipFromUndefinedDatastream = false;
+      }
 
       if ( skipHighFrequencyEvent || this.phetioEventType === EventType.OPT_OUT || skipFromUndefinedDatastream ) {
         this.phetioMessageStack.push( SKIPPING_MESSAGE );
