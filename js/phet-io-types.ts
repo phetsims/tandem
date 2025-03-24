@@ -90,22 +90,64 @@ export type FlattenedAPIPhetioElements = Record<PhetioID, PhetioElement>;
 export type PhetioElementMetadata = {
 
   // Used in PhetioObjectOptions
+  // When true, includes the PhET-iO Element in the PhET-iO state (not automatically recursive, must be specified for
+  // children explicitly)
   phetioState: boolean;
+
+  // When true, you can only get values from the PhET-iO Element; no setting allowed.
+  // This option controls how PhET-iO wrappers can interface with this PhetioObject. Predominately this occurs via
+  // public methods defined on this PhetioObject's phetioType, in which some method are not executable when this flag
+  // is true. See `ObjectIO.methods` for further documentation, especially regarding `invocableForReadOnlyElements`.
+  // NOTE: PhetioObjects with {phetioState: true} AND {phetioReadOnly: true} are restored during via setState.
   phetioReadOnly: boolean;
+
+  // The category of event that this element emits to the PhET-iO Data Stream.
   phetioEventType: string;
+
+  // Useful notes about a PhET-iO Element, shown in the PhET-iO Studio Wrapper. It's an html
+  // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio. NOTE! You must
+  // escape any HTML characters that are not intended to be rendered as HTML, use _.escape().
   phetioDocumentation: string;
+
+  // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents
+  // and PhetioClient.launchSimulation option
+  // @deprecated - see https://github.com/phetsims/phet-io/issues/1629#issuecomment-608002410
   phetioHighFrequency: boolean; // @deprecated
-  phetioPlayback: boolean;
-  phetioFeatured?: boolean; // LinkedElements have no phetioFeatured because they defer to their core element
+
+  // When true, emits events for data streams for playback, see handlePlaybackEvent.js
+  // @deprecated
+  phetioPlayback: boolean; // @deprecated
+
+  // When true, this is categorized as an important "featured" element in Studio.
+  // If this is a featured PhET-iO Element.
+  // LinkedElements have no phetioFeatured because they defer to their core element
+  phetioFeatured?: boolean;
+
+  // If this element is a "dynamic element" that can be created and destroyed throughout the lifetime of the sim (as opposed to existing forever).
+  // indicates that an object may or may not have been created. Applies recursively automatically
+  // and should only be set manually on the root dynamic element. Dynamic archetypes will have this overwritten to
+  // false even if explicitly provided as true, as archetypes cannot be dynamic.
   phetioDynamicElement: boolean;
+
+  // Marking phetioDesigned: true opts-in to API change detection tooling that can be used to catch inadvertent
+  // changes to a designed API.  A phetioDesigned:true PhetioObject (or any of its tandem descendants) will throw
+  // assertion errors on CT (or when running with ?phetioCompareAPI) when the following are true:
+  // (a) its package.json lists compareDesignedAPIChanges:true in the "phet-io" section
+  // (b) the simulation is listed in perennial/data/phet-io-api-stable
+  // (c) any of its metadata values deviate from the reference API
   phetioDesigned: boolean;
 
   // Specific to Metadata
+
+  // The name of the PhET-iO Type
   phetioTypeName: IOTypeName;
+
+  // If this element is an archetype for a dynamic element.
   phetioIsArchetype: boolean;
+  // If an applicable dynamic element, this is the phetioID of its archetype.
   phetioArchetypePhetioID?: string | null;
 
-  // For PhetioDynamicElementContainer.
+  // Specific to PhetioDynamicElementContainer instance, see that file for doc.
   phetioDynamicElementName?: string | null;
 };
 

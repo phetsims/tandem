@@ -62,64 +62,22 @@ const ENABLE_DESCRIPTION_REGISTRY = !!window.phet?.chipper?.queryParameters?.sup
 
 const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementName'>> = {
 
-  // Subtypes can use `Tandem.REQUIRED` to require a named tandem passed in
-  tandem: Tandem.OPTIONAL,
-
-  // Defines description-specific tandems that do NOT affect the phet-io system.
-  descriptionTandem: Tandem.OPTIONAL,
-
-  // Defines API methods, events and serialization
+  tandem: Tandem.OPTIONAL,   // Subtypes can use `Tandem.REQUIRED` to require a named tandem passed in
   phetioType: IOType.ObjectIO,
-
-  // Useful notes about an instrumented PhetioObject, shown in the PhET-iO Studio Wrapper. It's an html
-  // string, so "<br>" tags are required instead of "\n" characters for proper rendering in Studio. NOTE! You must
-  // escape any HTML characters that are not intended to be rendered as HTML, use _.escape().
   phetioDocumentation: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDocumentation,
-
-  // When true, includes the PhetioObject in the PhET-iO state (not automatically recursive, must be specified for
-  // children explicitly)
   phetioState: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioState,
-
-  // This option controls how PhET-iO wrappers can interface with this PhetioObject. Predominately this occurs via
-  // public methods defined on this PhetioObject's phetioType, in which some method are not executable when this flag
-  // is true. See `ObjectIO.methods` for further documentation, especially regarding `invocableForReadOnlyElements`.
-  // NOTE: PhetioObjects with {phetioState: true} AND {phetioReadOnly: true} are restored during via setState.
   phetioReadOnly: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioReadOnly,
-
-  // Category of event type, can be overridden in phetioStartEvent options.  Cannot be supplied through TandemConstants because
-  // that would create an import loop
   phetioEventType: EventType.MODEL,
-
-  // High frequency events such as mouse moves can be omitted from data stream, see ?phetioEmitHighFrequencyEvents
-  // and PhetioClient.launchSimulation option
-  // @deprecated - see https://github.com/phetsims/phet-io/issues/1629#issuecomment-608002410
   phetioHighFrequency: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioHighFrequency,
-
-  // When true, emits events for data streams for playback, see handlePlaybackEvent.js
   phetioPlayback: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioPlayback,
-
-  // When true, this is categorized as an important "featured" element in Studio.
   phetioFeatured: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioFeatured,
-
-  // indicates that an object may or may not have been created. Applies recursively automatically
-  // and should only be set manually on the root dynamic element. Dynamic archetypes will have this overwritten to
-  // false even if explicitly provided as true, as archetypes cannot be dynamic.
   phetioDynamicElement: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDynamicElement,
-
-  // Marking phetioDesigned: true opts-in to API change detection tooling that can be used to catch inadvertent
-  // changes to a designed API.  A phetioDesigned:true PhetioObject (or any of its tandem descendants) will throw
-  // assertion errors on CT (or when running with ?phetioCompareAPI) when the following are true:
-  // (a) its package.json lists compareDesignedAPIChanges:true in the "phet-io" section
-  // (b) the simulation is listed in perennial/data/phet-io-api-stable
-  // (c) any of its metadata values deviate from the reference API
   phetioDesigned: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDesigned,
-
-  // delivered with each event, if specified. phetioPlayback is appended here, if true.
-  // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
   phetioEventMetadata: null,
+  tandemNameSuffix: null,
 
-  // null means no constraint on tandem name.
-  tandemNameSuffix: null
+  // @experimental - Defines description-specific tandems that do NOT affect the phet-io system.
+  descriptionTandem: Tandem.OPTIONAL
 };
 
 // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
@@ -132,11 +90,22 @@ assert && assert( EventType.phetioType.toStateObject( DEFAULTS.phetioEventType )
 type SelfOptions = StrictOmit<Partial<PhetioElementMetadata>, 'phetioTypeName' | 'phetioArchetypePhetioID' |
   'phetioIsArchetype' | 'phetioEventType'> & {
 
-  // This is the only place in the project where this is allowed
+  // Unique identifier for this instance, used by PhET-iO to access this instance from the wrapper frame.
+  // This is the only place in the project where `tandem` can be specified directly in a Type.
   tandem?: Tandem; // eslint-disable-line phet/bad-sim-text
+
+  // @experimental - do not use without consulting https://github.com/phetsims/joist/issues/941
   descriptionTandem?: Tandem;
+
+  // Defines API methods, events and serialization. The type of the PhET-iO Element, see IOType
   phetioType?: IOType;
+
+  // The category of event that this element emits to the PhET-iO Data Stream. This is a default, it can be overridden in
+  // phetioStartEvent options.  Cannot be supplied through TandemConstants because that would create an import loop
   phetioEventType?: EventType;
+
+  // delivered with each event, if specified. phetioPlayback is appended here, if true.
+  // Note: unlike other options, this option can be mutated downstream, and hence should be created newly for each instance.
   phetioEventMetadata?: EventMetadata | null;
 
   // The element's tandem name must have a specified suffix. This is to enforce naming conventions for PhET-iO.
