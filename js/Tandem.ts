@@ -12,6 +12,7 @@ import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import isPhetioEnabled from '../../phet-core/js/isPhetioEnabled.js';
 import merge from '../../phet-core/js/merge.js';
 import optionize from '../../phet-core/js/optionize.js';
+import { QueryStringMachine } from '../../query-string-machine/js/QueryStringMachineModule.js';
 import { PhetioID } from './phet-io-types.js';
 import PhetioIDUtils from './PhetioIDUtils.js';
 import type PhetioObject from './PhetioObject.js';
@@ -29,7 +30,7 @@ const PRINT_MISSING_TANDEMS = PHET_IO_ENABLED && phet.preloads.phetio.queryParam
 const IS_VALIDATION_DEFAULT = _.hasIn( packageJSON, 'phet.phet-io.validation' ) ? !!packageJSON.phet[ 'phet-io' ].validation : true;
 
 // The default value for validation can be overridden with a query parameter ?phetioValidation={true|false}.
-const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = self.QueryStringMachine && QueryStringMachine.containsKey( 'phetioValidation' );
+const IS_VALIDATION_QUERY_PARAMETER_SPECIFIED = QueryStringMachine.containsKey( 'phetioValidation' );
 const IS_VALIDATION_SPECIFIED = ( PHET_IO_ENABLED && IS_VALIDATION_QUERY_PARAMETER_SPECIFIED ) ? !!phet.preloads.phetio.queryParameters.phetioValidation :
                                 ( PHET_IO_ENABLED && IS_VALIDATION_DEFAULT );
 
