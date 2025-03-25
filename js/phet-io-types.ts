@@ -1,4 +1,4 @@
-// Copyright 2021-2024, University of Colorado Boulder
+// Copyright 2021-2025, University of Colorado Boulder
 
 /**
  * General TypeScript types that apply to PhET-iO features and architecture.
