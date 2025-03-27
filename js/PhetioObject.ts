@@ -594,11 +594,7 @@ class PhetioObject extends Disposable {
     // In some cases, UI components need to be wired up to a private (internal) Property which should neither be
     // instrumented nor linked.
     if ( PHET_IO_ENABLED && element.isPhetioInstrumented() ) {
-      const options = optionize<LinkedElementOptions, EmptySelfOptions>()( {
-
-        // The linkage is only featured if the parent and the element are both also featured
-        phetioFeatured: this.phetioFeatured && element.phetioFeatured
-      }, providedOptions );
+      const options = optionize<LinkedElementOptions, EmptySelfOptions>()( {}, providedOptions );
       assert && assert( Array.isArray( this.linkedElements ), 'linkedElements should be an array' );
 
       let tandem: Tandem | null = null;
@@ -871,7 +867,9 @@ class PhetioObject extends Disposable {
 // See documentation for addLinkedElement() to describe how to instrument LinkedElements. No other metadata is needed
 // for LinkedElements, and should instead be provided to the coreElement. If you find a case where you want to pass
 // another option through, please discuss with your friendly, neighborhood PhET-iO developer.
-type LinkedElementOptions = ( { tandemName?: string; tandem?: never } | { tandemName?: never; tandem?: Tandem } );
+type LinkedElementOptions = ( { tandemName?: string; tandem?: never } | { tandemName?: never; tandem?: Tandem } ) & {
+  phetioFeatured?: boolean;
+};
 
 /**
  * Internal class to avoid cyclic dependencies.
