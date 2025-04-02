@@ -7,17 +7,18 @@
 
 import EnumerationValue from '../../../phet-core/js/EnumerationValue.js';
 import TEnumeration, { EnumerationContainer } from '../../../phet-core/js/TEnumeration.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import IOTypeCache from '../IOTypeCache.js';
 import tandemNamespace from '../tandemNamespace.js';
 import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new IOTypeCache<TEnumeration<EnumerationValue>>();
+const cache = new IOTypeCache<IOType<IntentionalAny, string>, TEnumeration<EnumerationValue>>();
 
 const joinKeys = ( keys: string[] ) => keys.join( '|' );
 
-const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: EnumerationContainer<T> ): IOType => {
+const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: EnumerationContainer<T> ): IOType<T, string> => {
   const enumeration = enumerationContainer.enumeration;
 
   // This caching implementation should be kept in sync with the other parametric IOType caching implementations.

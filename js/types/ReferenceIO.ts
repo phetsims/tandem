@@ -12,27 +12,29 @@ import Validation from '../../../axon/js/Validation.js';
 import CouldNotYetDeserializeError from '../CouldNotYetDeserializeError.js';
 import IOTypeCache from '../IOTypeCache.js';
 import { PhetioID } from '../phet-io-types.js';
+import PhetioObject from '../PhetioObject.js';
 import Tandem from '../Tandem.js';
 import tandemNamespace from '../tandemNamespace.js';
-import IOType from './IOType.js';
+import IOType, { AnyIOType } from './IOType.js';
 import StringIO from './StringIO.js';
 
 // Cache each parameterized ReferenceIO so that it is only created once
-const cache = new IOTypeCache();
+const cache = new IOTypeCache<IOType<PhetioObject, ReferenceIOState>>();
 
+// TODO: Rename to "ReferenceState"? https://github.com/phetsims/tandem/issues/261
 export type ReferenceIOState = {
   phetioID: PhetioID;
 };
 
-const ReferenceIO = ( parameterType: IOType ): IOType => {
+// TODO: Parameterize so that it is a subtype of PhetioObject, https://github.com/phetsims/tandem/issues/261
+const ReferenceIO = ( parameterType: AnyIOType ): IOType<PhetioObject, ReferenceIOState> => {
   assert && assert( parameterType, 'ReferenceIO needs parameterType' );
 
   const cacheKey = parameterType;
 
   if ( !cache.has( cacheKey ) ) {
 
-    assert && assert( typeof parameterType.typeName === 'string', 'type name should be a string' );
-    cache.set( cacheKey, new IOType( `ReferenceIO<${parameterType.typeName}>`, {
+    cache.set( cacheKey, new IOType<PhetioObject, ReferenceIOState>( `ReferenceIO<${parameterType.typeName}>`, {
       isValidValue: value => Validation.isValueValid( value, parameterType.validator ),
       documentation: 'Uses reference identity for serializing and deserializing, and validates based on its parameter PhET-iO Type.',
       parameterTypes: [ parameterType ],

@@ -25,7 +25,7 @@ import optionize from '../../../phet-core/js/optionize.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import { IOTypeName } from '../phet-io-types.js';
 import tandemNamespace from '../tandemNamespace.js';
-import type IOType from './IOType.js';
+import { type AnyIOType } from './IOType.js';
 
 /**
  * This is the primary functionality of the StateSchema class. An IOType can be provided a composite schema like so:
@@ -38,7 +38,7 @@ import type IOType from './IOType.js';
  */
 export type CompositeSchema<SelfStateType> = {
   // [K in keyof SelfStateType]: IOType | { myIOType: IOType; isAPIStateful: true };
-  [K in keyof SelfStateType]: IOType
+  [K in keyof SelfStateType]: AnyIOType
 };
 
 export type APIStateKeys = string[];
@@ -51,7 +51,7 @@ export type CompositeStateObjectType = Record<string, IntentionalAny>;
 
 // Pluck the result toStateObject types from the CompositeSchema. For instance, map a state schema like so:
 // {name: StringIO} => {name: string}
-export type StateObject<T extends Record<string, IOType>> = {
+export type StateObject<T extends Record<string, AnyIOType>> = {
   [key in keyof T]: ReturnType<T[key]['toStateObject']>;
 };
 
@@ -280,8 +280,8 @@ export default class StateSchema<T, SelfStateType> {
   /**
    * Get a list of all IOTypes associated with this StateSchema
    */
-  public getRelatedTypes(): IOType[] {
-    const relatedTypes: IOType[] = [];
+  public getRelatedTypes(): AnyIOType[] {
+    const relatedTypes: AnyIOType[] = [];
 
     if ( this.compositeSchema ) {
 

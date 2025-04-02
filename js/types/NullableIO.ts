@@ -17,15 +17,18 @@
  */
 
 import Validation from '../../../axon/js/Validation.js';
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import IOTypeCache from '../IOTypeCache.js';
 import tandemNamespace from '../tandemNamespace.js';
-import IOType from './IOType.js';
+import IOType, { AnyIOType } from './IOType.js';
 import StateSchema from './StateSchema.js';
 
 // Cache each parameterized IOType so that it is only created once
-const cache = new IOTypeCache();
+const cache = new IOTypeCache<AnyIOType, IOType<IntentionalAny | null, IntentionalAny | null>>();
 
-const NullableIO = <ParameterType, ParameterStateType extends PatternStateSelfType, PatternStateSelfType>( parameterType: IOType<ParameterType, ParameterStateType, PatternStateSelfType> ): IOType => {
+const NullableIO = <ParameterType, ParameterStateType extends PatternStateSelfType, PatternStateSelfType>(
+  parameterType: IOType<ParameterType, ParameterStateType, PatternStateSelfType>
+): IOType<ParameterType | null, ParameterStateType | null> => {
 
   assert && assert( parameterType, 'NullableIO needs parameterType' );
 

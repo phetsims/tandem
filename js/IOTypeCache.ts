@@ -8,17 +8,16 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
-import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import tandemNamespace from './tandemNamespace.js';
-import type IOType from './types/IOType.js';
+import type { AnyIOType } from './types/IOType.js';
 
 
 // By default, the cache key is an IOType (like for a single parameter like PropertyIO)
-class IOTypeCache<T = IOType> extends Map<T, IOType> {
+class IOTypeCache<Value extends AnyIOType, Key = AnyIOType> extends Map<Key, Value> {
 
-  private static readonly caches: IOTypeCache<IntentionalAny>[] = [];
+  private static readonly caches: IOTypeCache<AnyIOType, unknown>[] = [];
 
-  public constructor( entries?: readonly ( readonly [ T, IOType ] )[] | null ) {
+  public constructor( entries?: readonly ( readonly [ Key, Value ] )[] | null ) {
     super( entries );
 
     IOTypeCache.caches.push( this );

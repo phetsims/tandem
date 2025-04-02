@@ -6,13 +6,14 @@
  * @author Sam Reid (PhET Interactive Simulations)
  */
 
+import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import IOType from './types/IOType.js';
 
 QUnit.module( 'PhetioObject' );
 
-const MockTypeIO = new IOType( 'MockTypeIO', {
+const MockTypeIO = new IOType<IntentionalAny, IntentionalAny>( 'MockTypeIO', {
   isValidValue: () => true,
   documentation: 'mock type',
   events: [ 'hello' ]

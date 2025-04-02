@@ -29,7 +29,7 @@ import PhetioIDUtils from './PhetioIDUtils.js';
 import Tandem from './Tandem.js';
 import TandemConstants from './TandemConstants.js';
 import tandemNamespace from './tandemNamespace.js';
-import IOType from './types/IOType.js';
+import IOType, { AnyIOType } from './types/IOType.js';
 
 // constants
 const PHET_IO_ENABLED = Tandem.PHET_IO_ENABLED;
@@ -98,7 +98,7 @@ type SelfOptions = StrictOmit<Partial<PhetioElementMetadata>, 'phetioTypeName' |
   descriptionTandem?: Tandem;
 
   // Defines API methods, events and serialization. The type of the PhET-iO Element, see IOType
-  phetioType?: IOType;
+  phetioType?: AnyIOType;
 
   // The category of event that this element emits to the PhET-iO Data Stream. This is a default, it can be overridden in
   // phetioStartEvent options.  Cannot be supplied through TandemConstants because that would create an import loop
@@ -136,7 +136,7 @@ class PhetioObject extends Disposable {
   // See documentation in DEFAULTS
   public phetioIsArchetype!: boolean;
   public phetioBaselineMetadata!: PhetioElementMetadata | null;
-  private _phetioType!: IOType;
+  private _phetioType!: AnyIOType;
   private _phetioState!: boolean;
   private _phetioReadOnly!: boolean;
   private _phetioDocumentation!: string;
@@ -339,7 +339,7 @@ class PhetioObject extends Disposable {
   }
 
   // throws an assertion error in brands other than PhET-iO
-  public get phetioType(): IOType {
+  public get phetioType(): AnyIOType {
     assert && assert( PHET_IO_ENABLED && this.isPhetioInstrumented(), 'phetioType only accessible for instrumented objects in PhET-iO brand.' );
     return this._phetioType;
   }

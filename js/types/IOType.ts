@@ -30,6 +30,9 @@ const truthy = ( x: IntentionalAny ): boolean => !!x;
 let GETTING_STATE_FOR_API = false;
 let API_STATE_NESTED_COUNT = 0;
 
+// Sometimes, it doesn't matter what the parameters of the IOType are. `unknown` most often doesn't work here.
+export type AnyIOType = IOType<IntentionalAny, IntentionalAny>;
+
 /**
  * Estimate the core type name from a given IOType name.
  */
@@ -42,8 +45,8 @@ const getCoreTypeName = ( ioTypeName: IOTypeName ): string => {
 type AddChildElement = ( group: PhetioDynamicElementContainer<PhetioObject>, componentName: string, stateObject: unknown ) => PhetioObject;
 
 export type IOTypeMethod = {
-  returnType: IOType;
-  parameterTypes: IOType[];
+  returnType: AnyIOType;
+  parameterTypes: AnyIOType[];
 
   //the function to execute when this method is called. This function's parameters will be based on `parameterTypes`,
   // and should return the type specified by `returnType`
@@ -69,7 +72,7 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   // toStateObject, fromStateObject, stateObjectToCreateElementArguments, applyState, addChildElement
   // will be inherited from the supertype (unless overridden).  It is also used in features such as schema validation,
   // data/metadata default calculations.
-  supertype?: IOType | null;
+  supertype?: AnyIOType | null;
 
   // The list of events that can be emitted at this level (does not include events from supertypes).
   events?: string[];
@@ -97,7 +100,7 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
   methodOrder?: string[];
 
   // For parametric types, they must indicate the types of the parameters here. Empty array if non-parametric.
-  parameterTypes?: IOType[];
+  parameterTypes?: AnyIOType[];
 
   // For internal phet-io use only. Functions cannot be sent from one iframe to another, so must be wrapped. See
   // phetioCommandProcessor.wrapFunction
@@ -184,17 +187,17 @@ type SelfOptions<T, StateType extends SelfStateType, SelfStateType> = {
 type IOTypeOptions<T, StateType extends SelfStateType, SelfStateType> = SelfOptions<T, StateType, SelfStateType> & Validator<T>;
 
 // StateType is the whole thing, SelfStateType is just at this level
-// export default class IOType<T = any, SelfStateType = any, ParentStateType = EmptyParent, StateType extends SelfStateType & ParentStateType = SelfStateType & ParentStateType> { // eslint-disable-line @typescript-eslint/no-explicit-any
-export default class IOType<T = any, StateType extends SelfStateType = any, SelfStateType = StateType> { // eslint-disable-line @typescript-eslint/no-explicit-any
+export default class IOType<T = never, StateType extends SelfStateType = never, SelfStateType = StateType> {
+
   // See documentation in options type declaration
-  public readonly supertype?: IOType;
+  public readonly supertype?: AnyIOType;
   public readonly documentation?: string;
   public readonly methods?: Record<string, IOTypeMethod>;
   public readonly events: string[];
   public readonly metadataDefaults?: Partial<PhetioElementMetadata>;
   public readonly dataDefaults?: Record<string, unknown>;
   public readonly methodOrder?: string[];
-  public readonly parameterTypes?: IOType[];
+  public readonly parameterTypes?: AnyIOType[];
 
   private readonly toStateObjectOption: ( ( t: T ) => StateType ) | null;
   public readonly fromStateObjectOption: ( ( state: StateType ) => T ) | null;
@@ -214,7 +217,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   public readonly fuzzElement: Required<SelfOptions<T, StateType, SelfStateType>>['fuzzElement'];
 
   // The base IOType for the entire hierarchy.
-  public static ObjectIO: IOType;
+  public static ObjectIO: IOType<PhetioObject, null>;
 
   private readonly toStateObjectSupplied: boolean;
   private readonly stateSchemaSupplied: boolean;
@@ -488,10 +491,10 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   /**
    * Gets an array of IOTypes of the self type and all the supertype ancestors.
    */
-  private getTypeHierarchy(): IOType<IntentionalAny, IntentionalAny, IntentionalAny>[] {
+  private getTypeHierarchy(): AnyIOType[] {
     const array = [];
 
-    let ioType: IOType = this; // eslint-disable-line consistent-this, @typescript-eslint/no-this-alias
+    let ioType: AnyIOType = this; // eslint-disable-line consistent-this, @typescript-eslint/no-this-alias
     while ( ioType ) {
       array.push( ioType );
       ioType = ioType.supertype!;
@@ -687,7 +690,7 @@ export default class IOType<T = any, StateType extends SelfStateType = any, Self
   }
 }
 
-const mapAPIForType = ( parameterType: IOType ): string => parameterType.typeName;
+const mapAPIForType = ( parameterType: AnyIOType ): string => parameterType.typeName;
 
 // default state value
 const DEFAULT_STATE = null;

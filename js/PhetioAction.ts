@@ -23,7 +23,7 @@ import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
 import ArrayIO from './types/ArrayIO.js';
-import IOType from './types/IOType.js';
+import IOType, { AnyIOType } from './types/IOType.js';
 import NullableIO from './types/NullableIO.js';
 import StringIO from './types/StringIO.js';
 import VoidIO from './types/VoidIO.js';
@@ -60,10 +60,10 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
   // To listen to when the action has completed.
   public readonly executedEmitter: Emitter<T>;
 
-  public static readonly PhetioActionIO = ( parameterTypes: IOType[] ): IOType => {
+  public static readonly PhetioActionIO = ( parameterTypes: AnyIOType[] ): AnyIOType => {
     const key = parameterTypes.map( getTypeName ).join( ',' );
     if ( !cache.has( key ) ) {
-      cache.set( key, new IOType( `PhetioActionIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
+      cache.set( key, new IOType<IntentionalAny, IntentionalAny>( `PhetioActionIO<${parameterTypes.map( getTypeName ).join( ', ' )}>`, {
         valueType: PhetioAction,
         documentation: 'Executes when an event occurs',
         events: [ 'executed' ],
@@ -191,10 +191,10 @@ class PhetioAction<T extends ActionParameter[] = []> extends PhetioDataHandler<T
   }
 }
 
-const getTypeName = ( ioType: IOType ) => ioType.typeName;
+const getTypeName = ( ioType: AnyIOType ) => ioType.typeName;
 
 // cache each parameterized IOType so that it is only created once.
-const cache = new IOTypeCache<string>();
+const cache = new IOTypeCache<AnyIOType, string>();
 
 tandemNamespace.register( 'PhetioAction', PhetioAction );
 export default PhetioAction;

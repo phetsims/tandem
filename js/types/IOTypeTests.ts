@@ -6,6 +6,7 @@
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
 
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import BooleanIO from './BooleanIO.js';
 import IOType from './IOType.js';
 import NumberIO from './NumberIO.js';
@@ -31,7 +32,7 @@ QUnit.test( 'default toStateObject and applyState', assert => {
 
     public set gettersAndSettersTest( value: string ) { this._valueForGetterAndSetter = value; }
 
-    public static MyClassIO = new IOType( 'MyClassIO', {
+    public static MyClassIO = new IOType<IntentionalAny, IntentionalAny>( 'MyClassIO', {
       valueType: MyClass,
       stateSchema: {
         firstField: BooleanIO,

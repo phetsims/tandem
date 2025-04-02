@@ -8,11 +8,11 @@
 
 import IOTypeCache from '../IOTypeCache.js';
 import tandemNamespace from '../tandemNamespace.js';
-import IOType from './IOType.js';
+import IOType, { AnyIOType } from './IOType.js';
 import StateSchema from './StateSchema.js';
 
 // Cache each parameterized IOType so that it is only created once
-const cache = new IOTypeCache<readonly string[]>();
+const cache = new IOTypeCache<AnyIOType, readonly string[]>();
 
 const StringUnionIO = <ParameterType extends readonly string[]>( unionValues: ParameterType ): IOType<ParameterType, string> => {
 

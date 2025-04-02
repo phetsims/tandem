@@ -13,11 +13,11 @@ import Validation from '../../../axon/js/Validation.js';
 import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import IOTypeCache from '../IOTypeCache.js';
 import tandemNamespace from '../tandemNamespace.js';
-import IOType from './IOType.js';
+import IOType, { AnyIOType } from './IOType.js';
 import StateSchema from './StateSchema.js';
 
 // Cache each parameterized IOType so that it is only created once.
-const cache = new IOTypeCache<string>();
+const cache = new IOTypeCache<AnyIOType, string>();
 
 const ARRAY_OF_ARRAY_VALIDATOR = {
   valueType: Array,
@@ -30,7 +30,10 @@ export type MapStateObject<KState, VState> = Array<[ KState, VState ]>;
  * Parametric IOType constructor.  Given an element type, this function returns an appropriate map IOType.
  * This caching implementation should be kept in sync with the other parametric IOType caching implementations.
  */
-function MapIO<KType, KStateType, VType, VStateType>( keyType: IOType<KType, KStateType>, valueType: IOType<VType, VStateType> ): IOType {
+function MapIO<KType, KStateType, VType, VStateType>(
+  keyType: IOType<KType, KStateType>,
+  valueType: IOType<VType, VStateType>
+): IOType<Map<KType, VType>, [ KStateType, VStateType ]> {
 
   const cacheKey = keyType.typeName + ',' + valueType.typeName;
   if ( !cache.has( cacheKey ) ) {

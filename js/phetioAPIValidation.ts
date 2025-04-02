@@ -38,7 +38,7 @@ import type PhetioObject from './PhetioObject.js';
 import { LinkedElement } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
-import IOType from './types/IOType.js';
+import { AnyIOType } from './types/IOType.js';
 
 // constants
 // The API-tracked and validated metadata keys
@@ -74,7 +74,7 @@ class PhetioAPIValidation {
   // double checked that anything being passed into a parametric type is memory safe. As of this writing, only IOTypes
   // are passed to parametric IOTypes, so this pattern remains memory leak free. Furthermore, this list is only
   // populated when `Tandem.apiValidationEnabled`.
-  private everyPhetioType: Record<string, IOType> = {};
+  private everyPhetioType: Record<string, AnyIOType> = {};
 
   /**
    * Callback when the simulation is ready to go, and all static PhetioObjects have been created.

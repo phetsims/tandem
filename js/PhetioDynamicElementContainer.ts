@@ -30,7 +30,7 @@ import PhetioIDUtils from './PhetioIDUtils.js';
 import PhetioObject, { PhetioObjectMetadataInput, PhetioObjectOptions } from './PhetioObject.js';
 import Tandem, { DYNAMIC_ARCHETYPE_NAME } from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
-import IOType from './types/IOType.js';
+import { AnyIOType } from './types/IOType.js';
 import StringIO from './types/StringIO.js';
 
 export type ClearOptions = {
@@ -290,7 +290,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, CreateEleme
    * @param argsForCreateFunction
    * @param containerParameterType - null in PhET brand
    */
-  public createDynamicElement( componentName: string, argsForCreateFunction: CreateElementArguments, containerParameterType: IOType | null ): T {
+  public createDynamicElement( componentName: string, argsForCreateFunction: CreateElementArguments, containerParameterType: AnyIOType | null ): T {
     assert && assert( Array.isArray( argsForCreateFunction ), 'should be array' );
 
     // create with default state and substructure, details will need to be set by setter methods.

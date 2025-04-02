@@ -27,7 +27,7 @@ import PhetioIDUtils from './PhetioIDUtils.js';
 import PhetioObject from './PhetioObject.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
-import IOType from './types/IOType.js';
+import IOType, { AnyIOType } from './types/IOType.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = PhetioIDUtils.CAPSULE_SUFFIX;
@@ -160,7 +160,8 @@ class PhetioCapsule<T extends PhetioObject, P extends IntentionalAny[] = []> ext
    * @param parameterType
    * @constructor
    */
-  public static PhetioCapsuleIO = <ParameterType extends PhetioObject, ParameterStateType>( parameterType: IOType<ParameterType, ParameterStateType> ): IOType => {
+  public static PhetioCapsuleIO = <ParameterType extends PhetioObject, ParameterStateType>(
+    parameterType: IOType<ParameterType, ParameterStateType> ): AnyIOType => {
 
     if ( !cache.has( parameterType ) ) {
       cache.set( parameterType, new IOType<PhetioCapsule<ParameterType>, IntentionalAny>( `PhetioCapsuleIO<${parameterType.typeName}>`, {

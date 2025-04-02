@@ -7,13 +7,14 @@
  * @author Andrew Adare (PhET Interactive Simulations)
  */
 
+import IntentionalAny from '../../../phet-core/js/types/IntentionalAny.js';
 import IOTypeCache from '../IOTypeCache.js';
 import tandemNamespace from '../tandemNamespace.js';
-import IOType from './IOType.js';
+import IOType, { AnyIOType } from './IOType.js';
 
 
 // cache each parameterized IOType so that it is only created once
-const cache = new IOTypeCache<string>();
+const cache = new IOTypeCache<AnyIOType, string>();
 
 /**
  * Parametric IOType constructor--given return type and parameter types, this function returns a type wrapped IOType for
@@ -22,7 +23,7 @@ const cache = new IOTypeCache<string>();
  * @param returnType - IOType of the return type of the function that can support cross-frame serialization
  * @param functionParameterTypes - IOTypes for the individual arguments of the function.
  */
-const FunctionIO = ( returnType: IOType, functionParameterTypes: IOType[] ): IOType => {
+const FunctionIO = ( returnType: AnyIOType, functionParameterTypes: AnyIOType[] ): AnyIOType => {
   for ( let i = 0; i < functionParameterTypes.length; i++ ) {
     assert && assert( functionParameterTypes[ i ], 'parameter type was not truthy' );
   }
@@ -40,9 +41,8 @@ const FunctionIO = ( returnType: IOType, functionParameterTypes: IOType[] ): IOT
     }
     const parameterTypesString = functionParameterTypes.map( parameterType => parameterType.typeName ).join( ',' );
 
-    cache.set( cacheKey, new IOType( `FunctionIO(${parameterTypesString})=>${returnType.typeName}`, {
+    cache.set( cacheKey, new IOType<IntentionalAny, IntentionalAny>( `FunctionIO(${parameterTypesString})=>${returnType.typeName}`, {
       valueType: 'function',
-
       isFunctionType: true,
 
       // These are the parameters to this FunctionIO, not to the function it wraps. That is why it includes the return type.

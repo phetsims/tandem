@@ -26,7 +26,7 @@ import PhetioObject from './PhetioObject.js';
 import phetioStateSetEmitter from './phetioStateSetEmitter.js';
 import Tandem from './Tandem.js';
 import tandemNamespace from './tandemNamespace.js';
-import IOType from './types/IOType.js';
+import IOType, { AnyIOType } from './types/IOType.js';
 
 // constants
 const DEFAULT_CONTAINER_SUFFIX = 'Group';
@@ -287,7 +287,8 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
   /**
    * Parametric IOType constructor.  Given an element type, this function returns a PhetioGroup IOType.
    */
-  public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType extends ParameterStateSelfType, ParameterStateSelfType>( parameterType: IOType<ParameterType, ParameterStateType, ParameterStateSelfType> ): IOType => {
+  public static PhetioGroupIO = <ParameterType extends PhetioObject, ParameterStateType extends ParameterStateSelfType, ParameterStateSelfType>(
+    parameterType: IOType<ParameterType, ParameterStateType, ParameterStateSelfType> ): AnyIOType => {
 
     // TODO: https://github.com/phetsims/tandem/issues/254 specify the correct type instead of IntentionalAny
     if ( !cache.has( parameterType ) ) {

@@ -17,8 +17,8 @@ import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
 import PhetioObject, { PhetioObjectOptions } from './PhetioObject.js';
 import Tandem from './Tandem.js';
-import IOType from './types/IOType.js';
 import tandemNamespace from './tandemNamespace.js';
+import { AnyIOType } from './types/IOType.js';
 
 const VALIDATE_OPTIONS_FALSE = { validateValidator: false };
 
@@ -54,7 +54,7 @@ type SelfOptions = {
   // The parameters to the emit method that will be called.
   // See PARAMETER_KEYS for a list of legal keys, their types, and documentation.
   parameters?: Parameter[];
-  phetioOuterType: ( t: IOType[] ) => IOType;
+  phetioOuterType: ( t: AnyIOType[] ) => AnyIOType;
   hasListenerOrderDependencies?: boolean;
 };
 
