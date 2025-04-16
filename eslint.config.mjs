@@ -10,5 +10,9 @@
 import simEslintConfig from '../perennial-alias/js/eslint/config/sim.eslint.config.mjs';
 
 export default [
-  ...simEslintConfig
+  ...simEslintConfig, {
+    rules: {
+      'phet/documentation-before-imports': 'off'
+    }
+  }
 ];
