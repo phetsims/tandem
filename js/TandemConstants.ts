@@ -1,15 +1,15 @@
 // Copyright 2021-2024, University of Colorado Boulder
 
-import PickRequired from '../../phet-core/js/types/PickRequired.js';
-import { PhetioElementMetadata } from './phet-io-types.js';
-import tandemNamespace from './tandemNamespace.js';
-
 /**
  * Factored-out constant values for use in Tandem.
  *
  * @author Sam Reid (PhET Interactive Simulations)
  * @author Michael Kauzmann (PhET Interactive Simulations)
  */
+
+import PickRequired from '../../phet-core/js/types/PickRequired.js';
+import { PhetioElementMetadata } from './phet-io-types.js';
+import tandemNamespace from './tandemNamespace.js';
 
 const OBJECT_IO_TYPE_NAME = 'ObjectIO';
 const EVENT_TYPE_MODEL = 'MODEL';
