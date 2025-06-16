@@ -11,7 +11,7 @@ import IOType from './IOType.js';
 import StateSchema from './StateSchema.js';
 import ValueIO from './ValueIO.js';
 
-type ObjectIOState = Record<string, IntentionalAny>;
+export type ObjectIOState = Record<string, IntentionalAny>;
 const noExtraPrototype = ( object: object ) => Object.getPrototypeOf( object ) === Object.prototype;
 const ObjectLiteralIO = new IOType<object, ObjectIOState>( 'ObjectLiteralIO', {
   documentation: 'PhET-iO Type for object literals',
