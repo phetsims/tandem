@@ -15,7 +15,6 @@
 import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
 import validate from '../../axon/js/validate.js';
-import type FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
@@ -568,8 +567,9 @@ class PhetioObject extends Disposable {
     return this.tandem && this.tandem.supplied;
   }
 
-  // For runtime "type checking" in PhetioObject. Note we cannot use instanceof FluentConstant here without causing a cyclic dependency. This is on the prototype to save space.
-  public isFluentConstant(): this is FluentConstant { return false; }
+  // Some PhetioObject forward to another by composition for PhET-iO support. For instance, FluentConstant forwards to
+  // a PhET-iO instrumented LocalizedStringProperty, which is instrumented by default.
+  public hasTargetProperty(): this is { targetProperty: PhetioObject } { return false; }
 
   /**
    * When an instrumented PhetioObject is linked with another instrumented PhetioObject, this creates a one-way
@@ -588,9 +588,10 @@ class PhetioObject extends Disposable {
    */
   public addLinkedElement( element: PhetioObject, providedOptions?: LinkedElementOptions ): void {
 
-    // For backward compatibility, link to the instrumented PhetioObject associated with a FluentConstant
-    if ( element.isFluentConstant() ) {
-      element = element.targetProperty!;
+    // For elements that delegate PhET-iO responsibility to a target property, substitute the target for the element.
+    // This is used in cases like FluentConstant, where the target is a PhET-iO instrumented LocalizedStringProperty.
+    if ( element.hasTargetProperty() ) {
+      element = element.targetProperty;
     }
 
     if ( !this.isPhetioInstrumented() ) {
