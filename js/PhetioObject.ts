@@ -587,6 +587,12 @@ class PhetioObject extends Disposable {
    * @param [providedOptions]
    */
   public addLinkedElement( element: PhetioObject, providedOptions?: LinkedElementOptions ): void {
+
+    // For backward compatibility, link to the instrumented PhetioObject associated with a FluentConstant
+    if ( element.isFluentConstant() ) {
+      element = element.targetProperty!;
+    }
+
     if ( !this.isPhetioInstrumented() ) {
 
       // set this to null so that you can't addLinkedElement on an uninitialized PhetioObject and then instrument
