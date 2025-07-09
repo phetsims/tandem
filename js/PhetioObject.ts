@@ -15,6 +15,7 @@
 import animationFrameTimer from '../../axon/js/animationFrameTimer.js';
 import Disposable, { DisposableOptions } from '../../axon/js/Disposable.js';
 import validate from '../../axon/js/validate.js';
+import type FluentConstant from '../../chipper/js/browser/FluentConstant.js';
 import arrayRemove from '../../phet-core/js/arrayRemove.js';
 import assertMutuallyExclusiveOptions from '../../phet-core/js/assertMutuallyExclusiveOptions.js';
 import merge from '../../phet-core/js/merge.js';
@@ -566,6 +567,9 @@ class PhetioObject extends Disposable {
   public isPhetioInstrumented(): boolean {
     return this.tandem && this.tandem.supplied;
   }
+
+  // For runtime "type checking" in PhetioObject. Note we cannot use instanceof FluentConstant here without causing a cyclic dependency. This is on the prototype to save space.
+  public isFluentConstant(): this is FluentConstant { return false; }
 
   /**
    * When an instrumented PhetioObject is linked with another instrumented PhetioObject, this creates a one-way
