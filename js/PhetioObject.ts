@@ -21,7 +21,6 @@ import merge from '../../phet-core/js/merge.js';
 import optionize, { combineOptions, EmptySelfOptions, OptionizeDefaults } from '../../phet-core/js/optionize.js';
 import IntentionalAny from '../../phet-core/js/types/IntentionalAny.js';
 import StrictOmit from '../../phet-core/js/types/StrictOmit.js';
-import DescriptionRegistry from './DescriptionRegistry.js';
 import EventType from './EventType.js';
 import LinkedElementIO from './LinkedElementIO.js';
 import { PhetioElementMetadata, PhetioID } from './phet-io-types.js';
@@ -58,8 +57,6 @@ type StartEventOptions = {
 // When an event is suppressed from the data stream, we keep track of it with this token.
 const SKIPPING_MESSAGE = -1;
 
-const ENABLE_DESCRIPTION_REGISTRY = !!window.phet?.chipper?.queryParameters?.supportsDescriptionPlugin;
-
 const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementName'>> = {
 
   tandem: Tandem.OPTIONAL,   // Subtypes can use `Tandem.REQUIRED` to require a named tandem passed in
@@ -74,10 +71,7 @@ const DEFAULTS: OptionizeDefaults<StrictOmit<SelfOptions, 'phetioDynamicElementN
   phetioDynamicElement: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDynamicElement,
   phetioDesigned: TandemConstants.PHET_IO_OBJECT_METADATA_DEFAULTS.phetioDesigned,
   phetioEventMetadata: null,
-  tandemNameSuffix: null,
-
-  // @experimental - Defines description-specific tandems that do NOT affect the phet-io system.
-  descriptionTandem: Tandem.OPTIONAL
+  tandemNameSuffix: null
 };
 
 // If you run into a type error here, feel free to add any type that is supported by the browsers "structured cloning algorithm" https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm
@@ -93,9 +87,6 @@ type SelfOptions = StrictOmit<Partial<PhetioElementMetadata>, 'phetioTypeName' |
   // Unique identifier for this instance, used by PhET-iO to access this instance from the wrapper frame.
   // This is the only place in the project where `tandem` can be specified directly in a Type.
   tandem?: Tandem; // eslint-disable-line phet/bad-sim-text
-
-  // @experimental - do not use without consulting https://github.com/phetsims/joist/issues/941
-  descriptionTandem?: Tandem;
 
   // Defines API methods, events and serialization. The type of the PhET-iO Element, see IOType
   phetioType?: AnyIOType;
@@ -185,10 +176,6 @@ class PhetioObject extends Disposable {
     // Make sure that required tandems are supplied
     if ( assert && Tandem.VALIDATION && providedOptions.tandem && providedOptions.tandem.required ) {
       assert( providedOptions.tandem.supplied, 'required tandems must be supplied' );
-    }
-
-    if ( ENABLE_DESCRIPTION_REGISTRY && providedOptions.tandem && providedOptions.tandem.supplied ) {
-      DescriptionRegistry.add( providedOptions.tandem, this );
     }
 
     // The presence of `tandem` indicates if this PhetioObject can be initialized. If not yet initialized, perhaps
@@ -807,10 +794,6 @@ class PhetioObject extends Disposable {
           assert && assert( descendant.isDisposed, `All descendants must be disposed by the next frame: ${descendant.tandem.phetioID}` );
         } );
       } );
-    }
-
-    if ( ENABLE_DESCRIPTION_REGISTRY && this.tandem && this.tandem.supplied ) {
-      DescriptionRegistry.remove( this );
     }
 
     // Detach from listeners and dispose the corresponding tandem. This must happen in PhET-iO brand and PhET brand
