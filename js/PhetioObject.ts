@@ -861,7 +861,7 @@ class PhetioObject extends Disposable {
 // See documentation for addLinkedElement() to describe how to instrument LinkedElements. No other metadata is needed
 // for LinkedElements, and should instead be provided to the coreElement. If you find a case where you want to pass
 // another option through, please discuss with your friendly, neighborhood PhET-iO developer.
-type LinkedElementOptions = ( { tandemName?: string; tandem?: never } | { tandemName?: never; tandem?: Tandem } ) & {
+export type LinkedElementOptions = ( { tandemName?: string; tandem?: never } | { tandemName?: never; tandem?: Tandem } ) & {
   phetioFeatured?: boolean;
 };
 
