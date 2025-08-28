@@ -10,7 +10,7 @@
  */
 
 import TinyProperty from '../../axon/js/TinyProperty.js';
-import TReadOnlyProperty from '../../axon/js/TReadOnlyProperty.js';
+import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
 import tandemNamespace from './tandemNamespace.js';
 
 // This one is for specialized usage in the PhetioStateEngine, which changes the value. DO NOT USE in sim code.

@@ -10,7 +10,7 @@
 
 import Emitter from '../../axon/js/Emitter.js';
 import { TReadOnlyEmitter } from '../../axon/js/TEmitter.js';
-import TReadOnlyProperty from '../../axon/js/TReadOnlyProperty.js';
+import { TReadOnlyProperty } from '../../axon/js/TReadOnlyProperty.js';
 import { FullPhetioState } from './phet-io-types.js';
 import PhetioObject from './PhetioObject.js';
 
