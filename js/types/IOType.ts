@@ -229,7 +229,7 @@ export default class IOType<T = never, StateType extends SelfStateType = never, 
    *    parameters in their typeName. If an IOType's parameters are other IOType(s), then they should be included within
    *    angle brackets, like "PropertyIO<BooleanIO>". Some other types use a more custom format for displaying their
    *    parameter types, in this case the parameter section of the type name (immediately following "IO") should begin
-   *    with an open paren, "(". Thus the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
+   *    with an open paren, "(". Thus, the schema for a typeName could be defined (using regex) as `[A-Z]\w*IO([(<].*){0,1}`.
    *    Parameterized types should also include a `parameterTypes` field on the IOType.
    * @param providedOptions
    */
