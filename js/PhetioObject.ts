@@ -125,25 +125,25 @@ class PhetioObject extends Disposable {
   private phetioObjectInitialized: boolean;
 
   // See documentation in DEFAULTS
-  public phetioIsArchetype!: boolean;
-  public phetioBaselineMetadata!: PhetioElementMetadata | null;
-  private _phetioType!: AnyIOType;
-  private _phetioState!: boolean;
-  private _phetioReadOnly!: boolean;
-  private _phetioDocumentation!: string;
-  private _phetioEventType!: EventType;
-  private _phetioHighFrequency!: boolean;
-  private _phetioPlayback!: boolean;
-  private _phetioDynamicElement!: boolean;
-  private _phetioFeatured!: boolean;
-  private _phetioEventMetadata!: EventMetadata | null;
-  private _phetioDesigned!: boolean;
+  declare public phetioIsArchetype: boolean;
+  declare public phetioBaselineMetadata: PhetioElementMetadata | null;
+  declare private _phetioType: AnyIOType;
+  declare private _phetioState: boolean;
+  declare private _phetioReadOnly: boolean;
+  declare private _phetioDocumentation: string;
+  declare private _phetioEventType: EventType;
+  declare private _phetioHighFrequency: boolean;
+  declare private _phetioPlayback: boolean;
+  declare private _phetioDynamicElement: boolean;
+  declare private _phetioFeatured: boolean;
+  declare private _phetioEventMetadata: EventMetadata | null;
+  declare private _phetioDesigned: boolean;
 
   // Public only for PhetioObjectMetadataInput
-  public phetioArchetypePhetioID!: string | null;
-  private linkedElements!: LinkedElement[] | null;
-  public phetioNotifiedObjectCreated!: boolean;
-  private phetioMessageStack!: number[];
+  declare public phetioArchetypePhetioID: string | null;
+  declare private linkedElements: LinkedElement[] | null;
+  declare public phetioNotifiedObjectCreated: boolean;
+  declare private phetioMessageStack: number[];
   public static readonly DEFAULT_OPTIONS = DEFAULTS;
   public phetioID: PhetioID;
 
