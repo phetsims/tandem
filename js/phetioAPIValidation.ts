@@ -108,7 +108,7 @@ class PhetioAPIValidation {
         }
         assert && assert( !phetioObject.phetioReadOnly, 'preferences model and its descendants should be phetioReadOnly: false, key=' + preferencesKey );
 
-        // Audio manager, color profile property and localeProperty are supposed to be stateful. All other preferences
+        // Audio enabled, color profile property and localeProperty are supposed to be stateful. All other preferences
         // should be phetioState: false so they are not captured in the state
         assert && assert( phetioObject.phetioState ===
                           ( phetioObject.phetioID.endsWith( '.colorProfileProperty' ) ||
