@@ -50,7 +50,7 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
 
   // (only for PhetioGroupIO) - for generating indices from a pool
   private groupElementIndex: number;
-  private groupElementStartingIndex: number;
+  private readonly groupElementStartingIndex: number;
   public readonly countProperty: NumberProperty; // (read-only)
 
   /**
