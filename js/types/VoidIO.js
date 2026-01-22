@@ -1,4 +1,4 @@
-// Copyright 2016-2018, University of Colorado Boulder
+// Copyright 2018, University of Colorado Boulder
 
 /**
  * IO type use to signify a function has no return value.

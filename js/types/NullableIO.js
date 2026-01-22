@@ -1,4 +1,4 @@
-// Copyright 2017, University of Colorado Boulder
+// Copyright 2018, University of Colorado Boulder
 
 /**
  * Parametric IO Type wrapper that adds support for null values in toStateObject/fromStateObject. This type is to

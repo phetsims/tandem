@@ -1,4 +1,4 @@
-// Copyright 2016, University of Colorado Boulder
+// Copyright 2018, University of Colorado Boulder
 
 /**
  * Augments PHET_CORE/inherit by adding typeName, methods, supertype and convenience methods for PhET-iO.

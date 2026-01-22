@@ -1,4 +1,4 @@
-// Copyright 2015, University of Colorado Boulder
+// Copyright 2015-2018, University of Colorado Boulder
 
 /**
  * Tandem is used to assign unique identifiers to instances in PhET simulations and register/unregister them in a
