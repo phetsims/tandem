@@ -3,7 +3,7 @@
 /**
  * PhET-iO Type for JS's built-in Float64Array type
  *
- * @author Jonathan Olson <jonathan.olson@colorado.edu>
+ * @author Jonathan Olson (PhET Interactive Simulations)
  * @author Chris Klusendorf
  */
 
