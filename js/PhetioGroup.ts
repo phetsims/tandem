@@ -262,8 +262,6 @@ class PhetioGroup<T extends PhetioObject, P extends IntentionalAny[] = []> exten
    * (PhetioGroupIO)
    */
   public createIndexedElement( index: number, argsForCreateFunction: P, fromStateSetting = false ): T {
-    assert && Tandem.VALIDATION && assert( this.isPhetioInstrumented(), 'TODO: support uninstrumented PhetioGroups? see https://github.com/phetsims/tandem/issues/184' );
-
     assert && this.supportsDynamicState && _.hasIn( window, 'phet.joist.sim' ) &&
     assert && isSettingPhetioStateProperty.value && this.isPhetioInstrumented() && assert( fromStateSetting,
       'dynamic elements should only be created by the state engine when setting state.' );
