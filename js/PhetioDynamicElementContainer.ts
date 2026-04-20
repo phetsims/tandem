@@ -317,7 +317,7 @@ abstract class PhetioDynamicElementContainer<T extends PhetioObject, CreateEleme
         'dynamic element container expected its created instance\'s phetioType to match its parameterType.' );
     }
 
-    assert && this.assertDynamicPhetioObject( createdObject );
+    // assert && this.assertDynamicPhetioObject( createdObject );
 
     return createdObject;
   }
