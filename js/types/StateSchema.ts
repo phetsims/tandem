@@ -55,6 +55,12 @@ export type StateObject<T extends Record<string, AnyIOType>> = {
   [key in keyof T]: ReturnType<T[key]['toStateObject']>;
 };
 
+// Pluck the core record types from the CompositeSchema. For instance, map a state schema like so:
+// {name: StringIO} => {name: string}
+export type CoreRecord<T extends Record<string, AnyIOType>> = {
+  [key in keyof T]: Parameters<T[key]['toStateObject']>[0];
+};
+
 type StateSchemaOptions<SelfStateType> = {
 
   // What the IOType will display as in the API.
@@ -307,6 +313,40 @@ export default class StateSchema<T, SelfStateType> {
     }
   }
 
+  /**
+   * Deserializes each field in a composite schema to a schema-shaped record. This is useful for data types that still
+   * need to pass the core values to a constructor, but do not need custom per-field deserialization logic.
+   */
+  public static recordFromStateObject<T extends Record<string, AnyIOType>>(
+    compositeSchema: T,
+    stateObject: StateObject<T>
+  ): CoreRecord<T> {
+    const coreRecord = {} as Partial<CoreRecord<T>>;
+    const keys = Object.keys( compositeSchema ) as ( keyof T )[];
+
+    keys.forEach( stateKey => {
+      coreRecord[ stateKey ] = compositeSchema[ stateKey ].fromStateObject( stateObject[ stateKey ] );
+    } );
+
+    return coreRecord as CoreRecord<T>;
+  }
+
+  /**
+   * Serializes each field in a schema-shaped core record using the provided composite schema.
+   */
+  public static recordToStateObject<T extends Record<string, AnyIOType>>(
+    compositeSchema: T,
+    coreRecord: CoreRecord<T>
+  ): StateObject<T> {
+    const stateObject = {} as Partial<StateObject<T>>;
+    const keys = Object.keys( compositeSchema ) as ( keyof T )[];
+
+    keys.forEach( stateKey => {
+      stateObject[ stateKey ] = compositeSchema[ stateKey ].toStateObject( coreRecord[ stateKey ] );
+    } );
+
+    return stateObject as StateObject<T>;
+  }
 
   /**
    * Factory function for StateSchema instances that represent a single value of state. This is opposed to a composite

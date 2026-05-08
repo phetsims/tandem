@@ -14,7 +14,7 @@ import StateSchema from './StateSchema.js';
 // Cache each parameterized IOType so that it is only created once
 const cache = new IOTypeCache<AnyIOType, readonly string[]>();
 
-const StringUnionIO = <ParameterType extends readonly string[]>( unionValues: ParameterType ): IOType<ParameterType, string> => {
+const StringUnionIO = <ParameterType extends readonly string[]>( unionValues: ParameterType ): IOType<ParameterType[number], ParameterType[number]> => {
 
   assert && assert( unionValues, 'StringUnionIO needs unionValues' );
 
