@@ -20,7 +20,7 @@ const StringUnionIO = <ParameterType extends readonly string[]>( unionValues: Pa
 
   if ( !cache.has( unionValues ) ) {
     const typeName = unionValues.join( ',' );
-    cache.set( unionValues, new IOType<string, string>( `StringUnionIO<${typeName}>`, {
+    cache.set( unionValues, new IOType<ParameterType[number], ParameterType[number]>( `StringUnionIO<${typeName}>`, {
       documentation: 'A PhET-iO Type validating on specific string values.',
       isValidValue: instance => unionValues.includes( instance ),
 
@@ -29,14 +29,14 @@ const StringUnionIO = <ParameterType extends readonly string[]>( unionValues: Pa
       fromStateObject: _.identity,
 
       // TODO: This is the only place that has IO suffix in StateSchema.asValue, see https://github.com/phetsims/tandem/issues/306
-      stateSchema: StateSchema.asValue( `StringUnionIO<${typeName}>`, {
+      stateSchema: StateSchema.asValue<ParameterType[number], ParameterType[number]>( `StringUnionIO<${typeName}>`, {
           isValidValue: value => unionValues.includes( value )
         }
       )
     } ) );
   }
 
-  return cache.get( unionValues )!;
+  return cache.get( unionValues )! as IOType<ParameterType[number], ParameterType[number]>;
 };
 
 tandemNamespace.register( 'StringUnionIO', StringUnionIO );
