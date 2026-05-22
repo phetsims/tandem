@@ -30,6 +30,8 @@ type OrIOState = {
   state: IntentionalAny;
 };
 
+const getJoined = ( keys: string[], joinBy: string ) => keys.sort().join( joinBy );
+
 /**
  * Parametric type constructor function, do not use `new`
  * @param parameterTypes - a list of IOType to combine into a single composite
@@ -50,7 +52,7 @@ const OrIO = ( parameterTypes: AnyIOType[] ): IOType<IntentionalAny, OrIOState> 
       }
       return false;
     };
-    cache.set( key, new IOType<IntentionalAny, OrIOState>( `OrIO<${typeNames.join( ', ' )}>`, {
+    cache.set( key, new IOType<IntentionalAny, OrIOState>( `OrIO<${getJoined( typeNames, ', ' )}>`, {
       documentation: 'A PhET-iO Type adding support for a composite type that can be any of its parameters.',
       parameterTypes: parameterTypes,
       isValidValue: isValidValue,
@@ -73,7 +75,7 @@ const OrIO = ( parameterTypes: AnyIOType[] ): IOType<IntentionalAny, OrIOState> 
         assert && assert( stateObject.hasOwnProperty( 'state' ), 'state required for deserialization' );
         return parameterTypes[ stateObject.index ].fromStateObject( stateObject.state );
       },
-      stateSchema: StateSchema.asValue( `${typeNames.join( '|' )}`, {
+      stateSchema: StateSchema.asValue( `${getJoined( typeNames, '|' )}`, {
         isValidValue: stateObject => {
 
           // Check based on the parameter that serialized the state

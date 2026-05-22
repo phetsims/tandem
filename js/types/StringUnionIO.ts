@@ -19,6 +19,7 @@ const StringUnionIO = <ParameterType extends readonly string[]>( unionValues: Pa
   assert && assert( unionValues, 'StringUnionIO needs unionValues' );
 
   if ( !cache.has( unionValues ) ) {
+    // FIXME: Think about using "sort()" here if we end up using a lot of StringUnionIOs
     const typeName = unionValues.join( ',' );
     cache.set( unionValues, new IOType<ParameterType[number], ParameterType[number]>( `StringUnionIO<${typeName}>`, {
       documentation: 'A PhET-iO Type validating on specific string values.',

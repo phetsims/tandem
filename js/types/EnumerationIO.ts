@@ -16,7 +16,8 @@ import StateSchema from './StateSchema.js';
 // Cache each parameterized IOType so that it is only created once.
 const cache = new IOTypeCache<IOType<IntentionalAny, string>, TEnumeration<EnumerationValue>>();
 
-const joinKeys = ( keys: string[] ) => keys.join( '|' );
+const getKeyList = ( keys: string[] ) => keys.sort();
+const joinKeys = ( keys: string[] ) => getKeyList( keys ).join( '|' );
 
 const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: EnumerationContainer<T> ): IOType<T, string> => {
   const enumeration = enumerationContainer.enumeration;
@@ -39,7 +40,7 @@ const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: Enumer
 
     cache.set( enumeration, new IOType<T, string>( ioTypeName, {
       validValues: values,
-      documentation: `Possible values: ${keys.join( ', ' )}.${additionalDocs}`,
+      documentation: `Possible values: ${getKeyList( keys ).join( ', ' )}.${additionalDocs}`,
       toStateObject: ( value: T ) => enumeration.getKey( value ),
       fromStateObject: ( stateObject: string ): T => {
         assert && assert( typeof stateObject === 'string', 'unsupported EnumerationIO value type, expected string' ); // eslint-disable-line phet/no-simple-type-checking-assertions
