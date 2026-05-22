@@ -16,7 +16,7 @@ import StateSchema from './StateSchema.js';
 // Cache each parameterized IOType so that it is only created once.
 const cache = new IOTypeCache<IOType<IntentionalAny, string>, TEnumeration<EnumerationValue>>();
 
-const getKeyList = ( keys: string[] ) => keys.sort();
+const getKeyList = ( keys: string[] ) => [ ...keys ].sort();
 const joinKeys = ( keys: string[] ) => getKeyList( keys ).join( '|' );
 
 const EnumerationIO = <T extends EnumerationValue>( enumerationContainer: EnumerationContainer<T> ): IOType<T, string> => {

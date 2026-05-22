@@ -30,7 +30,7 @@ type OrIOState = {
   state: IntentionalAny;
 };
 
-const getJoined = ( keys: string[], joinBy: string ) => keys.sort().join( joinBy );
+const getJoined = ( keys: string[], joinBy: string ) => [ ...keys ].sort().join( joinBy );
 
 /**
  * Parametric type constructor function, do not use `new`
